@@ -1,0 +1,3 @@
+Copying, modifying and distributing this software is allowed 
+provided this copyright notice is kept.  
+This work is available as-is with no whatsoever warranty.
