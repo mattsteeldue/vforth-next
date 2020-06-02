@@ -11,6 +11,7 @@ In this table:
      n       :   byte value (8 bits)
     nn       :   word value (16 bits)
     aa       :   address
+     r       :   Next register number
 
 You can use (IY+ operand wherever you can use (IX+ operand.
 
