@@ -1,4 +1,22 @@
+In this table:
+
+rr|      :  BC|   DE|   HL|   SP|  and in case  IX|   IY|   and   AF|   also 
+ r|      :   B|    C|    D|    E|    H|    L|    A|   and    (HL)|
+r'|      :  B'|   C'|   D'|   E'|   H'|   L'|   A'|   and   (HL)'|
+ f|      :  NZ|    Z|   NC|   CY|   PO|   PE|    P|    M|   used by JP and CALL
+f'|      : NZ'|   Z'|  NC'|  CY'|   same as above but used by JR
+ b|      :   0|    1|    2|    3|    4|    5|    6|    7|
+ a|      :  00|   08|   10|   18|   20|   28|   30|   38|
+ d       :   byte displacement
+ n       :   byte value (8 bits)
+nn       :   word value (16 bits)
+aa       :   address
+
+You can use (IY+ operand wherever you can use (IX+ operand.
+
+
     FORTH ASSEMBLER                         Z80 MNEMONIC               
+    ------------------------------------    ------------------------------------
     ADCA     (HL)|                          ADC A, (HL)                
     ADCA (IY+ d )|                          ADC A, (IXY+d)             
     ADCN        n    N,                     ADC A, n                   
