@@ -13,7 +13,7 @@ In this table:
     aa       :   address
      r       :   Next register number
 
-You can use (IY+ operand wherever you can use (IX+ operand.
+You can use (IX+ operand wherever you can use (IY+ operand.
 
 
     FORTH ASSEMBLER                               Z80 MNEMONIC               
