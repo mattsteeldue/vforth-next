@@ -1,0 +1,204 @@
+  8e       ADC  A,(HL)               
+  fd8efb   ADC  A,(IY-05)            
+  ce03     ADC  A,03                 
+  8b       ADC  A,E                  
+  ed5a     ADC  HL,DE                
+  86       ADD  A,(HL)               
+  fd8603   ADD  A,(IY+03)            
+  c603     ADD  A,03                 
+  83       ADD  A,E                  
+  19       ADD  HL,DE                
+  ed31     ADD  HL,A                          
+  ed32     ADD  DE,A                          
+  ed33     ADD  BC,A                          
+  ed340700 ADD  HL,0007
+  ed350700 ADD  DE,0007
+  ed360700 ADD  BC,0007
+  fd19     ADD  IY,DE                
+  a6       AND  (HL)                 
+  fda603   AND  (IY+03)              
+  e603     AND  A,03                 
+  a3       AND  E                    
+  cb7e     BIT  7,(HL)               
+  fdcbfb7e BIT  7,(IY-05)            
+  cb7b     BIT  7,E                  
+  ed2c     BRLC DE,B
+  ed28     BSLA DE,B
+  ed29     BSRA DE,B
+  ed2b     BSRF DE,B
+  ed2a     BSRL DE,B
+  ec0800   CALL PE,0008
+  cd0800   CALL 0008
+  3f       CCF                       
+  be       CP   (HL)                 
+  fdbe03   CP   (IY+03)              
+  fe03     CP   03                   
+  bb       CP   E                    
+  eda9     CPD                       
+  edb9     CPDR                      
+  eda1     CPI                       
+  edb1     CPIR                      
+  2f       CPL                       
+  27       DAA                       
+  35       DEC  (HL)                 
+  fd35fb   DEC  (IY-05)              
+  1b       DEC  DE                   
+  fd2b     DEC  IY                   
+  dd2b     DEC  IX                   
+  1d       DEC  E                    
+  f3       DI                        
+  10fb     DJNZ $-5                 
+  fb       EI                        
+  e3       EX   (SP),HL              
+  fde3     EX   (SP),IY              
+  08       EX   AF,AF'               
+  eb       EX   DE,HL                
+  d9       EXX                       
+  76       HALT                      
+  ed46     IM   0                    
+  ed56     IM   1                    
+  ed5e     IM   2                    
+  ed70    *IN   (C)                  
+  db03     IN   A,(03)               
+  ed58     IN   E,(C)                
+  34       INC  (HL)                 
+  fd34fb   INC  (IY-05)              
+  13       INC  DE                   
+  fd23     INC  IY                   
+  dd2b     DEC  IX                   
+  1c       INC  E                    
+  edaa     IND                       
+  edba     INDR                      
+  eda2     INI                       
+  edb2     INIR                      
+  ed98     JP   (C)
+  e9       JP   HL                   
+  fde9     JP   IY                   
+  dde9     JP   IX                   
+  ea0800   JP   PE,0008,error_1      
+  c30800   JP   0008,error_1         
+  28fb     JR   Z, $-5               
+  18fb     JR   $-5                 
+  12       LD   (DE),A               
+  73       LD   (HL),E               
+  3603     LD   (HL),03              
+  fd36fb03 LD   (IY-05),03           
+  fd73fb   LD   (IY-05),E            
+  320800   LD   (0008),A             
+  ed530700 LD   (0007),DE            
+  fd220800 LD   (0008),IY            
+  220800   LD   (0008),HL            
+  1a       LD   A,(DE)               
+  3a0800   LD   A,(0008)             
+  ed57     LD   A,I                  
+  ed5f     LD   A,R                  
+  110700   LD   DE,0007              
+  ed5b0700 LD   DE,(0007)            
+  2a0800   LD   HL,(0008)            
+  ed47     LD   I,A                  
+  fd210700 LD   IY,0007              
+  ed4f     LD   R,A                  
+  f9       LD   SP,HL                
+  fdf9     LD   SP,IY                
+  ddf9     LD   SP,IX                
+  5e       LD   E,(HL)               
+  fd5efb   LD   E,(IY-05)            
+  5b       LD   E,E                  
+  1e03     LD   E,03                 
+  eda8     LDD                       
+  edb8     LDDR                      
+  edbc     LDDRX
+  edac     LDDX
+  eda0     LDI                       
+  edb0     LDIR                      
+  edb4     LDIRX                        
+  eda4     LDIX                         
+  edb7     LDPIRX                       
+  eda5     LDWS                         
+  ed24     MIRROR A
+  ed30     MUL                          
+  ed44     NEG                       
+  ed922c   NEXTREGA         r  REG,
+  ed91032c NEXTREG   n  N,  r  REG,
+  00       NOP                       
+  b6       OR   (HL)                 
+  fdb6fb   OR   (IY-05)              
+  f603     OR   03                   
+  b3       OR   E                    
+  edbb     OTDR                      
+  edb3     OTIR                      
+  ed71    *OUT  (C),0                
+  ed59     OUT  (C),E                
+  d303     OUT  (03),A               
+  edab     OUTD                      
+  eda3     OUTI                      
+  ed90     OUTINB                        
+  ed94     PIXELAD                       
+  ed93     PIXELDN                       
+  f1       POP  AF                   
+  d1       POP  DE                   
+  fde1     POP  IY                   
+  dde1     POP  IX                   
+  d5       PUSH DE                   
+  fde5     PUSH IY                   
+  dde5     PUSH IX                   
+  ed8a0007 PUSH nn   ; LH!
+  cbbe     RES  7,(HL)               
+  fdcbfbbe RES  7,(IY-05)            
+  cbbb     RES  7,E                  
+  c9       RET                       
+  e8       RET  PE                   
+  ed4d     RETI                      
+  ed45     RETN                      
+  cb16     RL   (HL)                 
+  fdcbfb16 RL   (IY-05)              
+  cb13     RL   E                    
+  17       RLA                       
+  cb06     RLC  (HL)                 
+  fdcbfb06 RLC  (IY-05)              
+  cb03     RLC  E                    
+  07       RLCA                      
+  ed6f     RLD                       
+  cb1e     RR   (HL)                 
+  fdcbfb1e RR   (IY-05)              
+  cb1b     RR   E                    
+  1f       RRA                       
+  cb0e     RRC  (HL)                 
+  fdcbfb0e RRC  (IY-05)              
+  cb0b     RRC  E                    
+  0f       RRCA                      
+  ed67     RRD                       
+  cf       RST  #08                  
+  9e       SBC  A,(HL)               
+  fd9efb   SBC  A,(IY-05)            
+  de03     SBC  A,03                 
+  9b       SBC  A,E                  
+  ed52     SBC  HL,DE                
+  37       SCF                       
+  cbfe     SET  7,(HL)               
+  fdcbfbfe SET  7,(IY-05)            
+  cbfb     SET  7,E                  
+  ed95     SETAE
+  cb36    *SLL  (HL)                 
+  fdcbfb36*SLL  (IY-05)              
+  cb33    *SLL  E                    
+  cb26     SLA  (HL)                 
+  fdcbfb26 SLA  (IY-05)              
+  cb23     SLA  E                    
+  cb2e     SRA  (HL)                 
+  fdcbfb2e SRA  (IY-05)              
+  cb2b     SRA  E                    
+  cb3e     SRL  (HL)                 
+  fdcbfb3e SRL  (IY-05)              
+  cb3b     SRL  E                    
+  96       SUB  (HL)                 
+  fd96fb   SUB  (IY-05)              
+  d603     SUB  03                   
+  93       SUB  E                    
+  ed23     SWAPNIB                         
+  ed2703   TESTN 03                  
+  ae       XOR  (HL)                 
+  fdaefb   XOR  (IY-05)              
+  ee03     XOR  A,03                 
+  ab       XOR  E                    
+  010020   LD   BC,2000              
