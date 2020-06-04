@@ -552,7 +552,7 @@ ASSEMBLER DEFINITIONS HEX
 \ Screen# 160 
 ( Z80N Next extension )
 
-HEX
+ASSEMBLER DEFINITIONS HEX
 
 \ swaps hi-lo bytes
 : <, 100 /MOD C, C, ;
