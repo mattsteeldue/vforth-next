@@ -75,11 +75,11 @@ N.B. : in Forth spaces matter.
     IM0                                           IM 0                       
     IM1                                           IM 1                       
     IM2                                           IM 2                       
-    IN(C)                                         IN (c)                     
+    IN(C)   (HL)'|                                IN (c)                     
     INA         n    P,                           IN A, (n)                  
     IN(C)      r'|                                IN r, (c)                  
     INC     (HL)'|                                INC (HL)                   
-    INC  (IY+ d )|                                INC (IXY+d)                
+    INC  (IY'+ d )|                               INC (IXY+d)                
     INCX       rr|                                INC BC/DE/HL/SP            
     INCX       IY|                                INC IXY                    
     INC        r'|                                INC r                      
@@ -96,8 +96,8 @@ N.B. : in Forth spaces matter.
     JRF       f'|    d    D,                      JR C/NC/Z/NZ, d           
     JR               d    D,                      JR d                      
     LD(X)A    rr|                                 LD (BC/DE), A              
-    LD     (HL)'|         r|                      LD (HL), n                 
-    LDN    (HL)'|    n    N,                      LD (HL),r                  
+    LD     (HL)'|         r|                      LD (HL), r                  
+    LDN    (HL)'|    n    N,                      LD (HL), n                 
     LDN (IY'+ d )|   n    N,                      LD (IXY+d), n              
     LD(IY+   d )|         r|                      LD (IXY+d), r               
     LD()A           aa   AA,                      LD (aa), A                 
@@ -119,7 +119,7 @@ N.B. : in Forth spaces matter.
     LD        r'|      (HL)|                      LD r, (HL)                 
     LD        r'|  (IY+ d )|                      LD r, (IXY+d)              
     LD        r'|         r|                      LD r, r'                   
-    LD        r'|    n    N,                      LD r,n                     
+    LDN       r'|    n    N,                      LD r,n                     
     LDD                                           LDD                        
     LDDR                                          LDDR                       
     LDDRX                                         LDDRX                      
