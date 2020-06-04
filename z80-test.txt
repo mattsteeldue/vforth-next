@@ -58,7 +58,7 @@
   ed46     IM   0                    
   ed56     IM   1                    
   ed5e     IM   2                    
-  ed70    *IN   (C)                  
+  ed70     IN   (C)                  
   db03     IN   A,(03)               
   ed58     IN   E,(C)                
   34       INC  (HL)                 
@@ -127,7 +127,7 @@
   b3       OR   E                    
   edbb     OTDR                      
   edb3     OTIR                      
-  ed71    *OUT  (C),0                
+  ed71     OUT  (C),0                
   ed59     OUT  (C),E                
   d303     OUT  (03),A               
   edab     OUTD                      
@@ -179,9 +179,9 @@
   fdcbfbfe SET  7,(IY-05)            
   cbfb     SET  7,E                  
   ed95     SETAE
-  cb36    *SLL  (HL)                 
-  fdcbfb36*SLL  (IY-05)              
-  cb33    *SLL  E                    
+  cb36     SLL  (HL)                 
+  fdcbfb36 SLL  (IY-05)              
+  cb33     SLL  E                    
   cb26     SLA  (HL)                 
   fdcbfb26 SLA  (IY-05)              
   cb23     SLA  E                    
