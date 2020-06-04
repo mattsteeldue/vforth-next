@@ -1,4 +1,4 @@
-\ Z80N-asm.f
+\ z80n-asm.f
 \ 
 \ Zilog Z80 
 \  also Z80N  ( Next extensions are available )
