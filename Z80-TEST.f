@@ -34,10 +34,10 @@ ADDA        r|
 ADDHL      rr|
 ADDHL,A                  \ Next extension
 ADDDE,A                  \ Next extension
-ADDBC,A                 \ Next extension
-ADDHL,     nn   NN,     \ Next extension
-ADDDE,     nn   NN,     \ Next extension
-ADDBC,     nn   NN,     \ Next extension
+ADDBC,A                  \ Next extension
+ADDHL,     nn   NN,      \ Next extension
+ADDDE,     nn   NN,      \ Next extension
+ADDBC,     nn   NN,      \ Next extension
 ADDIY      rr|
 ANDA     (HL)|
 ANDA (IY+ n )|
@@ -47,10 +47,10 @@ BIT         b|     (HL)|
 BIT         b| (IY+ d )|
 BIT         b|        r|
 BRLCDE,B                 \ Next extension
-BSLADE,B                \ Next extension
-BSRADE,B                \ Next extension
-BSRFDE,B                \ Next extension
-BSRLDE,B                \ Next extension
+BSLADE,B                 \ Next extension
+BSRADE,B                 \ Next extension
+BSRFDE,B                 \ Next extension
+BSRLDE,B                 \ Next extension
 CALLF       f|  aa   AA,
 CALL            aa   AA,
 CCF 
