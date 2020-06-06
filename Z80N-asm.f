@@ -557,20 +557,18 @@ ASSEMBLER DEFINITIONS HEX
 \ swaps hi-lo bytes
 : <, 100 /MOD C, C, ;
 
-0 1 0 2000 ' C, COMMAER     REG,
+0 1 0 2000 ' C, COMMAER     V,
 0 1 0 4000 ' <, COMMAER     LH,
 \
-00 2100 00 91 EDPI          NEXTREG
-\  NEXTREG n N, r REG,
-00 2000 00 92 EDPI          NEXTREGA
-\  NEXTREGA r R,
+00 2800 00 91 EDPI          NEXTREG
+\  NEXTREG r P, n V,
+00 0800 00 92 EDPI          NEXTREGA
+\  NEXTREGA r P,
 00 4000 00 8A EDPI          PUSHN
 \   PUSHN nn LH,
 00 0100 00 27 EDPI          TESTN
 \  TESTN n N,
 
-0 1 0 8000 ' C, COMMAER     V,
-\
 
 \ Screen# 161
 ( Z80N Next extension )
