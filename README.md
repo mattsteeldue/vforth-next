@@ -11,4 +11,4 @@ Screens are stored in a file inside the SD card called "!Blocks.txt" 8 MBytes lo
 
 In this implementation a Screen is equivalent to a BLOCK that is 512 bytes, for backward compatibility reasons.
 
-Among the other things, I implemented an ASSEMBLER vocabulary with Z80N extension op-codes with custom notation as explained in Wiki pages.  
+Among the other things, I implemented an ASSEMBLER vocabulary with Z80N extension op-codes with custom notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
