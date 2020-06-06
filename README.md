@@ -1,6 +1,6 @@
 Forth on Sinclair ZX Spectrum Next
 
-vForth1.413n
+vForth1.15
 
 On April 27th 2020, I received my  ZX Spectrum Next  (Accelerated)  and immediately tried to port my Forth to the Next environment. 
 The purpose was to make Screens / BLOCKs system available using ZxNextOS APIs. 
