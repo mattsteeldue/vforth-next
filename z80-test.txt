@@ -118,8 +118,8 @@
   ed24     MIRROR A
   ed30     MUL                          
   ed44     NEG                       
-  ed922c   NEXTREGA         r  REG,
-  ed91032c NEXTREG   n  N,  r  REG,
+  ed922c   NEXTREGA  r  P,
+  ed912c03 NEXTREG   r  P,  n  V,
   00       NOP                       
   b6       OR   (HL)                 
   fdb6fb   OR   (IY-05)              
