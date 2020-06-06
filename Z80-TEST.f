@@ -139,8 +139,8 @@ LDWS
 MIRRORA
 MUL
 NEG
-NEXTREGA         r  REG,
-NEXTREG   n  N,  r  REG,
+NEXTREGA  r  P,
+NEXTREG   r  P, n  V,  
 NOP
 ORA      (HL)|
 ORA  (IY+ d )|
