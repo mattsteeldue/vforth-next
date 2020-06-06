@@ -133,8 +133,8 @@ N.B. : in Forth spaces matter.
     MIRRORA                                       MIRROR A                   
     MUL                                           MUL                        
     NEG                                           NEG                        
-    NEXTREGA         reg  REG,                    NEXTREG reg, A              
-    NEXTREG   n  N,  reg  REG,                    NEXTREG reg, n             
+    NEXTREGA  reg  P,                             NEXTREG reg, A              
+    NEXTREG   reg  P,  n  V,                      NEXTREG reg, n             
     NOP                                           NOP                        
     ORA      (HL)|                                OR (HL)                    
     ORA  (IY+ d )|                                OR (IXY+d)                 
