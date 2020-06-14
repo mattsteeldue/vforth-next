@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 \ v.Forth 1.5a
-\ build 20200601
+\ build 20200614
 \
 \ ZX Microdrive version + ZXNEXTOS version
 \ ______________________________________________________________________
@@ -21,8 +21,8 @@
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
-\   - Windows 7 or 10 + DosBox 0.74 
-\     - Z80 Emulator ver.4.00 with Interface 1
+\ - Windows 7 or 10 
+\     - DosBox 0.74 + Z80 Emulator ver.4.00 with Interface 1
 \       - Microdrive BLOCKS cartridge to be linked to stream #4
 \         OPEN #4,"M",1,"!Blocks" to enable Forth's BLOCK storage system
 \       - Redirect this file to RS232 Input 
@@ -36,6 +36,7 @@
 \  -FIND         returns CFA, instead of PFA as previously was
 \  SP!           must be passed with the address to initialize SP register
 \  RP!           must be passed with the address to initialize RP.
+\  WORD          now returns address HERE: a few blocks must be corrected
 \ ______________________________________________________________________
 
 \ _________________
@@ -282,11 +283,14 @@ DECIMAL
     IMMEDIATE
 
 \ ______________________________________________________________________
+
+HERE HEX U. KEY
+
+\ ______________________________________________________________________
 \ 
 \ force origin to an even address.
 HERE 1 AND ALLOT
 SET-DP-TO-ORG
-\ QUIT
 
 \
 \ ______________________________________________________________________
@@ -993,11 +997,12 @@ CODE key ( -- c )
         LDN     A'| HEX 02 N,   \ select channel #2
         CALL    HEX 1601 AA,
 
-        LDN     A'| 5F N,       \ flashing underscore 
-        CALL    HEX 18C1 AA,
+\       LDN     A'| 5F N,       \ flashing underscore 
+\       CALL    HEX 18C1 AA,
         
-\       LDN     A'| 8F N,       \ flashing underscore is no good with SYS64
+        LDN     A'| 8C N,       \ flashing underscore is no good with SYS64
 \       CALL    HEX 0010 AA,    \ instead use a block graphic-char
+        RST     10|
 
         LDN     A'| HEX 08 N,   \ backspace
         RST     10|
@@ -2994,7 +2999,7 @@ CODE fill ( a n c -- )
 \ Otherwise text is taken from the disk-block given by BLK.
 \ "in" variable is incremented of the number of character read.
 \ The number of characters read is given by ENCLOSE.
-: word  ( c -- )
+: word  ( c -- a )
     blk @ 
     If
         blk @ 
@@ -3013,6 +3018,7 @@ CODE fill ( a n c -- )
     r here c!
     +
     here 1+ r> cmove 
+    here
     ;
 
 
@@ -3032,7 +3038,8 @@ CODE fill ( a n c -- )
 \ get first character from next input word
 : char ( -- c )
     bl word
-    here 1+ c@
+\   here 1+ c@
+         1+ c@
     ;
 
 
@@ -3043,10 +3050,12 @@ CODE fill ( a n c -- )
     state @ 
     If
         compile (.")
-        word here c@ 
+\       word here c@ 
+        word      c@ 
         1+ allot
     Else
-        word here count type
+\       word here count type
+        word      count type
     Endif \ Then
     ; 
     immediate
@@ -3069,6 +3078,92 @@ CODE fill ( a n c -- )
     ; 
     immediate
 \ )
+
+
+\ ______________________________________________________________________
+
+\ A floating point number is stored in stack in 4 bytes (HLDE) 
+\ instead of the usual 5 bytes, so there is a little precision loss
+\ Maybe in the future we'll be able to extend and fix this fact.
+\
+\ Sign is the msb of H, so you can check for sign in the integer-way.
+\ Exponent +128 is stored in the following 8 bits of HL
+\ Mantissa is stored in L and 16 bits of DE. B is defaulted.
+\ 
+\ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
+\ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
+\  H   <->  A    # 0   -> a
+\  LDE <->  EDC  # 0DE -> eCD
+\  0   <->  B    # 0
+
+\ 6E11h
+\ >W    ( d -- )
+\ takes a double-number from stack and put to floating-pointer stack 
+CODE >w
+        POP     HL|     
+        POP     DE|     
+        PUSH    BC|     
+        RL       L|         \ To keep sign as the msb of H,   
+        RL       H|         \ so you can check for sign in the
+        RR       L|         \ integer-way. Sorry.
+        LDN     B'|    hex C0 N,  
+\       LD      B'|    E|    \ maybe a better fit than C0h
+        LD      C'|    E|    
+        LD      E'|    L|    
+        LD      A'|    H|    
+        ANDA     A|
+        JRF    NZ'|   HOLDPLACE
+            LD      H'|    D|  \ swap C and D 
+            LD      D'|    C|
+            LD      C'|    H|
+        HERE DISP, \ THEN,       
+        CALL    hex 2AB6 AA,
+        POP     BC|
+        Next
+        C;
+
+
+\ 6E33h
+\ W>    ( -- d )
+\ takes a double-number from stack and put to floating-pointer stack 
+CODE w>
+        PUSH    BC|     
+        CALL    hex 2BF1 AA,
+        ANDA     A|
+        JRF    NZ'|   HOLDPLACE
+            LD      H'|    D|   \ Swap C and D
+            LD      D'|    C|
+            LD      C'|    H|
+        HERE DISP, \ THEN,       
+        LD      H'|    A|
+        LD      L'|    E|
+        LD      E'|    C|    \ B is lost precision
+        RL       L|         \ To keep sign as the msb of H,
+        RR       H|         \ so you can check for sign in the 
+        RR       L|         \ integer-way. Sorry.
+        POP     BC|
+        Psh2
+        C;
+
+
+\ 6E51h
+\ FOP    ( n -- )
+\ Floating-Point-Operation
+CODE fop
+        POP     HL|     
+        LD      A'|    L|
+        LD()A   HERE 0 AA,
+        PUSH    BC|
+        RST     28|
+                HERE SWAP !
+                hex 04 C, \ this location is patched each time
+                hex 38 C, \ end of calculation
+        POP     BC|
+        Next
+        C;
+
+
+\ ______________________________________________________________________
 
 
 \ 6F4A
@@ -3159,7 +3254,7 @@ CODE fill ( a n c -- )
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
     bl word 
-    here            \ addr  
+\ \ here            \ addr  
     context @ @     \ addr voc
     (find)          \ cfa b 1   |  0
     
@@ -3507,7 +3602,8 @@ immediate
 \ the following text is interpreted as a comment until a closing ) 
 : ( 
     [ char ) ] Literal 
-    word 
+    word     \ +drop
+    drop
     ;
     immediate
 
@@ -4053,15 +4149,17 @@ HERE    LD()HL 0 AA,        \ patch to next CALL instruction
 
 
         LD()X   SP|    hex 02C +origin AA, \ saves SP
-        LDX     SP|    hex  -2 +origin NN, \ forth's RP
-
-
+        LDX     SP|    hex  -2 +origin NN, \ temp stack
+\       LD()X   SP|    hex 5B6A        AA, \ saves SP
+\       LDX     SP|    hex 5BFF        NN, \ temp stack
+ 
+ 
         \ save IFF to AF'
         LDAR
         DI
         EXAFAF
         EXX                       \ use alternate resister only under DI 
-
+ 
         LDX     HL| HEX 5B5C NN,  \ BANKM
         LD      A'| (HL)|
         RES      4|    A|         \ ROM switch 3 to 2
@@ -4069,7 +4167,7 @@ HERE    LD()HL 0 AA,        \ patch to next CALL instruction
         LD   (HL)'|    A|
         LDX     BC| HEX 7FFD NN,
         OUT(C)  A'|
-
+ 
         EXX                      \ restore alternate register under DI
         EXAFAF
         JPF     PO| HERE 3 + AA, \ Skip EI
@@ -4085,7 +4183,7 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
         DI
         EXAFAF
         EXX                       \ use alternate resister only under DI 
-
+ 
         LDX     HL| HEX 5B5C NN,  \ BANKM
         LD      A'| (HL)|
         SET      4|    A|         \ ROM switch 2 to 3 (48K)
@@ -4093,18 +4191,19 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
         LD   (HL)'|    A|
         LDX     BC| HEX 7FFD NN,
         OUT(C)  A'|
-
+ 
         EXX                       \ restore alternate register under DI
         EXAFAF
         JPF     PO| HERE 3 + AA,  \ Skip EI
         EI        
-
-
+ 
+ 
         POP     AF|               \ retrieve carry flag
 
 
-        LD()X   SP|    hex 02A +origin AA, \ saves SP
+        LD()X   SP|    hex 02A +origin AA, \ saves SP for logging
         LDX()   SP|    hex 02C +origin AA, \ restore SP
+\       LDX()   SP|    hex 5B6A        AA, \ restore SP
 
 
         EX(SP)HL            \ hl argument 
@@ -4597,7 +4696,7 @@ CODE cls
 : x
     cls cr
     .( v.Forth 1.5a)  cr
-    .( build 20200601)  cr
+    .( build 20200614)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4868,7 +4967,8 @@ CODE cls
     dup c@  [ hex 1F ] Literal  and
     2dup + 
     >r
-        bl word here  [ hex 20 ] Literal  allot
+\       bl word here  [ hex 20 ] Literal  allot
+        bl word       [ hex 20 ] Literal  allot
         count  [ hex 1F ] Literal  and rot min
         >r 
             swap 1+
@@ -5091,9 +5191,9 @@ RENAME   number         NUMBER
 \ RENAME   f+             F+    
 \ RENAME   f/             F/    
 \ RENAME   f*             F*    
-\ RENAME   fop            FOP   
-\ RENAME   w>             W>    
-\ RENAME   >w             >W    
+RENAME   fop            FOP   
+RENAME   w>             W>    
+RENAME   >w             >W    
 
 RENAME   (number)       (NUMBER)
 RENAME   (sgn)          (SGN) 
@@ -5363,7 +5463,7 @@ QUIT
 
 : using
   bl word    
-  here     
+\ \ here     
   open-disk-file
   link-it-to-blocks
   ; 
