@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-\ v.Forth 1.5a
-\ build 20200614
+\ ZX Next Forth 
+\ build 20200714
 \
 \ ZX Microdrive version + ZXNEXTOS version
 \ ______________________________________________________________________
@@ -21,15 +21,7 @@
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
-\ - Windows 7 or 10 
-\     - DosBox 0.74 + Z80 Emulator ver.4.00 with Interface 1
-\       - Microdrive BLOCKS cartridge to be linked to stream #4
-\         OPEN #4,"M",1,"!Blocks" to enable Forth's BLOCK storage system
-\       - Redirect this file to RS232 Input 
-\         OPEN #3,"B"  to link this file to Spectrum's channel #3 
-\         to be LOADed using  -3 LOAD
-\     - ZEsarUX emulator ver. 8.1
-\       - in TBBlue / ZX Spectrum Next personality
+\     - CSpect emulator V.2.12.30
 \
 \ There are a few modifications to keep in mind since previous v. 1.2
 \  '      (tick) returns CFA, instead of PFA as previously was
@@ -37,6 +29,24 @@
 \  SP!           must be passed with the address to initialize SP register
 \  RP!           must be passed with the address to initialize RP.
 \  WORD          now returns address HERE: a few blocks must be corrected
+\ ______________________________________________________________________
+\
+\ Z80 Register usage map
+\
+\ AF 
+\ BC - Instruction Pointer: should be preserved during ROM/OS calls
+\ DE -         (Low  word when used for 32-bit manipulations)
+\ HL - Working (High word when used for 32-bit manipulations)
+\
+\ AF'- Sometime used for backup purpose
+\ BC'- Not used: available in fast Interrupt via EXX
+\ DE'- Not used: available in fast Interrupt via EXX
+\ HL'- Not used: available in fast Interrupt via EXX (saved at startup)
+\
+\ SP - Calculation stack pointer
+\ IX - Sometime used for backup purpose
+\ IY - (ZX System)
+
 \ ______________________________________________________________________
 
 \ _________________
@@ -69,7 +79,7 @@ HEX
 \ This table is used later to insert a value in a conversion table for EMIT 
 \ that is a two areas table, EMIT-A are vector of address and EMIT-C are 
 \ characters. If you scan EMIT-C for a matching character you can get an 
-\ address to be used as a conversion subroutine 
+\ address to b  e used as a conversion subroutine 
 DECIMAL
      8  CONSTANT  EMIT-N   \ EMIT table length
      0  VALUE     EMIT-C^  \ char table
@@ -92,12 +102,13 @@ DECIMAL
      0  VALUE     warm^         \ ptr to warm start routine
      0  VALUE     vars^         \ ptr to user's vars ptr
      0  VALUE     rp^           \ ptr to RP register
-     0  VALUE     push2^        \ ptr to push 2 \ PSH2
+     0  VALUE     next^         \ ptr to NEXT in inner interpreter
      0  VALUE     exec^         \ ptr to exec xt
      0  VALUE     branch^       \ PFA of BRANCH
      0  VALUE     loop^         \ entry-point for compiled (+LOOP)
      0  VALUE     do^           \ entry-point for compiled (DO)
      0  VALUE     emitc^        \ entry-point for EMITC
+     0  VALUE     upper^        \ entry-point for UPPER
 
 \ some pointers are used to patch words later... 
 \ Since we need to create a word using "forward" definitions 
@@ -107,11 +118,11 @@ DECIMAL
      0  VALUE     lit~          \ some CFA
         \ at the *end*, zero has to be put at   lit~ - 2 
         \ to cut-off older dictionary :       0 lit~   2  -  !
-        \ see also <CUT ... FORWARD> technique while developing
      0  VALUE     branch~       \ CFA of BRANCH
      0  VALUE     0branch~      \ CFA of 0BRANCH
      0  VALUE     (loop)~       \ CFA of (LOOP)
      0  VALUE     (do)~         \ CFA of (DO)
+     0  VALUE     (?do)~        \ CFA of (?DO)
      0  VALUE     msg1^         \ patch of ERROR
      0  VALUE     msg2^         \ patch of CREATE
      0  VALUE     enter^        \ resolved within : definition.
@@ -125,12 +136,13 @@ DECIMAL
    \ 0  VALUE     xi/o2^        \ patch of XI/O in WARM 
      0  VALUE     y^
      0  VALUE     x^            \ patch of X    in WARM
+     0  VALUE     autoexec^     \ patch of LOAD in WARM
      0  VALUE     .^            \ patch of .    in MESSAGE
 
 \ compile CODE words for Jump to the Psh2, Psh1 or Next addresses.
-: Psh2     ASSEMBLER  JP push2^     AA, ;
-: Psh1     ASSEMBLER  JP push2^ 1+  AA, ;
-: Next     ASSEMBLER  JP push2^ 2+  AA, ;
+: Psh2     ASSEMBLER  JP next^  2 -   AA, ;
+: Psh1     ASSEMBLER  JP next^  1 -   AA, ;
+: Next     ASSEMBLER  JP next^        AA, ;
 
 \ macro of "RP" virtual register emulation
 : LDHL,RP  ASSEMBLER  LDHL() rp^      AA, ;
@@ -278,16 +290,27 @@ DECIMAL
     3 ?PAIRS 
     ?COMP 
     (loop)~ , 
-    BACK
+    BACK-
     ; 
     IMMEDIATE
 
-\ ______________________________________________________________________
+: ?Do       (     -- a 3 ) \ compile-time
+            ( n m --     ) \ run-time
+    ?COMP 
+    (?do)~ ,
+    HERE 0 , 0
+    HERE 3
+    ; 
+    IMMEDIATE
 
-HERE HEX U. KEY
+
 
 \ ______________________________________________________________________
-\ 
+\ \ 
+\ HERE     U.
+\ HERE HEX U. 
+\ KEY  DROP
+
 \ force origin to an even address.
 HERE 1 AND ALLOT
 SET-DP-TO-ORG
@@ -367,8 +390,6 @@ HERE TO vars^       R0 @ ,       \ HEX EAE0    ,
 
 
 \ +030  (Return Stack Pointer)
-\ HEX 6124 TO rp^     R0 @ ,     \ HEX EADE    ,
-\ HEX 24 +ORIGIN TO rp^     
 HEX 030 +ORIGIN TO rp^     
  
        R0 @ , \ 2  - \ was HEX EADE    ,  
@@ -379,19 +400,19 @@ HEX 030 +ORIGIN TO rp^
 
 
 \ 6126h
-\ +02A hook for Psh2
-    HERE TO push2^
+\ hook for Psh2
 
         ASSEMBLER
         PUSH    DE|
 
 \ 6127h
-\ +02B hook for Psh1
+\ hook for Psh1
          
         PUSH    HL|
 
 \ 6128h
-\ +02C hook for Next
+\ hook for Next - inner interpreter
+    HERE TO next^ 
          
         LDA(X)  BC|
         INCX    BC|
@@ -402,18 +423,18 @@ HEX 030 +ORIGIN TO rp^
 
 
 \ 612Eh
-\ +02E Execute "xt" i.e. CFA held in HL
+\ Execute "xt" i.e. CFA held in HL
     HERE TO exec^
         LD      E'| (HL)|
         INCX    HL|
         LD      D'| (HL)|
         EXDEHL
-        \ _^_^_ 
+
         JPHL
 
 
 \ 6133h 
-\ +033 LIT
+\ LIT
 \ puts on top of stack the value of the next location. 
 \ it is compiled in colon definition before a literal number
 CODE lit ( -- n )
@@ -497,7 +518,7 @@ CODE (loop) ( -- )
     HERE TO loop^
     
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
         
         LD      A'| (HL)|    \ increment ind
         ADDA     E|
@@ -529,7 +550,7 @@ CODE (loop) ( -- )
         INCX    HL|
 
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         INCX    BC|
         INCX    BC|
@@ -575,7 +596,7 @@ CODE (?do)      ( lim ind -- )
 
         \ prepares return-stack-pointer
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         DECX    HL|          \ this is 1T faster than
         DECX    HL|          \ ld de,-4 (10T)
@@ -583,7 +604,7 @@ CODE (?do)      ( lim ind -- )
         DECX    HL|          \ since dec hl is 6T.
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         \ stores ind as top RP
         POP     DE|
@@ -602,6 +623,8 @@ CODE (?do)      ( lim ind -- )
         INCX    BC|
         Next
         C;
+
+        ' (?do) TO (?do)~
 
 
 \ 61CAh
@@ -626,7 +649,7 @@ CODE (do) ( lim ind -- )
 CODE i ( -- ind )
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         LD      E'| (HL)|
         INCX    HL|
@@ -672,6 +695,50 @@ CODE digit ( c n -- u 1  |  0 )
         C;
 
 
+\ uppercase routine
+\ character in A is forced to Uppercase.
+\ no other register is altered
+    ASSEMBLER
+    HERE TO upper^
+        RET                 \ CASEON is default
+        CPN     HEX 61 N,   \ lower-case "a"
+        RETF    CY|
+        CPN     HEX 7B N,   \ lower-case "z" + 1
+        RETF    NC|
+        SUBN    HEX 20 N,   \ substract 20h if lowercase [a-z]
+        RET
+
+
+\ CASEON
+\ set case-sensitivity on
+\ it patches a RET at the beginning of the uppercase-routine
+CODE caseon
+        LDN     A'|  HEX C9 N,
+        LD()A   upper^ AA,    
+        Next
+        C;
+
+
+\ CASEOFF
+\ set case-sensitivity off
+\ it patches a NOP at the beginning of the uppercase-routine
+CODE caseoff
+        LDN     A'|  HEX 00 N,
+        LD()A   upper^ AA,    
+        Next
+        C;
+
+
+\ UPPER
+\ character on top of stack is forced to Uppercase.
+CODE upper ( c1 -- c2 )
+        POP     HL|            \ char
+        LD      A'|    L|
+        CALL    upper^  1+  AA,
+        Psh1
+        C;
+
+
 \ 6228h
 \ (FIND)
 \ vocabulary search, 
@@ -698,29 +765,17 @@ CODE (find) ( addr voc -- addr 0 | cfa b 1  )
                     INCX    DE|
                     LDA(X)  DE|
                     
-\ case insensitive option      
-\                                 
-\                   CPN     HEX 61 N,      \ if lowercase
-\                   JRF    CY'| HOLDPLACE
-\                       CPN     HEX 7A N,
-\                       JRF    NC'| HOLDPLACE
-\                           SUBN HEX 20 N,     
-\                       HERE DISP, \ THEN, 
-\                   HERE DISP, \ THEN, 
-\                   LDIXL    A|         \ ld ixl,a
-\
-\                   LD      A'|   (HL)|
-\                   CPN     HEX 61 N,      \ if lowercase
-\                   JRF    CY'| HOLDPLACE
-\                       CPN     HEX 7A N,
-\                       JRF    NC'| HOLDPLACE
-\                           SUBN HEX 20 N,     
-\                       HERE DISP, \ THEN, 
-\                   HERE DISP, \ THEN, 
-\
-\ case sensitive option                    
-\                   XORA   IXL|                \ xor ixl
-                    XORA  (HL)|
+\ case   sensitive option  
+\                   XORA  (HL)|
+
+\ case insensitive option  
+                    CALL    upper^ AA,  \ uppercase routine
+                    LDIXL    A|         \ ld ixl,a
+                    LD      A'|   (HL)|
+                    CALL    upper^ AA,  \ uppercase routine
+                    XORA   IXL|                \ xor ixl
+\ case option - end
+
                     ADDA     A|
                     JRF    NZ'| HOLDPLACE SWAP \ didn't match, jump (*)
                 
@@ -960,31 +1015,31 @@ EMIT-2^ EMIT-A^ 0E +  !
 \ KEY decode table
 HEX 
 HERE TO KEY-1^
-    E2   C,   \  0: STOP 
-    C3   C,   \  1: NOT 
-    CD   C,   \  2: STEP
-    CC   C,   \  3: TO
-    CB   C,   \  4: THEN
-    C6   C,   \  5: AND
-    C5   C,   \  6: OR
-    AC   C,   \  7: AT
+    E2   C,   \  0: STOP  --> SYMBOL+A : ~
+    C3   C,   \  1: NOT   --> SYMBOL+S : |
+    CD   C,   \  2: STEP  --> SYMBOl+D : \
+    CC   C,   \  3: TO    --> SYMBOL+F : {
+    CB   C,   \  4: THEN  --> SYMBOL+G : }
+    C6   C,   \  5: AND   --> SYMBOL+Y : [
+    C5   C,   \  6: OR    --> SYMBOL+U : ]
+    AC   C,   \  7: AT    --> SYMBOL+I : (C) copyright symbol
     C7   C,   \  8: <=
     C8   C,   \  9: >=
-    C9   C,   \ 10: <>
+    C9   C,   \ 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
-    06   C,   \ 10: same as CAPS (toggle)
+    06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
     20   C,   \  9: not used
     20   C,   \  8: not used
-    7F   C,   \  7: (C)
-    5D   C,   \  6: ]
-    5B   C,   \  5: [
-    7D   C,   \  4: }
-    7B   C,   \  3: {
-    5C   C,   \  2: \
-    7C   C,   \  1: |
-    7E   C,   \  0: ~
+    7F   C,   \  7: SYMBOL+I : (C) copyright symbol
+    5D   C,   \  6: SYMBOL+U : ]
+    5B   C,   \  5: SYMBOL+Y : [
+    7D   C,   \  4: SYMBOL+G : }
+    7B   C,   \  3: SYMBOL+F : {
+    5C   C,   \  2: SYMBOl+D : \
+    7C   C,   \  1: SYMBOL+S : |
+    7E   C,   \  0: SYMBOL+A : ~
 
 
 \ new
@@ -993,6 +1048,9 @@ HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
 CODE key ( -- c )
          
         PUSH    BC|
+
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack
 
         LDN     A'| HEX 02 N,   \ select channel #2
         CALL    HEX 1601 AA,
@@ -1045,20 +1103,27 @@ CODE key ( -- c )
         LD      L'|    A|
         LDN     H'|    0 N,
 
+\       POP     BC|
+\       Psh1
+\       C;
+
+        LDA()  HEX 5C48 AA,    \ BORDCR system variable
+        RRA
+        RRA
+        RRA
+        ORN     18 N,           \ quick'n'dirty click 
+        OUTA    HEX FE P,
+        LDN     B'|    0 N,
+        HERE \ BEGIN,
+        DJNZ    HOLDPLACE SWAP DISP, \ Wait loop
+        XORN    18 N,           \ click ?
+        OUTA    HEX FE P,
+
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+
         POP     BC|
         Psh1
         C;
-
-\       LDA()  HEX 5C48 AA,    \ BORDCR system variable
-\       RRA
-\       RRA
-\       RRA
-\       ORN     18 N,           \ quick'n'dirty click 
-\       OUTA    HEX FE P,
-\       LDN     B'|    0 N,
-\       DJNZ    FE              \ ? Wait loop ?
-\       XORN    18 N,           \ click ?
-\       OUTA    HEX FE P,
 
 
 \ 637Bh
@@ -1067,7 +1132,10 @@ CODE key ( -- c )
 CODE ?terminal ( -- 0 | 1 ) ( true if BREAK-SPACE pressed )
          
         LDX     HL| 0 NN,
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack
         CALL    HEX 1F54 AA,
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         JRF    CY'| HOLDPLACE
             INC     L'|
         HERE DISP, \ THEN,
@@ -1082,37 +1150,6 @@ CODE cr  ( -- )
          
         LDN     A'|     HEX 0D N,
         JP      emitc^  AA,
-        C;
-
-
-\ 7734h >>>
-\ INKEY
-\ calls ROM inkey$ routine, returns c or "zero".
-CODE inkey ( -- c )
-         
-        PUSH    BC|
-        CALL    HEX  15E6  AA,  ( instead of 15E9 )
-        LD      L'|    A|
-        LDN     H'|    0 N,
-        POP     BC|
-        Psh1 
-        C;
-
-
-\ 7749h >>>
-\ SELECT
-\ selects the given channel number
-\ #2 is keyboard or video
-\ #3 is printer or rs-232 i/o port (it depends on OPEN#3 from BASIC)
-\ #4 is microdrive channel (it depends on OPEN#4 from BASIC)
-CODE select ( n -- )
-         
-        POP     HL|
-        PUSH    BC|
-        LD      A'|    L|
-        CALL    HEX 1601 AA,
-        POP     BC|
-        Next 
         C;
 
 
@@ -1216,7 +1253,7 @@ CODE um/mod ( ud u1 -- r q )
         POP     BC|        \ divisor
         POP     DE|        \ high part
         EX(SP)HL           \ low part and save BC
-        EXDEHL             \ a double number is kept as HLDE
+        EXDEHL             \ restore the fact a double number is kept as HLDE
         LD      A'|    L|  \ check without changing arguments
         SUBA     C|        \ if divisor is greater than high part
         LD      A'|    H|  \ so quotient will be in range
@@ -1290,7 +1327,8 @@ CODE or  ( n1 n2 -- n3 )
         LD      A'|    D|
         ORA      H|     
         LD      H'|    A|
-        Psh1 C;
+        Psh1 
+        C;
 
 
 \ 6473h
@@ -1312,7 +1350,7 @@ CODE xor ( n1 n2 -- n3 )
 \ 6486h
 \ SP@
 \ returns on top of stack the value of SP before execution
-CODE sp@ ( -- spreg )
+CODE sp@ ( -- a )
          
         LDX     HL|    0 NN,
         ADDHL   SP|
@@ -1336,10 +1374,10 @@ CODE sp! ( a -- )
 \ 64ABh
 \ RP@
 \ returns on top of stack the value of Return-Pointer
-CODE rp@ ( -- rp )
+CODE rp@ ( -- a )
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         Psh1
         C;
@@ -1353,7 +1391,7 @@ CODE rp! ( a -- )
 
         POP     HL|        
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         Next
         C;
@@ -1365,7 +1403,7 @@ CODE rp! ( a -- )
 CODE ;s ( -- )
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         LD      C'| (HL)|
         INCX    HL|
@@ -1373,7 +1411,7 @@ CODE ;s ( -- )
         INCX    HL|
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         Next
         C;       
@@ -1386,7 +1424,7 @@ CODE ;s ( -- )
 CODE leave ( -- )
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         LD      E'| (HL)|  
         INCX    HL|
@@ -1407,7 +1445,7 @@ CODE >r ( n -- )
         POP     DE|
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         DECX    HL|
         LD   (HL)'|    D|
@@ -1415,7 +1453,7 @@ CODE >r ( n -- )
         LD   (HL)'|    E|
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         Next
         C;
@@ -1427,7 +1465,7 @@ CODE >r ( n -- )
 CODE r> ( -- n )
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         LD      E'| (HL)|
         INCX    HL|
@@ -1435,7 +1473,7 @@ CODE r> ( -- n )
         INCX    HL|
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         PUSH    DE|
         Next
@@ -1521,7 +1559,7 @@ CODE + ( n1 n2 -- n3 )
 \ SP  +01234567
 CODE d+ ( d1 d2 -- d3 )
 
-        \ Exchange BC with (SP+6)         
+        \ Load DE with (SP+6/7) and save BC there.
         LDX     HL|   7 NN,
         ADDHL   SP|
         LD      D'| (HL)|
@@ -1537,7 +1575,7 @@ CODE d+ ( d1 d2 -- d3 )
         POP     HL|            \ HL  = hd1
         ADCHL   BC|            \ HL  = hd1+hd2
 
-        POP     BC|        
+        POP     BC|            \ retrieve BC
         Psh2
         C;
 
@@ -1676,8 +1714,8 @@ CODE nip  ( n1 n2 -- n2 )
 \ Copies the top element after the second.
 CODE tuck  ( n1 n2 -- n2 n1 n2 )
 
-        POP     DE|
         POP     HL|
+        POP     DE|
         PUSH    HL|
         Psh2
         C;
@@ -1716,6 +1754,22 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
         EX(SP)HL     \ n1 <-> n2
         Psh2         \ n3, n2
         C;
+
+
+\ \ PICK
+\ \ picks the nth element from TOS
+\ CODE pick ( n -- v )
+\ 
+\         POP     HL| 
+\         ADDHL   HL|
+\         ADDHL   SP|
+\         LD      A'| (HL)|
+\         INCX    HL|
+\         LD      H'| (HL)|
+\         LD      L'|    A|
+\         Psh1         
+\         C;
+
 
 \ 6E8Bh >>>
 \ 2OVER
@@ -1975,7 +2029,7 @@ CODE 2! ( d a -- )
 \ new
 \ P@
 \ Read one byte from port ap and leave the result on top of stack
-CODE p@ ( ap -- b )
+CODE p@ ( p -- b )
          
         LD      D'|    B|
         LD      E'|    C|
@@ -1995,7 +2049,7 @@ CODE p@ ( ap -- b )
 \ new
 \ P!
 \ Send one byte (top of stack) to port ap 
-CODE p! ( b ap -- )
+CODE p! ( b p -- )
          
         LD      D'|    B|
         LD      E'|    C|
@@ -2009,82 +2063,6 @@ CODE p! ( b ap -- )
 
         Next
         C;
-
-
-\ new
-\ BANK!
-\ 128K ROM-RAM bank switch: it maps n-th bank at C000-FFFF
-\ n in range 00-07 to switch RAM bank and switch ROM from 3  to  2.
-\ n in range 10-17 to switch RAM bank and switch ROM from 2  to  3. 
-\ Tipical use for NextZXOS call is: 07 BANK! before ZXOS call to switch to
-\ BANK 7 and ROM 3 (48K); then HEX 10 BANK! to restore BANK 0 adn ROM 2.
-\ Unpredictable behaviour if n is out of range.
-\ N.B. SP must be pre-set below BFE0 
-\ Normally 128K ROM-RAM layout is as follow
-\   0000-3FFF : ROM
-\   4000-7FFF : Bank 5  always
-\   8000-BFFF : Bank 2  always
-\   C000-FFFF : Bank 0 at startup, but can hold any of other RAM banks.
-\ Only banks 1,3,4,6 can be used safely, 7 is reserved for disk operation,
-CODE bank! ( n -- ) 
-        \ save IFF and BC
-        LDAR
-        DI
-        EXAFAF
-        LD      D'|    B|
-        LD      E'|    C|
-
-        LDX     HL| HEX 5B5C NN,  \ BANKM
-        LD      A'| (HL)|
-        ANDN    HEX E8 N,         \ This is tipical F8 and BIT 4 reset.
-        POP     BC|               \ C has the bank number
-        ORA      C|
-        LD   (HL)'|    A|
-        LDX     BC| HEX 7FFD NN,
-        OUT(C)  A'|
-
-        \ restore BC and IFF
-        LD      B'|    D|
-        LD      C'|    E|
-        EXAFAF
-        JPF     PO| HERE 3 + AA, \ Skip EI
-        EI        
-        Next 
-        C;
-
-\ call#
-\ This word can be used to call +3DOS services with the sequence
-\  bc_val  de_val  hl_val   \ pass registers values in this order
-\  HEX 07 BANK!             \ bank 7 and ROM 2
-\  dos-addr CALL#           \ call DOS service (or any)
-\  HEX 10 BANK!             \ bank 0 and ROM 3 (48K)
-\  -DUP IF . 000F ERROR ENDIF \ 
-CODE call# ( hl de bc address -- hl de bc  0|n  )
-
-        POP     HL|         \ dos call entry address
-HERE    LD()HL 0 AA,
-
-        LD      H'|    B|
-        LD      L'|    C|
-        POP     BC|         \ bc argument
-        POP     DE|         \ de argument
-        EX(SP)HL            \ hl argument
-        LD      A'|    L|   \  A has the same value of L, sometime useful
-        
-HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch ld (.),hl
-
-        EX(SP)HL            \ hl argument
-        PUSH    DE|         \ de argument
-        PUSH    BC|         \ bc argument
-        LD      C'|    L|
-        LD      B'|    H|
-
-        LDX     HL| 0 NN,        \ 0000 stands for OK.
-        JRF    CY'| HOLDPLACE    \ OK : Carry True   
-         LD     L'|    A|        \ KO returns Error code on top of stack
-        HERE DISP,
-        Psh1
-        C;        
 
 
 \ new
@@ -2171,7 +2149,7 @@ CODE cells ( n2 -- n2 )
         HERE TO enter^ 
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         DECX    HL| 
         LD   (HL)'|    B|
@@ -2179,9 +2157,9 @@ CODE cells ( n2 -- n2 )
         LD   (HL)'|    C|
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
-        INCX    DE| 
+        INCX    DE|          \ this depends on how inner interpreter works
         LD      C'|    E|
         LD      B'|    D|
         Next
@@ -2320,7 +2298,7 @@ DECIMAL 512 constant b/buf
     
 \ (NEXT) 
 \ HEX 028 +origin constant (next) 
-push2^ 2+ constant (next)
+next^     constant (next)
 
 
 \ 67C4h  
@@ -2413,8 +2391,9 @@ CODE s->d   ( n -- d )
         LDX     HL|    0 NN,
         LD      A'|    D|
         ANDN    HEX    80  N, DECIMAL 
-        JPF      Z|    push2^ AA, 
+        JRF     Z'|    HOLDPLACE \ IF,
         DECX    HL|
+        HERE DISP, \ THEN, 
         Psh2
         C;
 
@@ -2707,7 +2686,7 @@ CODE ?dup ( n -- 0 | n n )
 
 \ 6b29
 \ ] 
-: ] ( -- )  
+    : ] ( -- )  
     [ DECIMAL 192 ] Literal
     state !
     ;
@@ -2787,7 +2766,7 @@ CODE ?dup ( n -- 0 | n n )
     ;code 
 
         HERE !rp^ 
-        LDHL,RP              \ macro 24h +Origin
+        LDHL,RP              \ macro 30h +Origin
 
         DECX    HL| 
         LD   (HL)'|    B|
@@ -2795,7 +2774,7 @@ CODE ?dup ( n -- 0 | n n )
         LD   (HL)'|    C|
         
         HERE !rp^
-        LDRP,HL              \ macro 24h +Origin
+        LDRP,HL              \ macro 30h +Origin
         
         INCX    DE|
         EXDEHL 
@@ -2820,15 +2799,10 @@ CODE ?dup ( n -- 0 | n n )
 \ TYPE
 \ Sends to current output channel n characters starting at address a.
 : type   ( a n -- )
-    -dup
-    If
-        over + swap
-        Do
-            i c@ emit
-        Loop
-    Else
-        drop
-    Endif
+    over + swap
+    ?Do
+        i c@ emit
+    Loop
     ;
 
 
@@ -2970,7 +2944,7 @@ CODE fill ( a n c -- )
 \ 6D99
 \ HOLD
 \ Used between <# and #> to insert a character c in numerico formatting.
-: hold ( c -- )
+    : hold ( c -- )
 \    [ decimal -1 ] Literal
     -1
     hld +!
@@ -3080,87 +3054,87 @@ CODE fill ( a n c -- )
 \ )
 
 
-\ ______________________________________________________________________
-
-\ A floating point number is stored in stack in 4 bytes (HLDE) 
-\ instead of the usual 5 bytes, so there is a little precision loss
-\ Maybe in the future we'll be able to extend and fix this fact.
-\
-\ Sign is the msb of H, so you can check for sign in the integer-way.
-\ Exponent +128 is stored in the following 8 bits of HL
-\ Mantissa is stored in L and 16 bits of DE. B is defaulted.
+\ \ ______________________________________________________________________
 \ 
-\ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
-\ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
-\  H   <->  A    # 0   -> a
-\  LDE <->  EDC  # 0DE -> eCD
-\  0   <->  B    # 0
-
-\ 6E11h
-\ >W    ( d -- )
-\ takes a double-number from stack and put to floating-pointer stack 
-CODE >w
-        POP     HL|     
-        POP     DE|     
-        PUSH    BC|     
-        RL       L|         \ To keep sign as the msb of H,   
-        RL       H|         \ so you can check for sign in the
-        RR       L|         \ integer-way. Sorry.
-        LDN     B'|    hex C0 N,  
-\       LD      B'|    E|    \ maybe a better fit than C0h
-        LD      C'|    E|    
-        LD      E'|    L|    
-        LD      A'|    H|    
-        ANDA     A|
-        JRF    NZ'|   HOLDPLACE
-            LD      H'|    D|  \ swap C and D 
-            LD      D'|    C|
-            LD      C'|    H|
-        HERE DISP, \ THEN,       
-        CALL    hex 2AB6 AA,
-        POP     BC|
-        Next
-        C;
-
-
-\ 6E33h
-\ W>    ( -- d )
-\ takes a double-number from stack and put to floating-pointer stack 
-CODE w>
-        PUSH    BC|     
-        CALL    hex 2BF1 AA,
-        ANDA     A|
-        JRF    NZ'|   HOLDPLACE
-            LD      H'|    D|   \ Swap C and D
-            LD      D'|    C|
-            LD      C'|    H|
-        HERE DISP, \ THEN,       
-        LD      H'|    A|
-        LD      L'|    E|
-        LD      E'|    C|    \ B is lost precision
-        RL       L|         \ To keep sign as the msb of H,
-        RR       H|         \ so you can check for sign in the 
-        RR       L|         \ integer-way. Sorry.
-        POP     BC|
-        Psh2
-        C;
-
-
-\ 6E51h
-\ FOP    ( n -- )
-\ Floating-Point-Operation
-CODE fop
-        POP     HL|     
-        LD      A'|    L|
-        LD()A   HERE 0 AA,
-        PUSH    BC|
-        RST     28|
-                HERE SWAP !
-                hex 04 C, \ this location is patched each time
-                hex 38 C, \ end of calculation
-        POP     BC|
-        Next
-        C;
+\ \ A floating point number is stored in stack in 4 bytes (HLDE) 
+\ \ instead of the usual 5 bytes, so there is a little precision loss
+\ \ Maybe in the future we'll be able to extend and fix this fact.
+\ \
+\ \ Sign is the msb of H, so you can check for sign in the integer-way.
+\ \ Exponent +128 is stored in the following 8 bits of HL
+\ \ Mantissa is stored in L and 16 bits of DE. B is defaulted.
+\ \ 
+\ \ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
+\ \ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
+\ \  H   <->  A    # 0   -> a
+\ \  LDE <->  EDC  # 0DE -> eCD
+\ \  0   <->  B    # 0
+\ 
+\ \ 6E11h
+\ \ >W    ( d -- )
+\ \ takes a double-number from stack and put to floating-pointer stack 
+\ CODE >w
+\         POP     HL|     
+\         POP     DE|     
+\         PUSH    BC|     
+\         RL       L|         \ To keep sign as the msb of H,   
+\         RL       H|         \ so you can check for sign in the
+\         RR       L|         \ integer-way. Sorry.
+\         LDN     B'|    hex C0 N,  
+\ \       LD      B'|    E|    \ maybe a better fit than C0h
+\         LD      C'|    E|    
+\         LD      E'|    L|    
+\         LD      A'|    H|    
+\         ANDA     A|
+\         JRF    NZ'|   HOLDPLACE
+\             LD      H'|    D|  \ swap C and D 
+\             LD      D'|    C|
+\             LD      C'|    H|
+\         HERE DISP, \ THEN,       
+\         CALL    hex 2AB6 AA,
+\         POP     BC|
+\         Next
+\         C;
+\ 
+\ 
+\ \ 6E33h
+\ \ W>    ( -- d )
+\ \ takes a double-number from stack and put to floating-pointer stack 
+\ CODE w>
+\         PUSH    BC|     
+\         CALL    hex 2BF1 AA,
+\         ANDA     A|
+\         JRF    NZ'|   HOLDPLACE
+\             LD      H'|    D|   \ Swap C and D
+\             LD      D'|    C|
+\             LD      C'|    H|
+\         HERE DISP, \ THEN,       
+\         LD      H'|    A|
+\         LD      L'|    E|
+\         LD      E'|    C|    \ B is lost precision
+\         RL       L|         \ To keep sign as the msb of H,
+\         RR       H|         \ so you can check for sign in the 
+\         RR       L|         \ integer-way. Sorry.
+\         POP     BC|
+\         Psh2
+\         C;
+\ 
+\ 
+\ \ 6E51h
+\ \ FOP    ( n -- )
+\ \ Floating-Point-Operation
+\ CODE fop
+\         POP     HL|     
+\         LD      A'|    L|
+\         LD()A   HERE 0 AA,
+\         PUSH    BC|
+\         RST     28|
+\                 HERE SWAP !
+\                 hex 04 C, \ this location is patched each time
+\                 hex 38 C, \ end of calculation
+\         POP     BC|
+\         Next
+\         C;
 
 
 \ ______________________________________________________________________
@@ -3489,9 +3463,12 @@ CODE fop
 : ?stack  ( -- )
     sp@ 
     s0 @ swap u< 1 ?error
-    sp@
-    here [ decimal 128 ] Literal + u< 
-         [ decimal   7 ] Literal ?error
+    here 
+    s0 @ < If
+        sp@
+        here [ decimal 128 ] Literal + u< 
+             [ decimal   7 ] Literal ?error
+    Endif
     ;
 
 
@@ -3535,6 +3512,7 @@ CODE fop
             Endif 
         Endif 
         ?stack 
+        \ ?terminal 0 ?error
     Again
     ;
 
@@ -3648,6 +3626,8 @@ immediate
     \ .cpu
     [compile] forth 
     definitions
+    [ here TO autoexec^ ]
+    noop
     quit
     ;
 
@@ -3655,23 +3635,23 @@ immediate
 
     -2 ALLOT \ we can save two bytes because QUIT
 
+
 \ 74AEh 
 \ WARM
 : warm
-    noop   \ this could be used in future for autoexec something.
 
     \ [ here TO xi/o2^ ]    
-
     \ XI/O                   \ ___ forward ___
-    
+
     [ here TO x^ ]
-    
     X                                  \ ___ forward ___
     [ decimal      7 ] Literal emit
+
     abort
     ;
 
     -2 ALLOT \ we can save two bytes because COLD starts
+
     
 \ 74C3h
 \ COLD
@@ -3731,12 +3711,13 @@ here warm^ ! \ patch
         LD()A   hex 5C6B AA,   \ DF_SZ system variable
 
         LDX()   HL|    hex  14 +origin AA, \ forth's RP
-        LD()X   HL|    hex  030 +origin AA,
+        LD()X   HL|    hex 030 +origin AA,
         LDX     BC|    y^              NN, \ ... so BC is WARM, quick'n'dirty
-        JPF     CY|    push2^ 2+       AA,  
+        JRF    CY'|    HOLDPLACE \ IF,
 
         INCX    BC|
         INCX    BC|    \ ... so BC is COLD
+        HERE DISP, \ THEN, 
         Next
 
 
@@ -3746,8 +3727,9 @@ here warm^ ! \ patch
 \ BYE
 \ immediately quits to Spectrum BASIC 
 CODE basic ( -- )
+        POP     BC|
         LDN     A'|    2 N,
-        LD()A  hex 5C6B AA,   \ DF_SZ system variable
+        LD()A   hex 5C6B AA,   \ DF_SZ system variable
         LDX     HL|    0 NN,
         ADDHL   SP|
         LDX()   SP|    hex  08 +origin AA, \ retrieve SP just before...
@@ -3759,6 +3741,7 @@ CODE basic ( -- )
 
         RET
         C;
+
 
 \ copy the previously stored SP the new location (valid only once?!)
 08 +ORIGIN @ 08 +origin !
@@ -3957,6 +3940,23 @@ CODE basic ( -- )
     
 \ ______________________________________________________________________ 
 
+\ ZX NEXT OS option
+
+\      NXT @ variable nxt
+
+
+\ 7727h
+\ STRM
+       STRM @ variable strm
+
+\ \ 7824h
+\ DEVICE
+\ used to save current device stream number (video or printer)
+2 variable device
+
+\ 
+\ ______________________________________________________________________ 
+
 
 \ 7703h
 \ DRV
@@ -3971,154 +3971,43 @@ CODE basic ( -- )
 hex 5CF0 variable map
 
 
-\ 7719h
-\ CHNL 
-hex 5D2F variable chnl
+\ 7734h >>>
+\ INKEY
+\ calls ROM inkey$ routine, returns c or "zero".
+CODE inkey ( -- c )
+         
+        PUSH    BC|
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack
+        CALL    HEX  15E6  AA,  ( instead of 15E9 )
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+        LD      L'|    A|
+        LDN     H'|    0 N,
+        POP     BC|
+        Psh1 
+        C;
 
 
-\ 7727h
-\ STRM
-       4 variable strm
+\ 7749h >>>
+\ SELECT
+\ selects the given channel number
+\ #2 is keyboard or video
+\ #3 is printer or rs-232 i/o port (it depends on OPEN#3 from BASIC)
+\ #4 is microdrive channel (it depends on OPEN#4 from BASIC)
+CODE select ( n -- )
+         
+        POP     HL|
+        PUSH    BC|
+        LD      A'|    L|
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack
+        CALL    HEX  1601 AA,
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+        POP     BC|
+        Next 
+        C;
 
 
-\ 7734h INKEY  <<<
-\
-\ 7749h SELECT <<<
-\ 
-
-
-\ 775Eh
-\ OPEN - MDR
-\ it relies on a BASIC's OPEN#4 to Microdrive 
-\ and sets the variables used to access the "!Blocks" data-file
-: mdr  ( n -- )
-    >r
-        r 0< 
-        r [ decimal 15 ] Literal > 
-            + [ decimal 25 ] Literal ?error
-        r r + [ hex 5C16 ] Literal \ STRMS 
-        + @  \ offset to stream #n    
-        [ hex 5C4F ] Literal  \ CHANS
-        @ + \ address of channel #n
-        1 - >r
-            r [ decimal 4 ] Literal + c@ [ hex 4D ] Literal - 
-                [ decimal 25 ] Literal ?error
-            r [ decimal 26 ] Literal + @
-            map !
-        r> chnl !   \ normally 5D2F
-    r> strm  !   \ normally 4
-    ;
-
-
-\ 77CDh
-\ SCTR
-\ it fills the microdrive map with FFs 
-\ gets the HDNUMB variable of the Microdrive Channel
-\ calculates the corrisponding bit (byte and bit)
-\ and fools the microdrive to believe there is only that one sector free.
-: sctr  ( -- )
-    map @ 
-    [ decimal 32 ] Literal [ decimal 255 ] Literal fill 
-    chnl @ [ decimal 41 ] Literal \ HDNUMB of channel
-    + c@                    \ sect
-    [ decimal 8 ] Literal   
-    /mod        \ rem q
-    swap        \ q   rem
-    1 swap      \ q 1 rem 
-    lshift      \ q bits
-\    [ decimal -1 ] Literal
-    -1
-    xor         \ q negbits
-    map @       \ q negbits 5CF0
-    rot +       \ negbits 5CF0+q
-    c!
-    ;
-
-    \ was: 
-    \ >r    \ saves the quotient i.e. the offset inside microdrive map
-    \ 1 swap -1 Do 2* Loop  2/ 
-    \ [ decimal 255 ] Literal swap - map @ 
-    \ r> + c!
-
-
-\ 7824h
-\ DEVICE
-\ used to save current device stream number (video or printer)
-2 variable device
-
-
-\ 7831h
-\ MDRGET
-\ low level "CHREC" read
-\ gets the current channel "M" pointer stored in CHANNEL 
-\ puts   3 to channel+12 (i.e. a value > 512 for CHBYTE)
-\ puts   0 to channel+67 (RECFLG) this is not EOF
-\ puts 254 to channel+24 (CHFLAG) to read/write flag
-\ then forces the read of the next character available
-: mdrget
-    chnl @ >r
-    r 0=  [ 5 ] Literal ?error
-      3 \ [ 3 ] Literal 
-      r  [ decimal  12 ] Literal + c! \ CHBYTE of channel
-      0 
-      r  [ decimal  67 ] Literal + c! \ RECFLG of channel
-         [ decimal 254 ] Literal 
-      r> [ decimal  24 ] Literal + c! \ CHFLAG of channel
-    strm @ select 
-    inkey drop
-    device @ select
-    ;
-    
-
-\ 7882h
-\ MDRR1
-\ verifies if the current microdrive buffer is the requested block
-\ otherwise, it forces channel+13 "CHREC" and calls MDRGET
-: mdrr1  ( n -- )
-    [ 4 ] Literal mdr chnl @ >r
-           [ decimal 254 ] Literal /mod   \ find drive# and sector#
-    dup    [ decimal  48 ] Literal +
-        r  [ decimal  53 ] Literal + c!   \ Last byte of HDNAME
-    2+                                    \ DR0 is drive #2
-        r  [ decimal  25 ] Literal + c!   \ CHDRIV
-    1-  r> [ decimal  13 ] Literal + c!   \ CHREC of channel
-    mdrget
-    ;
-
-
-\ 78c1h
-\ MDRRD
-\ read block n and store it to buffer at address a
-: mdrrd  ( a n -- ) 
-    mdrr1
-    chnl @
-    [ decimal 82 ] Literal + \ first byte of channel's data-area 
-    swap b/buf cmove
-    ;
-    
-
-\ 78e0h
-\ MDRWR    
-\ write block n to microdrive taking it from buffer at address a
-: mdrwr  ( a n -- )
-    mdrr1
-    chnl @ >r
-    r [ decimal 82 ] Literal + 
-    b/buf cmove
-    sctr
-    [ decimal 255 ] Literal r 
-    [ decimal  24 ] Literal + c!    \ CHFLAG of channel
-    [ decimal 511 ] Literal r 
-    [ decimal  11 ] Literal + !     \ CHBYTE of channel
-    strm @ select
-    r [ decimal 593 ] Literal + c@  \ latest byte of channel's data-area
-    emitc
-    device @ select
-    \ it puts 255 to CHREC to clear everything.
-    [ decimal 255 ] Literal r>  
-    [ decimal  13 ] Literal + c!    \ CHREC of channel
-    ;
-    
 \ ______________________________________________________________________ 
 \
 \ ZX-Next-OS option.
@@ -4148,8 +4037,8 @@ HERE    LD()HL 0 AA,        \ patch to next CALL instruction
         LD      A'|    L|   \  A has the same value of L, sometime useful
 
 
-        LD()X   SP|    hex 02C +origin AA, \ saves SP
-        LDX     SP|    hex  -2 +origin NN, \ temp stack
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack
 \       LD()X   SP|    hex 5B6A        AA, \ saves SP
 \       LDX     SP|    hex 5BFF        NN, \ temp stack
  
@@ -4201,8 +4090,8 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
         POP     AF|               \ retrieve carry flag
 
 
-        LD()X   SP|    hex 02A +origin AA, \ saves SP for logging
-        LDX()   SP|    hex 02C +origin AA, \ restore SP
+        LD()X   SP|    HEX 02A org^ +  AA, \ saves SP for logging
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
 \       LDX()   SP|    hex 5B6A        AA, \ restore SP
 
 
@@ -4222,41 +4111,40 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
         C;        
 
 
-\ move-sp
-: move-sp  ( a -- )
-    dup         [ hex 12 ] Literal +origin !
-    dup   s0 !
-    s0  @  sp!
-;
-
-
-\ move-rp
-: move-rp  ( a -- )
-    dup r0 @    [ hex 80 ] Literal -
-    swap        [ hex 80 ] Literal - [ hex C0 ] Literal cmove
-    dup         r0 !
-    dup         [ hex A0 ] Literal -   tib !
-    dup         [ hex A0 ] Literal - [ hex 16 ] Literal +origin !
-    dup         [ hex 14 ] Literal +origin !
-    dup         [ hex 2E ] Literal +origin !
-    dup         r0 !
-;
-
-
-\ move-limit
-: move-limit ( a -- )
-    dup limit !
-    dup [ hex  24 ] Literal +origin !
-        [ hex 60C ] Literal - dup first !
-    dup use !
-    dup prev !
-        [ hex  22 ] Literal +origin !
-;        
+\ \ move-sp
+\ : move-sp  ( a -- )
+\     dup  [ hex 16 ] Literal +origin !
+\     dup   tib !
+\     dup  [ hex 12 ] Literal +origin !
+\     dup   s0  !
+\     s0  @   sp!
+\ ;
+\ 
+\ 
+\ \ move-rp
+\ : move-rp  ( a -- )
+\     dup r0 @    [ hex 80 ] Literal -
+\     swap        [ hex 80 ] Literal - [ hex C0 ] Literal cmove
+\     dup         [ hex 14 ] Literal +origin !
+\     dup         [ hex 2E ] Literal +origin !
+\     dup         r0 !
+\ ;
+\ 
+\ 
+\ \ move-limit
+\ : move-limit ( a -- )
+\     dup limit !
+\     dup [ hex  24 ] Literal +origin !
+\         [ hex 60C ] Literal - dup first !
+\     dup use !
+\     dup prev !
+\         [ hex  22 ] Literal +origin !
+\ ;        
 
 \ the sequence should be
-\ HEX B900 MOVE-SP
-\ HEX B9A0 MOVE-RP
-\ HEX C000 MOVE-LIMIT
+\ HEX D900 MOVE-SP
+\ HEX D9A0 MOVE-RP
+\ HEX E000 MOVE-LIMIT
 
 \ HEX FF58 MOVE-LIMIT
 \ HEX F8E0 MOVE-RP
@@ -4270,8 +4158,6 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
 \ ______________________________________________________________________ 
 
 \ ZX NEXT OS option
-
-0 variable nxt
 
 \ NXTDRV
 \ ZXNEXTOS set drive on b
@@ -4330,23 +4216,13 @@ decimal 16383 constant #sec
 : r/w  ( a n f -- )
     >r
     1-  dup 0<           
-        over #sec  1-  > 
+           over #sec  1-  > 
         or [ decimal 6 ] Literal ?error
     r> 
     If
-        nxt @
-        If
             nxtrd
-        Else
-            mdrrd
-        Endif
     Else
-        nxt @
-        If
             nxtwr
-        Else
-            mdrwr
-        Endif
     Endif
     ;
 
@@ -4451,7 +4327,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     
 
 \ \ 7ac4h    
-\ load
+\ -load
 : -load  ( n -- )
     blk @  >r  
     in  @  >r
@@ -4463,6 +4339,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     r> in !
     r> blk !
     ;
+    
     
 
 \ 7af7h    
@@ -4507,10 +4384,8 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ 7c8fh
 \ SPACES
 : spaces  ( n -- )
-    0 max -dup
-    If
-        0 Do space Loop
-    Endif
+    0 max 
+    0 ?Do space Loop
     ;
 
 
@@ -4695,8 +4570,8 @@ CODE cls
 \ X
 : x
     cls cr
-    .( v.Forth 1.5a)  cr
-    .( build 20200614)  cr
+    .( ZX Next Forth )  cr
+    .( build 20200714)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4752,7 +4627,7 @@ CODE cls
         i c!
         1+
     Loop  ( n2 )
-;
+    ;
 
 
 \ LOAD
@@ -4779,13 +4654,24 @@ CODE cls
     Else
         -load
     Endif
-;
+    ;
+
+
+: autoexec
+    [ decimal 1      ] Literal  dup
+    [ ' noop         ] Literal  
+    [ autoexec^      ] Literal  !  \ patch autoexec-off
+    load
+    quit
+    ;
+    ' autoexec autoexec^ ! \ patch autoexec-on
 
 
 \ BYE
 : bye ( -- )
     flush
     empty-buffers
+    0 +origin 
     basic
     ;
     -2 ALLOT    \ we can save two bytes because BASIC quits to BASIC.
@@ -4984,9 +4870,9 @@ CODE cls
 \ VALUE
 : value ( x ccc --   )
         (       -- n )
-    [COMPILE] constant
+    [compile] constant
     ;
-    IMMEDIATE 
+    immediate 
 
 
 \ TO
@@ -5080,6 +4966,7 @@ RENAME   back           BACK
 \ RENAME   truv           TRUV
 \ RENAME   invv           INVV
 RENAME   bye            BYE
+RENAME   autoexec       AUTOEXEC 
 RENAME   load           LOAD
 RENAME   -accept        -ACCEPT
 \ RENAME   rsload         RSLOAD
@@ -5124,24 +5011,25 @@ RENAME   nxtwr          NXTWR
 RENAME   nxtrd          NXTRD
 RENAME   nxtstp         NXTSTP
 RENAME   nxtdrv         NXTDRV
-RENAME   nxt            NXT
 \
-RENAME   move-limit     MOVE-LIMIT
-RENAME   move-rp        MOVE-RP
-RENAME   move-sp        MOVE-SP
+\ RENAME   move-limit     MOVE-LIMIT
+\ RENAME   move-rp        MOVE-RP
+\ RENAME   move-sp        MOVE-SP
 RENAME   doscall        DOSCALL
 \
-RENAME   mdrwr          MDRWR
-RENAME   mdrrd          MDRRD
-RENAME   mdrr1          MDRR1
-RENAME   mdrget         MDRGET
+\ RENAME   mdrwr          MDRWR
+\ RENAME   mdrrd          MDRRD
+\ RENAME   mdrr1          MDRR1
+\ RENAME   mdrget         MDRGET
+\ RENAME   sctr           SCTR
+\ RENAME   mdr            MDR
+\ RENAME   chnl           CHNL
+\ RENAME   map            MAP
+\ RENAME   drv            DRV
+
 RENAME   device         DEVICE
-RENAME   sctr           SCTR
-RENAME   mdr            MDR
 RENAME   strm           STRM
-RENAME   chnl           CHNL
-RENAME   map            MAP
-RENAME   drv            DRV
+\ RENAME   nxt            NXT
 RENAME   message        MESSAGE
 RENAME   .line          .LINE
 RENAME   (line)         (LINE)
@@ -5191,9 +5079,9 @@ RENAME   number         NUMBER
 \ RENAME   f+             F+    
 \ RENAME   f/             F/    
 \ RENAME   f*             F*    
-RENAME   fop            FOP   
-RENAME   w>             W>    
-RENAME   >w             >W    
+\ RENAME   fop            FOP   
+\ RENAME   w>             W>    
+\ RENAME   >w             >W    
 
 RENAME   (number)       (NUMBER)
 RENAME   (sgn)          (SGN) 
@@ -5309,13 +5197,13 @@ RENAME   ;              ;
 RENAME   :              :   
 \ RENAME   Message        MESSAGE
 \ RENAME   Create         CREATE 
-RENAME   call#          CALL#
+\ RENAME   call#          CALL#
 RENAME   cells          CELLS  
 RENAME   rshift         RSHIFT 
 RENAME   lshift         LSHIFT 
 RENAME   2/             2/     
 RENAME   2*             2*     
-RENAME   bank!          BANK! 
+\ RENAME   bank!          BANK! 
 RENAME   p!             P!     
 RENAME   p@             P@     
 RENAME   2!             2!     
@@ -5332,6 +5220,7 @@ RENAME   2dup           2DUP
 RENAME   2swap          2SWAP 
 RENAME   2drop          2DROP 
 RENAME   2over          2OVER 
+\ RENAME   pick           PICK  
 RENAME   rot            ROT   
 RENAME   dup            DUP   
 RENAME   swap           SWAP  
@@ -5378,6 +5267,9 @@ RENAME   (?emit)        (?EMIT)
 RENAME   emitc          EMITC  
 RENAME   enclose        ENCLOSE
 RENAME   (find)         (FIND) 
+RENAME   upper          UPPER 
+RENAME   caseoff        CASEOFF
+RENAME   caseon         CASEON
 RENAME   digit          DIGIT  
 RENAME   i              I      
 RENAME   (do)           (DO)   
@@ -5387,7 +5279,7 @@ RENAME   (loop)         (LOOP)
 RENAME   0branch        0BRANCH
 RENAME   branch         BRANCH 
 RENAME   execute        EXECUTE
-RENAME   lit            Lit
+RENAME   lit            LIT
 
 
 \ ______________________________________________________________________ 
@@ -5402,7 +5294,7 @@ CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' Lit 2 - ! final_rp_patch BYE BYE SHRLDU
+0 ' LIT 2 - ! final_rp_patch BYE BYE SHRLDU
 
 \
 \ Origin area.
@@ -5501,23 +5393,4 @@ QUIT
 \ $BD52  48466  ORIGIN    (8232)
 \ $DD7A  56698  COLD      (6532)     
 \ $F6FE  63230  Assembler (0934)
-
-\
-\ ______________________________________________________________________
-\
-\ Register usage map
-\
-\ AF
-\ BC - Instruction pointer
-\ DE - Working Lo
-\ HL - Working Hi
-\
-\ AF'
-\ BC'-
-\ DE'
-\ HL'- (ZX System - backupped at start)
-\
-\ SP - Parameter stack pointer
-\ IX
-\ IY - (ZX System)
 
