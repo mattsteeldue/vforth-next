@@ -1,0 +1,84 @@
+
+
+\ build 20200514
+First working  DOSCALL that uses NEXTZXOS primitives.
+
+
+\ build 20200529
+Tentative project branch to use IX as return-stack-pointer (RP).
+This test show that there is no speed nor room improvement in using IX instead of a fixed memory location.
+More, I found IX useful as a spare couple of register.
+
+
+\ build 20200608
+SP register to be below C000 in  INKEY  and  SELECT  too.
+Removed  floating-point primitives to save room.
+LOAD  now can be interrupted using Break 
+
+
+\ build 20200619
+Changed behaviour of  WORD  to return the value of HERE 
+Removed  CALL#   from core and left only in Blocks library 
+Replacing  DO  with  ?DO  in  TYPE  and  SPACES
+Introducing  PICK  at  Scr# 270
+Fixed  ?STACK  to ignore errors when DP is beyond S0: purpose is to use higher 8K RAM as vocabulary extension.
+
+
+\ build 20200624
+Removed  MOVE-SP,  MOVE-RP,  MOVE-LIMIT  from core and moved to  Blocks  library
+Removed 128-RAM bank switch  (BANK!)  from core in perspective to abandon all references to non-Next version
+Fixed  SEE  to detect  ?DO  when on disassemble.
+Fixed  BLEEP  and introduced  some BLEEP-CALC  and  BEEP-PITCH
+Experiment on  MMU7  and corrections on  MOVE-SP,  MOVE-RP,  MOVE-LIMIT 
+Experiment on  UPPER
+
+
+\ build 20200628
+Introducing  AUTOEXEC  for the first time 
+Changed "name" to  "Next Forth" and removed references to Microdrive
+Improving  MMU7  banking study using words  +FAR -FAR  FAR-HL and moved previous example of  FAR-HL  from screen #290 to #300 
+Bakup of first 350 screens to 10001 onward.
+
+
+\ build 20200702
+Introduced a quick'n'dirty audible click on  KEY 
+Word  BASIC  on returning to Basic, retuns the value currently on top-of-stack. Useful to return ORIGIN and make faster the rebuild.
+Test on  AUTOEXEC  in core, run 1 LOAD. Useful at startup.
+Verified and corrected words MOVE-SP; copied words MOVE-SP, MOVE-RP, MOVE-LIMIT to screen 225-227: useful to free MMU7 last 8K bank (D000-FFFF)
+Introduced screen #100 to compile the whole ASSEMBLER (screens 101-162)
+
+
+\ build 20200705
+fixed  AUTOEXEC  in core, to correctly run 1 LOAD
+Added NIP and TUCK to core.
+SP register to be below C000 in  ?TERMINAL  and  KEY  too.
+Fixed  RND  in !blocks.bin library and told Marcus Cruz to correct his GitHub's Afera library.
+Improving MMU7 banking study using words  +FAR -FAR  FAR-HL, Moved previous example of FAR-HL from screen #290 to #300 
+Finally fixed the Z80N  NEXTREG op-code  to use N, commaer instead of the duplicated V,
+Experiment on  .RESET  to force a soft-reset.
+
+\ build 20200714
+Introducing case-insensitive vocabulary search (FIND)
+Two new words CASEON to enable and CASEOFF to disable case-sensitive.
+
+
+\ build 20200717
+Removed a nasty bug: when you typed  LIT  alone, the system crashed.
+Resolved adding a NOOP after EXECUTE in INTERPRET definition.
+This shows how easily we can rebuild this system.
+
+
+\ build 20200721
+Fixed v-Forth name in spash screen.
+Restored flashing cursor. Improved SEE.
+Introduced CASEOFF and CASEON to accept lower-case input.
+
+
+\ build 20200808
+Introducing FAR address pointer based on MMU7.
+System now starts with a write-only OPEN#13 stream attached to file "c:/FORTH/output.txt" text file to collect any output redirected to device #13 via some   13 SELECT   followed by some output word. See Screen#252 to see an example of it.
+This release comes in two version 
+- forth15a.bin : as usual
+- forth15e.bin : with upper 8K RAM freed to experiment with MMU7.
+
+
