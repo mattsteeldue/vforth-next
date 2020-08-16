@@ -1,6 +1,6 @@
 Forth on Sinclair ZX Spectrum Next
 
-vForth1.15
+vForth1.5
 
 On April 27th 2020, I received my  ZX Spectrum Next  (Accelerated)  and immediately tried to port my Forth to the Next environment. 
 The purpose was to make Screens / BLOCKs system available using ZxNextOS APIs. 
@@ -13,3 +13,5 @@ In this implementation a Screen is equivalent to a BLOCK that is 512 bytes, for 
 
 I implemented an ASSEMBLER vocabulary with notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
 This ASSEMBLER provides Z80N extension op-codes.
+
+The Wiki as a whole in this repository is getting some shape, I suggesto to pay a visit.
