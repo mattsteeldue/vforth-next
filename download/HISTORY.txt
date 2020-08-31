@@ -82,3 +82,7 @@ This release comes in two version
 - forth15e.bin : with upper 8K RAM freed to experiment with MMU7.
 
 
+\ build 20200830
+Introduction of LAYER 1,2 graphic resolution, this now allows
+screen size 1024 bytes, twice than previous releases.
+Continuing studying POINTER address for heap memory via MMU7.
