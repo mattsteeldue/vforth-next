@@ -14,4 +14,4 @@ In the latest implementation a Screen is two BLOCKs that is 1024 bytes.
 I implemented an ASSEMBLER vocabulary with notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
 This ASSEMBLER provides Z80N extension op-codes.
 
-The Wiki byedddin this repository is getting some shape, I suggesto to pay a visit.
+The Wiki in this repository is getting some shape, I suggesto to pay a visit.
