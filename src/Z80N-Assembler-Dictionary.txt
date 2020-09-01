@@ -17,8 +17,10 @@ You can use (IX+ operand wherever you can use (IY+ operand.
 N.B. : in Forth spaces matter.
 
 
+<<<<<<< HEAD
     FORTH ASSEMBLER                         Z80 MNEMONIC               
     ---------------------------------       ---------------------------------
+=======
     ADCA     (HL)|                          ADC A, (HL)                
     ADCA (IY+ d )|                          ADC A, (IY+d)             
     ADCN        n    N,                     ADC A, n                   
@@ -234,3 +236,4 @@ N.B. : in Forth spaces matter.
     XORA  (IY+ d )|                         XOR (IY+d)                
     XORN         n   N,                     XOR n                      
     XORA         r|                         XOR r                      
+<<<<<<< HEAD
