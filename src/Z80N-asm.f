@@ -55,7 +55,7 @@
 
 FORTH DEFINITIONS DECIMAL
 
-\ Screen# 100 
+\ Screen# 101 
 : INVERT -1 XOR ;
 : @+ >R R CELL+ R> @ ;
 : !+ >R R ! R> CELL+ ;
@@ -68,7 +68,7 @@ FORTH DEFINITIONS DECIMAL
 CHAR - CONSTANT &-
 CHAR ~ CONSTANT &~
 
-\ Screen# 101 
+\ Screen# 102 
 
 VOCABULARY ASSEMBLER IMMEDIATE
 
@@ -85,14 +85,14 @@ FORTH DEFINITIONS HEX
 : VOCEND?     @ FFFF AND A081 = ;
 : >NEXT%      BEGIN (>NEXT%)  DUP 1+ C@ &- - UNTIL ;
 
-\ Screen# 102 
+\ Screen# 103 
 ( Z80 Utility - Sys depend )
 : STARTVOC '  ASSEMBLER 2 + CELL+ @ ;
 : IS-A        <BUILDS  0 ,  DOES>  @ SWAP %>CODE @ = ;
 : REMEMBER    HERE LATEST  (>NEXT%) %>BODY ! ;  IMMEDIATE
 : CONTAINED-IN OVER AND = ;
 
-\ Screen# 103 
+\ Screen# 104 
 \ 0 VARIABLE TABLE FF ,
 \ FFFF , FFFFFF , FFFFFFFF ,
 \ : FIRSTBYTES CELLS TABLE
@@ -105,7 +105,7 @@ FORTH DEFINITIONS HEX
 0 VARIABLE    PREVIOUS
 : !TALLY      0 TALLY-BY !  0 TALLY-BI ! 0 TALLY-BA !  0 PREVIOUS ! ;
 
-\ Screen# 104 
+\ Screen# 105 
 ( Z80 System independ. )
 : AT-REST?    TALLY-BI @ 0= TALLY-BY @ 0= AND ;
 : BADPAIRS?   DUP 2 * AND AAAAAAAA AND ;
@@ -113,7 +113,7 @@ FORTH DEFINITIONS HEX
 : COMPATIBLE? TALLY-BA @ OR BADPAIRS? 0= ;
 DECIMAL
 
-\ Screen# 105 
+\ Screen# 106 
 ( Z80 Generate errors )
 : CHECK26     AT-REST? 0= 26 ?ERROR ;
 : CHECK27     BAD? 27 ?ERROR ;
@@ -124,13 +124,13 @@ DECIMAL
 : CHECK30     DUP PREVIOUS @ <  30 ?ERROR DUP PREVIOUS ! ;
 HEX
 
-\ Screen# 106 
+\ Screen# 107 
 ( Assembler Z80 )
 : OR!         >R R @ CHECK28 OR R> ! ;
 : OR!U        >R R @ OR R> ! ;
 : AND!        >R INVERT R @  CHECK29 AND R> ! ;
 
-\ Screen# 107 
+\ Screen# 108 
 ( Assembler Z80 )
 : >DATA       %>BODY ;
 : >BI         %>BODY CELL+ ;
@@ -142,7 +142,7 @@ HEX
 : !POSTIT     HERE ISS ! 0 PREVIOUS ! ;
 : TALLY:,     @+ TALLY-BI !  @+ TALLY-BY ! @+ TALLY-BA !  @ ISL ! ;
 
-\ Screen# 108 
+\ Screen# 109 
 ( Assembler Z80 )
 : POSTIT      CHECK26 !POSTIT  HERE ISS ! @+ , TALLY:,  CORRECT,- ;
 IS-A IS-CBPI : CBPI CHECK33
@@ -158,7 +158,7 @@ IS-A IS-FDPI : FDPI CHECK33
     <BUILDS , , , , 1 , DOES>
     REMEMBER FD C, POSTIT ; 
 
-\ Screen# 109 
+\ Screen# 110 
 ( Assembler Z80 )
 IS-A IS-1PI : 1PI CHECK33
     <BUILDS , , , , 1 , DOES>
@@ -175,7 +175,7 @@ IS-A IS-3PI : 3PI CHECK33
     R IS-DDPI R IS-FDPI OR OR
     R> DROP ;
 
-\ Screen# 110 
+\ Screen# 111 
 ( Assembler Z80 )
 : TALLY:|
     @+ TALLY-BI AND!
@@ -187,7 +187,7 @@ IS-A IS-XFI : XFI CHECK31
     REMEMBER FIXUP> ;
 : CORRECT-R 0 CELL+ ISL @  - ROTLEFT ;
 
-\ Screen# 111 
+\ Screen# 112 
 ( Assembler Z80 )
 : TALLY:|R @+ CORRECT-R TALLY-BI AND! @+ TALLY-BY OR! @ TALLY-BA OR!U ;
 : FIXUP< @+ CORRECT-R ISS @ OR! TALLY:|R CHECK27 ;
@@ -197,7 +197,7 @@ IS-A IS-XFIR : XFIR CHECK31
 : TALLY:,, CELL+ @+ CHECK30 TALLY-BY AND! @ TALLY-BA OR!U ;
 : COMMA @+ >R TALLY:,,  CHECK27 R> EXECUTE ;
 
-\ Screen# 112 
+\ Screen# 113 
 ( Assembler Z80 )
 IS-A IS-COMMA : COMMAER
     <BUILDS , 0 , , , , , DOES>
@@ -206,7 +206,7 @@ IS-A IS-COMMA : COMMAER
 : T! PRO-TALLY !+ !+ !+ DROP ;
 : T@ PRO-TALLY 3 CELLS +   @- @- @- DROP ;
 
-\ Screen# 113 
+\ Screen# 114 
 ( Assembler Z80 )
 : 1FAMILY, 0 DO DUP >R T@   R> 1PI OVER + LOOP   DROP DROP ;
 : 2FAMILY, 0 DO DUP >R T@   R> 2PI OVER + LOOP   DROP DROP ;
@@ -214,17 +214,17 @@ IS-A IS-COMMA : COMMAER
 : XFAMILY| 0 DO DUP >R T@   R> XFI OVER + LOOP   DROP DROP ;
 : XFAMILY|R 0 DO DUP >R T@  R> XFIR OVER + LOOP  DROP DROP ; 
 
-\ Screen# 114 
+\ Screen# 115 
 ( Assembler Z80 )
 : CBFAMILY, 0 DO DUP >R T@   R> CBPI OVER + LOOP  DROP DROP ;
 : EDFAMILY, 0 DO DUP >R T@   R> EDPI OVER + LOOP  DROP DROP ;
 
-\ Screen# 115 
+\ Screen# 116 
 ( Assembler Z80 )
 : DDFAMILY, 0 DO DUP >R T@   R> DDPI OVER + LOOP  DROP DROP ;
 : FDFAMILY, 0 DO DUP >R T@   R> FDPI OVER + LOOP  DROP DROP ;
 
-\ Screen# 116 
+\ Screen# 117 
 ( Assembler Z80 )
 ' ASSEMBLER ' ;CODE >BODY  4 CELLS + !  (  PATCH!  )
 
@@ -241,10 +241,10 @@ FORTH DEFINITIONS DECIMAL
 
 ASSEMBLER DEFINITIONS HEX
 
-0 1 0 100 ' C,        COMMAER N,
+0 1 0 800 ' C,        COMMAER N,
 0 0 CELL+ 0 200 ' ,   COMMAER NN,
 0 0 CELL+ 0 400 ' ,   COMMAER AA,
-0 1 0 800 ' C,        COMMAER P,
+0 1 0 100 ' C,        COMMAER P,
 0 1 0 1000 ' C,       COMMAER D,
 
 
@@ -294,9 +294,9 @@ ASSEMBLER DEFINITIONS HEX
 \ Screen# 124 
 ( Z80 immediate data )
 HEX
-00 0800 00 T!
-08 D3 2 1FAMILY,    OUTA  INA
 00 0100 00 T!
+08 D3 2 1FAMILY,    OUTA  INA
+00 0800 00 T!
 08 C6 8 1FAMILY,    ADDN ADCN SUBN SBCN  ANDN XORN ORN  CPN
 00 00 00 T!
 10 C9 4 1FAMILY,    RET EXX JPHL LDSPHL
@@ -314,7 +314,7 @@ HEX
 08 00 8 XFAMILY|    B'| C'| D'| E'|  H'| L'| (HL)'| A'|
 01 04 2 1FAMILY,    INC DEC
 00 00 3F 40 1PI     LD
-00 0100 38 06 1PI   LDN
+00 0800 38 06 1PI   LDN
 
 \ LD B'| C| LD()A nn AA,
 
@@ -357,7 +357,7 @@ HEX
 08 43 2 EDFAMILY,   LD()X  LDX()
 00 00 38 T!
 01 40 2 EDFAMILY,   IN(C)  OUT(C)
-: F'| (HL)'| ; -->
+ 
 \ SBCHL BC| ADCHL SP|
 \ LDX() BC| nn AA,
 \ LD()X SP| nn AA,
@@ -557,16 +557,15 @@ ASSEMBLER DEFINITIONS HEX
 \ swaps hi-lo bytes
 : <, 100 /MOD C, C, ;
 
-0 1 0 2000 ' C, COMMAER     V,
 0 1 0 4000 ' <, COMMAER     LH,
 \
-00 2800 00 91 EDPI          NEXTREG
-\  NEXTREG r P, n V,
-00 0800 00 92 EDPI          NEXTREGA
-\  NEXTREGA r P,
+00 0900 00 91 EDPI          NEXTREG
+\  NEXTREG reg P, n N,
+00 0100 00 92 EDPI          NEXTREGA
+\  NEXTREGA reg P,
 00 4000 00 8A EDPI          PUSHN
 \   PUSHN nn LH,
-00 0100 00 27 EDPI          TESTN
+00 0800 00 27 EDPI          TESTN
 \  TESTN n N,
 
 
@@ -595,3 +594,6 @@ ASSEMBLER DEFINITIONS HEX
 \
 
 FORTH DEFINITIONS DECIMAL
+
+QUIT
+
