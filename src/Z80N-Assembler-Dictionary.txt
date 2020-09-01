@@ -1,3 +1,5 @@
+# Z80 instruction table
+
 In this table:
 
     rr|      :  BC|   DE|   HL|   SP|  and in case  IX|   IY|   and   AF|   also 
@@ -12,15 +14,21 @@ In this table:
     nn       :   word value (16 bits)
     aa       :   address
      r       :   Next-register number
+<<<<<<< HEAD
 
-You can use (IX+ operand wherever you can use (IY+ operand.
-N.B. : in Forth spaces matter.
+
+>>>>>>> f8dae164ac5646b8fc81e351b5710cdafae7a895
+
+You can use   (IY+   operand wherever you can use   (IX+   operand.
 
 
 <<<<<<< HEAD
     FORTH ASSEMBLER                         Z80 MNEMONIC               
     ---------------------------------       ---------------------------------
 =======
+***         
+    FORTH ASSEMBLER                         Z80 MNEMONIC
+***         
     ADCA     (HL)|                          ADC A, (HL)                
     ADCA (IY+ d )|                          ADC A, (IY+d)             
     ADCN        n    N,                     ADC A, n                   
@@ -237,3 +245,5 @@ N.B. : in Forth spaces matter.
     XORN         n   N,                     XOR n                      
     XORA         r|                         XOR r                      
 <<<<<<< HEAD
+***
+>>>>>>> f8dae164ac5646b8fc81e351b5710cdafae7a895
