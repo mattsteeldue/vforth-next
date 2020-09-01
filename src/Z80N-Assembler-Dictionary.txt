@@ -1,232 +1,236 @@
 In this table:
 
     rr|      :  BC|   DE|   HL|   SP|  and in case  IX|   IY|   and   AF|   also 
-     r|      :   B|    C|    D|    E|    H|    L|    A|   and    (HL)|
-    r'|      :  B'|   C'|   D'|   E'|   H'|   L'|   A'|   and   (HL)'|
-     f|      :  NZ|    Z|   NC|   CY|   PO|   PE|    P|    M|   used by JP and CALL
-    f'|      : NZ'|   Z'|  NC'|  CY'|   same as above but used by JR
+     r|      :   B|    C|    D|    E|    H|    L|    A|   and    (HL)|    { source registers }
+    r'|      :  B'|   C'|   D'|   E'|   H'|   L'|   A'|   and   (HL)'|    { destination registers - NOT "alternate" }
+     f|      :  NZ|    Z|   NC|   CY|   PO|   PE|    P|    M|   { flags used by JP, CALL and RET }
+    f'|      : NZ'|   Z'|  NC'|  CY'|   { same as flags above but used by JR }
      b|      :   0|    1|    2|    3|    4|    5|    6|    7|
      a|      :  00|   08|   10|   18|   20|   28|   30|   38|
-     d       :   byte signed displacement
+     d       :   byte displacement
      n       :   byte value (8 bits)
     nn       :   word value (16 bits)
-    aa       :   word address (16 bits)
-   reg       :   Next register number (8 bit)
+    aa       :   address
+     r       :   Next-register number
 
 You can use (IX+ operand wherever you can use (IY+ operand.
 N.B. : in Forth spaces matter.
 
 
-    FORTH ASSEMBLER                               Z80 MNEMONIC               
-    ---------------------------------             ---------------------------------
-    ADCA      (HL)|                               ADC A, (HL)                
-    ADCA  (IY+ d )|                               ADC A, (IXY+d)             
-    ADCN         n    N,                          ADC A, n                   
-    ADCA         r|                               ADC A, r                   
-    ADCHL       rr|                               ADC HL, BC/DE/HL/SP        
-    ADDA      (HL)|                               ADD A, (HL)                
-    ADDA  (IY+ n )|                               ADD A, (IXY+d)             
-    ADDN         n    N,                          ADD A, n                   
-    ADDA         r|                               ADD A, r                   
-    ADDHL       rr|                               ADD HL, BC/DE/HL/SP        
-    ADDHL,A                                       ADD HL, A            
-    ADDDE,A                                       ADD DE, A            
-    ADDBC,A                                       ADD BC, A            
-    ADDrr,      nn   NN,                          ADD HL/DE/BC, nn         
-    ADDIY       rr|                               ADD IXY, BC/DE/IXY/SP      
-    ANDA      (HL)|                               AND (HL)                   
-    ANDA  (IY+ n )|                               AND (IXY+d)                
-    ANDN         n    N,                          AND n                      
-    ANDA         r|                               AND r                      
-    BIT          b|     (HL)|                     BIT b,(HL)                 
-    BIT          b| (IY+ d )|                     BIT b,(IXY+d)              
-    BIT          b|        r|                     BIT b,r                    
-    BRLCDE,B                                      BRLC DE,B                  
-    BSLADE,B                                      BSLA DE,B                  
-    BSRADE,B                                      BSRA DE,B                  
-    BSRFDE,B                                      BSRF DE,B                  
-    BSRLDE,B                                      BSRL DE,B                  
-    CALLF        f|  aa   AA,                     CALL Z/NZ/C/NC/PO/PE/P/M, aa
-    CALL            aa   AA,                      CALL aa                    
-    CCF                                           CCF                        
-    CPA       (HL)|                               CP (HL)                    
-    CPA   (IY+ n )|                               CP (IXY+d)                 
-    CPN          n    N,                          CP n                       
-    CPA          r|                               CP r                       
-    CPD                                           CPD                        
-    CPDR                                          CPDR                       
-    CPI                                           CPI                        
-    CPIR                                          CPIR                       
-    CPL                                           CPL                        
-    DAA                                           DAA                        
-    DEC      (HL)'|                               DEC (HL)                   
-    DEC  (IY'+ d )|                               DEC (IXY+d)                
-    DECX        rr|                               DEC BC/DE/HL/SP            
-    DECX        IY|                               DEC IXY                    
-    DEC         r'|                               DEC r                      
-    DI                                            DI                         
-    DJNZ        d    D,                           DJNZ n                     
-    EI                                            EI                         
-    EX(SP)HL                                      EX (SP), HL                
-    EX(SP)IX                                      EX (SP), IXY               
-    EX(SP)IY                                      EX (SP), IXY               
-    EXAFAF                                        EX AF, AF'                 
-    EXDEHL                                        EX DE, HL                  
-    EXX                                           EXX                        
-    HALT                                          HALT                       
-    IM0                                           IM 0                       
-    IM1                                           IM 1                       
-    IM2                                           IM 2                       
-    IN(C)    (HL)'|                               IN (c)                     
-    INA          n    P,                          IN A, (n)                  
-    IN(C)       r'|                               IN r, (c)                  
-    INC      (HL)'|                               INC (HL)                   
-    INC   (IY'+ d )|                              INC (IXY+d)                
-    INCX        rr|                               INC BC/DE/HL/SP            
-    INCX        IY|                               INC IXY                    
-    INC         r'|                               INC r                      
-    IND                                           IND                        
-    INDR                                          INDR                       
-    INI                                           INI                        
-    INIR                                          INIR                       
-    JP(C)                                         JP (C)                     
-    JPHL                                          JP (HL)                    
-    JPIX                                          JP (IXY)                   
-    JPIY                                          JP (IXY)                   
-    JPF          f|   aa   AA,                    JP Z/NZ/NC/C/PO/PE/P/M, aa 
-    JP                aa   AA,                    JP aa                      
-    JRF         f'|    d    D,                    JR C/NC/Z/NZ, d           
-    JR               d    D,                      JR d                      
-    LD(X)A      rr|                               LD (BC/DE), A              
-    LD       (HL)'|         r|                    LD (HL), r                  
-    LDN      (HL)'|    n    N,                    LD (HL), n                 
-    LDN  (IY'+ d )|   n    N,                     LD (IXY+d), n              
-    LD(IY+     d )|         r|                    LD (IXY+d), r               
-    LD()A             aa   AA,                    LD (aa), A                 
-    LD()X       rr|   nn   AA,                    LD (aa), BC/DE/SP          
-    LD()IY            aa   AA,                    LD (aa), IXY               
-    LD()HL            aa   AA,                    LD (aa), HL                
-    LDA(X)      rr|                               LD A, (BC/DE)              
-    LDA()             aa   AA,                    LD A, (aa)                 
-    LDAI                                          LD A, I                    
-    LDAR                                          LD A, R                    
-    LDX         rr|   nn   NN,                    LD BC/DE/HL/SP, nn         
-    LDX()       rr|   nn   AA,                    LD BC/DE/SP/IXY, (nn)      
-    LDHL()            aa   AA,                    LD HL, (aa)                
-    LDIA                                          LD I, A                    
-    LDX         IY|   nn   NN,                    LD IXY, nn                 
-    LDRA                                          LD R, A                    
-    LDSPHL                                        LD SP, HL                  
-    LDSPIY                                        LD SP, IY                 
-    LDSPIX                                        LD SP, IX
-    LD          r'|      (HL)|                    LD r, (HL)                 
-    LD          r'|  (IY+ d )|                    LD r, (IXY+d)              
-    LD          r'|         r|                    LD r, r'                   
-    LDN         r'|    n    N,                    LD r,n                     
-    LDD                                           LDD                        
-    LDDR                                          LDDR                       
-    LDDRX                                         LDDRX                      
-    LDDX                                          LDDX                       
-    LDI                                           LDI                        
-    LDIR                                          LDIR                       
-    LDIRX                                         LDIRX                      
-    LDIX                                          LDIX                       
-    LDPIRX                                        LDPIRX                     
-    LDWS                                          LDWS                       
-    MIRRORA                                       MIRROR A                   
-    MUL                                           MUL                        
-    NEG                                           NEG                        
-    NEXTREGA    reg  P,                           NEXTREG reg, A              
-    NEXTREG     reg  P,  n  N,                    NEXTREG reg, n             
-    NOP                                           NOP                        
-    ORA        (HL)|                              OR (HL)                    
-    ORA    (IY+ d )|                              OR (IXY+d)                 
-    ORN           n    N,                         OR n                       
-    ORA           r|                              OR r                       
-    OTDR                                          OTDR                       
-    OTIR                                          OTIR                       
-    OUT(C)    (HL)'|                              OUT (c),0                  
-    OUT(C)       r'|                              OUT (c),r                  
-    OUTA          n    P,                         OUT (n),A                  
-    OUTD                                          OUTD                       
-    OUTI                                          OUTI                       
-    OUTINB                                        OUTINB                     
-    PIXELAD                                       PIXELAD                    
-    PIXELDN                                       PIXELDN                    
-    POP          AF|                              POP AF                     
-    POP          rr|                              POP BC/DE/HL               
-    POP          IY|                              POP IXY                    
-    PUSH         rr|                              PUSH BC/DE/HL/AF           
-    PUSH         IY|                              PUSH IXY                   
-    PUSHN        nn   NN,                         PUSH nnnn                  
-    RES           b|     (HL)|                    RES b,(HL)                 
-    RES           b| (IY+ d )|                    RES b,(IXY+d)              
-    RES           b|        r|                    RES b,r                    
-    RET                                           RET                        
-    RETF          f|                              RET Z/NZ/C/NC/PO/PE/P/M    
-    RETI                                          RETI                       
-    RETN                                          RETN                       
-    RL         (HL)|                              RL (HL)                    
-    RL     (IY+ d )|                              RL (IXY+d)                 
-    RL            r|                              RL r                       
-    RLA                                           RLA                        
-    RLC        (HL)|                              RLC (HL)                   
-    RLC    (IY+ d )|                              RLC (IXY+d)                
-    RLC           r|                              RLC r                      
-    RLCA                                          RLCA                       
-    RLD                                           RLD                        
-    RR         (HL)|                              RR (HL)                    
-    RR     (IY+ d )|                              RR (IXY+d)                 
-    RR            r|                              RR r                       
-    RRA                                           RRA                        
-    RRC        (HL)|                              RRC (HL)                   
-    RRC    (IY+ d )|                              RRC (IXY+d)                
-    RRC           r|                              RRC r                      
-    RRCA                                          RRCA                       
-    RRD                                           RRD                        
-    RST           a|                              RST n                      
-    SBCA       (HL)|                              SBC A, (HL)                
-    SBCA   (IY+ d )|                              SBC A, (IXY+d)             
-    SBCN          n   N,                          SBC A, n                   
-    SBCA          r|                              SBC A, r                   
-    SBCHL        rr|                              SBC HL, BC/DE/HL/SP        
-    SCF                                           SCF                        
-    SET           b|     (HL)|                    SET b,(HL)                 
-    SET           b| (IY+ d )|                    SET b,(IXY+d)              
-    SET           b|        r|                    SET b,r                    
-    SETAE                                         SETAE                      
-    SLL        (HL)|                              SL1 (HL)                   
-    SLL    (IY+ d )|                              SL1 (IXY+d)                
-    SLL           r|                              SL1 r                      
-    SLA        (HL)|                              SLA (HL)                   
-    SLA    (IY+ d )|                              SLA (IXY+d)                
-    SLA           r|                              SLA r                      
-    SRA        (HL)|                              SRA (HL)                   
-    SRA    (IY+ d )|                              SRA (IXY+d)                
-    SRA           r|                              SRA r                      
-    SRL        (HL)|                              SRL (HL)                   
-    SRL    (IY+ d )|                              SRL (IXY+d)                
-    SRL           r|                              SRL r                      
-    SUBA       (HL)|                              SUB (HL)                   
-    SUBA   (IY+ d )|                              SUB (IXY+d)                
-    SUBN          n   N,                          SUB n                      
-    SUBA          r|                              SUB r                      
-    SWAPNIB                                       SWAPNIB                    
-    TESTN         n   N,                          TEST n                     
-    XORA       (HL)|                              XOR (HL)                   
-    XORA   (IY+ d )|                              XOR (IXY+d)                
-    XORN          n   N,                          XOR n                      
-    XORA          r|                              XOR r                      
+    FORTH ASSEMBLER                         Z80 MNEMONIC               
+    ---------------------------------       ---------------------------------
+    ADCA     (HL)|                          ADC A, (HL)                
+    ADCA (IY+ d )|                          ADC A, (IY+d)             
+    ADCN        n    N,                     ADC A, n                   
+    ADCA        r|                          ADC A, r                   
+    ADCHL      rr|                          ADC HL, BC/DE/HL/SP        
+    ADDA     (HL)|                          ADD A, (HL)                
+    ADDA (IY+ n )|                          ADD A, (IY+d)             
+    ADDN        n    N,                     ADD A, n                   
+    ADDA        r|                          ADD A, r                   
+    ADDHL      rr|                          ADD HL, BC/DE/HL/SP        
+    ADDHL,A                                 ADD HL, A            
+    ADDDE,A                                 ADD DE, A            
+    ADDBC,A                                 ADD BC, A            
+    ADDHL,     nn   NN,                     ADD HL, nn         
+    ADDDE,     nn   NN,                     ADD DE, nn         
+    ADDBC,     nn   NN,                     ADD BC, nn         
+    ADDIY      rr|                          ADD IY, BC/DE/IY/SP      
+    ANDA     (HL)|                          AND (HL)                   
+    ANDA (IY+ n )|                          AND (IY+d)                
+    ANDN        n    N,                     AND n                      
+    ANDA        r|                          AND r                      
+    BIT         b|     (HL)|                BIT b, (HL)                 
+    BIT         b| (IY+ d )|                BIT b, (IY+d)              
+    BIT         b|        r|                BIT b, r                    
+    BRLCDE,B                                BRLC DE, B                  
+    BSLADE,B                                BSLA DE, B                  
+    BSRADE,B                                BSRA DE, B                  
+    BSRFDE,B                                BSRF DE, B                  
+    BSRLDE,B                                BSRL DE, B                  
+    CALLF       f|  aa   AA,                CALL Z/NZ/C/NC/PO/PE/P/M, aa
+    CALL            aa   AA,                CALL aa                    
+    CCF                                     CCF                        
+    CPA      (HL)|                          CP (HL)                    
+    CPA  (IY+ n )|                          CP (IY+d)                 
+    CPN         n    N,                     CP n                       
+    CPA         r|                          CP r                       
+    CPD                                     CPD                        
+    CPDR                                    CPDR                       
+    CPI                                     CPI                        
+    CPIR                                    CPIR                       
+    CPL                                     CPL                        
+    DAA                                     DAA                        
+    DEC     (HL)'|                          DEC (HL)                   
+    DEC (IY'+ d )|                          DEC (IY+d)                
+    DECX       rr|                          DEC BC/DE/HL/SP            
+    DECX       IX|                          DEC IX                   
+    DECX       IY|                          DEC IY                    
+    DEC        r'|                          DEC r                      
+    DI                                      DI                         
+    DJNZ        d    D,                     DJNZ d                     
+    EI                                      EI                         
+    EX(SP)HL                                EX (SP), HL                
+    EX(SP)IY                                EX (SP), IY               
+    EXAFAF                                  EX AF, AF'                 
+    EXDEHL                                  EX DE, HL                  
+    EXX                                     EXX                        
+    HALT                                    HALT                       
+    IM0                                     IM 0
+    IM1                                     IM 1
+    IM2                                     IM 2
+    IN(C)   (HL)'|                          IN (c)                     
+    INA         n    P,                     IN A, (n)                  
+    IN(C)      r'|                          IN r, (c)                  
+    INC     (HL)'|                          INC (HL)                   
+    INC (IY'+ d )|                          INC (IY+d)                
+    INCX       rr|                          INC BC/DE/HL/SP            
+    INCX       IX|                          INC IX                   
+    INCX       IY|                          INC IY                    
+    INC        r'|                          INC r                      
+    IND                                     IND                        
+    INDR                                    INDR                       
+    INI                                     INI                        
+    INIR                                    INIR                       
+    JP(C)                                   JP (C)                     
+    JPHL                                    JP (HL)                    
+    JPIX                                    JP (IX)  
+    JPIY                                    JP (IY)  
+    JPF         f|  aa   AA,                JP Z/NZ/NC/C/PO/PE/P/M, aa 
+    JP              aa   AA,                JP aa                      
+    JRF        f'|   d    D,                JR C/NC/Z/NZ, d           
+    JR               d    D,                JR d                      
+    LD(X)A     rr|                          LD (BC/DE), A              
+    LD      (HL)'|         r|               LD (HL), n                 
+    LDN     (HL)'|    n    N,               LD (HL), r                  
+    LDN (IY'+ d )|    n    N,               LD (IY+d), n              
+    LD(IY+    d )|         r|               LD (IY+d), r               
+    LD()A            aa   AA,               LD (nn), A                 
+    LD()X      rr|   nn   AA,               LD (nn), BC/DE/SP          
+    LD()IY           aa   AA,               LD (nn), IY               
+    LD()HL           aa   AA,               LD (nn), HL                
+    LDA(X)     rr|                          LD A, (BC/DE)              
+    LDA()            aa   AA,               LD A, (aa)                 
+    LDAI                                    LD A, I                    
+    LDAR                                    LD A, R                    
+    LDX        rr|   nn   NN,               LD BC/DE/HL/SP, nn         
+    LDX()      rr|   nn   AA,               LD BC/DE/SP/IY, (aa)      
+    LDHL()           aa   AA,               LD HL, (aa)                
+    LDIA                                    LD I, A                    
+    LDX        IY|   nn   NN,               LD IY, nn                 
+    LDRA                                    LD R, A                    
+    LDSPHL                                  LD SP, HL                  
+    LDSPIX                                  LD SP, IX                 
+    LDSPIY                                  LD SP, IY                 
+    LD         r'|      (HL)|               LD r, (HL)                 
+    LD         r'|  (IY+ d )|               LD r, (IY+d)              
+    LD         r'|         r|               LD r, r'                   
+    LDN        r'|    n    N,               LD r, n                     
+    LDD                                     LDD                        
+    LDDR                                    LDDR                       
+    LDDRX                                   LDDRX                      
+    LDDX                                    LDDX                       
+    LDI                                     LDI                        
+    LDIR                                    LDIR                       
+    LDIRX                                   LDIRX                      
+    LDIX                                    LDIX                       
+    LDPIRX                                  LDPIRX                     
+    LDWS                                    LDWS                       
+    MIRRORA                                 MIRROR A                   
+    MUL                                     MUL                        
+    NEG                                     NEG                        
+    NEXTREGA   r  P,                        NEXTREG r, A              
+    NEXTREG    r  P,  n  N,                 NEXTREG r, n             
+    NOP                                     NOP                        
+    ORA       (HL)|                         OR (HL)                    
+    ORA   (IY+ d )|                         OR (IY+d)                 
+    ORN          n    N,                    OR n                       
+    ORA          r|                         OR r                       
+    OTDR                                    OTDR                       
+    OTIR                                    OTIR                       
+    OUT(C)   (HL)'|                         OUT (c), 0                  
+    OUT(C)      r'|                         OUT (c), r                  
+    OUTA         n    P,                    OUT (n), A                  
+    OUTD                                    OUTD                       
+    OUTI                                    OUTI                       
+    OUTINB                                  OUTINB                     
+    PIXELAD                                 PIXELAD                    
+    PIXELDN                                 PIXELDN                    
 
-Not implemented (yet):
 
-\   RES           b|        r|  (IX+ d )|         RES r,b,(IX+d)             
-\   RL            r| (IY+ d )|                    RL r,(IX+d)                
-\   RLC           r| (IY+ d )|                    RLC r,(IX+d)               
-\   RR            r| (IY+ d )|                    RR r,(IX+d)                
-\   RRC           r| (IY+ d )|                    RRC r,(IX+d)               
-\   SET           b|        r|  (IX+ d )|         SET r,b,(IX+d)             
-\   SLL           r| (IY+ d )|                    SL1 r,(IXY+d)              
-\   SLA           r| (IY+ d )|                    SLA r,(IX+d)               
-\   SRA           r| (IY+ d )|                    SRA r,(IX+d)               
-\   SRL           r| (IY+ d )|                    SRL r,(IXY+d)              
+    POP         AF|                         POP AF                     
+    POP         rr|                         POP BC/DE/HL               
+    POP         IX|                          POP IX                    
+    POP         IY|                         POP IY                    
+    PUSH        rr|                         PUSH BC/DE/HL/AF           
+    PUSH        IX|                         PUSH IX                   
+    PUSH        IY|                         PUSH IY                   
+    PUSHN       nn   LH,                    PUSH nn                  
+    RES          b|     (HL)|               RES b, (HL)                 
+    RES          b| (IY+ d )|               RES b, (IY+d)              
+    RES          b|        r|               RES b, r                    
+    RES          b|        r|  (IY+ d )|    RES r, b, (IY+d)             
+    RET                                     RET                        
+    RETF         f|                         RET Z/NZ/C/NC/PO/PE/P/M    
+    RETI                                    RETI                       
+    RETN                                    RETN                       
+    RL        (HL)|                         RL (HL)                    
+    RL    (IY+ d )|                         RL (IY+d)                 
+    RL           r|                         RL r                       
+    RL           r| (IY+ d )|               RL r, (IY+d)                
+    RLA                                     RLA                        
+    RLC       (HL)|                         RLC (HL)                   
+    RLC   (IY+ d )|                         RLC (IY+d)                
+    RLC          r|                         RLC r                      
+    RLC          r| (IY+ d )|               RLC r, (IY+d)               
+    RLCA                                    RLCA                       
+    RLD                                     RLD                        
+    RR        (HL)|                         RR (HL)                    
+    RR    (IY+ d )|                         RR (IY+d)                 
+    RR           r|                         RR r                       
+    RR           r| (IY+ d )|               RR r, (IY+d)                
+    RRA                                     RRA                        
+    RRC       (HL)|                         RRC (HL)                   
+    RRC   (IY+ d )|                         RRC (IY+d)                
+    RRC          r|                         RRC r                      
+    RRC          r| (IY+ d )|               RRC r,(IY+d)               
+    RRCA                                    RRCA                       
+    RRD                                     RRD                        
+    RST          a|                         RST n                      
+    SBCA      (HL)|                         SBC A, (HL)                
+    SBCA  (IY+ d )|                         SBC A, (IY+d)             
+    SBCN         n   N,                     SBC A, n                   
+    SBCA         r|                         SBC A, r                   
+    SBCHL       rr|                         SBC HL, BC/DE/HL/SP        
+    SCF                                     SCF                        
+    SET          b|     (HL)|               SET b, (HL)                 
+    SET          b| (IY+ d )|               SET b, (IY+d)              
+    SET          b|        r|               SET b, r                    
+    SET          b|        r|  (IY+ d )|    SET r, b, (IX+d)             
+    SETAE                                   SETAE                      
+    SLL       (HL)|                         SL1 (HL)                   
+    SLL   (IY+ d )|                         SL1 (IY+d)                
+    SLL          r|                         SL1 r                      
+    SLL          r| (IY+ d )|               SL1 r, (IY+d)              
+    SLA       (HL)|                         SLA (HL)                   
+    SLA   (IY+ d )|                         SLA (IY+d)                
+    SLA          r|                         SLA r                      
+    SLA          r| (IY+ d )|               SLA r, (IY+d)               
+    SRA       (HL)|                         SRA (HL)                   
+    SRA   (IY+ d )|                         SRA (IY+d)                
+    SRA          r|                         SRA r                      
+    SRA          r| (IY+ d )|               SRA r, (IY+d)               
+    SRL       (HL)|                         SRL (HL)                   
+    SRL   (IY+ d )|                         SRL (IY+d)                
+    SRL          r|                         SRL r                      
+    SRL          r| (IY+ d )|               SRL r, (IY+d)              
+    SUBA      (HL)|                         SUB (HL)                   
+    SUBA  (IY+ d )|                         SUB (IY+d)                
+    SUBN         n   N,                     SUB n                      
+    SUBA         r|                         SUB r                      
+    SWAPNIB                                 SWAPNIB                    
+    TESTN        n   N,                     TEST n                     
+    XORA      (HL)|                         XOR (HL)                   
+    XORA  (IY+ d )|                         XOR (IY+d)                
+    XORN         n   N,                     XOR n                      
+    XORA         r|                         XOR r                      
