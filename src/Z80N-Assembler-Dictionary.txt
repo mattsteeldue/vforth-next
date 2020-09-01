@@ -1,4 +1,5 @@
-# Z80 instruction table
+Z80 instruction table
+_____________________
 
 In this table:
 
@@ -14,21 +15,12 @@ In this table:
     nn       :   word value (16 bits)
     aa       :   address
      r       :   Next-register number
-<<<<<<< HEAD
-
-
->>>>>>> f8dae164ac5646b8fc81e351b5710cdafae7a895
 
 You can use   (IY+   operand wherever you can use   (IX+   operand.
 
 
-<<<<<<< HEAD
     FORTH ASSEMBLER                         Z80 MNEMONIC               
     ---------------------------------       ---------------------------------
-=======
-***         
-    FORTH ASSEMBLER                         Z80 MNEMONIC
-***         
     ADCA     (HL)|                          ADC A, (HL)                
     ADCA (IY+ d )|                          ADC A, (IY+d)             
     ADCN        n    N,                     ADC A, n                   
@@ -166,8 +158,6 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     OUTINB                                  OUTINB                     
     PIXELAD                                 PIXELAD                    
     PIXELDN                                 PIXELDN                    
-
-
     POP         AF|                         POP AF                     
     POP         rr|                         POP BC/DE/HL               
     POP         IX|                          POP IX                    
@@ -244,6 +234,3 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     XORA  (IY+ d )|                         XOR (IY+d)                
     XORN         n   N,                     XOR n                      
     XORA         r|                         XOR r                      
-<<<<<<< HEAD
-***
->>>>>>> f8dae164ac5646b8fc81e351b5710cdafae7a895
