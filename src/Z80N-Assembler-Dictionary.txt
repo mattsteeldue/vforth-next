@@ -30,7 +30,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     ADCHL      rr|                          ADC HL, BC/DE/HL/SP        
     ADDA     (HL)|                          ADD A, (HL)                
     ADDA (IY+ n )|                          ADD A, (IY+d)             
-    ADDA        n    N,                     ADD A, n                   
+    ADDN        n    N,                     ADD A, n                   
     ADDA        r|                          ADD A, r                   
     ADDHL      rr|                          ADD HL, BC/DE/HL/SP        
     ADDHL,A                                 ADD HL, A            
@@ -42,7 +42,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     ADDIY      rr|                          ADD IY, BC/DE/IY/SP      
     ANDA     (HL)|                          AND (HL)                   
     ANDA (IY+ n )|                          AND (IY+d)                
-    ANDA        n    N,                     AND n                      
+    ANDN        n    N,                     AND n                      
     ANDA        r|                          AND r                      
     BIT         b|     (HL)|                BIT b, (HL)                 
     BIT         b| (IY+ d )|                BIT b, (IY+d)              
@@ -57,7 +57,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     CCF                                     CCF                        
     CPA      (HL)|                          CP (HL)                    
     CPA  (IY+ n )|                          CP (IY+d)                 
-    CPA         n    N,                     CP n                       
+    CPN         n    N,                     CP n                       
     CPA         r|                          CP r                       
     CPD                                     CPD                        
     CPDR                                    CPDR                       
@@ -66,10 +66,10 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     CPL                                     CPL                        
     DAA                                     DAA                        
     DEC     (HL)'|                          DEC (HL)                   
-    DEC  (IY+ d )|                          DEC (IY+d)                
+    DEC (IY'+ d )|                          DEC (IY+d)                
     DECX       rr|                          DEC BC/DE/HL/SP            
-    DECIX                                   DEC IX                   
-    DECIY                                   DEC IY                    
+    DECX       IX|                          DEC IX                   
+    DECX       IY|                          DEC IY                    
     DEC        r'|                          DEC r                      
     DI                                      DI                         
     DJNZ        d    D,                     DJNZ d                     
@@ -83,14 +83,14 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     IM0                                     IM 0
     IM1                                     IM 1
     IM2                                     IM 2
-    IN(C)                                   IN (c)                     
+    IN(C)   (HL)'|                          IN (c)                     
     INA         n    P,                     IN A, (n)                  
     IN(C)      r'|                          IN r, (c)                  
     INC     (HL)'|                          INC (HL)                   
-    INC  (IY+ d )|                          INC (IY+d)                
+    INC (IY'+ d )|                          INC (IY+d)                
     INCX       rr|                          INC BC/DE/HL/SP            
-    INCIX                                   INC IX                    
-    INCIY                                   INC IY                    
+    INCX       IX|                          INC IX                   
+    INCX       IY|                          INC IY                    
     INC        r'|                          INC r                      
     IND                                     IND                        
     INDR                                    INDR                       
@@ -102,12 +102,12 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     JPIY                                    JP (IY)  
     JPF         f|  aa   AA,                JP Z/NZ/NC/C/PO/PE/P/M, aa 
     JP              aa   AA,                JP aa                      
-    JRF        f'|    d    D,               JR C/NC/Z/NZ, d           
-    JR                d    D,               JR d                      
+    JRF        f'|   d    D,                JR C/NC/Z/NZ, d           
+    JR               d    D,                JR d                      
     LD(X)A     rr|                          LD (BC/DE), A              
     LD      (HL)'|         r|               LD (HL), n                 
     LDN     (HL)'|    n    N,               LD (HL), r                  
-    LDN (IY+  d )|    n    N,               LD (IY+d), n              
+    LDN (IY'+ d )|    n    N,               LD (IY+d), n              
     LD(IY+    d )|         r|               LD (IY+d), r               
     LD()A            aa   AA,               LD (nn), A                 
     LD()X      rr|   nn   AA,               LD (nn), BC/DE/SP          
@@ -129,7 +129,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     LD         r'|      (HL)|               LD r, (HL)                 
     LD         r'|  (IY+ d )|               LD r, (IY+d)              
     LD         r'|         r|               LD r, r'                   
-    LD         r'|    n    N,               LD r, n                     
+    LDN        r'|    n    N,               LD r, n                     
     LDD                                     LDD                        
     LDDR                                    LDDR                       
     LDDRX                                   LDDRX                      
@@ -160,14 +160,16 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     OUTINB                                  OUTINB                     
     PIXELAD                                 PIXELAD                    
     PIXELDN                                 PIXELDN                    
+
+
     POP         AF|                         POP AF                     
     POP         rr|                         POP BC/DE/HL               
-    POPIX                                   POP IX                    
-    POPIY                                   POP IY                    
+    POP         IX|                          POP IX                    
+    POP         IY|                         POP IY                    
     PUSH        rr|                         PUSH BC/DE/HL/AF           
-    PUSHIX                                  PUSH IX                   
-    PUSHIY                                  PUSH IY                   
-    PUSHN       nn   NN,                    PUSH nn                  
+    PUSH        IX|                         PUSH IX                   
+    PUSH        IY|                         PUSH IY                   
+    PUSHN       nn   LH,                    PUSH nn                  
     RES          b|     (HL)|               RES b, (HL)                 
     RES          b| (IY+ d )|               RES b, (IY+d)              
     RES          b|        r|               RES b, r                    
