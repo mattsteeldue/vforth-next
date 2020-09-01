@@ -7,11 +7,11 @@ The purpose was to make Screens / BLOCKs system available using ZxNextOS APIs.
 Having done it in the past for ZX Microdrive and MGT Disciple floppy diskette  I really thought it was worth give a try on ZxNextOs.
 I'm putting here the version that are stable enough to be published.
 
-Screens are stored in a file inside the SD card called "!Blocks.txt" 8 MBytes long and it can hold 16.383 Screens (while MGT version can hold 1.560 and Microdrive 254 only). Content of STRM variable determines which opened stream is in use: ZXNEXTOS needs a value 2 to indicate the first OPEN# channel.  
+Screens are stored in a file inside the SD card called "!Blocks.txt" 16 MBytes long and it can hold 16.383 1KByte-Screens (while MGT version and Microdrive - 512 Byte Screens - can hold 1.560 and 254 respectively). Content of STRM variable determines which opened stream is in use: ZXNEXTOS needs a value 2 to indicate the first OPEN# channel.  
 
-In this latest implementation a Screen is two BLOCKs that is 1024 bytes.
+In the latest implementation a Screen is two BLOCKs that is 1024 bytes.
 
 I implemented an ASSEMBLER vocabulary with notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
 This ASSEMBLER provides Z80N extension op-codes.
 
-The Wiki as a whole in this repository is getting some shape, I suggesto to pay a visit.
+The Wiki byedddin this repository is getting some shape, I suggesto to pay a visit.
