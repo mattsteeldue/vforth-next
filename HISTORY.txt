@@ -87,3 +87,7 @@ Introduction of LAYER 1,2 graphic resolution, this now allows screen size 1024 b
 KEY cursor must be displayed via software-loop instead of "flash" attribute (which is no more using LAYER 1,2)
 Continuing studying POINTER address for heap memory via MMU7 and experimenting with ASSEMBLER vocabulary on MMU7 page.
 
+
+\ build 20200907
+Faster LOAD of external text source file by disabling echoing to video.
+Improvement in DOSCALL to allow A register to be passed along.
