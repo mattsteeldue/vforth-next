@@ -3,7 +3,7 @@ Version number is given between "underscore", Build number is the last number an
 
 HOW TO START
 ------------
-1. Download the latest .zip file from Project Download directory
+1. Download the latest .zip file from Project Download directory <https://github.com/mattsteeldue/vforth-next/tree/master/download>
 2. Copy from .zip file to Next's SD card the whole "forth" directory
 3. Forth System is loaded and activated by the Basic program C:/forth/forth15_loader.bas
 
