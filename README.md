@@ -14,4 +14,7 @@ In the latest implementation a Screen is two BLOCKs that is 1024 bytes (at last)
 I implemented an ASSEMBLER vocabulary with notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
 This ASSEMBLER provides Z80N extension op-codes.
 
+Larger 2048K RAM is made available through MMU7 on which any 8K-page can be fitted.
+For String storage purpose, an HEAP facility grants access to 64K of space via FAR and POINTER definitions.
+
 The Wiki in this repository is getting some shape, I suggesto to pay a visit.
