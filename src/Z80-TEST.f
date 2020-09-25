@@ -88,8 +88,8 @@ CODE Z80-TESTER
     INC     (HL)'|
     INC (IY'+ d )|
     INCX       rr|
-    INCX       IX|
     INCX       IY|
+    INCX       IX|
     INC        r'|
     IND
     INDR
@@ -159,6 +159,8 @@ CODE Z80-TESTER
     OUTINB
     PIXELAD
     PIXELDN
+    
+    
     POP         AF|
     POP         rr|
     POP         IX|
@@ -235,6 +237,7 @@ CODE Z80-TESTER
     XORA  (IY+ d )|
     XORN         n   N,
     XORA         r|
+
 C;  
 
 QUIT

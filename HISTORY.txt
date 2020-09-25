@@ -91,3 +91,17 @@ Continuing studying POINTER address for heap memory via MMU7 and experimenting w
 \ build 20200907
 Faster LOAD of external text source file by disabling echoing to video.
 Improvement in DOSCALL to allow A register to be passed along.
+
+
+\ build 20200912
+IX register now holds NEXT address: this makes inner-interpreter 2 T-states faster than before...
+Many LIbrary Screens had to be checked to be IX-compliant
+Introducing RECURSE in core dictionary.
+
+
+\ build 20200923
+Optimization of some definitions that used IX as temporary register.
+To interact with Next's hardware there are new definitions: REG@ and REG! 
+To better interact with higher RAM there are new definitions: MMU7@ and MMU7!
+Implemented a heap-based string S" storage system using FAR on MMU7.
+Stable version of POINTER.

@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-.( vForth 1.5 NextZXOS version )
-.( build 20200907 )
+.( v-Forth 1.5 NextZXOS version )
+.( build 20200923 )
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -44,7 +44,7 @@
 \ HL'- Not used: available in fast Interrupt via EXX (saved at startup)
 \
 \ SP - Calculation stack pointer
-\ IX - Sometime used for backup purpose
+\ IX - Inner interpreter next-address
 \ IY - (ZX System)
 
 \ ______________________________________________________________________
@@ -145,9 +145,13 @@ DECIMAL
 .( Psh2 Psh1 Next )
 
 \ compile CODE words for Jump to the Psh2, Psh1 or Next addresses.
-: Psh2     ASSEMBLER  JP next^  2 -   AA, ;
-: Psh1     ASSEMBLER  JP next^  1 -   AA, ;
-: Next     ASSEMBLER  JP next^        AA, ;
+\ : Psh2     ASSEMBLER  JP next^  2 -   AA, ;
+\ : Psh1     ASSEMBLER  JP next^  1 -   AA, ;
+\ : Next     ASSEMBLER  JP next^        AA, ;
+
+: Psh2     ASSEMBLER  PUSH DE|   PUSH HL|   JPIX ;
+: Psh1     ASSEMBLER             PUSH HL|   JPIX ;
+: Next     ASSEMBLER                        JPIX ;
 
 \ macro of "RP" virtual register emulation
 : LDHL,RP  ASSEMBLER  LDHL() rp^      AA, ;
@@ -778,25 +782,25 @@ CODE (find) ( addr voc -- addr 0 | cfa b 1  )
 \                   XORA  (HL)|
 
 \ case insensitive option  
-                    PUSH    IX|
-                    ANDN    HEX 80 N,
-                    LDIXH    A|         \ ld ixh,a
+                    PUSH    BC|
+                    ANDN    HEX 80 N,   \ split A in msb and the rest.
+                    LD      B'|      A| \ store msb in B and the rest in C
                     LDA(X)  DE|
                     ANDN    HEX 7F N,
                     CALL    upper^ AA,  \ uppercase routine
-                    LDIXL    A|         \ ld ixl,a
+                    LD      C'|      A|  
                     LD      A'|   (HL)|
                     CALL    upper^ AA,  \ uppercase routine
-                    XORA   IXL|         \ xor ixl
-                    XORA   IXH|         \ xor ixh
-                    POP     IX|
+                    XORA     C|         
+                    XORA     B|         
+                    POP     BC|
 \ case option - end
 
-                    ADDA     A|
+                    ADDA     A|         \ ignore msb in compare
                     JRF    NZ'| HOLDPLACE SWAP \ didn't match, jump (*)
 
                 JRF    NC'| HOLDPLACE SWAP DISP, 
-                \ loop until last byte msb is set 
+                \ loop until last byte msb is found set 
                 \ that bit marks the ending char of this word
 
                 \ match found!
@@ -874,14 +878,14 @@ HEX
 
         PUSH    DE|
 
-        PUSH    IX|             \ save IX
-        
-        LDIXL    A|             \ save  a ( char )
+        PUSH    BC|                \ save BC
 
-        LD      A'| (HL)|
+        LD      C'|      A|        \ save  a ( char )
+
+        LD      A'|   (HL)|
         ANDA     A|             ( stops if null )
         JRF    NZ'| HOLDPLACE ( iii. no more character in string )
-            POP     IX|         \ retrieve IX
+            POP     BC|         \ retrieve BC
             INCX    DE|
             PUSH    DE|
             DECX    DE|
@@ -889,13 +893,13 @@ HEX
             Next
         HERE DISP, \ THEN,
         HERE  \ BEGIN, 
-            LD      A'|    IXL|     \ ld a,ixl
+            LD      A'|      C|     
             INCX    HL|
             INCX    DE|
             CPA   (HL)|
 
             JRF    NZ'| HOLDPLACE  ( separator )
-                POP     IX|         \ retrieve IX
+                POP     BC|         \ retrieve BC
                 PUSH    DE|         ( i. first non enclosed )
                 INCX    DE|
                 PUSH    DE|
@@ -905,7 +909,7 @@ HEX
             ANDA     A|
         JRF    NZ'| HOLDPLACE SWAP DISP,
                                    ( ii. separator & terminator )
-        POP     IX|         \ retrieve IX
+        POP     BC|         \ retrieve BC
         PUSH    DE|
         PUSH    DE|
         Next
@@ -936,12 +940,12 @@ CODE (compare) ( a1 a2 n -- b )
                 JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
                       LDX  HL| -1 NN,
                 HERE DISP, \ THEN,
-                POP BC| 
+                POP     BC| 
                 Psh1
             HERE DISP, \ THEN,
         DJNZ BACK,
         LDX HL| 0 NN,
-        POP BC| 
+        POP     BC| 
         Psh1 
         C; 
 
@@ -1118,7 +1122,7 @@ CODE key ( -- c )
             CALL    HEX 1601 AA,
 
             \ software flash every 640 ms
-            LDN     A'| HEX 2C N,             \ Asimmetric timing 
+            LDN     A'| HEX 54 N,             \ Asimmetric timing 
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
             LDN     A'| HEX 8F N,             \ block character
@@ -1169,10 +1173,6 @@ CODE key ( -- c )
         
         LD      L'|    A|
         LDN     H'|    0 N,
-
-\       POP     BC|
-\       Psh1
-\       C;
 
         LDA()  HEX 5C48 AA,    \ BORDCR system variable
         RRA
@@ -2415,11 +2415,7 @@ DECIMAL
   64     user    place     \ number of digits after decimal point in output
   66     user    dl        \ data-stream number in LOAD
   68     user    span      \ number of character of last EXPECT
-\ 70     user    drive     \ microdrive number used by mdr
-\ 72     user    map       \ microdrive map used by mdr
-\ 74     user    channel   \ microdrive channel used by mdr
-\ 76     user    stream    \ microdrive stream used by mdr
-\ 78     user    device    \ current device (stream used) video / printer
+  70     user    hp        \ heap-pointer
   
   
 \ 1+  has moved backward
@@ -2829,6 +2825,13 @@ CODE ?dup ( n -- 0 | n n )
     0 
     constant
     ;
+
+
+.( RECURSE )
+: recurse
+    latest pfa cfa ,
+    ; 
+    immediate
 
 
 \ 6BDFh
@@ -3756,6 +3759,8 @@ immediate
     [ decimal      8 ] Literal     \ caps-lock on
     [ hex       5C6A ] Literal c!  \ FLAGS2
     
+    0 hp !
+
     \ [ here TO xi/o^ ]      
     
     \ XI/O                   \ ___ forward ___
@@ -3805,7 +3810,7 @@ here warm^ ! \ patch
 .( BASIC )
 \ immediately quits to Spectrum BASIC 
 \ see BYE 
-CODE basic ( -- )
+CODE basic ( n -- )
         POP     BC|
 
 \       LDN     A'|    2 N,
@@ -3817,7 +3822,7 @@ CODE basic ( -- )
         LD()X   HL|    hex  08 +origin AA, \ ...saving Forth SP.
 
         EXX
-        POP     HL|    \ retrieve HL'
+        POP     HL|    \ retrieve Basic HL'
         EXX
 
         RET
@@ -4039,7 +4044,7 @@ CODE basic ( -- )
 
 
 \ 7703h
-.( DRV )
+\ DRV
 \      0 variable drv
 
 
@@ -4049,7 +4054,7 @@ CODE basic ( -- )
 \ i.e. a 32 bytes area = 256 bits each representing one sector
 \ If a bit is set the corrisponding sector is "used". 
 \ hex 5CF0 variable map
-
+    
 
 \ 7734h >>>
 .( INKEY )
@@ -4094,8 +4099,168 @@ CODE select ( n -- )
 
 \ ______________________________________________________________________ 
 \
-\ ZX-Next-OS option.
+\ NextZXOS option.
 
+hex 253B constant reg-data
+hex 243B constant reg-select
+
+
+.( REG@ )
+\ reads Next REGister n giving byte b
+CODE reg@ ( n -- b )
+        LD      D'|    B|
+        LD      E'|    C|
+        LDX     BC|    reg-select  NN,
+        POP     HL|
+        OUT(C)  L'|
+        INC     B'|
+        LDN     H'|  0 N,
+        IN(C)   L'|
+        LD      B'|    D|
+        LD      C'|    E|
+        Psh1
+        C;
+
+
+.( REG! )
+\ write value b to Next REGister n 
+CODE reg! ( b n -- )
+        LD      D'|    B|
+        LD      E'|    C|
+        LDX     BC|    reg-select  NN,
+        POP     HL|
+        OUT(C)  L'|
+        INC     B'|
+        POP     HL|
+        OUT(C)  L'|
+        LD      B'|    D|
+        LD      C'|    E|
+        Next 
+        C;
+
+
+.( MMU7@ )
+\ set MMU7 8K-RAM page to n given between 0 and 223
+: mmu7@ ( n -- )
+    [ decimal 87 ] literal reg@
+;
+    
+
+.( MMU7! )
+\ set MMU7 8K-RAM page to n given between 0 and 223
+CODE mmu7! ( n -- )
+        POP     HL|
+        LD      A'|      L|
+        NEXTREGA DECIMAL 87 P,   \ nextreg 87,a
+        Next 
+        C;
+
+
+.( >FAR )
+\ decode bits 765 of H as 8K-page 64-71 (40h-47h)
+\ take lower bits of H and L as an offset from E000h
+\ return address  a  between E000h-FFFFh 
+\ and page number n  between 64-71 (40h-47h)
+CODE >far ( ha -- a n )
+        POP     HL|
+        LD      A'|      H|
+        ANDN   HEX E0 N,
+        RLCA
+        RLCA
+        RLCA
+        ORN    HEX 40 N,
+        LD      E'|      A|
+        LDN     D'|    HEX 00 N,
+        LD      A'|      H|
+        ORN    HEX E0 N,
+        LD      H'|      A|
+        EXDEHL
+        Psh2
+        C;
+        
+
+.( <FAR )
+\ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
+\ reverse of >FAR: encodes a FAR address compressing
+\ to bits 765 of H, lower bits of HL address offset at E000h
+CODE <far ( a n -- ha )
+        POP     DE|         \ page number in E
+        POP     HL|         \ address in HL
+        LD      A'|      E|
+        ANDN   HEX   07  N, \ reduced to 0-7
+        RRCA
+        RRCA
+        RRCA
+        LD      D'|      A| \ bits 765 are saved on D 
+        LD      A'|      H| \ drops
+        ANDN   HEX   1F  N,
+        ORA      D|
+        LD      H'|      A|
+        Psh1
+        C;        
+        
+
+.( FAR )
+\ convert an heap-pointer into an offset (at E000h)
+\ and perform the correct 8K paging on MMU7
+: far ( ha -- a ) 
+    >far     \ offset-address, page number
+    mmu7!
+;
+
+
+.( H" )
+\ Accept a string and store it to Heap, 
+\ return an heap-address pointer to a counted string 
+: h" ( -- ha )
+    hp @
+    [char] " word
+    dup c@ 1+ >r
+    hp @ far
+    r cmove
+    r> hp +!
+;
+
+
+\ Append a string to the last string 
+\ return an heap-address pointer to a counted string 
+: +" ( ha1 -- ha2 )
+    dup far c@
+    [char] " word
+    dup c@ >r 1+
+    hp @ far r cmove
+    r hp +!
+    r> +
+    over far c!
+;
+
+
+.( S" )
+\ Counted Strings in Heap
+\ Accept a string and store it to Heap
+\ and at compile time compiles (s") and the heap-pointer
+\ during normal itepreting and 
+\ at runtime returns an heap-address pointer to a counted string 
+: (s") r @ far count ;
+: s"  ( -- a n )
+  state @ 
+  If
+   compile (s") h" ,
+  Else
+   h" far count
+  Endif
+; immediate
+
+
+
+.( POINTER )
+\ like CONSTANT but it returns a "FAR-resolved" pointer
+\ A possible use is:  S" ccc" POINTER P1
+: pointer ( -- )
+    <builds , does> @ far 
+;
+
+ 
 .( DOSCALL )
 \ NextZXOS call wrapper.
 \  n1 = hl register parameter value
@@ -4153,6 +4318,7 @@ HERE    LD()HL 0 AA,        \ patch to next CALL instruction
         LDA()   HEX 028 org^ + AA,
         PUSH    IX|
 HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
+        LD()IX  HEX 026 org^ + AA, 
         POP     IX|
         LD()A   HEX 028 org^ + AA,
         PUSH    AF|              \ saves carry flag for later
@@ -4203,7 +4369,7 @@ HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
 
 \ ______________________________________________________________________ 
 
-\ ZX NEXT OS option
+\ NextZXOS option
 
 .( NXTDRV )
 \ NextZXOS set drive on b
@@ -4428,6 +4594,23 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
 
 
+.( MARKER )
+: marker ( -- ccc )
+    <builds
+        voc-link        @ ,
+        current         @ ,
+        context         @ ,
+        latest            , \ dp
+        latest pfa lfa  @ ,
+    does>
+        dup @ voc-link  ! cell+ 
+        dup @ current   ! cell+
+        dup @ context   ! cell+
+        dup @ dp        ! cell+
+            @ current @ !
+; immediate
+
+
 
 \ 7c8fh
 .( SPACES )
@@ -4625,7 +4808,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : x
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20200907)  cr
+    .( build 20200923)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4660,7 +4843,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
 
 
-.( accept- )
+.( ACCEPT- )
 \ accepts at most n1 characters from current channel/stream
 \ and stores them at address a.
 \ returns n2 as the number of read characters.
@@ -5063,6 +5246,7 @@ RENAME   #>             #>
 RENAME   <#             <#
 RENAME   spaces         SPACES
 RENAME   forget         FORGET
+RENAME   marker         MARKER
 RENAME   '              '
 RENAME   -->            -->
 RENAME   load-          LOAD-
@@ -5082,6 +5266,20 @@ RENAME   nxtstp         NXTSTP
 RENAME   nxtdrv         NXTDRV
 \
 RENAME   doscall        DOSCALL
+RENAME   pointer        POINTER
+RENAME   s"             S"
+RENAME   (s")           (S")
+RENAME   +"             +"
+RENAME   h"             H"
+RENAME   far            FAR
+RENAME   <far           <FAR
+RENAME   >far           >FAR
+RENAME   mmu7@          MMU7@
+RENAME   mmu7!          MMU7!
+RENAME   reg!           REG!
+RENAME   reg@           REG@
+RENAME   reg-select     REG-SELECT
+RENAME   reg-data       REG-DATA
 \
 \ RENAME   mdrwr          MDRWR
 \ RENAME   mdrrd          MDRRD
@@ -5168,6 +5366,7 @@ RENAME   -trailing      -TRAILING
 RENAME   type           TYPE  
 RENAME   count          COUNT 
 RENAME   does>          DOES> 
+RENAME   recurse        RECURSE
 RENAME   <builds        <BUILDS
 RENAME   ;code          ;CODE  
 RENAME   (;code)        (;CODE)
@@ -5208,6 +5407,7 @@ RENAME   c,             C,
 RENAME   ,              ,    
 RENAME   allot          ALLOT
 RENAME   here            HERE 
+RENAME   hp             HP 
 RENAME   span           SPAN 
 RENAME   dl             DL   
 RENAME   place          PLACE
