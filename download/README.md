@@ -9,7 +9,7 @@ HOW TO START
 
 HOW TO CONTINUE
 ---------------
-1. The loader CLEARs RAMTOP to 25343, says it is loading the CODE part, then allows 5 seconds to be stopped (you you need to).
+1. The loader CLEARs RAMTOP to 25343, says it is loading the CODE part, then allows 5 seconds to be stopped (if you need to).
 2. Then it loads another Basic program that runs LINE 20 to perform a COLD start, but RUN performs a WARM start
 3. Before entering Forth, it OPEN# some text file to be used from within Forth environment.
 4. To quit to Basic, you can give BYE
