@@ -95,7 +95,7 @@ Improvement in DOSCALL to allow A register to be passed along.
 
 \ build 20200912
 IX register now holds NEXT address: this makes inner-interpreter 2 T-states faster than before...
-Many LIbrary Screens had to be checked to be IX-compliant
+Many Library Screens had to be checked to be IX-compliant
 Introducing RECURSE in core dictionary.
 
 
@@ -105,3 +105,10 @@ To interact with Next's hardware there are new definitions: REG@ and REG!
 To better interact with higher RAM there are new definitions: MMU7@ and MMU7!
 Implemented a heap-based string S" storage system using FAR on MMU7.
 Stable version of POINTER.
+
+
+\ build 20200928
+Test "Heap Memory Management" to store counted-string, i.e. strings 255 bytes in length. 
+In Screens #80-85 there is some definitions: FAR HP@ POINTER HEAP H" S"
+I put in this this release CHOMP2.F source, a simple pacman style game written in Forth that explores how to use Heap Memory to store data.
+This is the first step into Next's Hardware: hopefully next will be sprites.

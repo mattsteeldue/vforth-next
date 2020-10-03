@@ -43,8 +43,8 @@
   35       DEC  (HL)                 
   fd35fb   DEC  (IY-05)              
   1b       DEC  DE                   
-  dd2b     DEC  IX                   
   fd2b     DEC  IY                   
+  dd2b     DEC  IX                   
   1d       DEC  E                    
   f3       DI                        
   10fb     DJNZ $-5                 
@@ -64,8 +64,8 @@
   34       INC  (HL)                 
   fd34fb   INC  (IY-05)              
   13       INC  DE                   
-  dd23     INC  IX                   
   fd23     INC  IY                   
+  dd2b     DEC  IX                   
   1c       INC  E                    
   edaa     IND                       
   edba     INDR                      
@@ -73,8 +73,8 @@
   edb2     INIR                      
   ed98     JP   (C)
   e9       JP   HL                   
-  dde9     JP   IX                   
   fde9     JP   IY                   
+  dde9     JP   IX                   
   ea0800   JP   PE,0008,error_1      
   c30800   JP   0008,error_1         
   28fb     JR   Z, $-5               
@@ -99,8 +99,8 @@
   fd210700 LD   IY,0007              
   ed4f     LD   R,A                  
   f9       LD   SP,HL                
-  ddf9     LD   SP,IX                
   fdf9     LD   SP,IY                
+  ddf9     LD   SP,IX                
   5e       LD   E,(HL)               
   fd5efb   LD   E,(IY-05)            
   5b       LD   E,E                  
@@ -137,11 +137,11 @@
   ed93     PIXELDN                       
   f1       POP  AF                   
   d1       POP  DE                   
-  dde1     POP  IX                   
   fde1     POP  IY                   
+  dde1     POP  IX                   
   d5       PUSH DE                   
-  dde5     PUSH IX                   
   fde5     PUSH IY                   
+  dde5     PUSH IX                   
   ed8a0007 PUSH nn   ; LH!
   cbbe     RES  7,(HL)               
   fdcbfbbe RES  7,(IY-05)            
@@ -201,3 +201,4 @@
   fdaefb   XOR  (IY-05)              
   ee03     XOR  A,03                 
   ab       XOR  E                    
+  010020   LD   BC,2000              

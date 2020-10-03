@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version )
-.( build 20200923 )
+.( build 20200928 )
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -2415,7 +2415,7 @@ DECIMAL
   64     user    place     \ number of digits after decimal point in output
   66     user    dl        \ data-stream number in LOAD
   68     user    span      \ number of character of last EXPECT
-  70     user    hp        \ heap-pointer
+  70     user    hp        \ heap-pointer address
   
   
 \ 1+  has moved backward
@@ -3759,7 +3759,7 @@ immediate
     [ decimal      8 ] Literal     \ caps-lock on
     [ hex       5C6A ] Literal c!  \ FLAGS2
     
-    0 hp !
+    2 hp !
 
     \ [ here TO xi/o^ ]      
     
@@ -4101,46 +4101,25 @@ CODE select ( n -- )
 \
 \ NextZXOS option.
 
-hex 253B constant reg-data
-hex 243B constant reg-select
-
 
 .( REG@ )
 \ reads Next REGister n giving byte b
-CODE reg@ ( n -- b )
-        LD      D'|    B|
-        LD      E'|    C|
-        LDX     BC|    reg-select  NN,
-        POP     HL|
-        OUT(C)  L'|
-        INC     B'|
-        LDN     H'|  0 N,
-        IN(C)   L'|
-        LD      B'|    D|
-        LD      C'|    E|
-        Psh1
-        C;
+: reg@ ( n -- b )
+    [ hex 243B ] literal p!
+    [ hex 253B ] literal p@
+;
 
 
 .( REG! )
 \ write value b to Next REGister n 
-CODE reg! ( b n -- )
-        LD      D'|    B|
-        LD      E'|    C|
-        LDX     BC|    reg-select  NN,
-        POP     HL|
-        OUT(C)  L'|
-        INC     B'|
-        POP     HL|
-        OUT(C)  L'|
-        LD      B'|    D|
-        LD      C'|    E|
-        Next 
-        C;
+: reg! ( b n -- )
+    [ hex 243B ] literal p!
+    [ hex 253B ] literal p!
+;
 
 
 .( MMU7@ )
-\ set MMU7 8K-RAM page to n given between 0 and 223
+\ query current page in MMU7 8K-RAM : 0 and 223
 : mmu7@ ( n -- )
     [ decimal 87 ] literal reg@
 ;
@@ -4148,6 +4127,7 @@ CODE reg! ( b n -- )
 
 .( MMU7! )
 \ set MMU7 8K-RAM page to n given between 0 and 223
+\ optimized version that uses NEXTREG n,A Z80n op-code.
 CODE mmu7! ( n -- )
         POP     HL|
         LD      A'|      L|
@@ -4157,10 +4137,17 @@ CODE mmu7! ( n -- )
 
 
 .( >FAR )
-\ decode bits 765 of H as 8K-page 64-71 (40h-47h)
+\ decode bits 765 of H as one of the 8K-page between 64 and 71 (40h-47h)
 \ take lower bits of H and L as an offset from E000h
-\ return address  a  between E000h-FFFFh 
+\ then return address  a  between E000h-FFFFh 
 \ and page number n  between 64-71 (40h-47h)
+\ For example, in hex: 
+\   0000 >FAR  gives  40.E000
+\   1FFF >FAR  gives  40.FFFF
+\   2000 >FAR  gives  41.E000
+\   3FFF >FAR  gives  41.FFFF
+\   EFFF >FAR  gives  47.EFFF
+\   FFFF >FAR  gives  47.FFFF
 CODE >far ( ha -- a n )
         POP     HL|
         LD      A'|      H|
@@ -4182,7 +4169,7 @@ CODE >far ( ha -- a n )
 .( <FAR )
 \ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
 \ reverse of >FAR: encodes a FAR address compressing
-\ to bits 765 of H, lower bits of HL address offset at E000h
+\ to bits 765 of H, lower bits of HL address offset from E000h
 CODE <far ( a n -- ha )
         POP     DE|         \ page number in E
         POP     HL|         \ address in HL
@@ -4200,67 +4187,6 @@ CODE <far ( a n -- ha )
         C;        
         
 
-.( FAR )
-\ convert an heap-pointer into an offset (at E000h)
-\ and perform the correct 8K paging on MMU7
-: far ( ha -- a ) 
-    >far     \ offset-address, page number
-    mmu7!
-;
-
-
-.( H" )
-\ Accept a string and store it to Heap, 
-\ return an heap-address pointer to a counted string 
-: h" ( -- ha )
-    hp @
-    [char] " word
-    dup c@ 1+ >r
-    hp @ far
-    r cmove
-    r> hp +!
-;
-
-
-\ Append a string to the last string 
-\ return an heap-address pointer to a counted string 
-: +" ( ha1 -- ha2 )
-    dup far c@
-    [char] " word
-    dup c@ >r 1+
-    hp @ far r cmove
-    r hp +!
-    r> +
-    over far c!
-;
-
-
-.( S" )
-\ Counted Strings in Heap
-\ Accept a string and store it to Heap
-\ and at compile time compiles (s") and the heap-pointer
-\ during normal itepreting and 
-\ at runtime returns an heap-address pointer to a counted string 
-: (s") r @ far count ;
-: s"  ( -- a n )
-  state @ 
-  If
-   compile (s") h" ,
-  Else
-   h" far count
-  Endif
-; immediate
-
-
-
-.( POINTER )
-\ like CONSTANT but it returns a "FAR-resolved" pointer
-\ A possible use is:  S" ccc" POINTER P1
-: pointer ( -- )
-    <builds , does> @ far 
-;
-
- 
 .( DOSCALL )
 \ NextZXOS call wrapper.
 \  n1 = hl register parameter value
@@ -4541,7 +4467,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
     
 
-\ \ 7ac4h    
+\ 7ac4h    
 .( load- )
 : load-  ( n -- )
     blk @  >r  
@@ -4808,7 +4734,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : x
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20200923)  cr
+    .( build 20200928)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -5266,20 +5192,12 @@ RENAME   nxtstp         NXTSTP
 RENAME   nxtdrv         NXTDRV
 \
 RENAME   doscall        DOSCALL
-RENAME   pointer        POINTER
-RENAME   s"             S"
-RENAME   (s")           (S")
-RENAME   +"             +"
-RENAME   h"             H"
-RENAME   far            FAR
 RENAME   <far           <FAR
 RENAME   >far           >FAR
 RENAME   mmu7@          MMU7@
 RENAME   mmu7!          MMU7!
 RENAME   reg!           REG!
 RENAME   reg@           REG@
-RENAME   reg-select     REG-SELECT
-RENAME   reg-data       REG-DATA
 \
 \ RENAME   mdrwr          MDRWR
 \ RENAME   mdrrd          MDRRD
