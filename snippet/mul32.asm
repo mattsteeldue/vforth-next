@@ -1,7 +1,7 @@
 ; Multiply HL * DE giving result in HLDE
 ; Input: HL, DE as factors
 ; Output: HLDE  as product
-; registers A,B, C and A' are corrupted.
+; registers A,B, C and A' are corrupted. More, it does 3 times  ex af,af'  so af and a'f' pairs are swapped.
 ; 
 ; This is the concept:
 ;    HL 
