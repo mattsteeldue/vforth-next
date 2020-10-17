@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-.( v-Forth 1.5 NextZXOS version )
-.( build 20200928 )
+.( v-Forth 1.5 NextZXOS version ) CR
+.( build 20201017 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -29,9 +29,10 @@
 \  SP!           must be passed with the address to initialize SP register
 \  RP!           must be passed with the address to initialize RP.
 \  WORD          now returns address HERE: a few blocks must be corrected
+\  CREATE        now creates a definition that returns its PFA.
 \ ______________________________________________________________________
 \
-\ Z80 Register usage map
+\ Z80 Registers usage map
 \
 \ AF 
 \ BC - Instruction Pointer: should be preserved during ROM/OS calls
@@ -43,9 +44,9 @@
 \ DE'- Not used: available in fast Interrupt via EXX
 \ HL'- Not used: available in fast Interrupt via EXX (saved at startup)
 \
-\ SP - Calculation stack pointer
-\ IX - Inner interpreter next-address
-\ IY - (ZX System)
+\ SP - Calc Stack Pointer
+\ IX - Inner interpreter next-address pointer. This is 2T-state faster than JP
+\ IY - (ZX System: must be preserved)
 
 \ ______________________________________________________________________
 
@@ -54,17 +55,16 @@
   FORTH DEFINITIONS
 \ _________________
 
-CASEON  \ we must be in Case-sensitive option to compile this file.
-0 WARNING !
-
-HEX
+CASEON      \ we must be in Case-sensitive option to compile this file.
+0 WARNING ! \ avoid verbose messaging
 
 \ The following word makes dynamic the location of "Origin", so that we can
 \ compile this Forth *twice* to rebuild it completely in itself.
 \ At second run, it forces DP to re-start at a lower-address such as the 
 \ following. (N.B. an open microdrive channel requires 627 bytes)
+HEX
 : SET-DP-TO-ORG
-    0 +ORIGIN 09000 U< 0=
+    0 +ORIGIN 08000 U< 0=
     IF
         \ 6100 \ 24832 \ = origin of v1.2. it allows 1 microdrive channel
           6400 \ 25600 \ = origin of v1.413. it allows 2 microdrive channels
@@ -127,7 +127,7 @@ DECIMAL
      0  VALUE     (do)~         \ CFA of (DO)
      0  VALUE     (?do)~        \ CFA of (?DO)
      0  VALUE     msg1^         \ patch of ERROR
-     0  VALUE     msg2^         \ patch of CREATE
+     0  VALUE     msg2^         \ patch of CODE/CDEF (CREATE)
      0  VALUE     enter^        \ resolved within : definition.
      0  VALUE     error^        \ patch of ?ERROR with ERROR
      0  VALUE     asm^          \ patch of ;CODE with ASSEMBLER
@@ -136,9 +136,9 @@ DECIMAL
      0  VALUE     quit^         \ patch of ERROR with QUIT
      0  VALUE     abort^        \ patch of (ABORT)
    \ 0  VALUE     xi/o^         \ patch of XI/O and WARM in COLD
-   \ 0  VALUE     xi/o2^        \ patch of XI/O in WARM 
-     0  VALUE     y^
-     0  VALUE     x^            \ patch of X    in WARM
+     0  VALUE     xi/o2^        \ patch of BLK-INIT in WARM 
+     0  VALUE     y^            \ patch of COLD/WARM start
+     0  VALUE     splash^       \ patch of SPLASH in WARM
      0  VALUE     autoexec^     \ patch of LOAD in WARM
      0  VALUE     .^            \ patch of .    in MESSAGE
 
@@ -1122,7 +1122,7 @@ CODE key ( -- c )
             CALL    HEX 1601 AA,
 
             \ software flash every 640 ms
-            LDN     A'| HEX 54 N,             \ Asimmetric timing 
+            LDN     A'| HEX 50 N,             \ Asimmetric timing 
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
             LDN     A'| HEX 8F N,             \ block character
@@ -1279,6 +1279,7 @@ CODE cmove> ( a1 a2 nc -- )
 \ where HL is on the top of the stack and DE is the second from top,
 \ so in the stack memory it appears as LHED.
 \ Instead, in 2VARIABLE a double number is stored as EDLH.
+\ this definition could use "MUL" Z80N new op-code.
 CODE um* ( u1 u2 -- ud )
         POP     DE|
         POP     HL|
@@ -1313,7 +1314,7 @@ CODE um* ( u1 u2 -- ud )
 \ algorithm takes 16 bit at a time starting from msb
 \ DE grows from lsb upward with quotient result
 \ HL keeps the remainder at each stage of division
-\ each loop "lowers" the next binary digit to form the current dividend
+\ each loop 'lowers' the next binary digit to form the current dividend
 CODE um/mod ( ud u1 -- r q )
          
         LD      H'|    B|  \ save BC via EX(SP)HL later
@@ -1690,6 +1691,12 @@ CODE cell+ ( n1 -- n2 )
          
         \ this way we will have a real duplicate of 2+
         ' 2+  >BODY  LATEST PFA CFA ! 
+        C;
+
+
+.( ALIGN )
+CODE align ( a1 -- a2 )
+        Next
         C;
 
 
@@ -2211,7 +2218,7 @@ CODE cells ( n2 -- n2 )
     !CSP      
     CURRENT  @ 
     CONTEXT  ! 
-    CREATE 
+    CREATE SMUDGE 
     ] 
     ;CODE
 
@@ -2246,7 +2253,7 @@ CODE cells ( n2 -- n2 )
 : ; 
     ?CSP
     COMPILE   ;s     
-    SMUDGE 
+    SMUDGE    
     [COMPILE] [    \ previous version
     ;
     IMMEDIATE
@@ -2260,10 +2267,10 @@ CODE cells ( n2 -- n2 )
 
 \ 66CFh
 .( CONSTANT ) \ ___ late-patch ___ 
-: constant ( x ccc --   )
+: constant ( n ccc --   )
            (       -- n )
     CREATE , 
-    SMUDGE
+    \ SMUDGE
     ;CODE
         INCX    DE|
         EXDEHL
@@ -2277,7 +2284,7 @@ CODE cells ( n2 -- n2 )
 
 \ 66EDh
 .( VARIABLE ) \ ___ late-patch ___ only for ;CODE
-: variable ( x ccc --   )
+: variable ( n ccc --   )
            (       -- n )
     constant
     ;CODE
@@ -2289,10 +2296,10 @@ CODE cells ( n2 -- n2 )
 
 \ 6703h
 .( USER ) \ ___ late-patch ___ 
-: user ( x ccc --   )
+: user ( n ccc --   )
        (       -- n )
-    CREATE  C,
-    SMUDGE
+    CREATE  C, 
+    \ SMUDGE
     ;CODE
         INCX    DE|
         EXDEHL
@@ -2794,7 +2801,6 @@ CODE ?dup ( n -- 0 | n n )
     base !
     ;
 
-
 \ 6b9f
 ." (;CODE) "
 : (;code)  ( -- )
@@ -3094,6 +3100,15 @@ CODE fill ( a n c -- )
 
 
 \ new
+.( STRING" )
+\ allot a string from next input stream
+: string" ( -- )
+    [ CHAR " ] Literal word
+    count 1+ allot
+    ;
+
+
+\ new
 .( .C )
 \ intermediate general purpose string builder, used by ." and .(
 : .c ( c -- )
@@ -3383,9 +3398,8 @@ CODE fill ( a n c -- )
 
 
 \ 721Dh
-.( CREATE )
-\ RENAME create Create
-: create  ( -- cccc )
+.( CODE )
+: cdef  ( -- cccc )
     -find  \ cfa b f
     If
         drop
@@ -3403,8 +3417,19 @@ CODE fill ( a n c -- )
     latest ,
     current @ !
     here cell+ ,
-    ;
-    
+;
+
+
+.( CREATE )
+: create ( -- cccc )
+         ( -- n )
+    cdef smudge 
+    ;code
+        INCX    DE|
+        PUSH    DE|
+        Next
+        C;
+
 
 \ Late-Patch for : colon-definition
     ' :  
@@ -3415,6 +3440,7 @@ CODE fill ( a n c -- )
         cell+ ' context   over !
         cell+ ' !         over !
         cell+ ' create    over !
+        cell+ ' smudge    over !
         cell+ ' ]         over !
         cell+ ' (;code)   over !
     drop
@@ -3435,8 +3461,7 @@ CODE fill ( a n c -- )
     ' constant  
         cell+ ' create    over ! 
         cell+ ' ,         over ! 
-        cell+ ' smudge    over ! 
-        cell+ ' (;code)   over !  
+        cell+ ' (;code)   over ! 
     drop
 
 
@@ -3459,7 +3484,6 @@ CODE fill ( a n c -- )
     ' user  
         cell+ ' create    over ! 
         cell+ ' c,        over ! 
-        cell+ ' smudge    over ! 
         cell+ ' (;code)   over !  
     drop
 
@@ -3717,11 +3741,12 @@ immediate
 .( WARM )
 : warm
 
-    \ [ here TO xi/o2^ ]    
-    \ XI/O                   \ ___ forward ___
+    [ here TO xi/o2^ ]    
+    BLK-INIT                 \ ___ forward ___
 
-    [ here TO x^ ]
-    X                                  \ ___ forward ___
+    [ here TO splash^ ]
+    SPLASH                   \ ___ forward ___
+
     [ decimal      7 ] Literal emit
     
     abort
@@ -4003,14 +4028,14 @@ CODE basic ( n -- )
 : message
     warning @
     If
-        -dup
-        If
+        \ -dup
+        \ If
             [ decimal 4 ] literal
             offset @
             b/scr / -
             .line
             space
-        Endif
+        \ Endif
     Else
         .( msg#)
         
@@ -4021,18 +4046,11 @@ CODE basic ( n -- )
     ;
     
     ' message msg1^  !   \ patch error
-    ' message msg2^  !   \ patch create
+    ' message msg2^  !   \ patch code / cdef
 
     
 \ ______________________________________________________________________ 
 
-\ ZX NEXT OS option
-
-\      NXT @ variable nxt
-
-\ 7727h
-.( STRM )
-       STRM @ variable strm
 
 \ \ 7824h
 .( DEVICE )
@@ -4042,19 +4060,6 @@ CODE basic ( n -- )
 \ 
 \ ______________________________________________________________________ 
 
-
-\ 7703h
-\ DRV
-\      0 variable drv
-
-
-\ 770Fh
-\ MAP
-\ This variable is a pointer to the Microdrive Map, 
-\ i.e. a 32 bytes area = 256 bits each representing one sector
-\ If a bit is set the corrisponding sector is "used". 
-\ hex 5CF0 variable map
-    
 
 \ 7734h >>>
 .( INKEY )
@@ -4187,7 +4192,7 @@ CODE <far ( a n -- ha )
         C;        
         
 
-.( DOSCALL )
+.( M_P3DOS )
 \ NextZXOS call wrapper.
 \  n1 = hl register parameter value
 \  n2 = de register parameter value 
@@ -4198,148 +4203,217 @@ CODE <far ( a n -- ha )
 \  n5 = hl returned value
 \  n6 = de returned value 
 \  n7 = bc returned value
-\  n8 =  a or error code or zero when everything is OK.
+\  n8 =  a returned value
+\   f
 \
-CODE doscall ( n1 n2 n3 n4 a -- n5 n6 n7 ff|n8 )
-        POP     HL|         \ dos call entry address
-HERE    LD()HL 0 AA,        \ patch to next CALL instruction
-
+CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
+        POP     DE|         \ dos call entry address
         POP     HL|         \ a register
         LD      A'|    L|
-        LD()A   HEX 028 org^ + AA,
 
-        LD      H'|    B|   \ save BC to HL and then to stack
-        LD      L'|    C|
-
+        EXX
         POP     BC|         \ bc argument
         POP     DE|         \ de argument
-        EX(SP)HL            \ hl argument
+        POP     HL|         \ hl argument
+        EXX
+
+        PUSH    BC| 
+        PUSH    IX| 
 
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
         LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
-\       LD()X   SP|    hex 5B6A        AA, \ saves SP
-\       LDX     SP|    hex 5BFF        NN, \ temp stack
- 
- 
-        \ save IFF to AF'
-        LDAR
-        DI
-        EXAFAF
-        EXX                       \ use alternate resister only under DI 
- 
-        LDX     HL| HEX 5B5C NN,  \ BANKM
-        LD      A'| (HL)|
-        RES      4|    A|         \ ROM switch 3 to 2
-        ORN      7     N,         \ RAM PAGE 7  
-        LD   (HL)'|    A|
-        LDX     BC| HEX 7FFD NN,
-        OUT(C)  A'|
- 
-        EXX                      \ restore alternate register under DI
-        EXAFAF
-        JPF     PO| HERE 3 + AA, \ Skip EI
-        EI        
+        LDN     C'|    7   N,              \ use 7 RAM bank
+        
+        RST     08|    HEX 094  C,
 
-
-        LDA()   HEX 028 org^ + AA,
-        PUSH    IX|
-HERE    CALL    HERE  AA,  1+ SWAP 1+ ! \ patch from ld (.),hl
-        LD()IX  HEX 026 org^ + AA, 
-        POP     IX|
-        LD()A   HEX 028 org^ + AA,
-        PUSH    AF|              \ saves carry flag for later
-
-
-        \ save IFF to AF'
-        LDAR
-        DI
-        EXAFAF
-        EXX                       \ use alternate resister only under DI 
- 
-        LDX     HL| HEX 5B5C NN,  \ BANKM
-        LD      A'| (HL)|
-        SET      4|    A|         \ ROM switch 2 to 3 (48K)
-        ANDN   HEX 0F8 N,         \ RAM PAGE 0  
-        LD   (HL)'|    A|
-        LDX     BC| HEX 7FFD NN,
-        OUT(C)  A'|
- 
-        EXX                       \ restore alternate register under DI
-        EXAFAF
-        JPF     PO| HERE 3 + AA,  \ Skip EI
-        EI        
- 
- 
-        POP     AF|               \ restore carry flag returned from CALL
-
-        LD()X   SP|    HEX 02A org^ +  AA, \ saves SP for logging
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-\       LDX()   SP|    hex 5B6A        AA, \ restore SP
+        PUSH    IX|
+        POP     HL|
+        LD()X   HL|    HEX 02A org^ +  AA, \ saves away IX 
 
-
-        EX(SP)HL            \ hl argument 
+        POP     IX|
+        EX(SP)HL            \ hl argument and retrieve BC
         PUSH    DE|         \ de argument
         PUSH    BC|         \ bc argument
 
         LD      C'|    L|   \ restore BC register
         LD      B'|    H|
 
-        LDX     HL| 0 NN,         \ 0000 stands for OK.
+        LDN     H'|    0  N,  
+        LD      L'|    A|
+        PUSH    HL|
         
-        JRF    CY'| HOLDPLACE     \ OK : Carry True   
-         LD     L'|    A|         \ KO returns Error code on top of stack
-        HERE DISP,
+        SBCHL   HL|         \ -1 for OK ;  0 for KO but now
+        INCX    HL|         \  0 for OK ;  1 for KO  
         Psh1
         C;        
 
 
 \ ______________________________________________________________________ 
 
-\ NextZXOS option
-
-.( NXTDRV )
-\ NextZXOS set drive on b
-: nxtdrv ( n1 -- n2 )
-    strm @
-    [ 8 ] Literal lshift
-;    
-
-.( NXTSTP )
-\ NextZXOS set position on blocks-file
-: nxtstp ( n -- )
-    b/buf m*                            \ d     
-    nxtdrv                              \ d  n
-    0                                   \ d  n  0
-    [ hex 0136 ] Literal doscall        \ hl de bc f
-    [ hex 2D ] Literal ?error           \ hl de bc 
-    drop 2drop                          \ 
-    ;
-
-
-.( NXTRD )
-\ NextZXOS read sector to address
-: nxtrd ( a n -- )
-    nxtstp                              \ a 
-    b/buf                               \ a  n
-    nxtdrv                              \ d  n  n2
-    0                                   \ d  n  n2  0 
-    [ hex 0112 ] Literal doscall        \ hl de bc  f
-    [ hex 2E ] Literal ?error           \ hl de bc 
-    drop 2drop
-;
+.( F_SEEK )
+CODE f_seek ( d n -- f )
+        POP     HL|     
+        LD      A'|     L|
+        LD      H'|     B|
+        LD      L'|     C|
+        POP     BC|
+        POP     DE|
+        PUSH    IX|
+        PUSH    HL|
+        LDX     IX|     0 NN,
+        RST     08|     HEX  9F  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
     
-     
-.( NXTWR )
-\ NextZXOS write sector from address
-: nxtwr ( a n -- )
-    nxtstp 
-    b/buf 
-    nxtdrv
-    0
-    [ hex 0115 ] Literal doscall
-    [ hex 2F ] Literal ?error
-    drop 2drop
+    
+.( F_WRITE )
+CODE f_write ( addr bytes n -- actual f )
+        LD      D'|     B|
+        LD      E'|     C|
+        POP     HL|         \ file handle number
+        LD      A'|     L|
+        POP     BC|         \ bytes to read
+        EX(SP)IX
+        PUSH    DE|
+        RST     08|     HEX  9E  C,
+        POP     BC|
+        POP     IX|
+        PUSH    DE|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_READ )
+CODE f_read ( addr bytes n -- actual f )
+        LD      D'|     B|
+        LD      E'|     C|
+        POP     HL|         \ file handle number
+        LD      A'|     L|
+        POP     BC|         \ bytes to read
+        EX(SP)IX
+        PUSH    DE|
+        RST     08|   HEX  9D  c,
+        POP     BC|
+        POP     IX|
+        PUSH    DE|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_CLOSE )
+CODE f_close ( n -- f )
+        POP     HL|
+        LD      A'|   L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9B  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_OPEN )
+CODE f_open ( fspec buff mode -- n f )
+        LD      H'|     B|
+        LD      L'|     C|
+        POP     BC|         \ mode
+        LD      B'|     C|
+        POP     DE|         \ 8-byte buffer if any
+        EX(SP)IX            \ filespec nul-terminated
+        PUSH    HL|         \ this push bc
+        LDN     A'|     CHAR  *  N,
+        RST     08|     HEX  9A  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        LD      E'|     A|
+        LDN     D'|     0  N,
+        Psh2
+        C;
+    \ CREATE FILENAME 30 ALLOT
+    \ FILENAME 30 ERASE
+    \ S" test.txt"   \ new Counted String
+    \ FILENAME SWAP CMOVE
+    \ FILENAME PAD 1 F_OPEN
+    \ DROP
+    \ F_CLOSE
+
+
+.( F_SYNC )
+CODE f_sync ( n -- f )
+        POP     HL|
+        LD      A'|   L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9C  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+BLK-FH @ variable blk-fh
+
+\ create blk-fname string" test.bin"  
+create blk-fname string" !Blocks-64.bin"  
+here 18 dup allot erase
+
+
+.( blk-seek )
+
+\ seek block n  within blocks!.bin  file
+: blk-seek  ( n -- )
+    b/buf m*
+    blk-fh @
+    f_seek
+    [ hex 2D ]   Literal ?error
 ;
+
+
+.( blk-read )
+\ read block n to address a
+: blk-read  ( a n -- )
+    blk-seek
+    b/buf
+    blk-fh @
+    f_read
+    [ hex 2E ]   Literal ?error
+    drop
+;
+
+
+.( blk-write )
+\ write block n from address a
+: blk-write  ( a n -- )
+    blk-seek
+    b/buf
+    blk-fh @
+    f_write
+    [ hex 2F ]   Literal ?error
+    drop
+;
+
+
+.( blk-init )
+\ initialize block system
+: blk-init  ( -- )
+    blk-fh @ f_close drop  \ ignore error
+    blk-fname 1+
+    here 3 f_open
+    [ hex 2C ]   Literal ?error
+    blk-fh !
+;
+
+    ' blk-init  xi/o2^ !   \ patch 
 
 
 \ ______________________________________________________________________ 
@@ -4361,9 +4435,9 @@ decimal 16383 constant #sec
         or [ decimal 6 ] Literal ?error
     r> 
     If
-            nxtrd
+            blk-read
     Else
-            nxtwr
+            blk-write
     Endif
     ;
 
@@ -4730,15 +4804,15 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 
 \ 7e96
-.( X )
-: x
+.( SPLASH )
+: splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20200928)  cr
+    .( build 20201017)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
-    ' x x^ ! \ patch 
+    ' splash splash^ ! \ patch 
 
 
 \ 7ecb
@@ -4839,6 +4913,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : bye ( -- )
     flush
     empty-buffers
+    blk-fh @ f_close drop  \ ignore error
     0 +origin 
     basic
     ;
@@ -5044,7 +5119,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 
 .( VALUE )
-: value ( x ccc --   )
+: value ( n ccc --   )
         (       -- n )
     [compile] constant
     ;
@@ -5083,7 +5158,7 @@ forth definitions
 
 \ ______________________________________________________________________ 
 
-\ this is a final patch to all "RP-address" references
+\ this is a final patch to all 'RP-address' references
 \ all these address were collected using !rp^ word
 \ once used, this word can be forgotten.
 CODE final_rp_patch
@@ -5118,12 +5193,11 @@ CODE final_rp_patch
 \ ______________________________________________________________________ 
 
 
-.( RENAME   \              \  )
-
-RENAME   rename         RENAME 
 
 RENAME   to             TO
 RENAME   value          VALUE
+RENAME   rename         RENAME 
+.( RENAME   \              \  )
 
 RENAME   ?do            ?DO
 RENAME   +loop          +LOOP
@@ -5154,7 +5228,7 @@ RENAME   accept-        ACCEPT-
 RENAME   video          VIDEO
 \ RENAME   printer        PRINTER        
 \ RENAME   xi/o           XI/O
-RENAME   x              X
+RENAME   splash         SPLASH
 RENAME   cls            CLS
 RENAME   index          INDEX
 RENAME   list           LIST
@@ -5186,32 +5260,30 @@ RENAME   +buf           +BUF
 RENAME   r/w            R/W
 RENAME   #sec           #SEC
 \
-RENAME   nxtwr          NXTWR
-RENAME   nxtrd          NXTRD
-RENAME   nxtstp         NXTSTP
-RENAME   nxtdrv         NXTDRV
+RENAME   blk-init       BLK-INIT
+RENAME   blk-write      BLK-WRITE
+RENAME   blk-read       BLK-READ
+RENAME   blk-seek       BLK-SEEK
+RENAME   blk-fname      BLK-FNAME
+RENAME   blk-fh         BLK-FH
+RENAME   f_sync         F_SYNC
+RENAME   f_open         F_OPEN
+RENAME   f_close        F_CLOSE
+RENAME   f_read         F_READ
+RENAME   f_write        F_WRITE
+RENAME   f_seek         F_SEEK
 \
-RENAME   doscall        DOSCALL
+RENAME   m_p3dos        M_P3DOS
 RENAME   <far           <FAR
 RENAME   >far           >FAR
 RENAME   mmu7@          MMU7@
 RENAME   mmu7!          MMU7!
 RENAME   reg!           REG!
 RENAME   reg@           REG@
+RENAME   select         SELECT
+RENAME   inkey          INKEY 
 \
-\ RENAME   mdrwr          MDRWR
-\ RENAME   mdrrd          MDRRD
-\ RENAME   mdrr1          MDRR1
-\ RENAME   mdrget         MDRGET
-\ RENAME   sctr           SCTR
-\ RENAME   mdr            MDR
-\ RENAME   chnl           CHNL
-\ RENAME   map            MAP
-\ RENAME   drv            DRV
-
 RENAME   device         DEVICE
-RENAME   strm           STRM
-\ RENAME   nxt            NXT
 RENAME   message        MESSAGE
 RENAME   .line          .LINE
 RENAME   (line)         (LINE)
@@ -5236,6 +5308,7 @@ RENAME   abort          ABORT
 \ RENAME   .cpu           .CPU
 RENAME   quit           QUIT
 RENAME   (              (
+( )
 RENAME   definitions    DEFINITIONS
 RENAME   forth          FORTH
 RENAME   vocabulary     VOCABULARY
@@ -5246,6 +5319,7 @@ RENAME   dliteral       DLITERAL
 RENAME   literal        LITERAL
 RENAME   [compile]      [COMPILE]
 RENAME   create         CREATE
+RENAME   cdef           CODE        \ be careful on this
 RENAME   id.            ID.
 RENAME   error          ERROR
 RENAME   (abort)        (ABORT)
@@ -5268,8 +5342,10 @@ RENAME   number         NUMBER
 RENAME   (number)       (NUMBER)
 RENAME   (sgn)          (SGN) 
 RENAME   .(             .(    
+( )
 RENAME   ."             ."    
 RENAME   .c             .C    
+RENAME   string"        STRING"
 RENAME   char           CHAR  
 RENAME   (.")           (.")  
 RENAME   word           WORD  
@@ -5277,6 +5353,7 @@ RENAME   pad            PAD
 RENAME   hold           HOLD
 RENAME   blanks         BLANKS
 RENAME   erase          ERASE 
+RENAME   fill           FILL  
 RENAME   query          QUERY 
 RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
@@ -5324,7 +5401,7 @@ RENAME   -              -
 RENAME   c,             C,   
 RENAME   ,              ,    
 RENAME   allot          ALLOT
-RENAME   here            HERE 
+RENAME   here           HERE 
 RENAME   hp             HP 
 RENAME   span           SPAN 
 RENAME   dl             DL   
@@ -5358,8 +5435,8 @@ RENAME   width          WIDTH
 RENAME   tib            TIB
 RENAME   r0             R0 
 RENAME   s0             S0 
-RENAME   +origin        +ORIGIN
 RENAME   (next)         (NEXT)
+RENAME   +origin        +ORIGIN
 RENAME   l/scr          L/SCR
 RENAME   b/scr          B/SCR 
 RENAME   b/buf          B/BUF 
@@ -5416,6 +5493,7 @@ RENAME   over           OVER
 RENAME   dminus         DMINUS
 RENAME   minus          MINUS 
 RENAME   cell-          CELL-  
+RENAME   align          ALIGN
 RENAME   cell+          CELL+  
 RENAME   2+             2+ 
 RENAME   1-             1- 
@@ -5439,11 +5517,8 @@ RENAME   or             OR
 RENAME   and            AND 
 RENAME   um/mod         UM/MOD
 RENAME   um*            UM*   
-RENAME   fill           FILL  
 RENAME   cmove>         CMOVE>
 RENAME   cmove          CMOVE 
-RENAME   select         SELECT
-RENAME   inkey          INKEY 
 RENAME   cr             CR    
 RENAME   ?terminal      ?TERMINAL
 RENAME   key            KEY    
@@ -5470,7 +5545,7 @@ RENAME   lit            LIT
 
 \ ______________________________________________________________________ 
 
-X \ Return to Splash screen
+SPLASH \ Return to Splash screen
 
 \ display address and length
 DECIMAL  
@@ -5481,7 +5556,7 @@ CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' LIT 2 - ! final_rp_patch BYE BYE SHRLDU
+0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN BASIC
 
 \
 \ Origin area.
@@ -5535,48 +5610,3 @@ CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
 
 QUIT
 
-: [char]
-   char
-   [compile] literal
-; immediate
-
-: using
-  bl word    
-\ \ here     
-  open-disk-file
-  link-it-to-blocks
-  ; 
-
-: use using ;
-
-: marker 
-  create 
-
-
-
-\  CUT>
-\  ABORT \ this forces to new command prompt
-\  QUIT QUIT QUIT
-
-\ PAUSE 41286,8221
-\ SAVE "forth1413j" CODE 25600,8221
-\ PAUSE USR 25856 : REM COLD 6500
-\ PAUSE USR 25860 : REM WARM 6504
-
-\ CLEAR 25587
-\ SAVE "forth1413h" CODE 32768,8327
-\ PAUSE USR 32768 : REM COLD 8000
-\ PAUSE USR 32772 : REM WARM 8004
-
-
-\ $6400  25600  ORIGIN
-\ $8428  33833  COLD      (8232)
-\ $9DAC  40364  Assembler (6531)
-\ $A152  41298  cross     (0934)
-                
-\ $8000  32768  ORIGIN    (8232)
-\ $A028  41000  COLD      (6532)
-\ $BA0B  47532  Assembler (0934)
-\ $BD52  48466  ORIGIN    (8232)
-\ $DD7A  56698  COLD      (6532)     
-\ $F6FE  63230  Assembler (0934)

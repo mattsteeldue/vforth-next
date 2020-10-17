@@ -112,3 +112,15 @@ Test "Heap Memory Management" to store counted-string, i.e. strings 255 bytes in
 In Screens #80-85 there is some definitions: FAR HP@ POINTER HEAP H" S"
 I put in this this release CHOMP2.F source, a simple pacman style game written in Forth that explores how to use Heap Memory to store data.
 This is the first step into Next's Hardware: hopefully next will be sprites.
+
+
+\ build 20201017
+Now the following word are available: M_P3DOS  F_SYNC  F_OPEN  F_CLOSE  F_READ  F_WRITE  F_SEEK  that use RST 8 calls for NextZXOS interaction, fast and neat indeed since there is no more need for BANK paging during DOSCALL.
+
+Screens/Blocks system doesn't need  OPEN# from Basic anymore, instead Block's file is opened during COLD or WARM and closed during  BYE.
+
+Now CREATE is more ISO compliant and a new MARKER definition is now available.
+Also, a better compiled strings are now available to create string to hold a filename. Still, an  USE  definition is lacking, ... la prochaine fois.
+
+ASSEMBLER vocabulary doesn't occupy Dictionary space anymore, instead it uses some HEAP VOCABULARY extending what I am already doing with HEAP STRINGs. 
+

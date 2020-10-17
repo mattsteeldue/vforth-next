@@ -1,7 +1,8 @@
 \ z80n-asm.f
 \ 
-\ Zilog Z80 
-\  also Z80N  ( Next extensions are available )
+CR
+.( Zilog Z80 ) CR
+.( also Z80N Next extensions are available ) CR
 \ 
 \ This is a tentative Z80 adaptation of Albert van der Horst's work available 
 \ at  <https://github.com/albertvanderhorst/ciasdis>
@@ -53,9 +54,21 @@
 \    REG,       used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
-FORTH DEFINITIONS DECIMAL
+
+FORTH DEFINITIONS 
+
+MARKER FORGET-ASSEMBLER
+VOCABULARY TOOLS-ASM IMMEDIATE
+VOCABULARY FORTH-ASM
+
+: ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
+
+DECIMAL
 
 \ Screen# 101 
+ASSEMBLER TOOLS-ASM DEFINITIONS
+  DP @ LP ! HEX E080 DP !
+  
 : INVERT -1 XOR ;
 : @+ >R R CELL+ R> @ ;
 : !+ >R R ! R> CELL+ ;
@@ -69,10 +82,6 @@ CHAR - CONSTANT &-
 CHAR ~ CONSTANT &~
 
 \ Screen# 102 
-
-VOCABULARY ASSEMBLER IMMEDIATE
-
-FORTH DEFINITIONS HEX
 
 : %           COMPILE ' <NAME ;
 \ : %           POSTPONE ' <NAME ;
@@ -224,22 +233,11 @@ IS-A IS-COMMA : COMMAER
 : DDFAMILY, 0 DO DUP >R T@   R> DDPI OVER + LOOP  DROP DROP ;
 : FDFAMILY, 0 DO DUP >R T@   R> FDPI OVER + LOOP  DROP DROP ;
 
-\ Screen# 117 
-( Assembler Z80 )
-' ASSEMBLER ' ;CODE >BODY  4 CELLS + !  (  PATCH!  )
-
-: CODE ?EXEC NEWDEF   [COMPILE] ASSEMBLER   !TALLY !CSP ; IMMEDIATE
-: C; CURRENT @ CONTEXT !  ?EXEC CHECK26 CHECK27  SMUDGE ; IMMEDIATE
-: LABEL ?EXEC 0 VARIABLE SMUDGE -2 ALLOT  [COMPILE] ASSEMBLER !CSP ; IMMEDIATE
-
-
-FORTH DEFINITIONS DECIMAL
-
-
 \ Screen# 120 
 .( Z80 definitions. ) CR
 
 ASSEMBLER DEFINITIONS HEX
+TOOLS-ASM
 
 0 1 0 800 ' C,        COMMAER N,
 0 0 CELL+ 0 200 ' ,   COMMAER NN,
@@ -446,12 +444,14 @@ HEX
     -2 ALLOT SWAP C, CB C, C,
   ENDIF 
 ;
+TOOLS-ASM
 
 00 00 07 T!
 00 06 1 XFAMILY|    (I
 
 : (IX+      (I  DD I) ;
 : (IY+      (I  FD I) ;
+TOOLS-ASM
 
 \ LD B'| (IY+ d )|
 \ ADCA   (IY+ d )|
@@ -476,6 +476,7 @@ HEX
     HERE 1- C@ -1 ALLOT SWAP C, C,
   ENDIF 
 ;
+TOOLS-ASM
 
 
 \ Screen# 136 
@@ -489,6 +490,7 @@ HEX
 
 : (IX'+ (I' DD I) ;
 : (IY'+ (I' FD I) ;
+TOOLS-ASM
 
 \
 \ LD(IX+ d )'|  r|
@@ -498,7 +500,7 @@ HEX
 00 70 1 FDFAMILY, LD(IY+
 
 : )'| ' EXECUTE )| ;
-
+TOOLS-ASM
 
 
 \ Screen# 137 
@@ -519,11 +521,12 @@ HEX
 : IXH|   H|  DD  IXY| ;
 : IYL|   L|  FD  IXY| ;
 : IYH|   H|  FD  IXY| ;
+TOOLS-ASM
 
 \ LDX IY| nn NN,
 \ PUSH POP IX|
 
-FORTH DEFINITIONS DECIMAL
+\ FORTH DEFINITIONS DECIMAL
 
 
 
@@ -545,17 +548,18 @@ ASSEMBLER DEFINITIONS HEX
 
 
 \ Screen# 141 
-( Z80 Near struct. )
+.( Z80 Near struct. )
 : THEN, HERE DISP, ;
 : ELSE, JR HOLDPLACE  SWAP THEN, ;
 
 \ Screen# 160 
-( Z80N Next extension )
+.( Z80N Next extension )
 
 ASSEMBLER DEFINITIONS HEX
 
 \ swaps hi-lo bytes
 : <, 100 /MOD C, C, ;
+TOOLS-ASM
 
 0 1 0 4000 ' <, COMMAER     LH,
 \
@@ -571,8 +575,6 @@ ASSEMBLER DEFINITIONS HEX
 
 \ Screen# 161
 ( Z80N Next extension )
-
-ASSEMBLER DEFINITIONS HEX
 
 00 00 00 T!
 01 23 2 EDFAMILY,           SWAPNIB MIRRORA
@@ -594,6 +596,31 @@ ASSEMBLER DEFINITIONS HEX
 \
 
 FORTH DEFINITIONS DECIMAL
+
+DP @ LP @ DP !  LP !
+
+
+\ Screen# 117 
+.( Assembler Z80 )
+
+FORTH DEFINITIONS RENAME CODE CDEF
+
+: CODE ?EXEC 
+    CDEF   
+    [COMPILE] ASSEMBLER   
+    TOOLS-ASM
+    !TALLY !CSP 
+    ; IMMEDIATE
+: C; 
+    CURRENT @ CONTEXT !  ?EXEC 
+    TOOLS-ASM CHECK26 CHECK27  
+    SMUDGE ; IMMEDIATE
+
+' ASSEMBLER ' ;CODE >BODY 4 CELLS + ! ( patch to ;CODE )
+
+FORTH DEFINITIONS DECIMAL
+
+
 
 QUIT
 
