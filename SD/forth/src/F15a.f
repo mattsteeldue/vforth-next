@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20201017 ) CR
+.( build 20201031 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -389,12 +389,12 @@ HERE TO org^
 \ end of data for COLD start
 
 \ +026
-                 0           ,
+                 HEX 8F C, 88 C,    \ Used by KEY
 \ +028
+                 HEX 5F C, 00 C,    \ Used by KEY
+\ +02A   ( Echoed IX after NextZXOS call )
                  0           ,
-\ +02A   ( Echoed SP after +3DOS call )
-                 0           ,
-\ +02C   ( Saved SP during +3DOS call )
+\ +02C   ( Saved SP during NextZXOS call )
                  0           ,
 \ +02E   (User Variable Pointer)
 HERE TO vars^       R0 @ ,       \ HEX EAE0    ,
@@ -1106,7 +1106,8 @@ HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
 
 \ new
 .( KEY )
-\ reads one character from current channel stream and leaves it on stack
+\ display a flashing cursor then
+\ reads one character from keyboard stream and leaves it on stack
 CODE key ( -- c )
          
         PUSH    BC|
@@ -1122,15 +1123,18 @@ CODE key ( -- c )
             CALL    HEX 1601 AA,
 
             \ software flash every 640 ms
-            LDN     A'| HEX 50 N,             \ Asimmetric timing 
+            LDN     A'| HEX 20 N,             \ Timing 
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
-            LDN     A'| HEX 8F N,             \ block character
+\           LDN     A'| HEX 8F N,             \ block character
+            LDA()   HEX 026 org^ +   AA,
             JRF    NZ'| HOLDPLACE \ IF,
-                LDN     A'| HEX 88 N,         \ lower-half-block character
+\               LDN     A'| HEX 88 N,         \ lower-half-block character
+                LDA()   HEX 027 org^ +   AA,
                 BIT      3| (IY+ HEX 30 )|    \ FLAGS2 (5C3A+30)                
                 JRF     Z'| HOLDPLACE \ IF,
-                    LDN     A'| 5F N,         \ upper-half-block character 
+\                   LDN     A'| 5F N,         \ upper-half-block character 
+                    LDA()   HEX 028 org^ +   AA,
                 HERE DISP, \ THEN, 
             HERE DISP, \ THEN, 
 
@@ -2403,7 +2407,7 @@ DECIMAL
   26     user    exp       \ keeps the exponent in number conversion
   28     user    nmode     \ number mode: 0 integer, 1 floating point 
   30     user    blk       \ block number to be interpreted. 0 for terminal
-  32     user    in        \ incremented when consuming input buffer
+  32     user    >in       \ incremented when consuming input buffer
   34     user    out       \ incremented when sending to output
   36     user    scr       \ latest screen retreieved by LIST
   38     user    offset    \ 
@@ -2979,7 +2983,7 @@ CODE ?dup ( n -- 0 | n n )
     tib @ 
     [ decimal 80 ] Literal
     expect
-    0 in ! 
+    0 >in ! 
     ;
 
 
@@ -3066,10 +3070,10 @@ CODE fill ( a n c -- )
     Else
         tib @
     Endif \ Then
-    in @ + 
+    >in @ + 
     swap enclose
     here [ decimal 34 ] Literal blanks
-    in +!
+    >in +!
     over - >r
     r here c!
     +
@@ -3105,6 +3109,7 @@ CODE fill ( a n c -- )
 : string" ( -- )
     [ CHAR " ] Literal word
     count 1+ allot
+    0 c,
     ;
 
 
@@ -3369,7 +3374,7 @@ CODE fill ( a n c -- )
     s0 @ sp!
     blk @ -dup
     If 
-        in @ swap
+        >in @ swap
     Endif \ Then
 
     [ HERE TO quit^ ]
@@ -3538,7 +3543,7 @@ CODE fill ( a n c -- )
 : ~             \ to be RENAME'd via patch
     blk @ If 
         1 blk +!  
-        0  in !  
+        0  >in !  
         blk @ b/scr 1 - and 0= 
         If 
             ?exec 
@@ -4270,6 +4275,24 @@ CODE f_seek ( d n -- f )
         C;        
     
     
+.( F_FGETPOS )
+CODE f_fgetpos ( n -- d f )
+        POP     HL|     
+        LD      A'|     L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|     HEX  0A0  C,
+        POP     HL|
+        POP     IX|
+        PUSH    DE|
+        PUSH    BC|
+        LD      B'|     H|
+        LD      C'|     L|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
 .( F_WRITE )
 CODE f_write ( addr bytes n -- actual f )
         LD      D'|     B|
@@ -4545,13 +4568,13 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 .( load- )
 : load-  ( n -- )
     blk @  >r  
-    in  @  >r
+    >in  @  >r
     
-    0 in ! 
+    0 >in ! 
     b/scr * blk ! 
     interpret
     
-    r> in !
+    r> >in !
     r> blk !
     ;
 
@@ -4560,7 +4583,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 .( --> )
 : -->  ( -- )
     ?loading 
-    0 in ! 
+    0 >in ! 
     b/scr   \ z
     blk @   \ z b
     over    \ z b z
@@ -4765,7 +4788,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ 7e29
 .( INDEX )
 : index    ( n1 n2 -- )
-    [ decimal 6 ] Literal emitc
+\   [ decimal 6 ] Literal emitc
     1+ swap
     Do
         cr i 3 \ [ decimal 3 ] Literal
@@ -4808,7 +4831,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20201017)  cr
+    .( build 20201031)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4886,7 +4909,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
             video 
             \ type cr
             2drop
-            0 in !
+            0 >in !
             interpret
             ?terminal  
         Until         \ Again
@@ -5089,9 +5112,9 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : \ 
     blk @
     If
-        in @ c/l mod c/l swap - in +!
+        >in @ c/l mod c/l swap - >in +!
     Else
-        [ decimal 80 ] Literal  in !
+        [ decimal 80 ] Literal  >in !
     Endif
     ;
     immediate
@@ -5271,6 +5294,7 @@ RENAME   f_open         F_OPEN
 RENAME   f_close        F_CLOSE
 RENAME   f_read         F_READ
 RENAME   f_write        F_WRITE
+RENAME   f_fgetpos      F_FGETPOS
 RENAME   f_seek         F_SEEK
 \
 RENAME   m_p3dos        M_P3DOS
@@ -5421,7 +5445,7 @@ RENAME   context        CONTEXT
 RENAME   offset         OFFSET 
 RENAME   scr            SCR 
 RENAME   out            OUT 
-RENAME   in             IN  
+RENAME   >in            >IN  
 RENAME   blk            BLK 
 RENAME   nmode          NMODE
 RENAME   exp            EXP  

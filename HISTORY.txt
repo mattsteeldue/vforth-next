@@ -124,3 +124,12 @@ Also, a better compiled strings are now available to create string to hold a fil
 
 ASSEMBLER vocabulary doesn't occupy Dictionary space anymore, instead it uses some HEAP VOCABULARY extending what I am already doing with HEAP STRINGs. 
 
+
+\ build 20201031
+Introducing a new Full-Screen Editor available at startup or after AUTOEXEC. See Screens 190-196.
+Line-Editor is moved to Screens 90-95
+Renamed  IN   into  >IN  to be more ANS compliant.
+Defined DEFER, at last.
+Documentation upgraded and revised.
+
+
