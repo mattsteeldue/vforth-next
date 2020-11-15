@@ -133,9 +133,8 @@ Defined DEFER, at last.
 Documentation upgraded and revised.
 
 
-\ build 20201015
-Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way.
-The bug is in (LOOP) definition that does a JP C instead of a JP M.
+\ build 20201115
+Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way. The bug is in (LOOP) definition that does a JP C instead of a JP M.
 Changed  STRING"  into  ,"  in Forth Inc. style.
 Re-introduced  PICK  INVV  TRUV  
 Introducing a new  Full Screen Editor  that can be loaded from library.
