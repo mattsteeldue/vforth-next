@@ -5639,5 +5639,5 @@ CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 \ FFFF      P_RAMT  Phisical ram-top
 \
 
-QUIT
+QUIT .
 
