@@ -133,3 +133,15 @@ Defined DEFER, at last.
 Documentation upgraded and revised.
 
 
+\ build 20201015
+Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way.
+The bug is in (LOOP) definition that does a JP C instead of a JP M.
+Changed  STRING"  into  ,"  in Forth Inc. style.
+Re-introduced  PICK  INVV  TRUV  
+Introducing a new  Full Screen Editor  that can be loaded from library.
+Attached block-system file  !Blocks64.bin  has become integral part of this Forth system, since many features come along with it.
+   20: SEE debugger facility
+   80: String on Heap Memory Management
+   90: Line Editor
+  100: Z80 Assembler
+  190: Full Screen Editor

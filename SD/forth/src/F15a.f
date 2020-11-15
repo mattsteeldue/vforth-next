@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20201031 ) CR
+.( build 20201115 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -300,7 +300,7 @@ DECIMAL
     3 ?PAIRS 
     ?COMP 
     (loop)~ , 
-    BACK-
+    ?DO-
     ; 
     IMMEDIATE
 
@@ -540,10 +540,9 @@ CODE (loop) ( -- )
         ADCA     D|
         LD   (HL)'|    A|
         INCX    HL|
-        INC     D'|
-        DEC     D'|
+        BIT      7|    D|     
         LD      D'|    A|
-        JRF    CY'|    HOLDPLACE \ if increment is positive then
+        JRF    NZ'|    HOLDPLACE \ if increment is positive then
             LD      A'|    E|
             SUBA  (HL)|
             LD      A'|    D|
@@ -556,8 +555,8 @@ CODE (loop) ( -- )
             LD      A'| (HL)|
             SBCA     D|
         HERE DISP, \ THEN,
-        JPF     CY|  branch^  AA,
-\     \ JRF    CY'|  branch^  HERE 1 + - D,
+        JPF      M|  branch^  AA,
+\     !!JRF    CY'|  branch^  HERE 1 + - D,
         INCX    HL|
 
         HERE !rp^
@@ -1119,11 +1118,13 @@ CODE key ( -- c )
         RES      5| (IY+ 1 )|
         HERE  \ BEGIN, 
 
+            HALT
+
             LDN     A'| HEX 02 N,   \ select channel #2
             CALL    HEX 1601 AA,
 
-            \ software flash every 640 ms
-            LDN     A'| HEX 20 N,             \ Timing 
+            \ software flash every 320 ms
+            LDN     A'| HEX 10 N,             \ Timing 
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
 \           LDN     A'| HEX 8F N,             \ block character
@@ -1142,11 +1143,10 @@ CODE key ( -- c )
             LDN     A'| HEX 08 N,   \ backspace
             RST     10|
 
-            EI
-            HALT
-
             BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
         JRF     Z'| HOLDPLACE SWAP DISP,  \ UNTIL, 
+
+        HALT
 
         LDN     A'| HEX 20 N,   \ space to blank cursor
         RST     10|
@@ -1836,19 +1836,19 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
         C;
 
 
-\ .( PICK )
-\ \ picks the nth element from TOS
-\ CODE pick ( n -- v )
-\ 
-\         POP     HL| 
-\         ADDHL   HL|
-\         ADDHL   SP|
-\         LD      A'| (HL)|
-\         INCX    HL|
-\         LD      H'| (HL)|
-\         LD      L'|    A|
-\         Psh1         
-\         C;
+.( PICK )
+\ picks the nth element from TOS
+CODE pick ( n -- v )
+
+        POP     HL| 
+        ADDHL   HL|
+        ADDHL   SP|
+        LD      A'| (HL)|
+        INCX    HL|
+        LD      H'| (HL)|
+        LD      L'|    A|
+        Psh1         
+        C;
 
 
 \ 6E8Bh >>>
@@ -3104,11 +3104,12 @@ CODE fill ( a n c -- )
 
 
 \ new
-.( STRING" )
-\ allot a string from next input stream
-: string" ( -- )
+.( ," )
+\ compiles a string terminated by " as a counted string
+\ from next input stream
+: ," ( -- )
     [ CHAR " ] Literal word
-    count 1+ allot
+    c@ 1+ allot
     0 c,
     ;
 
@@ -3319,7 +3320,7 @@ CODE fill ( a n c -- )
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "ccc"
+\ used in the form -FIND "cc                                                                                                                                                                                    
 \ searches the vocabulary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
@@ -4386,12 +4387,12 @@ CODE f_sync ( n -- f )
     
 BLK-FH @ variable blk-fh
 
-\ create blk-fname string" test.bin"  
-create blk-fname string" !Blocks-64.bin"  
+\ create blk-fname ," test.bin"  
+create blk-fname ," !Blocks-64.bin"  
 here 18 dup allot erase
 
 
-.( blk-seek )
+.( BLK-SEEK )
 
 \ seek block n  within blocks!.bin  file
 : blk-seek  ( n -- )
@@ -4402,7 +4403,7 @@ here 18 dup allot erase
 ;
 
 
-.( blk-read )
+.( BLK-READ )
 \ read block n to address a
 : blk-read  ( a n -- )
     blk-seek
@@ -4414,7 +4415,7 @@ here 18 dup allot erase
 ;
 
 
-.( blk-write )
+.( BLK-WRITE )
 \ write block n from address a
 : blk-write  ( a n -- )
     blk-seek
@@ -4426,12 +4427,12 @@ here 18 dup allot erase
 ;
 
 
-.( blk-init )
+.( BLK-INIT )
 \ initialize block system
 : blk-init  ( -- )
     blk-fh @ f_close drop  \ ignore error
     blk-fname 1+
-    here 3 f_open
+    here 3 f_open          \ open for update   
     [ hex 2C ]   Literal ?error
     blk-fh !
 ;
@@ -4444,7 +4445,7 @@ here 18 dup allot erase
 
 \ 7946h    
 \  number of blocks available in Next Option.
-decimal 16383 constant #sec
+decimal #SEC constant #sec
 
 
 \ 7951h
@@ -4742,7 +4743,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 
 \ 7d95
-\ VLIST 
+\ WORDS 
 .( WORDS )
 : words  ( -- )
     [ decimal 128 ] Literal out !
@@ -4831,7 +4832,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20201031)  cr
+    .( build 20201115)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4943,19 +4944,24 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     -2 ALLOT    \ we can save two bytes because BASIC quits to BASIC.
 
 
-\ \ INVV
-\ : invv
-\     [ decimal 20 ] Literal emitc
-\     1 emitc
-\     ;
-\     
-\ 
-\ \ TRUV
-\ : truv
-\     [ decimal 20 ] Literal emitc 
-\     0 emitc
-\     ;
+\ INVV
+: invv ( -- )
+    [ decimal 20 ] Literal emitc
+    1 emitc
+    ;
     
+
+\ TRUV
+: truv ( -- )
+    [ decimal 20 ] Literal emitc 
+    0 emitc
+    ;
+    
+
+\ MARK
+: mark ( a n -- )
+    invv type truv
+    ;
 
 .( BACK )
 : back
@@ -5053,9 +5059,9 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     immediate
 
 
-.( BACK- )
+.( ?DO- )
 \ peculiar version of BACK fitted for ?DO and LOOP
-: back-
+: ?do-
     back
     sp@ csp @ -
     \ dup 0= 
@@ -5082,7 +5088,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : loop      ( a 3 -- ) \ compile-time
     3 ?pairs 
     compile (loop) 
-    back- \ back
+    ?do- \ back
     ; 
     immediate
 
@@ -5091,7 +5097,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : +loop     ( a 3 -- ) \ compile-time
     3 ?pairs 
     compile (+loop) 
-    back- \ back
+    ?do- \ back
     ; 
     immediate
 
@@ -5226,7 +5232,7 @@ RENAME   ?do            ?DO
 RENAME   +loop          +LOOP
 RENAME   loop           LOOP
 RENAME   do             DO
-RENAME   back-          BACK-
+RENAME   ?do-           ?DO- 
 RENAME   repeat         REPEAT
 RENAME   while          WHILE
 RENAME   end            END
@@ -5238,8 +5244,9 @@ RENAME   then           THEN
 RENAME   endif          ENDIF
 RENAME   if             IF
 RENAME   back           BACK
-\ RENAME   truv           TRUV
-\ RENAME   invv           INVV
+RENAME   mark           MARK
+RENAME   truv           TRUV
+RENAME   invv           INVV
 RENAME   bye            BYE
 RENAME   autoexec       AUTOEXEC 
 RENAME   load           LOAD
@@ -5369,7 +5376,7 @@ RENAME   .(             .(
 ( )
 RENAME   ."             ."    
 RENAME   .c             .C    
-RENAME   string"        STRING"
+RENAME   ,"             ,"
 RENAME   char           CHAR  
 RENAME   (.")           (.")  
 RENAME   word           WORD  
@@ -5506,7 +5513,7 @@ RENAME   2dup           2DUP
 RENAME   2swap          2SWAP 
 RENAME   2drop          2DROP 
 RENAME   2over          2OVER 
-\ RENAME   pick           PICK  
+RENAME   pick           PICK  
 RENAME   rot            ROT   
 RENAME   dup            DUP   
 RENAME   swap           SWAP  
@@ -5575,7 +5582,7 @@ SPLASH \ Return to Splash screen
 DECIMAL  
 1 WARNING !
 CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 80" CR CR
-CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
+CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 
 \ ______________________________________________________________________ 
 
