@@ -9,12 +9,12 @@ I'm putting here the version that are stable enough to be published.
 
 Screens are stored in a file inside the SD card called "!Blocks.txt" 16 MBytes long and it can hold 16.383 1KByte-Screens (while MGT version and Microdrive - 512 Byte Screens - can hold 1.560 and 254 respectively). Content of STRM variable determines which opened stream is in use: ZXNEXTOS needs a value 2 to indicate the first OPEN# channel. 
 
-In the latest implementation a Screen is two BLOCKs that is 1024 bytes (at last).
+In the latest implementation a Screen is two BLOCKs 1024 bytes each (at last).
 
 I implemented an ASSEMBLER vocabulary with notation as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
 This ASSEMBLER provides Z80N extension op-codes.
 
-Larger 2048K RAM is made available through MMU7 on which any 8K-page can be fitted.
+Larger 1792K RAM is made available through MMU7 on which any 8K-page can be fitted.
 For String storage purpose, an HEAP facility grants access to 64K of space via FAR and POINTER definitions.
 
 The Wiki in this repository is getting some shape, I suggesto to pay a visit.
