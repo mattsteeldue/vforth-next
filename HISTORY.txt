@@ -144,3 +144,11 @@ Attached block-system file  !Blocks64.bin  has become integral part of this Fort
    90: Line Editor
   100: Z80 Assembler
   190: Full Screen Editor
+  
+  
+\ build 20201129
+Introducing F_GETLINE and first version of INCLUDE definition. Introducing also 
+SOURCE-ID user variable to keep track of nested calls to INCLUDE definition.
+This - and this is a real big leap - allows interpreting any source file.
+AUTOEXEC now loads Screen # 11. This frees the first 3 Screen for any other 
+purpose.

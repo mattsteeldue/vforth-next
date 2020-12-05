@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20201115 ) CR
+.( build 20201129 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -1123,7 +1123,7 @@ CODE key ( -- c )
             LDN     A'| HEX 02 N,   \ select channel #2
             CALL    HEX 1601 AA,
 
-            \ software flash every 320 ms
+            \ software-flash: flips face every 320 ms
             LDN     A'| HEX 10 N,             \ Timing 
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
@@ -2424,7 +2424,7 @@ DECIMAL
   60     user    prev      \ address of previous used block
   62     user    lp        \ line printer (not used)
   64     user    place     \ number of digits after decimal point in output
-  66     user    dl        \ data-stream number in LOAD
+  66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last EXPECT
   70     user    hp        \ heap-pointer address
   
@@ -4257,7 +4257,10 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
 
 \ ______________________________________________________________________ 
 
+
 .( F_SEEK )
+\ Seek to position d in file-handle n.
+\ Return 0 on success, True flag on error
 CODE f_seek ( d n -- f )
         POP     HL|     
         LD      A'|     L|
@@ -4277,6 +4280,8 @@ CODE f_seek ( d n -- f )
     
     
 .( F_FGETPOS )
+\ Get current position d of file-handle n.
+\ Return 0 on success, True flag on error
 CODE f_fgetpos ( n -- d f )
         POP     HL|     
         LD      A'|     L|
@@ -4295,6 +4300,8 @@ CODE f_fgetpos ( n -- d f )
     
     
 .( F_WRITE )
+\ Write bytes at addr to file-handle n.
+\ Return actual written bytes and 0 on success, True flag on error
 CODE f_write ( addr bytes n -- actual f )
         LD      D'|     B|
         LD      E'|     C|
@@ -4313,6 +4320,9 @@ CODE f_write ( addr bytes n -- actual f )
     
     
 .( F_READ )
+\ Read bytes from file-handle n to address addr
+\ Return actual read bytes 
+\ Return 0 on success, True flag on error
 CODE f_read ( addr bytes n -- actual f )
         LD      D'|     B|
         LD      E'|     C|
@@ -4331,6 +4341,8 @@ CODE f_read ( addr bytes n -- actual f )
     
     
 .( F_CLOSE )
+\ Close file-handle n.
+\ Return 0 on success, True flag on error
 CODE f_close ( n -- f )
         POP     HL|
         LD      A'|   L|
@@ -4345,6 +4357,19 @@ CODE f_close ( n -- f )
     
     
 .( F_OPEN )
+\ filespec is a null-terminated string, such as produced by ," definition
+\ buff is a 8-byte header data used in some cases. You can use HERE
+\ mode is access modes, that is a combination of:
+\ any/all of:
+\   esx_mode_read          $01 request read access
+\   esx_mode_write         $02 request write access
+\   esx_mode_use_header    $40 read/write +3DOS header
+\ plus one of:
+\   esx_mode_open_exist    $00 only open existing file
+\   esx_mode_open_creat    $08 open existing or create file
+\   esx_mode_creat_noexist $04 create new file, error if exists
+\   esx_mode_creat_trunc   $0c create new file, delete existing
+\ Return file-handle n and 0 on success, True flag on error
 CODE f_open ( fspec buff mode -- n f )
         LD      H'|     B|
         LD      L'|     C|
@@ -4362,16 +4387,15 @@ CODE f_open ( fspec buff mode -- n f )
         LDN     D'|     0  N,
         Psh2
         C;
-    \ CREATE FILENAME 30 ALLOT
-    \ FILENAME 30 ERASE
-    \ S" test.txt"   \ new Counted String
-    \ FILENAME SWAP CMOVE
-    \ FILENAME PAD 1 F_OPEN
+    \ CREATE FILENAME ," test.txt"   \ new Counted String
+    \ FILENAME 1+ PAD 1 F_OPEN
     \ DROP
     \ F_CLOSE
 
 
 .( F_SYNC )
+\ Sync file-handle n changes to disk.
+\ Return 0 on success, True flag on error
 CODE f_sync ( n -- f )
         POP     HL|
         LD      A'|   L|
@@ -4383,9 +4407,10 @@ CODE f_sync ( n -- f )
         SBCHL   HL|
         Psh1
         C;        
-    
-    
+
+   
 BLK-FH @ variable blk-fh
+
 
 \ create blk-fname ," test.bin"  
 create blk-fname ," !Blocks-64.bin"  
@@ -4432,7 +4457,7 @@ here 18 dup allot erase
 : blk-init  ( -- )
     blk-fh @ f_close drop  \ ignore error
     blk-fname 1+
-    here 3 f_open          \ open for update   
+    here 3 f_open          \ open for update  (read+write)
     [ hex 2C ]   Literal ?error
     blk-fh !
 ;
@@ -4565,9 +4590,81 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
     
 
+.( F_GETLINE )
+\ Given a filehandle read next line (terminated with $0D or $0A)
+\ Address a is left for subsequent process
+\ and n as the number of byte read, that is the length of line 
+decimal
+: f_getline ( a fh -- a n )
+    dup >r f_fgetpos [ 44 ] Literal ?error \ a d
+    rot     dup b/buf 2dup blanks          \ d a a 512
+    1- r  f_read [ 46 ] Literal ?error     \ d a n
+    If \ at least 1 chr was read
+        [ 10 ] Literal enclose drop swap drop swap \ d b a
+        [ 13 ] Literal enclose drop swap drop      \ d b a c
+        rot min                            \ d a n
+        dup >r 2swap r> 1+ 0 d+            \ a n d+n
+        r> f_seek [ 45 ] Literal ?error    \ a n
+    Else
+        r> 2swap 2drop drop 0              \ a 0
+    Endif
+    2dup + over b/buf swap - blanks
+;
+
+
+.( F_INCLUDE )
+\ Given a filehandle includes the source from file
+decimal
+: f_include  ( fh -- )
+    blk @ >r  
+    >in @ >r  
+    source-id @ >r r 
+    If 
+        r f_fgetpos [ 44 ] Literal ?error 
+    Else 
+        0 0 
+    Endif 
+    >r >r
+    source-id !
+    Begin
+        1 block source-id @ 
+        f_getline  
+      \ cr 2dup type  
+        swap drop
+    While
+        update 
+        1 blk ! 0 >in !  
+        interpret
+    Repeat
+    source-id @  
+    0 source-id !  
+    f_close [ 42 ] Literal ?error
+    r> r> r>   
+    dup source-id !
+    If 
+        source-id @ f_seek [ 43 ] Literal ?error 
+    Else 
+        2drop 
+    Endif
+    r> >in !  
+    r> blk !
+;
+
+
+.( INCLUDE )
+\ Include the following filename
+decimal
+: include  ( -- cccc )
+    bl word count over + 0 swap !
+    pad 1 f_open [ 43 ] Literal ?error
+    f_include
+    \ f_close drop
+;
+
+
 \ 7ac4h    
-.( load- )
-: load-  ( n -- )
+.( load+ )
+: load+  ( n -- )
     blk @  >r  
     >in  @  >r
     
@@ -4832,7 +4929,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20201115)  cr
+    .( build 20201129)  cr
     .( 1990-2020 Matteo Vitturi)  cr
     ;
 
@@ -4891,6 +4988,29 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
 
 
+.( LOAD- )
+\ Provided that a stream n is OPEN# via the standart BASIC 
+\ it accepts text from stream #n to the normal INTERPRET 
+\ up to now, text-file must end with QUIT 
+: load- ( n -- )
+    source-id ! 
+    Begin
+        tib @                        ( a )
+        dup [ decimal 80 ] literal   ( a a n )
+        2dup blanks                  ( a a n )
+        source-id @ abs dup device ! select  \ was printer
+        accept-                      ( a n2 )
+        video 
+        \ type cr
+        2drop
+        0 blk !
+        0 >in !
+        interpret
+        ?terminal  
+    Until         \ Again
+;
+
+
 .( LOAD )
 \ if n is positive, it loads screen #n (as usual)
 \ if n is negative, it connects stream #n to the normal INTERPRET 
@@ -4899,23 +5019,9 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 : load ( n -- )
     dup 0< 
     If
-        abs dl ! 
-        Begin
-            0 blk !
-            dl @ dup device ! select \ was printer
-            tib @                        ( a )
-            dup [ decimal 80 ] literal   ( a a n )
-            2dup blanks                  ( a a n )
-            accept-                      ( a n2 )
-            video 
-            \ type cr
-            2drop
-            0 >in !
-            interpret
-            ?terminal  
-        Until         \ Again
-    Else
         load-
+    Else
+        load+
     Endif
     ;
 
@@ -4924,13 +5030,13 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 1      ] Literal  dup
+    [ decimal 11     ] Literal  
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
     quit
     ;
-    ' autoexec autoexec^ ! \ patch autoexec-on
+    ' autoexec autoexec^ ! \ patch autoexec-on in ABORT
 
 
 .( BYE )
@@ -5250,6 +5356,7 @@ RENAME   invv           INVV
 RENAME   bye            BYE
 RENAME   autoexec       AUTOEXEC 
 RENAME   load           LOAD
+RENAME   load-          LOAD-
 RENAME   accept-        ACCEPT-
 \ RENAME   rsload         RSLOAD
 \ RENAME   rquery         RQUERY
@@ -5279,7 +5386,10 @@ RENAME   forget         FORGET
 RENAME   marker         MARKER
 RENAME   '              '
 RENAME   -->            -->
-RENAME   load-          LOAD-
+RENAME   load+          LOAD+
+RENAME   include         INCLUDE
+RENAME   f_include      F_INCLUDE
+RENAME   f_getline      F_GETLINE
 RENAME   flush          FLUSH
 RENAME   #buff          #BUFF
 RENAME   block          BLOCK
@@ -5435,7 +5545,7 @@ RENAME   allot          ALLOT
 RENAME   here           HERE 
 RENAME   hp             HP 
 RENAME   span           SPAN 
-RENAME   dl             DL   
+RENAME   source-id      SOURCE-ID
 RENAME   place          PLACE
 RENAME   lp             LP   
 RENAME   prev           PREV 
