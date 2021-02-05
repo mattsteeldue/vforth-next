@@ -3,15 +3,14 @@ Version number is given between "underscore", Build number is the last number an
 
 HOW TO START
 ------------
-1. Download the latest .zip file from Project Download directory <https://github.com/mattsteeldue/vforth-next/tree/master/download>
+1. Download the latest .zip file from Project Download directory https://github.com/mattsteeldue/vforth-next/tree/master/download
 2. Copy from .zip file to Next's SD card the whole "forth" directory
-3. Forth System is loaded and activated by the Basic program C:/forth/forth15_loader.bas
+3. Forth System is loaded and activated by the Basic program C:/tools/vforth/forth15_loader.bas
 
 HOW TO CONTINUE
 ---------------
-1. The loader CLEARs RAMTOP to 25343, says it is loading the CODE part, then allows 5 seconds to be stopped (if you need to).
-2. Then it loads another Basic program that runs LINE 20 to perform a COLD start, but RUN performs a WARM start
-3. Before entering Forth, it OPEN# some text file to be used from within Forth environment.
-4. To quit to Basic, you can give BYE
-5. To re-enter Forth with a WARM start, you have to give interactively RUN.
-6. To re-enter Forth with a COLD start, you have to give interactively RUN 20 instead.
+1. forth15_loader.bas  loads the CODE part, It CLEARs RAMTOP to 25343, so little Basic space is left.
+2. It then loads another small Basic program that runs LINE 20 to perform a COLD start to Forth.
+3. From Forth, BYE to quit to Basic.
+5. From Basic, RUN to perform a WARM start to Forth.
+6. From Basic, RUN 20 to perform a COLD starto to Forth.
