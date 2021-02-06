@@ -545,7 +545,7 @@ ASSEMBLER DEFINITIONS HEX
 : DISP,     OVER -  1 - SWAP C! ;
 : BACK,     HOLDPLACE SWAP DISP, ;
 \
-
+: | ;
 
 \ Screen# 141 
 .( Z80 Near struct. )
