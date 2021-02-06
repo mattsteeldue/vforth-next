@@ -152,3 +152,10 @@ SOURCE-ID user variable to keep track of nested calls to INCLUDE definition.
 This - and this is a real big leap - allows interpreting any source file.
 AUTOEXEC now loads Screen # 11. This frees the first 3 Screen for any other 
 purpose.
+
+
+\ build 20210131
+Improved F_GETLINE and EMIT to handle 0x0A more friendly.
+The (COMPARE) definition is now case sensitive or not based on CASEON and CASEOFF.
+A working LOCATE definition is now available in Screens # 70-76 
+DOSCALL definition is now removed since a better M_P3DOS is now available.
