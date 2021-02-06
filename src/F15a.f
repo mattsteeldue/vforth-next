@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20201129 ) CR
+.( build 20210131 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -11,9 +11,9 @@
 \ provided that the copyright notice is kept.  
 \ ______________________________________________________________________
 \
-\ by Matteo Vitturi, 1990-2020
+\ by Matteo Vitturi, 1990-2021
 \
-\ https://sites.google.com/view/vforth/vforth1-3
+\ https://sites.google.com/view/vforth/vforth15-next
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
 \  
 \ This is the complete compiler for v.Forth for SINCLAIR ZX Spectrum Next.
@@ -114,7 +114,7 @@ DECIMAL
      0  VALUE     upper^        \ entry-point for UPPER
 
 \ some pointers are used to patch words later... 
-\ Since we need to create a word using "forward" definitions 
+\ Since we need to define a word using "forward" definitions 
 \ we simply use the previous definitions with the promise
 \ we'll patch the just created word using the forward definitions
 \ as soon as we have them available (later during the compilation)
@@ -127,7 +127,7 @@ DECIMAL
      0  VALUE     (do)~         \ CFA of (DO)
      0  VALUE     (?do)~        \ CFA of (?DO)
      0  VALUE     msg1^         \ patch of ERROR
-     0  VALUE     msg2^         \ patch of CODE/CDEF (CREATE)
+     0  VALUE     msg2^         \ patch of CODE/MCOD (CREATE)
      0  VALUE     enter^        \ resolved within : definition.
      0  VALUE     error^        \ patch of ?ERROR with ERROR
      0  VALUE     asm^          \ patch of ;CODE with ASSEMBLER
@@ -917,20 +917,27 @@ HEX
 
 ." (COMPARE) "
 \ this word performs a lexicographic compare of n bytes of text at address a1 
-\ with n bytes of text t address a2. It returns numeric a value 
+\ with n bytes of text at address a2. It returns numeric a value: 
 \  0 : if strings are equal
 \ +1 : if string at a1 greater than string at a2 
 \ -1 : if string at a1 less than string at a2 
+\ strings can be 256 bytes in length at most.
 CODE (compare) ( a1 a2 n -- b )
         POP     HL| 
         LD      A'|    L|
-        POP     HL| 
-        POP     DE| 
+        POP     HL|         \ string a2
+        POP     DE|         \ string a1
         PUSH    BC|
         LD      B'|    A|
         HERE
-            LDA(X)  DE| 
-            CPA   (HL)|
+\           LDA(X)  DE| 
+\           CPA   (HL)|
+            LD      A'|   (HL)|
+            CALL    upper^ AA,  \ uppercase routine
+            LD      C'|      A|
+            LDA(X)  DE|
+            CALL    upper^ AA,  \ uppercase routine
+            CPA      C|
             INCX    DE| 
             INCX    HL|
             JRF Z'| HOLDPLACE
@@ -976,7 +983,7 @@ HEX 07 C, \ bel
 HEX 08 C, \ bs
 HEX 09 C, \ tab
 HEX 0D C, \ cr
-HEX 20 C, \ not used
+HEX 0A C, \ lf Unix newline
 HEX 20 C, \ not used
 HEX 20 C, \ not used
 
@@ -1039,7 +1046,7 @@ HERE    EMIT-A^ 02 +  !
         POP     BC|
         LDX     HL| 0 NN,          \ don't print anything
         Psh1
-        C;
+\       C;
 
 \ 08 tab        
 EMIT-2^ EMIT-A^ 04 +  ! 
@@ -1049,11 +1056,18 @@ HERE    EMIT-A^ 06 +  !
         ASSEMBLER 
         LDX     HL| 6 NN,
         Psh1
-        C;
+\       C;
 
 \ 0D cr        
 EMIT-2^ EMIT-A^ 08 +  !
-EMIT-2^ EMIT-A^ 0A +  !
+
+\ 0A nl
+HERE    EMIT-A^ 0A +  ! 
+        ASSEMBLER 
+        LDX     HL| 0D NN,
+        Psh1
+\       C;
+
 EMIT-2^ EMIT-A^ 0C +  !
 EMIT-2^ EMIT-A^ 0E +  !
 
@@ -1124,7 +1138,7 @@ CODE key ( -- c )
             CALL    HEX 1601 AA,
 
             \ software-flash: flips face every 320 ms
-            LDN     A'| HEX 10 N,             \ Timing 
+            LDN     A'| HEX 20 N,             \ Timing  
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
 \           LDN     A'| HEX 8F N,             \ block character
@@ -1214,6 +1228,165 @@ CODE ?terminal ( -- 0 | 1 ) ( true if BREAK-SPACE pressed )
         Psh1
         C;
 
+
+\ ______________________________________________________________________ 
+\ 
+\ NextZXOS calls
+\
+
+.( F_SEEK )
+\ Seek to position d in file-handle u.
+\ Return a false-flag 0 on success, True flag on error
+CODE f_seek ( d u -- f )
+        POP     HL|     
+        LD      A'|     L|
+        LD      H'|     B|
+        LD      L'|     C|
+        POP     BC|
+        POP     DE|
+        PUSH    IX|
+        PUSH    HL|
+        LDX     IX|     0 NN,
+        RST     08|     HEX  9F  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_FGETPOS )
+\ Get current position d of file-handle u.
+\ Return d and a false-flag 0 on success, or True flag on error
+CODE f_fgetpos ( u -- d f )
+        POP     HL|     
+        LD      A'|     L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|     HEX  0A0  C,
+        POP     HL|
+        POP     IX|
+        PUSH    DE|
+        PUSH    BC|
+        LD      B'|     H|
+        LD      C'|     L|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_WRITE )
+\ Write bytes currently stored at address a to file-handle u.
+\ Return the actual n bytes written and 0 on success, True flag on error.
+CODE f_write ( a b u -- n f )
+        LD      D'|     B|
+        LD      E'|     C|
+        POP     HL|         \ file handle number
+        LD      A'|     L|
+        POP     BC|         \ bytes to read
+        EX(SP)IX
+        PUSH    DE|
+        RST     08|     HEX  9E  C,
+        POP     BC|
+        POP     IX|
+        PUSH    DE|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_READ )
+\ Read b bytes from file-handle u to address a
+\ Return the actual number n of bytes read 
+\ Return 0 on success, True flag on error
+CODE f_read ( a b u -- n f )
+        LD      D'|     B|
+        LD      E'|     C|
+        POP     HL|         \ file handle number
+        LD      A'|     L|
+        POP     BC|         \ bytes to read
+        EX(SP)IX
+        PUSH    DE|
+        RST     08|   HEX  9D  C,
+        POP     BC|
+        POP     IX|
+        PUSH    DE|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_CLOSE )
+\ Close file-handle u.
+\ Return 0 on success, True flag on error
+CODE f_close ( u -- f )
+        POP     HL|
+        LD      A'|   L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9B  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_OPEN )
+\ open a file 
+\ a1 (filespec) is a null-terminated string, such as produced by ," definition
+\ a2 is address to an 8-byte header data used in some cases.
+\ b is access mode-byte, that is a combination of:
+\ any/all of:
+\   esx_mode_read          $01 request read access
+\   esx_mode_write         $02 request write access
+\   esx_mode_use_header    $40 read/write +3DOS header
+\ plus one of:
+\   esx_mode_open_exist    $00 only open existing file
+\   esx_mode_open_creat    $08 open existing or create file
+\   esx_mode_creat_noexist $04 create new file, error if exists
+\   esx_mode_creat_trunc   $0c create new file, delete existing
+\ Return file-handle u and 0 on success, True flag on error
+CODE f_open ( a1 a2 b -- u f )
+        LD      H'|     B|
+        LD      L'|     C|
+        POP     BC|         \ mode
+        LD      B'|     C|
+        POP     DE|         \ 8-byte buffer if any
+        EX(SP)IX            \ filespec nul-terminated
+        PUSH    HL|         \ this pushes original bc
+        LDN     A'|     CHAR  *  N,
+        RST     08|     HEX  9A  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        LD      E'|     A|
+        LDN     D'|     0  N,
+        Psh2
+        C;
+    \ CREATE FILENAME ," test.txt"   \ new Counted String
+    \ FILENAME 1+ PAD 1 F_OPEN
+    \ DROP
+    \ F_CLOSE
+
+
+.( F_SYNC )
+\ Sync file-handle u changes to disk.
+\ Return 0 on success, True flag on error
+CODE f_sync ( u -- f )
+        POP     HL|
+        LD      A'|   L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9C  C,
+        POP     BC|
+        POP     IX|
+        SBCHL   HL|
+        Psh1
+        C;        
+
+\ ______________________________________________________________________ 
+\ 
 
 \ 6396h
 .( CR )
@@ -2222,7 +2395,8 @@ CODE cells ( n2 -- n2 )
     !CSP      
     CURRENT  @ 
     CONTEXT  ! 
-    CREATE SMUDGE 
+    CREATE 
+    SMUDGE 
     ] 
     ;CODE
 
@@ -2839,6 +3013,7 @@ CODE ?dup ( n -- 0 | n n )
 
 .( RECURSE )
 : recurse
+    ?comp
     latest pfa cfa ,
     ; 
     immediate
@@ -3320,7 +3495,7 @@ CODE fill ( a n c -- )
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "cc                                                                                                                                                                                    
+\ used in the form -FIND "ccc"                                                                                                                                                                                    
 \ searches the vocabulary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
@@ -3405,7 +3580,7 @@ CODE fill ( a n c -- )
 
 \ 721Dh
 .( CODE )
-: cdef  ( -- cccc )
+: mcod  ( -- cccc )
     -find  \ cfa b f
     If
         drop
@@ -3429,7 +3604,7 @@ CODE fill ( a n c -- )
 .( CREATE )
 : create ( -- cccc )
          ( -- n )
-    cdef smudge 
+    mcod smudge 
     ;code
         INCX    DE|
         PUSH    DE|
@@ -3542,7 +3717,7 @@ CODE fill ( a n c -- )
 \ 7306h    
 .( 0x00 ) \ i.e. nul word
 : ~             \ to be RENAME'd via patch
-    blk @ If 
+    blk @ 1 > If 
         1 blk +!  
         0  >in !  
         blk @ b/scr 1 - and 0= 
@@ -3698,6 +3873,7 @@ immediate
 \ Erase the return-stack, stop any compilation and give controlo to 
 \ the console. No message is issued.
 : quit  ( -- )
+    0 source-id !
     0 blk !
     [compile] [
     Begin
@@ -4052,7 +4228,7 @@ CODE basic ( n -- )
     ;
     
     ' message msg1^  !   \ patch error
-    ' message msg2^  !   \ patch code / cdef
+    ' message msg2^  !   \ patch code / mcod
 
     
 \ ______________________________________________________________________ 
@@ -4254,160 +4430,6 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         Psh1
         C;        
 
-
-\ ______________________________________________________________________ 
-
-
-.( F_SEEK )
-\ Seek to position d in file-handle n.
-\ Return 0 on success, True flag on error
-CODE f_seek ( d n -- f )
-        POP     HL|     
-        LD      A'|     L|
-        LD      H'|     B|
-        LD      L'|     C|
-        POP     BC|
-        POP     DE|
-        PUSH    IX|
-        PUSH    HL|
-        LDX     IX|     0 NN,
-        RST     08|     HEX  9F  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
-.( F_FGETPOS )
-\ Get current position d of file-handle n.
-\ Return 0 on success, True flag on error
-CODE f_fgetpos ( n -- d f )
-        POP     HL|     
-        LD      A'|     L|
-        PUSH    IX|
-        PUSH    BC|
-        RST     08|     HEX  0A0  C,
-        POP     HL|
-        POP     IX|
-        PUSH    DE|
-        PUSH    BC|
-        LD      B'|     H|
-        LD      C'|     L|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
-.( F_WRITE )
-\ Write bytes at addr to file-handle n.
-\ Return actual written bytes and 0 on success, True flag on error
-CODE f_write ( addr bytes n -- actual f )
-        LD      D'|     B|
-        LD      E'|     C|
-        POP     HL|         \ file handle number
-        LD      A'|     L|
-        POP     BC|         \ bytes to read
-        EX(SP)IX
-        PUSH    DE|
-        RST     08|     HEX  9E  C,
-        POP     BC|
-        POP     IX|
-        PUSH    DE|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
-.( F_READ )
-\ Read bytes from file-handle n to address addr
-\ Return actual read bytes 
-\ Return 0 on success, True flag on error
-CODE f_read ( addr bytes n -- actual f )
-        LD      D'|     B|
-        LD      E'|     C|
-        POP     HL|         \ file handle number
-        LD      A'|     L|
-        POP     BC|         \ bytes to read
-        EX(SP)IX
-        PUSH    DE|
-        RST     08|   HEX  9D  c,
-        POP     BC|
-        POP     IX|
-        PUSH    DE|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
-.( F_CLOSE )
-\ Close file-handle n.
-\ Return 0 on success, True flag on error
-CODE f_close ( n -- f )
-        POP     HL|
-        LD      A'|   L|
-        PUSH    IX|
-        PUSH    BC|
-        RST     08|   HEX  9B  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
-.( F_OPEN )
-\ filespec is a null-terminated string, such as produced by ," definition
-\ buff is a 8-byte header data used in some cases. You can use HERE
-\ mode is access modes, that is a combination of:
-\ any/all of:
-\   esx_mode_read          $01 request read access
-\   esx_mode_write         $02 request write access
-\   esx_mode_use_header    $40 read/write +3DOS header
-\ plus one of:
-\   esx_mode_open_exist    $00 only open existing file
-\   esx_mode_open_creat    $08 open existing or create file
-\   esx_mode_creat_noexist $04 create new file, error if exists
-\   esx_mode_creat_trunc   $0c create new file, delete existing
-\ Return file-handle n and 0 on success, True flag on error
-CODE f_open ( fspec buff mode -- n f )
-        LD      H'|     B|
-        LD      L'|     C|
-        POP     BC|         \ mode
-        LD      B'|     C|
-        POP     DE|         \ 8-byte buffer if any
-        EX(SP)IX            \ filespec nul-terminated
-        PUSH    HL|         \ this push bc
-        LDN     A'|     CHAR  *  N,
-        RST     08|     HEX  9A  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        LD      E'|     A|
-        LDN     D'|     0  N,
-        Psh2
-        C;
-    \ CREATE FILENAME ," test.txt"   \ new Counted String
-    \ FILENAME 1+ PAD 1 F_OPEN
-    \ DROP
-    \ F_CLOSE
-
-
-.( F_SYNC )
-\ Sync file-handle n changes to disk.
-\ Return 0 on success, True flag on error
-CODE f_sync ( n -- f )
-        POP     HL|
-        LD      A'|   L|
-        PUSH    IX|
-        PUSH    BC|
-        RST     08|   HEX  9C  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        Psh1
-        C;        
-
    
 BLK-FH @ variable blk-fh
 
@@ -4446,7 +4468,7 @@ here 18 dup allot erase
     blk-seek
     b/buf
     blk-fh @
-    f_write
+    f_write 
     [ hex 2F ]   Literal ?error
     drop
 ;
@@ -4469,7 +4491,7 @@ here 18 dup allot erase
 
 
 \ 7946h    
-\  number of blocks available in Next Option.
+\  number of blocks available
 decimal #SEC constant #sec
 
 
@@ -4591,24 +4613,26 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     
 
 .( F_GETLINE )
-\ Given a filehandle read next line (terminated with $0D or $0A)
-\ Address a is left for subsequent process
-\ and n as the number of byte read, that is the length of line 
+\ Given an open filehandle read next line (terminated with $0D or $0A)
+\ Address a is left for subsequent processing
+\ and n as the actual number of byte read, that is the length of line 
 decimal
 : f_getline ( a fh -- a n )
-    dup >r f_fgetpos [ 44 ] Literal ?error \ a d
-    rot     dup b/buf 2dup blanks          \ d a a 512
-    1- r  f_read [ 46 ] Literal ?error     \ d a n
+    dup >r f_fgetpos [ 44 ] Literal ?error  \ a d
+    rot     dup b/buf 2dup blanks           \ d a a 512
+    cell- swap 1+ swap                      \ d a a+1 510
+    1- r  f_read [ 46 ] Literal ?error      \ d a n
     If \ at least 1 chr was read
         [ 10 ] Literal enclose drop swap drop swap \ d b a
         [ 13 ] Literal enclose drop swap drop      \ d b a c
-        rot min                            \ d a n
-        dup >r 2swap r> 1+ 0 d+            \ a n d+n
-        r> f_seek [ 45 ] Literal ?error    \ a n
+        rot min                             \ d a n+1
+        dup >r 2swap r>    0 d+             \ a n d+n+1
+        r> f_seek [ 45 ] Literal ?error     \ a n
     Else
-        r> 2swap 2drop drop 0              \ a 0
+        r> 2swap 2drop drop 0               \ a 0
     Endif
-    2dup + over b/buf swap - blanks
+    2dup + over b/buf swap - blanks 
+    2dup + 0 swap c! 
 ;
 
 
@@ -4911,16 +4935,10 @@ decimal
 
 \ 7e86
 .( CLS )
-\ CODE cls
-\       PUSH    BC| 
-\       CALL    hex 0DAF AA,
-\       POP     BC|
-\       Next
-\       C;
+\ CODE cls 
+\ Chr$ 14 is NextZXOS version CLS
 : cls 
     [ hex 0E ] Literal emitc
-\   bl 
-\   [ hex 16 ] Literal emitc  0 emitc  0 emitc
 ;    
 
 
@@ -4929,8 +4947,8 @@ decimal
 : splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20201129)  cr
-    .( 1990-2020 Matteo Vitturi)  cr
+    .( build 20210131)  cr
+    .( 1990-2021 Matteo Vitturi)  cr
     ;
 
     ' splash splash^ ! \ patch 
@@ -5222,9 +5240,14 @@ decimal
 .( \ )
 \ the following text is interpreted as a comment until end-of-line
 : \ 
-    blk @
+    blk @ 
     If
-        >in @ c/l mod c/l swap - >in +!
+        blk @ 1 >  \ BLOCK 1 is used as temp-line in INCLUDE file.
+        If
+            >in @ c/l mod c/l swap - >in +!
+        Else
+            b/buf cell- >in !
+        Endif
     Else
         [ decimal 80 ] Literal  >in !
     Endif
@@ -5387,7 +5410,7 @@ RENAME   marker         MARKER
 RENAME   '              '
 RENAME   -->            -->
 RENAME   load+          LOAD+
-RENAME   include         INCLUDE
+RENAME   include        INCLUDE
 RENAME   f_include      F_INCLUDE
 RENAME   f_getline      F_GETLINE
 RENAME   flush          FLUSH
@@ -5406,13 +5429,6 @@ RENAME   blk-read       BLK-READ
 RENAME   blk-seek       BLK-SEEK
 RENAME   blk-fname      BLK-FNAME
 RENAME   blk-fh         BLK-FH
-RENAME   f_sync         F_SYNC
-RENAME   f_open         F_OPEN
-RENAME   f_close        F_CLOSE
-RENAME   f_read         F_READ
-RENAME   f_write        F_WRITE
-RENAME   f_fgetpos      F_FGETPOS
-RENAME   f_seek         F_SEEK
 \
 RENAME   m_p3dos        M_P3DOS
 RENAME   <far           <FAR
@@ -5460,7 +5476,7 @@ RENAME   dliteral       DLITERAL
 RENAME   literal        LITERAL
 RENAME   [compile]      [COMPILE]
 RENAME   create         CREATE
-RENAME   cdef           CODE        \ be careful on this
+RENAME   mcod           CODE        \ be careful on this
 RENAME   id.            ID.
 RENAME   error          ERROR
 RENAME   (abort)        (ABORT)
@@ -5661,6 +5677,13 @@ RENAME   um*            UM*
 RENAME   cmove>         CMOVE>
 RENAME   cmove          CMOVE 
 RENAME   cr             CR    
+RENAME   f_sync         F_SYNC
+RENAME   f_open         F_OPEN
+RENAME   f_close        F_CLOSE
+RENAME   f_read         F_READ
+RENAME   f_write        F_WRITE
+RENAME   f_fgetpos      F_FGETPOS
+RENAME   f_seek         F_SEEK
 RENAME   ?terminal      ?TERMINAL
 RENAME   key            KEY    
 \ RENAME   bleep          BLEEP  
@@ -5711,7 +5734,6 @@ CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 \ 5800-5AFF         Attributes
 \ 5B00-5BFF         Printer buffer / System variables 128K RAM
 \ 5C00-5CEF         System variables
-\ 5CF0              Microdrive map
 \          *CHANS   Stream map
 \          *PROG    Basic program
 \          *VARS    Basic variables
@@ -5721,31 +5743,23 @@ CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 \          *STKEND  Floating point end
 \          *SP      Z80 Stack Pointer register in Basic
 \ 62FF     *RAMTOP  Logical RAM top (RAMTOP var is 23730)
-\
-\ 
-\ 6300      TIB     TIB @
-\ 63B0              R0 @  &  Forth User variables 
 \ 6400      ORIGIN  Forth Origin
 \                   FENCE @
 \                   LATEST @
 \           HERE    DP @
 \           PAD     HERE 68 + (44h)
 \           ...     Dictionary grows upward
-\
 \           ...     Free memory
-\
 \           ...     Stack grows downward
-
 \ SP                SP@
-\ F840              S0 @
-\ F840              #TIB     TIB @
-\                   #
+\ D0E8              S0 @
+\ D0E8              #TIB     TIB @
 \                   #...     Return stack grows downward: it can hold 80 entries
 \                   #RP@
-\ F8E0              #R0 @
-\ F8E0-F930         #        User variables area (40-3 entries)
-\ F94C      FIRST   First buffer.
-\ FF58      LIMIT   End of forth (UDG)
+\ D188              #R0 @
+\ D188-D1D8         #        User variables area (about 50 entries)
+\ D1E4      FIRST   First buffer.
+\ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
 \ FFFF      P_RAMT  Phisical ram-top
 \
 
