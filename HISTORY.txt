@@ -159,3 +159,10 @@ Improved F_GETLINE and EMIT to handle 0x0A more friendly.
 The (COMPARE) definition is now case sensitive or not based on CASEON and CASEOFF.
 A working LOCATE definition is now available in Screens # 70-76 
 DOSCALL definition is now removed since a better M_P3DOS is now available.
+
+
+\ build 20210215
+Everything is moved in  C:/tools/vForth to avoid future collisions with C:/forth.
+Introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
+Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
+Cursor keys (or Cursor Joystick maybe)
