@@ -166,3 +166,4 @@ Everything is moved in  C:/tools/vForth to avoid future collisions with C:/forth
 Introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
 Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
 Cursor keys (or Cursor Joystick maybe)
+It's a work-in-progress though. See
