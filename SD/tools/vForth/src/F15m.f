@@ -1623,9 +1623,12 @@ CODE 0< ( n -- f )
 CODE 0> ( n -- f )
          
         POP     HL|
+        LD      A'|    L|
+        ORA      H|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    CY'|    HOLDPLACE    
+        ANDA     A|
         JRF     Z'|    HOLDPLACE
             INC     L'|
         HERE DISP, HERE DISP, \ THEN, THEN,

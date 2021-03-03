@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210131 ) CR
+.( build 20210215 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -389,7 +389,7 @@ HERE TO org^
 \ end of data for COLD start
 
 \ +026
-                 HEX 8F C, 88 C,    \ Used by KEY
+                 HEX 8F C, 8C C,    \ Cursor faces used by KEY
 \ +028
                  HEX 5F C, 00 C,    \ Used by KEY
 \ +02A   ( Echoed IX after NextZXOS call )
@@ -1775,9 +1775,12 @@ CODE 0< ( n -- f )
 CODE 0> ( n -- f )
          
         POP     HL|
+        LD      A'|    L|
+        ORA      H|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    CY'|    HOLDPLACE    
+        ANDA     A|
         JRF     Z'|    HOLDPLACE
             INC     L'|
         HERE DISP, HERE DISP, \ THEN, THEN,
@@ -4307,7 +4310,7 @@ CODE select ( n -- )
 
 .( MMU7@ )
 \ query current page in MMU7 8K-RAM : 0 and 223
-: mmu7@ ( n -- )
+: mmu7@ ( -- n )
     [ decimal 87 ] literal reg@
 ;
     
@@ -4609,6 +4612,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     Do
         0 buffer drop
     Loop
+    blk-fh @ f_sync drop
     ;
     
 
@@ -4947,7 +4951,7 @@ decimal
 : splash
     cls cr
     .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20210131)  cr
+    .( build 20210215)  cr
     .( 1990-2021 Matteo Vitturi)  cr
     ;
 
@@ -4988,20 +4992,22 @@ decimal
 \ returns n2 as the number of read characters.
 : accept- ( a n1 -- n2 )
     >r    ( a )
-    0     ( a 0 )
-    swap  ( 0 a )
-    dup   ( 0 a a )
-    r>    ( 0 a a n )
-    +     ( 0 a n+a )
-    swap  ( 0 n+a a )
-    Do    ( 0 )
-        inkey 
+    0     ( a n2 as the final counter )
+    swap  ( n2 a )
+    dup   ( n2 a a )
+    r>    ( n2 a a n1 )
+    +     ( n2 a n1+a )
+    swap  ( n2 n1+a a )
+    Do    ( n2 )
+        mmu7@ ( n2 page )
+        inkey ( n2 page c )
+        swap mmu7! ( n2 c )
         dup 0= If video quit Endif
         dup [ decimal 13 ] literal = If drop 0 Endif \ Then
         dup [ decimal 10 ] literal = If drop 0 Endif \ Then
         dup  0=  If leave Endif \ Then
-        i c!
-        1+
+        i c! ( n2 )
+        1+ ( increment n2 )
     Loop  ( n2 )
     ;
 
