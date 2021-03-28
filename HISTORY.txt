@@ -167,3 +167,10 @@ Introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
 Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
 Cursor keys (or Cursor Joystick maybe)
 It's a work-in-progress though. See
+
+\ build 20210328
+Using Visual Studio Code with some "Next extension", I've ported the whole source
+code int a new project that produce the very same output as before.
+This opens the way to change the Forth's core in a more effective way.
+
+

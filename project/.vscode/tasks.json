@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // use the sjasmplus assembler    
+            "label": "sjasmplus",
+            "type": "shell",
+            // the command to the assembler and its path has changed
+            // and the argument to create a listing file is added            
+            "command": "c:/Zx/sjasmplus/sjasmplus.exe",
+            "args": [
+				"--sld=${workspaceFolder}/list/main.sld.txt",
+                "--fullpath",
+				"--zxnext",
+				"--lst=${workspaceFolder}/list/main.lst",
+				"${workspaceFolder}/source/main.asm",
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind" : "build",
+                "isDefault": true
+            } 
+        }
+    ]
+}
