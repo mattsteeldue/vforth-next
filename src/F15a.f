@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210131 ) CR
+.( build 20210407 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -57,6 +57,7 @@
 
 CASEON      \ we must be in Case-sensitive option to compile this file.
 0 WARNING ! \ avoid verbose messaging
+29 LOAD     \ RENAME utility.
 
 \ The following word makes dynamic the location of "Origin", so that we can
 \ compile this Forth *twice* to rebuild it completely in itself.
@@ -389,7 +390,7 @@ HERE TO org^
 \ end of data for COLD start
 
 \ +026
-                 HEX 8F C, 88 C,    \ Used by KEY
+                 HEX 8F C, 8C C,    \ Cursor faces used by KEY
 \ +028
                  HEX 5F C, 00 C,    \ Used by KEY
 \ +02A   ( Echoed IX after NextZXOS call )
@@ -710,7 +711,7 @@ CODE digit ( c n -- u 1  |  0 )
 \ no other register is altered
     ASSEMBLER
     HERE TO upper^
-        RET                 \ CASEON is default. This location is patched
+        NOP                 \ CASEOFF is default. This location is patched
                             \ at runtime by CASEON and CASEOFF
         CPN     HEX 61 N,   \ lower-case "a"
         RETF    CY|
@@ -1000,7 +1001,7 @@ CODE (?emit) ( c1 -- c2 )
         ANDN    HEX    7F N,  \ 7-bit ascii only
         PUSH    BC|            \ saves program counter
         LDX     BC|  EMIT-N  NN,
-        LDX     HL|  EMIT-C^ EMIT-N + 1 - NN, \ EMIT-Z^
+        LDX     HL|  EMIT-C^ EMIT-N + 1- NN, \ EMIT-Z^
         CPDR    \ search for c1 in EMIT-C table, backward
         
         JRF    NZ'|  HOLDPLACE    \ Found, decode it
@@ -1275,26 +1276,6 @@ CODE f_fgetpos ( u -- d f )
         C;        
     
     
-.( F_WRITE )
-\ Write bytes currently stored at address a to file-handle u.
-\ Return the actual n bytes written and 0 on success, True flag on error.
-CODE f_write ( a b u -- n f )
-        LD      D'|     B|
-        LD      E'|     C|
-        POP     HL|         \ file handle number
-        LD      A'|     L|
-        POP     BC|         \ bytes to read
-        EX(SP)IX
-        PUSH    DE|
-        RST     08|     HEX  9E  C,
-        POP     BC|
-        POP     IX|
-        PUSH    DE|
-        SBCHL   HL|
-        Psh1
-        C;        
-    
-    
 .( F_READ )
 \ Read b bytes from file-handle u to address a
 \ Return the actual number n of bytes read 
@@ -1308,6 +1289,26 @@ CODE f_read ( a b u -- n f )
         EX(SP)IX
         PUSH    DE|
         RST     08|   HEX  9D  C,
+        POP     BC|
+        POP     IX|
+        PUSH    DE|
+        SBCHL   HL|
+        Psh1
+        C;        
+    
+    
+.( F_WRITE )
+\ Write bytes currently stored at address a to file-handle u.
+\ Return the actual n bytes written and 0 on success, True flag on error.
+CODE f_write ( a b u -- n f )
+        LD      D'|     B|
+        LD      E'|     C|
+        POP     HL|         \ file handle number
+        LD      A'|     L|
+        POP     BC|         \ bytes to read
+        EX(SP)IX
+        PUSH    DE|
+        RST     08|     HEX  9E  C,
         POP     BC|
         POP     IX|
         PUSH    DE|
@@ -1775,9 +1776,12 @@ CODE 0< ( n -- f )
 CODE 0> ( n -- f )
          
         POP     HL|
+        LD      A'|    L|
+        ORA      H|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    CY'|    HOLDPLACE    
+        ANDA     A|
         JRF     Z'|    HOLDPLACE
             INC     L'|
         HERE DISP, HERE DISP, \ THEN, THEN,
@@ -3011,12 +3015,12 @@ CODE ?dup ( n -- 0 | n n )
     ;
 
 
-.( RECURSE )
-: recurse
-    ?comp
-    latest pfa cfa ,
-    ; 
-    immediate
+\ .( RECURSE )
+\ : recurse
+\     ?comp
+\     latest pfa cfa ,
+\     ; 
+\     immediate
 
 
 \ 6BDFh
@@ -3128,7 +3132,7 @@ CODE ?dup ( n -- 0 | n n )
             i c!        ( a  c )
             dup bl <    ( a  c  c<BL )  \ patch ghost word
             If
-                r> 1 - >r  
+                r> 1- >r  
             Endif
 
         Endif
@@ -3594,7 +3598,7 @@ CODE fill ( a n c -- )
     here 
     dup c@ width @ min 1+ allot
     dup [ decimal 160 ] Literal toggle
-    here 1 - [ decimal 128 ] Literal toggle
+    here 1- [ decimal 128 ] Literal toggle
     latest ,
     current @ !
     here cell+ ,
@@ -3720,7 +3724,7 @@ CODE fill ( a n c -- )
     blk @ 1 > If 
         1 blk +!  
         0  >in !  
-        blk @ b/scr 1 - and 0= 
+        blk @ b/scr 1- and 0= 
         If 
             ?exec 
             r> drop 
@@ -3963,8 +3967,8 @@ immediate
 
     [ decimal      4 ] Literal place !
 
-    [ decimal      8 ] Literal     \ caps-lock on
-    [ hex       5C6A ] Literal c!  \ FLAGS2
+\   [ decimal      8 ] Literal     \ caps-lock on !
+\   [ hex       5C6A ] Literal c!  \ FLAGS2       !
     
     2 hp !
 
@@ -4001,8 +4005,8 @@ here warm^ ! \ patch
 \       LDN     A'|    1 N,
 \       LD()A   hex 5C6B AA,   \ DF_SZ system variable
 
-        LDX()   HL|    hex  14 +origin AA, \ forth's RP
-        LD()X   HL|    hex 030 +origin AA,
+        LDHL()  hex  14 +origin AA, \ forth's RP
+        LD()HL  hex 030 +origin AA,
         LDX     BC|    y^              NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,
 
@@ -4026,7 +4030,7 @@ CODE basic ( n -- )
         LDX     HL|    0 NN,
         ADDHL   SP|
         LDX()   SP|    hex  08 +origin AA, \ retrieve SP just before...
-        LD()X   HL|    hex  08 +origin AA, \ ...saving Forth SP.
+        LD()HL  hex  08 +origin AA, \ ...saving Forth SP.
 
         EXX
         POP     HL|    \ retrieve Basic HL'
@@ -4307,7 +4311,7 @@ CODE select ( n -- )
 
 .( MMU7@ )
 \ query current page in MMU7 8K-RAM : 0 and 223
-: mmu7@ ( n -- )
+: mmu7@ ( -- n )
     [ decimal 87 ] literal reg@
 ;
     
@@ -4381,7 +4385,7 @@ CODE <far ( a n -- ha )
 \  n3 = bc register parameter value
 \  n4 =  a register parameter value
 \   a = routine address in ROM 3
-\ ----
+\ ---- 
 \  n5 = hl returned value
 \  n6 = de returned value 
 \  n7 = bc returned value
@@ -4411,7 +4415,7 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         PUSH    IX|
         POP     HL|
-        LD()X   HL|    HEX 02A org^ +  AA, \ saves away IX 
+        LD()HL         HEX 02A org^ +  AA, \ saves away IX 
 
         POP     IX|
         EX(SP)HL            \ hl argument and retrieve BC
@@ -4609,6 +4613,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     Do
         0 buffer drop
     Loop
+    blk-fh @ f_sync drop
     ;
     
 
@@ -4945,10 +4950,12 @@ decimal
 \ 7e96
 .( SPLASH )
 : splash
-    cls cr
-    .( v-Forth 1.5 NextZXOS version)  cr
-    .( build 20210131)  cr
-    .( 1990-2021 Matteo Vitturi)  cr
+    cls
+    [compile] (.")
+    [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
+    [ decimal 13 here ," build 20210407" -1 allot ]
+    [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
+    [ decimal 13 c, c! c! c! ]
     ;
 
     ' splash splash^ ! \ patch 
@@ -4988,20 +4995,22 @@ decimal
 \ returns n2 as the number of read characters.
 : accept- ( a n1 -- n2 )
     >r    ( a )
-    0     ( a 0 )
-    swap  ( 0 a )
-    dup   ( 0 a a )
-    r>    ( 0 a a n )
-    +     ( 0 a n+a )
-    swap  ( 0 n+a a )
-    Do    ( 0 )
-        inkey 
+    0     ( a n2 as the final counter )
+    swap  ( n2 a )
+    dup   ( n2 a a )
+    r>    ( n2 a a n1 )
+    +     ( n2 a n1+a )
+    swap  ( n2 n1+a a )
+    Do    ( n2 )
+        mmu7@ ( n2 page )
+        inkey ( n2 page c )
+        swap mmu7! ( n2 c )
         dup 0= If video quit Endif
         dup [ decimal 13 ] literal = If drop 0 Endif \ Then
         dup [ decimal 10 ] literal = If drop 0 Endif \ Then
         dup  0=  If leave Endif \ Then
-        i c!
-        1+
+        i c! ( n2 )
+        1+ ( increment n2 )
     Loop  ( n2 )
     ;
 
@@ -5255,25 +5264,25 @@ decimal
     immediate
 
 
-.( RENAME )
-\ special utility to rename a word to another name but same length
-: rename  ( -- "ccc" "ddd" )
-    ' >body nfa
-    dup c@  [ hex 1F ] Literal  and
-    2dup + 
-    >r
-\       bl word here  [ hex 20 ] Literal  allot
-        bl word       [ hex 20 ] Literal  allot
-        count  [ hex 1F ] Literal  and rot min
-        >r 
-            swap 1+
-        r>
-        cmove
-        r  c@  [ hex 80 ] Literal  or
-    r>      
-    c!
-    [ hex -20 ] Literal allot
-;
+\ .( RENAME )
+\ \ special utility to rename a word to another name but same length
+\ : rename  ( -- "ccc" "ddd" )
+\     ' >body nfa
+\     dup c@  [ hex 1F ] Literal  and
+\     2dup + 
+\     >r
+\ \       bl word here  [ hex 20 ] Literal  allot
+\         bl word       [ hex 20 ] Literal  allot
+\         count  [ hex 1F ] Literal  and rot min
+\         >r 
+\             swap 1+
+\         r>
+\         cmove
+\         r  c@  [ hex 80 ] Literal  or
+\     r>      
+\     c!
+\     [ hex -20 ] Literal allot
+\ ;
 
 
 .( VALUE )
@@ -5313,6 +5322,7 @@ voc-link @ hex 020 +origin !  \ set cold-VOC-LINK
 
 forth definitions
 
+CASEOFF
 
 \ ______________________________________________________________________ 
 
@@ -5354,7 +5364,7 @@ CODE final_rp_patch
 
 RENAME   to             TO
 RENAME   value          VALUE
-RENAME   rename         RENAME 
+\ RENAME   rename         RENAME 
 .( RENAME   \              \  )
 
 RENAME   ?do            ?DO
@@ -5518,7 +5528,7 @@ RENAME   -trailing      -TRAILING
 RENAME   type           TYPE  
 RENAME   count          COUNT 
 RENAME   does>          DOES> 
-RENAME   recurse        RECURSE
+\ RENAME   recurse        RECURSE
 RENAME   <builds        <BUILDS
 RENAME   ;code          ;CODE  
 RENAME   (;code)        (;CODE)
@@ -5680,8 +5690,8 @@ RENAME   cr             CR
 RENAME   f_sync         F_SYNC
 RENAME   f_open         F_OPEN
 RENAME   f_close        F_CLOSE
-RENAME   f_read         F_READ
 RENAME   f_write        F_WRITE
+RENAME   f_read         F_READ
 RENAME   f_fgetpos      F_FGETPOS
 RENAME   f_seek         F_SEEK
 RENAME   ?terminal      ?TERMINAL
@@ -5761,7 +5771,6 @@ CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 \ D1E4      FIRST   First buffer.
 \ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
 \ FFFF      P_RAMT  Phisical ram-top
-\
+\ 
 
 QUIT
-
