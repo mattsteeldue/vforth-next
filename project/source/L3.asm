@@ -551,7 +551,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210328", 13
+                db      "build 20210407", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -696,9 +696,9 @@ Load_Endif:
 //
 // mark     --
 //
-                Colon_Def MARK, "MARK", is_normal
-                dw      INVV, TYPE, TRUV
-                dw      EXIT
+//              Colon_Def MARK, "MARK", is_normal
+//              dw      INVV, TYPE, TRUV
+//              dw      EXIT
 
 //  ______________________________________________________________________ 
 //
@@ -889,22 +889,22 @@ Backslash_Endif_1:
 //  ______________________________________________________________________ 
 //
 // rename
-                Colon_Def RENAME, "RENAME", is_normal
-                dw      TICK, TO_BODY, NFA
-                dw      DUP, CFETCH, LIT, $1F, AND_OP
-                dw      TWO_DUP, PLUS
-                dw      TO_R
-                dw      BL, WORD, LIT, 32, ALLOT
-                dw      COUNT, LIT, $1F, AND_OP, ROT, MIN
-                dw      TO_R
-                dw      SWAP, ONE_PLUS
-                dw      R_TO
-                dw      CMOVE
-                dw      R_OP, CFETCH, LIT, END_BIT, OR_OP
-                dw      R_TO
-                dw      CSTORE
-                dw      LIT, -32, ALLOT
-                dw      EXIT
+//              Colon_Def RENAME, "RENAME", is_normal
+//              dw      TICK, TO_BODY, NFA
+//              dw      DUP, CFETCH, LIT, $1F, AND_OP
+//              dw      TWO_DUP, PLUS
+//              dw      TO_R
+//              dw      BL, WORD, LIT, 32, ALLOT
+//              dw      COUNT, LIT, $1F, AND_OP, ROT, MIN
+//              dw      TO_R
+//              dw      SWAP, ONE_PLUS
+//              dw      R_TO
+//              dw      CMOVE
+//              dw      R_OP, CFETCH, LIT, END_BIT, OR_OP
+//              dw      R_TO
+//              dw      CSTORE
+//              dw      LIT, -32, ALLOT
+//              dw      EXIT
 
 //  ______________________________________________________________________ 
 //

@@ -625,12 +625,12 @@ QError_Endif:                                   // endif
 //  ______________________________________________________________________ 
 //
 // recurse      --
-                Colon_Def RECURSE, "RECURSE", is_immediate
-                dw      QCOMP                   // ?comp
-                dw      LATEST                  // latest
-                dw      PFA, CFA                // pfa cfa
-                dw      COMMA                   // ,
-                dw      EXIT                    // ; immediate
+//              Colon_Def RECURSE, "RECURSE", is_immediate
+//              dw      QCOMP                   // ?comp
+//              dw      LATEST                  // latest
+//              dw      PFA, CFA                // pfa cfa
+//              dw      COMMA                   // ,
+//              dw      EXIT                    // ; immediate
 
 //  ______________________________________________________________________ 
 //

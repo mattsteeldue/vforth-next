@@ -78,7 +78,7 @@ Psh1_Ptr:       push    hl
 
 Next_Ptr:       // This address must always be kept in IX: "next" relies on that
 
-                if DEBUGGING != 0
+                if ( 1 == DEBUGGING )
                 ld      hl, Next_Breakpoint_1
                 and     a
                 sbc     hl, bc

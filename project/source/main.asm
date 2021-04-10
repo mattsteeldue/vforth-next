@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 // v-Forth 1.6 NextZXOS version 
-// build 20210320 
+// build 20210407 
 // 
 // 
 //  NextZXOS version
@@ -52,18 +52,38 @@
 //  _________________
 
                 OPT     --zxnext    
+//  ______________________________________________________________________
+//
+// this controls some debugging code in L0.asm
+//  0 for final binary release.
+//  1 for debugging with Visual Studio Code and DeZog
+// -1 for for binary comparison with Forth generated code.
+DEBUGGING       equ     0
+//
+//  ______________________________________________________________________
 
-DEBUGGING       equ     0                       // this controls some debugging code in L0.asm
-//ORIGIN          equ     $6400
+                if ( -1 == DEBUGGING ) 
 ORIGIN          equ     $6380                   // for binary comparison
-//ORIGIN          equ     $8400                   // for DeZog
+                endif
+//  ______________________________________________________________________
 
+                if (  0 == DEBUGGING ) 
+ORIGIN          equ     $6400                   // binary
+                endif
+//  ______________________________________________________________________
+
+                if (  1 == DEBUGGING ) 
+ORIGIN          equ     $8080                   // for DeZog
+                endif
+//  ______________________________________________________________________
 
                 DEVICE  ZXSPECTRUMNEXT
-//              DEVICE  NONE
 
                 ORG     ORIGIN
-                ds 128
+
+                if ( -1 == DEBUGGING ) 
+                ds 128                            // for binary comparison
+                endif
 
 //  ______________________________________________________________________
 // 

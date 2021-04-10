@@ -52,30 +52,6 @@
  
 //  ______________________________________________________________________ 
 //
-// f_write      a b u -- n f
-// Write bytes currently stored at address a to file-handle u.
-// Return the actual n bytes written and 0 on success, True flag on error.
-                New_Def F_WRITE, "F_WRITE", is_code, is_normal
-            
-                ld      d, b
-                ld      e, c
-
-                pop     hl
-                ld      a, l                // file-handle
-                pop     bc                  // bc has bytes to read
-                ex      (sp), ix            // ix has address
-                push    de                  // Save Instruction pointer 
-                rst     $08     
-                db      $9E
-                pop     bc                  // Restore Instruction pointer 
-                pop     ix                  // Restore ix
-                push    de                  // bytes written
-                sbc     hl, hl
-
-                psh1
-
-//  ______________________________________________________________________ 
-//
 // f_read       a b u -- n f
 // Read b bytes from file-handle u to address a
 // Return the actual number n of bytes read 
@@ -91,6 +67,29 @@
                 push    de                  // Save Instruction pointer 
                 rst     $08     
                 db      $9D
+                pop     bc                  // Restore Instruction pointer 
+                pop     ix                  // Restore ix
+                push    de                  // bytes written
+                sbc     hl, hl
+
+                psh1
+
+//  ______________________________________________________________________ 
+//
+// f_write      a b u -- n f
+// Write bytes currently stored at address a to file-handle u.
+// Return the actual n bytes written and 0 on success, True flag on error.
+                New_Def F_WRITE, "F_WRITE", is_code, is_normal
+            
+                ld      d, b
+                ld      e, c
+                pop     hl
+                ld      a, l                // file-handle
+                pop     bc                  // bc has bytes to read
+                ex      (sp), ix            // ix has address
+                push    de                  // Save Instruction pointer 
+                rst     $08     
+                db      $9E
                 pop     bc                  // Restore Instruction pointer 
                 pop     ix                  // Restore ix
                 push    de                  // bytes written
