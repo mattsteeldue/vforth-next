@@ -43,17 +43,17 @@ Bakup of first 350 screens to 10001 onward, just to be safe. Accessing upper Scr
 \ build 20200702
 Introduced a quick'n'dirty audible click on  KEY 
 Word  BASIC, on returning to Basic, retuns the value currently on top-of-stack. Useful to return ORIGIN and make faster rebuild.
-Test on  AUTOEXEC  in core, run 1 LOAD. Useful at startup, as already seen..
+Test on  AUTOEXEC  in core, run 11 LOAD. Useful at startup, as already seen..
 Verified and corrected words MOVE-SP; copied words MOVE-SP, MOVE-RP, MOVE-LIMIT to screen 220-223: useful to free MMU7 last 8K bank (D000-FFFF)
 Introduced screen #100 to compile the whole ASSEMBLER (screens 101-162). And Screen #9 too.
 
 
 \ build 20200705
-Finally fixed  AUTOEXEC  in core, to correctly run 1 LOAD
+Finally fixed  AUTOEXEC  in core, to correctly run 11 LOAD
 Added NIP and TUCK to core.
 SP register to be below C000 in  ?TERMINAL  and  KEY  too.
 Fixed  RND  in !blocks.bin library and told Marcus Cruz to correct his GitHub's Afera library.
-Improving MMU7 banking study using words  +FAR -FAR  FAR-HL, Moved previous example of FAR-HL from screen #290 to #300 
+Improving MMU7 banking study using words  >FAR <FAR. Moved previous example of FAR-HL from screen #290 to #300 
 Finally fixed the Z80N  NEXTREG op-code  to use "N," commaer instead of the duplicated "V,"
 Experiment on  .RESET  to force a soft-reset. Maybe this could become a dot-command if there isn't any yet.
 
@@ -116,12 +116,9 @@ This is the first step into Next's Hardware: hopefully next will be sprites.
 
 \ build 20201017
 Now the following word are available: M_P3DOS  F_SYNC  F_OPEN  F_CLOSE  F_READ  F_WRITE  F_SEEK  that use RST 8 calls for NextZXOS interaction, fast and neat indeed since there is no more need for BANK paging during DOSCALL.
-
 Screens/Blocks system doesn't need  OPEN# from Basic anymore, instead Block's file is opened during COLD or WARM and closed during  BYE.
-
 Now CREATE is more ISO compliant and a new MARKER definition is now available.
 Also, a better compiled strings are now available to create string to hold a filename. Still, an  USE  definition is lacking, ... la prochaine fois.
-
 ASSEMBLER vocabulary doesn't occupy Dictionary space anymore, instead it uses some HEAP VOCABULARY extending what I am already doing with HEAP STRINGs. 
 
 
@@ -166,11 +163,13 @@ Everything is moved in  C:/tools/vForth to avoid future collisions with C:/forth
 Introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
 Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
 Cursor keys (or Cursor Joystick maybe)
-It's a work-in-progress though. See
+It's a work-in-progress though.
 
 \ build 20210328
 Using Visual Studio Code with some "Next extension", I've ported the whole source
-code int a new project that produce the very same output as before.
+code into a new project that produce the very same output as before.
 This opens the way to change the Forth's core in a more effective way.
 
+\ build 20210407
+minor fix and docs.
 
