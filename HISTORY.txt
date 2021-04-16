@@ -175,5 +175,6 @@ minor fix and docs.
 
 \ build 20210416
 Introducing NEEDS definition and the corresponding inc/ including directory.
+( Reading source file via OPEN# stream is now deemed obsolete and deprecated )
 
 
