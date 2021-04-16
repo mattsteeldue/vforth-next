@@ -159,6 +159,8 @@ Voclink_Ptr:
 Quit_Begin:                                                
                 dw      R0, FETCH, RPSTORE      //      r0 @ rp!
                 dw      CR                      //      cr
+// Next_Breakpoint_3:
+
                 dw      QUERY                   //      query
 Next_Breakpoint_1:
                 dw      INTERPRET               //      interpret                                                
@@ -184,6 +186,7 @@ Quit_Endif:                                     //      else
                 dw      DEFINITIONS             // definitions
 Autoexec_Ptr:                
                 dw      AUTOEXEC                // autoexec, patched to noop
+Next_Breakpoint_2:
                 dw      QUIT                    // quit
                 dw      EXIT                    // ;
 
@@ -219,6 +222,8 @@ Autoexec_Ptr:
 //              dw      LIT, 8
 //              dw      LIT, FLAGS2, CSTORE     // 8 5C6A c!
                 dw      TWO, HP, STORE          // 2 hp !
+
+                dw      EMPTY_BUFFERS
 Warm_Start:     dw      WARM
 Cold_Start:     dw      COLD      
                 dw      EXIT        

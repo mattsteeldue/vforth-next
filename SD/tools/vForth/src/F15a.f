@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210407 ) CR
+.( build 20210416 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -55,9 +55,11 @@
   FORTH DEFINITIONS
 \ _________________
 
+NEEDS RENAME
+NEEDS ASSEMBLER
+
 CASEON      \ we must be in Case-sensitive option to compile this file.
 0 WARNING ! \ avoid verbose messaging
-29 LOAD     \ RENAME utility.
 
 \ The following word makes dynamic the location of "Origin", so that we can
 \ compile this Forth *twice* to rebuild it completely in itself.
@@ -1365,7 +1367,7 @@ CODE f_open ( a1 a2 b -- u f )
         LDN     D'|     0  N,
         Psh2
         C;
-    \ CREATE FILENAME ," test.txt"   \ new Counted String
+    \ CREATE FILENAME ," test.txt"   \ new Counted String zero-padded
     \ FILENAME 1+ PAD 1 F_OPEN
     \ DROP
     \ F_CLOSE
@@ -1875,10 +1877,10 @@ CODE cell+ ( n1 -- n2 )
         C;
 
 
-.( ALIGN )
-CODE align ( a1 -- a2 )
-        Next
-        C;
+\ .( ALIGN )
+\ CODE align ( a1 -- a2 )
+\         Next
+\         C;
 
 
 .( CELL- )
@@ -3236,7 +3238,7 @@ CODE fill ( a n c -- )
 \ Other occurrences of c are ignored.
 \ If BLK is zero, text is taken from terminal buffer TIB.
 \ Otherwise text is taken from the disk-block given by BLK.
-\ "in" variable is incremented of the number of character read.
+\ ">in" variable is incremented of the number of character read.
 \ The number of characters read is given by ENCLOSE.
 : word  ( c -- a )
     blk @ 
@@ -3284,8 +3286,8 @@ CODE fill ( a n c -- )
 
 \ new
 .( ," )
-\ compiles a string terminated by " as a counted string
-\ from next input stream
+\ read text from input stream until a " in encontered and 
+\ compiles a string as a "counted string" appending a trailing 0x00
 : ," ( -- )
     [ CHAR " ] Literal word
     c@ 1+ allot
@@ -3499,7 +3501,7 @@ CODE fill ( a n c -- )
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "ccc"                                                                                                                                                                                    
+\ used in the form -FIND "cccc"                                                                                                                                                                                    
 \ searches the vocabulary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
@@ -3877,6 +3879,7 @@ immediate
 \ Erase the return-stack, stop any compilation and give controlo to 
 \ the console. No message is issued.
 : quit  ( -- )
+    \ source-id f_close drop \ to be **tested**
     0 source-id !
     0 blk !
     [compile] [
@@ -4645,36 +4648,51 @@ decimal
 \ Given a filehandle includes the source from file
 decimal
 : f_include  ( fh -- )
+    \ it first saves current loading status (BLK, >IN, SOURCE-ID)
     blk @ >r  
     >in @ >r  
-    source-id @ >r r 
+    source-id @ >r 
+
+    \ if SOURCE-ID was non zero (i.e. this is a recursed F_INCLUDE)
+    \ try to save its position and close the file-handle.
+    r 
     If 
         r f_fgetpos [ 44 ] Literal ?error 
     Else 
-        0 0 
+        0 0         \ 0 0 fake handle-position
     Endif 
-    >r >r
-    source-id !
+    >r >r           \ save previous (double) handle-position if any...
+    
+    source-id !     \ this use the  fh  passed parameter (at last)
+
+    \ read text from file using  block #1 as a temporary buffer.
     Begin
         1 block source-id @ 
-        f_getline  
-      \ cr 2dup type  
+        f_getline     \ a source text line can be up to 511 characters
+      \ cr 2dup type  \ during code-debugging phase
         swap drop
-    While
-        update 
+    While             \ stay in loop while there is text to be read
+        update        \ toggle it again to avoid write it back to disk     
         1 blk ! 0 >in !  
         interpret
     Repeat
+
+    \ close current file
     source-id @  
     0 source-id !  
     f_close [ 42 ] Literal ?error
-    r> r> r>   
+
+    \ restore previous Handle-position
+    r> r> 
+    \ restore SOURCE-ID
+    r>   
     dup source-id !
     If 
         source-id @ f_seek [ 43 ] Literal ?error 
     Else 
-        2drop 
+        2drop       \ ignore 0 0 fake handle-position.
     Endif
+    \ restore >IN, BLK
     r> >in !  
     r> blk !
 ;
@@ -4688,6 +4706,77 @@ decimal
     pad 1 f_open [ 43 ] Literal ?error
     f_include
     \ f_close drop
+;
+
+
+.( NEEDS )
+\ check for cccc exists in vocabulary
+\ if it doesn't then  INCLUDE  inc/cccc.F
+decimal
+\ temp filename cccc.f as counted string zero-padded
+create   needs-w     35 allot   \ 32 + .f + 0x00 = len 35
+needs-w 35 erase
+\ temp complete path+filename
+create   needs-fn    40 allot
+needs-fn 40 erase
+\ constant path
+create   needs-inc   ," inc/"
+\ create   needs-lib   ," lib/"
+
+
+\ Concatenate path at a and filename and include it
+\ No error is issued if filename doesn't exist.
+: needs/  ( a -- )              \ a is address of Path passed
+    count tuck                    \ n a n
+    needs-fn swap cmove           \ n       \ Path
+    needs-fn +                    \ a1+n    \ concat
+    needs-w 1+ swap [ 35 ] Literal  
+    cmove                         \         \ Filename
+    needs-fn                      \ a3
+    pad 1 f_open
+    If 
+        [ 43 ] Literal message
+    Else 
+        f_include
+    Endif
+;
+
+
+\ Replace illegal character in filename with tilde ~
+\ at the moment we need only  "
+: needs-check ( -- )
+    needs-w count over + swap
+    Do
+        i c@ [ char " ] Literal =
+        If   [ char ~ ] Literal i c!  Endif
+    Loop
+;
+
+
+\ include  "path/cccc.f" if cccc is not defined
+\ filename cccc.f is temporary stored at NEEDS-W
+: needs-path  ( a -- )
+    -find 0= If
+        needs-w    [ 35 ] literal  
+        erase                           \ a
+        here c@ 1+ here over            \ a n here n
+        needs-w    swap cmove           \ a n
+        needs-check
+        needs-w    +                    \ a a1+n
+        [ hex 662E decimal ] literal    \ a a1+n ".F"
+        swap !                          \ a
+        needs/
+    Endif 
+;
+
+
+\ check for cccc exists in vocabulary
+\ if it doesn't then  INCLUDE  inc/cccc.F
+\ search in inc subdirectory
+: needs
+    needs-inc needs-path     \ search in "inc/"
+\ needs-w c@ minus >in +!  \ re-feed cccc
+\ needs-lib needs-path     \ 2nd chance at "lib/"
 ;
 
 
@@ -4953,9 +5042,9 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210407" -1 allot ]
+    [ decimal 13 here ," build 20210416" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
-    [ decimal 13 c, c! c! c! ]
+    [ decimal 13 c, c! c! c! ] 
     ;
 
     ' splash splash^ ! \ patch 
@@ -5091,10 +5180,10 @@ decimal
     ;
     
 
-\ MARK
-: mark ( a n -- )
-    invv type truv
-    ;
+\ \ MARK
+\ : mark ( a n -- )
+\     invv type truv
+\     ;
 
 .( BACK )
 : back
@@ -5271,7 +5360,6 @@ decimal
 \     dup c@  [ hex 1F ] Literal  and
 \     2dup + 
 \     >r
-\ \       bl word here  [ hex 20 ] Literal  allot
 \         bl word       [ hex 20 ] Literal  allot
 \         count  [ hex 1F ] Literal  and rot min
 \         >r 
@@ -5383,7 +5471,7 @@ RENAME   then           THEN
 RENAME   endif          ENDIF
 RENAME   if             IF
 RENAME   back           BACK
-RENAME   mark           MARK
+\ RENAME   mark           MARK
 RENAME   truv           TRUV
 RENAME   invv           INVV
 RENAME   bye            BYE
@@ -5420,6 +5508,14 @@ RENAME   marker         MARKER
 RENAME   '              '
 RENAME   -->            -->
 RENAME   load+          LOAD+
+RENAME   needs          NEEDS 
+RENAME   needs-path     NEEDS-PATH
+RENAME   needs-check    NEEDS-CHECK
+RENAME   needs/         NEEDS/
+RENAME   needs-w        NEEDS-W
+RENAME   needs-inc      NEEDS-INC
+RENAME   needs-fn       NEEDS-FN
+RENAME   needs-w        NEEDS-W
 RENAME   include        INCLUDE
 RENAME   f_include      F_INCLUDE
 RENAME   f_getline      F_GETLINE
@@ -5660,7 +5756,7 @@ RENAME   over           OVER
 RENAME   dminus         DMINUS
 RENAME   minus          MINUS 
 RENAME   cell-          CELL-  
-RENAME   align          ALIGN
+\ RENAME   align          ALIGN 
 RENAME   cell+          CELL+  
 RENAME   2+             2+ 
 RENAME   1-             1- 

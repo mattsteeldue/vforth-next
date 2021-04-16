@@ -173,3 +173,7 @@ This opens the way to change the Forth's core in a more effective way.
 \ build 20210407
 minor fix and docs.
 
+\ build 20210416
+Introducing NEEDS definition and the corresponding inc/ including directory.
+
+

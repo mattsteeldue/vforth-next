@@ -120,9 +120,9 @@ len_NFA         defl    $ - temp_NFA
 
                 dw      last_NFA            // Link to previous definition Name
 label:          if runcode != 0 ; ok        // This is the start address of the direct jp(hl)
-                dw      runcode ; ok        // for primitive definitions  actual code
-                else
-                dw      $ + 2   ; ok        // is pointed by CFA    
+                call    runcode ; ok        // for primitive definitions  actual code
+
+
                 endif           ; ok        // for other definitions it "points" the correct handler
                 // Use of "; ok" to suppress "warning[fwdref]"
                                             

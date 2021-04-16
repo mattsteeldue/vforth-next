@@ -29,6 +29,8 @@ close G ;
 
 open( F, '<', $source_filename )|| die "$block_filename not found.\n" ;
 while( my $line = <F> ) {
+	set_screen_number( $desc_screen_number ) if ( 0 == $screen_number && $desc_screen_number != 0 && $line =~ /Screen#\s(\d{1,4})/ ); 		# :dbolli:20210414 17:21:21 Added to use $desc_screen_number param if specified
+	set_screen_number( $desc_screen_number ) if ( 0 == $screen_number && $desc_screen_number != 0 && $line =~ /Scr#\s(\d{1,4})/ ); 		# :dbolli:20210414 17:21:21 Added to use $desc_screen_number param if specified
     set_screen_number( $1 ) if ( 0 == $screen_number && $line =~ /Screen#\s(\d{1,4})/ ) ;
     set_screen_number( $1 ) if ( 0 == $screen_number && $line =~ /Scr#\s(\d{1,4})/ ) ;
     if ( $line =~ /^\s{1,2}(\d{1,2})\s?(.{1,64})/ ){
@@ -40,13 +42,12 @@ while( my $line = <F> ) {
     }
     if ( 16 == $line_number ) {
         # put_screen( $screen_number ) ;
-        set_screen_number( 0 );
+        set_screen_number( 0 ) if ( $desc_screen_number == 0 );		# :dbolli:20210414 17:21:21 Added if ( $desc_screen_number == 0 )
+        set_screen_number( $screen_number + 1 ) if ( $desc_screen_number != 0 );		# :dbolli:20210414 17:21:21 Added
         $line_number = 0 ;
     }
 }
 put_screen( $screen_number ) ;
-
-
 
 close F ;
 
