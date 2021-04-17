@@ -54,6 +54,8 @@ CR
 \    REG,       used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
+NEEDS RENAME        \ this is just a patch to be removed in the future
+NEEDS CODE          \ this is just a patch to be removed in the future 
 
 FORTH DEFINITIONS 
 
@@ -603,15 +605,15 @@ DP @ LP @ DP !  LP !
 \ Screen# 117 
 .( Assembler Z80 )
 
-FORTH DEFINITIONS RENAME CODE CDEF
+FORTH DEFINITIONS RENAME CODE MCOD
 
 : CODE ?EXEC 
-    CDEF   
+    MCOD   
     [COMPILE] ASSEMBLER   
     TOOLS-ASM
     !TALLY !CSP 
     ; IMMEDIATE
-: C; 
+: C; \ Ends a CODE definition
     CURRENT @ CONTEXT !  ?EXEC 
     TOOLS-ASM CHECK26 CHECK27  
     SMUDGE ; IMMEDIATE
@@ -619,8 +621,3 @@ FORTH DEFINITIONS RENAME CODE CDEF
 ' ASSEMBLER ' ;CODE >BODY 4 CELLS + ! ( patch to ;CODE )
 
 FORTH DEFINITIONS DECIMAL
-
-
-
-QUIT
-

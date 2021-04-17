@@ -54,8 +54,8 @@ CR
 \    REG,       used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
-NEEDS RENAME
-NEEDS CODE
+NEEDS RENAME        \ this is just a patch to be removed in the future
+NEEDS CODE          \ this is just a patch to be removed in the future 
 
 DECIMAL 100 LOAD
 

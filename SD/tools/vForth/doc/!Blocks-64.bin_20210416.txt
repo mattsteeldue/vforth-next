@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Fri Apr 16 23:58:00 2021
+Created: Sat Apr 17 16:25:20 2021
 
 Index:
 
@@ -120,7 +120,7 @@ Index:
   115 ( Assembler Z80 )
   116 ( Assembler Z80 )
   117 ( Assembler z80 )
-  118 ( Assembler MMU config )
+  118 ( Assembler MMU config ) ;S seems bugged: don't use
   119 
   120 .( Z80 definitions. ) CR
   121 ( Z80 ) HEX
@@ -2551,12 +2551,12 @@ Scr# 99
 Scr# 100 
   0 ." Assembler. "           CR
   1 \ Loads ASSEMBLER vocabulary
-  2 FORTH  DEFINITIONS   MARKER MARKER-ASM
+  2 FORTH  DEFINITIONS   MARKER FORGET-ASSEMBLER \ MARKER-ASM
   3 VOCABULARY TOOLS-ASM IMMEDIATE
   4 VOCABULARY FORTH-ASM
   5 \
-  6 DECIMAL 118 LOAD \ MMU allocation
-  7 \
+  6 \ DECIMAL 118 LOAD \ MMU allocation ( Seems bugged )
+  7 : ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
   8 DECIMAL 101 LOAD \ tools
   9 DECIMAL 120 LOAD \ Z80
  10 DECIMAL 140 LOAD \ structure
@@ -2873,7 +2873,7 @@ Scr# 117
  15 ." Done" CR
 
 Scr# 118 
-  0 ( Assembler MMU config )
+  0 ( Assembler MMU config ) ;S seems bugged: don't use
   1 HEX 3F CONSTANT ASM-PAGE
   2 : ASM-MMU  ( n -- )
   3   DUP 1 - IF  ASM-PAGE 0 0 01BD M_P3DOS THEN
