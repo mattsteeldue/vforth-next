@@ -4,7 +4,7 @@
 .( L ) 
 \
 \
-: L ( -- ) \ list current
+: L ( -- ) \ list current screen
     SCR @ LIST 
 ;
 

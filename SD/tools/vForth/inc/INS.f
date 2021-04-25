@@ -9,6 +9,7 @@
 \                      D  S  INS
 \
 NEEDS RE
+NEEDS S
 \
 \
 : INS ( n -- )      \ insert line n from PAD

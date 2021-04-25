@@ -177,4 +177,7 @@ minor fix and docs.
 Introducing NEEDS definition and the corresponding inc/ including directory.
 ( Reading source file via OPEN# stream is now deemed obsolete and deprecated )
 
-
+\ build 20210425
+Bugfix on NEEDS and INCLUDE definitions.
+Bugfix on PITCH-BEND (Screen# 52) credits: Derek Bolli).
+First experiment on TRACE definitions (Screen# 260)

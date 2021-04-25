@@ -48,7 +48,7 @@ NEEDS SEARCH.SCR
         I  SEARCH.BLK
         ?TERMINAL 
         IF 
-            ." Stop at " I . LEAVE 
+            ." Stop at " I B/SCR / . LEAVE 
         ENDIF
     LOOP
 ;

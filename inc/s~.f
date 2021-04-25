@@ -1,16 +1,18 @@
 \
 \ s~.f
 \
+\ this is part of the HEAP memory management libary. See also:
+\ FAR HP@ POINTER HEAP H" +C +" HEAP-INIT HEAP-DONE
+\ See "Heap memory facility" in PDF documentation for details
+\
 .( S" ) 
 \
 NEEDS FAR
 NEEDS H"
-
-\
 \
 \ immutable  string on heap
 : (S") R @ FAR COUNT R> CELL+ >R ;
-
+\
 : S"  ( -- a n )
     STATE @
     IF

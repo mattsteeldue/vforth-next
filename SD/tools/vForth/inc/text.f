@@ -1,8 +1,9 @@
 \
 \ text.f
 \
-.( TEXT ) 
 \ accept following text to PAD
+\
+.( TEXT ) 
 \
 \ TEXT
 : TEXT ( c -- )     

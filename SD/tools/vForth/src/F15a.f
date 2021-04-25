@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210416 ) CR
+.( build 20210425 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -3879,7 +3879,7 @@ immediate
 \ Erase the return-stack, stop any compilation and give controlo to 
 \ the console. No message is issued.
 : quit  ( -- )
-    \ source-id f_close drop \ to be **tested**
+    source-id @ f_close drop \ to be **tested**
     0 source-id !
     0 blk !
     [compile] [
@@ -4704,8 +4704,8 @@ decimal
 : include  ( -- cccc )
     bl word count over + 0 swap !
     pad 1 f_open [ 43 ] Literal ?error
-    f_include
-    \ f_close drop
+    dup f_include
+    f_close drop
 ;
 
 
@@ -4735,7 +4735,8 @@ create   needs-inc   ," inc/"
     needs-fn                      \ a3
     pad 1 f_open
     If 
-        [ 43 ] Literal message
+        needs-w count type space
+        [ 43 ] Literal message drop
     Else 
         f_include
     Endif
@@ -4766,6 +4767,8 @@ create   needs-inc   ," inc/"
         [ hex 662E decimal ] literal    \ a a1+n ".F"
         swap !                          \ a
         needs/
+    Else
+        drop 2drop
     Endif 
 ;
 
@@ -5030,7 +5033,7 @@ create   needs-inc   ," inc/"
 \ 7e86
 .( CLS )
 \ CODE cls 
-\ Chr$ 14 is NextZXOS version CLS
+\ Chr$ 14 is NextZXOS version CLS (LAYER0 don't work this way, though)
 : cls 
     [ hex 0E ] Literal emitc
 ;    
@@ -5042,7 +5045,7 @@ create   needs-inc   ," inc/"
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210416" -1 allot ]
+    [ decimal 13 here ," build 20210425" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5826,8 +5829,7 @@ CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN BASIC
-
+0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN ( SOURCE-ID @ F_CLOSE DROP ) BASIC
 \
 \ Origin area.
 \

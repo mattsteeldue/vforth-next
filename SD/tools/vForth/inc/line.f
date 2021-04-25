@@ -1,8 +1,9 @@
 \
 \ line.f
 \
-.( LINE ) 
 \ leave address of current screen line n
+\
+.( LINE ) 
 \
 \ LINE
 : LINE ( n -- a )   

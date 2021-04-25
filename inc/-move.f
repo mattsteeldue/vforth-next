@@ -1,12 +1,11 @@
 \
 \ -move.f
 \
-NEEDS LINE
-\
+\ move from a to current screen line n
 \
 .( -MOVE ) 
 \
-\ move from a to current screen line n
+NEEDS LINE
 \
 \ -MOVE
 : -MOVE ( a -- n )  

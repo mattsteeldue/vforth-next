@@ -1,8 +1,9 @@
 \
-\
 \ invv.f
 \
 \ Inverse/True Video character sequence
+\
+.( INVV )
 \
 \ INVV
 : INVV ( -- )
