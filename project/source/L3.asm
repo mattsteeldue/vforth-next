@@ -282,8 +282,99 @@ FInclude_Endif_2:                               // endif
                 dw      PLUS, ZERO, SWAP, STORE // + 0 swap !
                 dw      PAD, ONE, F_OPEN        // pad 1 f_open
                 dw      LIT, 43, QERROR         // 43 ?error
-                dw      F_INCLUDE               // f_include
+                dw      DUP, F_INCLUDE          // dup f_include
+                dw      F_CLOSE, DROP           // f_close drop
                 dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// needs
+// check for cccc exists in vocabulary
+// if it doesn't then  INCLUDE  inc/cccc.F
+
+// temp filename cccc.f as counted string zero-padded
+                New_Def NEEDS_W,   "NEEDS-W", Create_Ptr, is_normal  
+                ds      35                      // 32 + .f + 0x00 = len 35
+// temp complete path+filename
+                New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
+                ds      40
+// constant path
+                New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
+                db      4, "inc/", 0
+
+// Concatenate path at a and filename and include it
+// No error is issued if filename doesn't exist.
+                Colon_Def NEEDS_SLASH, "NEEDS/", is_normal
+                dw      COUNT, TUCK             // n a n
+                dw      NEEDS_FN, SWAP, CMOVE   // n        \ Path
+                dw      NEEDS_FN, PLUS          // a1+n     \ Concat
+                dw      NEEDS_W, ONE_PLUS, SWAP 
+                dw      LIT, 35
+                dw      CMOVE
+                dw      NEEDS_FN
+                dw      PAD, ONE, F_OPEN
+                dw      ZBRANCH
+                dw      Needs_1 - $
+                dw          NEEDS_W, COUNT, TYPE, SPACE
+                dw          LIT, 43, MESSAGE, DROP
+                dw      BRANCH
+                dw      Needs_2 - $
+Needs_1:
+                dw          F_INCLUDE
+Needs_2:
+                dw      EXIT                    // ;
+
+
+// Replace illegal character in filename with tilde ~
+// at the moment we need only  "
+                Colon_Def NEEDS_CHECK, "NEEDS-CHECK", is_normal
+                dw      NEEDS_W, COUNT, OVER
+                dw      PLUS, SWAP
+                dw      C_DO
+Needs_3:
+                dw          I, CFETCH
+                dw          LIT, 34, EQUALS
+                dw          ZBRANCH
+                dw          Needs_4 - $
+                dw              LIT, 126, I, CSTORE
+Needs_4:
+                dw      C_LOOP    
+                dw      Needs_3 - $
+                dw      EXIT
+
+
+// include  "path/cccc.f" if cccc is not defined
+// filename cccc.f is temporary stored at NEEDS-W
+                Colon_Def NEEDS_PATH, "NEEDS-PATH", is_normal
+                dw      LFIND, ZEQUAL           
+                dw      ZBRANCH
+                dw      Needs_5 - $
+                dw          NEEDS_W
+                dw          LIT, 35
+                dw          ERASE                   // a
+                dw          HERE, CFETCH, ONE_PLUS  // a n
+                dw          HERE, OVER              // a n here n
+                dw          NEEDS_W, SWAP, CMOVE    // a n
+                dw          NEEDS_CHECK
+                dw          NEEDS_W, PLUS           // a a1+1
+                dw          LIT, $662E              // a a1+1 ".F"
+                dw          SWAP, STORE             // a
+                dw          NEEDS_SLASH         
+                dw      BRANCH
+                dw      Needs_6 - $
+Needs_5:                
+                dw          DROP, TWO_DROP
+Needs_6:
+                dw      EXIT
+
+
+// check for cccc exists in vocabulary
+// if it doesn't then  INCLUDE  inc/cccc.F
+// search in inc subdirectory
+                Colon_Def NEEDS, "NEEDS", is_normal
+                dw      NEEDS_INC, NEEDS_PATH
+                dw      EXIT
+
 
 //  ______________________________________________________________________ 
 //
@@ -551,7 +642,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210407", 13
+                db      "build 20210425", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

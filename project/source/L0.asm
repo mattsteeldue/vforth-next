@@ -705,9 +705,7 @@ Key_MapTo:
 //  ______________________________________________________________________ 
 //
 // key          -- c
-// convert a character c using base n
-// returns a unsigned number and a true flag 
-// or just a false flag if the conversion fails
+// wait for a keypress
 // This definition need Standard ROM Interrupt to be served
 
                 New_Def KEY, "KEY", is_code, is_normal
@@ -715,8 +713,8 @@ Key_MapTo:
                 push    bc                  // save Instruction Pointer
                 push    ix  
 
-                ld      (SP_Saved), sp      // be sure to to be paged out.
-                ld      sp, Cold_origin - 2 // maybe $4000...
+                ld      (SP_Saved), sp      // be sure to not to be paged out.
+                ld      sp, Cold_origin - 2 // maybe $4000 in the future...
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
 Key_Wait:       
@@ -731,7 +729,7 @@ Key_Wait:
                     ld      a, (Block_Face)     // see origin.asm
                     jr      nz, Key_Cursor
                         ld      a, (Half_Face)      // see origin.asm
-                        bit     3, (iy + $30)       // FLAGS2 (5C3A+$30)
+                        bit     3, (iy + $30)       // FLAGS2 (5C3A+$30) that is CAPS-LOCK
                         jr      z, Key_Cursor
                             ld      a, (Underscore_Face) // see origin
 Key_Cursor:     
@@ -742,7 +740,7 @@ Key_Cursor:
                     bit     5, (iy + 1)         // FLAGS (5C3A+1)
                 jr      z, Key_Wait
     
-                halt
+                halt    // this is to sync flashing cursor.
 
                 ld      a, BLANK_CHAR       // space to blank cursor
                 rst     $10
@@ -758,7 +756,7 @@ Key_Cursor:
                     ld      hl, Key_MapTo
                     add     hl, bc
                     ld      a, (hl)
-Key_DontMap:    cp      $06                 // CAPS-LOCK amnagement                
+Key_DontMap:    cp      $06                 // CAPS-LOCK management                
                 jr      nz, Key_NoCapsLock
                     ld      hl, $5C6A           // FLAGS2
                     ld      a, (hl)
@@ -789,9 +787,7 @@ Key_NoCapsLock: ld      l, a
 //  ______________________________________________________________________ 
 //
 // ?terminal    -- FALSE | TRUE
-// convert a character c using base n
-// returns a unsigned number and a true flag 
-// or just a false flag if the conversion fails
+// test for BREAK keypress
                 New_Def QTERMINAL, "?TERMINAL", is_code, is_normal
                 ld      hl, 0
                 ld      (SP_Saved), sp
@@ -809,6 +805,7 @@ QTerminal_NoBreak:
 //  ______________________________________________________________________ 
 //
 // ZX Spectrum Next - Low Level disk primitives.
+// this include is "here" for backward compatibility
 
                 include "next-opt0.asm"
 
@@ -1247,8 +1244,8 @@ Two_Plus:
 //
 // align        a1 -- a2
 // align memory : not used
-                New_Def ALIGN_ADDR, "ALIGN", is_code, is_normal
-                next
+//              New_Def ALIGN_ADDR, "ALIGN", is_code, is_normal
+//            next
 
 //  ______________________________________________________________________ 
 //
