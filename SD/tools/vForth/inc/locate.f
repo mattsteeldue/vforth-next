@@ -5,6 +5,7 @@
 \
 
 NEEDS TEXT
+NEEDS SHOW-PROGRESS
 NEEDS SEARCH.SCR
 
 \
@@ -44,14 +45,11 @@ NEEDS SEARCH.SCR
 ;
 \
 \ try to locate where cccc colon-definition is defined
+
 : LOCATE ( -- cccc )
     BL TEXT                 \ accepts a word to PAD
-    1000 1 DO
-        I 05 MOD 42 + EMIT  \ show some movement during the search
-        1 \ I 20 MOD
-        IF 
-            8 EMIT 
-        THEN
+    2001 1 DO               \ Block 2001 is bottom part of Screen#1000
+        I SHOW-PROGRESS
         I LOCATE.BLK        \ perform the actual search
     LOOP
     ." Not found. " 

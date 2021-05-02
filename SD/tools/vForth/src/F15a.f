@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210425 ) CR
+.( build 20210430 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -21,7 +21,7 @@
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
-\     - CSpect emulator V.2.12.30
+\     - CSpect emulator V.2.12.36
 \
 \ There are a few modifications to keep in mind since previous v. 1.2
 \  '      (tick) returns CFA, instead of PFA as previously was
@@ -35,17 +35,18 @@
 \ Z80 Registers usage map
 \
 \ AF 
-\ BC - Instruction Pointer: should be preserved during ROM/OS calls
+\ BC - Instruction Pointer: it must be preserved during ROM/OS calls
 \ DE -         (Low  word when used for 32-bit manipulations)
 \ HL - Working (High word when used for 32-bit manipulations)
 \
 \ AF'- Sometime used for backup purpose
-\ BC'- Not used: available in fast Interrupt via EXX
-\ DE'- Not used: available in fast Interrupt via EXX
-\ HL'- Not used: available in fast Interrupt via EXX (saved at startup)
+\ BC'- Sometime used in tricky definitions
+\ DE'- Sometime used in tricky definitions
+\ HL'- Sometime used in tricky definitions
 \
 \ SP - Calc Stack Pointer
 \ IX - Inner interpreter next-address pointer. This is 2T-state faster than JP
+\      it must be preserved during ROM/OS calls
 \ IY - (ZX System: must be preserved)
 
 \ ______________________________________________________________________
@@ -56,6 +57,8 @@
 \ _________________
 
 NEEDS RENAME
+NEEDS VALUE
+NEEDS TO
 NEEDS ASSEMBLER
 
 CASEON      \ we must be in Case-sensitive option to compile this file.
@@ -417,12 +420,12 @@ HEX 030 +ORIGIN TO rp^
 \ hook for Psh2
 
         ASSEMBLER
-        PUSH    DE|
+\       PUSH    DE|   no more used since we use JP (IX)
 
 \ 6127h
 \ hook for Psh1
          
-        PUSH    HL|
+\       PUSH    HL|   no more used since we use JP (IX)
 
 \ 6128h
 \ hook for Next - inner interpreter
@@ -713,7 +716,7 @@ CODE digit ( c n -- u 1  |  0 )
 \ no other register is altered
     ASSEMBLER
     HERE TO upper^
-        NOP                 \ CASEOFF is default. This location is patched
+        RET                 \ This location is patched
                             \ at runtime by CASEON and CASEOFF
         CPN     HEX 61 N,   \ lower-case "a"
         RETF    CY|
@@ -915,6 +918,33 @@ HEX
         PUSH    DE|
         PUSH    DE|
         Next
+        C;
+
+
+." (MAP) "
+\ translate character c using mapping string a2 and a2
+\ c2 = c2 if it is not translated. n is the length of bot a1 and a2.
+CODE (map) ( a2 a1 n c1 -- c2 )
+        EXX
+        POP     HL|
+        LD      A'|    L|
+        POP     BC|
+        POP     HL|
+        LD      D'|    B|
+        LD      E'|    C|
+        CPIR 
+        POP     HL|
+        JRF    NZ'| HOLDPLACE
+            ADDHL   DE|
+            DECX    HL|
+            SBCHL   BC|
+            LD      A'| (HL)|
+        HERE DISP,
+        LD      L'|    A|
+        LDN     H'|  HEX 00 N,
+        PUSH    HL|
+        EXX
+        JPIX
         C;
 
 
@@ -1217,8 +1247,8 @@ CODE key ( -- c )
 
 \ 637Bh
 .( ?TERMINAL )
-\ Tests the terminal-break. Leaves tf if [SPACE/BREAK] is pressed, or ff.
-CODE ?terminal ( -- 0 | 1 ) ( true if BREAK-SPACE pressed )
+\ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
+CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
          
         LDX     HL| 0 NN,
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
@@ -1481,9 +1511,10 @@ CODE um* ( u1 u2 -- ud )
             HERE DISP, \ THEN,
             DEC     A'|
         JRF     NZ'|   HOLDPLACE  SWAP DISP, \ -UNTIL, 
-        EXDEHL
         POP     BC|
-        Psh2
+        PUSH    HL|
+        PUSH    DE|
+        Next
         C;
 
 
@@ -1810,7 +1841,7 @@ CODE + ( n1 n2 -- n3 )
 \      h l h l
 \ SP   LHEDLHED
 \ SP  +01234567
-CODE d+ ( d1 d2 -- d3 )
+CODE d+ ( d1 d2 -- d3 ***TODO*** )
 
         \ Load DE with (SP+6/7) and save BC there.
         LDX     HL|   7 NN,
@@ -2804,7 +2835,7 @@ CODE ?dup ( n -- 0 | n n )
         [ DECIMAL 127 ] Literal
         over c@ <
     Until
-    swap drop
+    nip
     ;
 
 
@@ -3879,7 +3910,7 @@ immediate
 \ Erase the return-stack, stop any compilation and give controlo to 
 \ the console. No message is issued.
 : quit  ( -- )
-    source-id @ f_close drop \ to be **tested**
+    source-id @ f_close drop  
     0 source-id !
     0 blk !
     [compile] [
@@ -4133,7 +4164,7 @@ CODE basic ( n -- )
 .( / )
 \ quotient 
 : /  ( n1 n2 -- n3 )
-    /mod swap drop
+    /mod nip
     ; 
 
 
@@ -4160,7 +4191,7 @@ CODE basic ( n -- )
 \ (n1 * n2) / n3. The intermediate passage through a double number
 \ avoids loss of precision
 : */  ( n1 n2 n3 --	n4 )
-    */mod swap drop
+    */mod nip
     ;
 
 
@@ -4330,55 +4361,56 @@ CODE mmu7! ( n -- )
         C;
 
 
-.( >FAR )
-\ decode bits 765 of H as one of the 8K-page between 64 and 71 (40h-47h)
-\ take lower bits of H and L as an offset from E000h
-\ then return address  a  between E000h-FFFFh 
-\ and page number n  between 64-71 (40h-47h)
-\ For example, in hex: 
-\   0000 >FAR  gives  40.E000
-\   1FFF >FAR  gives  40.FFFF
-\   2000 >FAR  gives  41.E000
-\   3FFF >FAR  gives  41.FFFF
-\   EFFF >FAR  gives  47.EFFF
-\   FFFF >FAR  gives  47.FFFF
-CODE >far ( ha -- a n )
-        POP     HL|
-        LD      A'|      H|
-        ANDN   HEX E0 N,
-        RLCA
-        RLCA
-        RLCA
-        ORN    HEX 40 N,
-        LD      E'|      A|
-        LDN     D'|    HEX 00 N,
-        LD      A'|      H|
-        ORN    HEX E0 N,
-        LD      H'|      A|
-        EXDEHL
-        Psh2
-        C;
-        
-
-.( <FAR )
-\ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
-\ reverse of >FAR: encodes a FAR address compressing
-\ to bits 765 of H, lower bits of HL address offset from E000h
-CODE <far ( a n -- ha )
-        POP     DE|         \ page number in E
-        POP     HL|         \ address in HL
-        LD      A'|      E|
-        ANDN   HEX   07  N, \ reduced to 0-7
-        RRCA
-        RRCA
-        RRCA
-        LD      D'|      A| \ bits 765 are saved on D 
-        LD      A'|      H| \ drops
-        ANDN   HEX   1F  N,
-        ORA      D|
-        LD      H'|      A|
-        Psh1
-        C;        
+\ .( >FAR )
+\ \ decode bits 765 of H as one of the 8K-page between 64 and 71 (40h-47h)
+\ \ take lower bits of H and L as an offset from E000h
+\ \ then return address  a  between E000h-FFFFh 
+\ \ and page number n  between 64-71 (40h-47h)
+\ \ For example, in hex: 
+\ \   0000 >FAR  gives  40.E000
+\ \   1FFF >FAR  gives  40.FFFF
+\ \   2000 >FAR  gives  41.E000
+\ \   3FFF >FAR  gives  41.FFFF
+\ \   EFFF >FAR  gives  47.EFFF
+\ \   FFFF >FAR  gives  47.FFFF
+\ CODE >far ( ha -- a n )
+\         POP     DE|
+\         LD      A'|      D|
+\         ANDN   HEX E0 N,
+\         RLCA
+\         RLCA
+\         RLCA
+\         ADDN    HEX 40 N,
+\         LD      L'|      A|
+\         LDN     H'|    HEX 00 N,
+\         LD      A'|      D|
+\         ORN    HEX E0 N,
+\         LD      D'|      A|
+\         PUSH    HL|
+\         PUSH    DE|
+\         Next
+\         C;
+\         
+\ 
+\ .( <FAR )
+\ \ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
+\ \ reverse of >FAR: encodes a FAR address compressing
+\ \ to bits 765 of H, lower bits of HL address offset from E000h
+\ CODE <far ( a n -- ha )
+\         POP     DE|         \ page number in E
+\         POP     HL|         \ address in HL
+\         LD      A'|      E|
+\         SUBN    HEX   40 N,
+\         RRCA
+\         RRCA
+\         RRCA
+\         LD      D'|      A| \ bits 765 are saved on D 
+\         LD      A'|      H| \ drops
+\         ANDN   HEX   1F  N,
+\         ORA      D|
+\         LD      H'|      A|
+\         Psh1
+\         C;        
         
 
 .( M_P3DOS )
@@ -4437,7 +4469,7 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         Psh1
         C;        
 
-   
+\ file-handle to Block's file !Blocks-64.bin  
 BLK-FH @ variable blk-fh
 
 
@@ -4627,12 +4659,13 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 decimal
 : f_getline ( a fh -- a n )
     dup >r f_fgetpos [ 44 ] Literal ?error  \ a d
-    rot     dup b/buf 2dup blanks           \ d a a 512
+    rot     dup b/buf                       \ d a a 512    2dup blanks
     cell- swap 1+ swap                      \ d a a+1 510
     1- r  f_read [ 46 ] Literal ?error      \ d a n
     If \ at least 1 chr was read
-        [ 10 ] Literal enclose drop swap drop swap \ d b a
-        [ 13 ] Literal enclose drop swap drop      \ d b a c
+        [ 10 ] Literal enclose drop nip     \ d a b 
+        swap                                \ d b a
+        [ 13 ] Literal enclose drop nip     \ d b a c
         rot min                             \ d a n+1
         dup >r 2swap r>    0 d+             \ a n d+n+1
         r> f_seek [ 45 ] Literal ?error     \ a n
@@ -4667,10 +4700,13 @@ decimal
 
     \ read text from file using  block #1 as a temporary buffer.
     Begin
-        1 block source-id @ 
-        f_getline     \ a source text line can be up to 511 characters
+        1 buffer 
+        dup b/buf blanks           
+        1+
+        source-id @ 
+        f_getline     \ a source text line can be up to 510 characters
       \ cr 2dup type  \ during code-debugging phase
-        swap drop
+        nip
     While             \ stay in loop while there is text to be read
         update        \ toggle it again to avoid write it back to disk     
         1 blk ! 0 >in !  
@@ -4726,6 +4762,7 @@ create   needs-inc   ," inc/"
 
 \ Concatenate path at a and filename and include it
 \ No error is issued if filename doesn't exist.
+decimal
 : needs/  ( a -- )              \ a is address of Path passed
     count tuck                    \ n a n
     needs-fn swap cmove           \ n       \ Path
@@ -4743,19 +4780,25 @@ create   needs-inc   ," inc/"
 ;
 
 
-\ Replace illegal character in filename with tilde ~
-\ at the moment we need only  "
+create ncdm hex    (   \ ^ ` % & $ _ { } ~   )
+    5E C,  60 C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
+create ndom hex    (   \ : ? / * | \ < > "   )
+    3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
+
+
+\ Replace illegal character in filename 
+decimal
 : needs-check ( -- )
     needs-w count over + swap
     Do
-        i c@ [ char " ] Literal =
-        If   [ char ~ ] Literal i c!  Endif
+        ncdm ndom [ 9 ] Literal i c@ (map) i c!
     Loop
 ;
 
 
 \ include  "path/cccc.f" if cccc is not defined
 \ filename cccc.f is temporary stored at NEEDS-W
+decimal 
 : needs-path  ( a -- )
     -find 0= If
         needs-w    [ 35 ] literal  
@@ -4776,6 +4819,7 @@ create   needs-inc   ," inc/"
 \ check for cccc exists in vocabulary
 \ if it doesn't then  INCLUDE  inc/cccc.F
 \ search in inc subdirectory
+decimal
 : needs
     needs-inc needs-path     \ search in "inc/"
 \ needs-w c@ minus >in +!  \ re-feed cccc
@@ -4784,7 +4828,7 @@ create   needs-inc   ," inc/"
 
 
 \ 7ac4h    
-.( load+ )
+.( LOAD+ )
 : load+  ( n -- )
     blk @  >r  
     >in  @  >r
@@ -5045,7 +5089,7 @@ create   needs-inc   ," inc/"
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210425" -1 allot ]
+    [ decimal 13 here ," build 20210430" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5376,29 +5420,6 @@ create   needs-inc   ," inc/"
 \ ;
 
 
-.( VALUE )
-: value ( n ccc --   )
-        (       -- n )
-    [compile] constant
-    ;
-    immediate 
-
-
-.( TO )
-: to ( n -- cccc )
-    ' >body
-    state @
-    If
-        compile lit 
-        , 
-        compile !
-    Else
-        ! 
-    Endif
-    ;
-    immediate
-
-
 \ ______________________________________________________________________ 
 
 \ patch for fence and latest
@@ -5412,8 +5433,6 @@ voc-link @ hex 020 +origin !  \ set cold-VOC-LINK
 ' noop asm^ !
 
 forth definitions
-
-CASEOFF
 
 \ ______________________________________________________________________ 
 
@@ -5452,9 +5471,8 @@ CODE final_rp_patch
 \ ______________________________________________________________________ 
 
 
-
-RENAME   to             TO
-RENAME   value          VALUE
+\ RENAME   to             TO
+\ RENAME   value          VALUE
 \ RENAME   rename         RENAME 
 .( RENAME   \              \  )
 
@@ -5514,8 +5532,9 @@ RENAME   load+          LOAD+
 RENAME   needs          NEEDS 
 RENAME   needs-path     NEEDS-PATH
 RENAME   needs-check    NEEDS-CHECK
+RENAME   ndom           NDOM
+RENAME   ncdm           NCDM
 RENAME   needs/         NEEDS/
-RENAME   needs-w        NEEDS-W
 RENAME   needs-inc      NEEDS-INC
 RENAME   needs-fn       NEEDS-FN
 RENAME   needs-w        NEEDS-W
@@ -5540,8 +5559,8 @@ RENAME   blk-fname      BLK-FNAME
 RENAME   blk-fh         BLK-FH
 \
 RENAME   m_p3dos        M_P3DOS
-RENAME   <far           <FAR
-RENAME   >far           >FAR
+\ RENAME   <far           <FAR
+\ RENAME   >far           >FAR
 RENAME   mmu7@          MMU7@
 RENAME   mmu7!          MMU7!
 RENAME   reg!           REG!
@@ -5799,6 +5818,7 @@ RENAME   key            KEY
 RENAME   (?emit)        (?EMIT)
 RENAME   emitc          EMITC  
 RENAME   (compare)      (COMPARE)
+RENAME   (map)          (MAP)
 RENAME   enclose        ENCLOSE
 RENAME   (find)         (FIND) 
 RENAME   upper          UPPER 
@@ -5820,11 +5840,14 @@ RENAME   lit            LIT
 
 SPLASH \ Return to Splash screen
 
+
 \ display address and length
 DECIMAL  
 1 WARNING !
-CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 80" CR CR
+CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 50" CR CR
 CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
+
+caseoff
 
 \ ______________________________________________________________________ 
 

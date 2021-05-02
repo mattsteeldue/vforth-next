@@ -5,6 +5,7 @@
 \ search for text word inside the first 1000 screens.
 
 NEEDS TEXT
+NEEDS SHOW-PROGRESS
 NEEDS SEARCH.SCR
 
 \ For debugging purposes
@@ -44,7 +45,7 @@ NEEDS SEARCH.SCR
     
     1+ B/SCR *  SWAP B/SCR *
     DO
-        I 05 MOD 42 + EMIT 8 EMIT
+        I  SHOW-PROGRESS
         I  SEARCH.BLK
         ?TERMINAL 
         IF 

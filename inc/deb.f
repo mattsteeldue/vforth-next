@@ -5,6 +5,7 @@
 \
 NEEDS .S
 \ debugging display
+\ Show "Debug n" followed by Calc-Stack content and Return-Stack content
 \
 : DEB ( n -- )
     ." debug " . .S ."  -- "

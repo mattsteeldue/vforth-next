@@ -47,16 +47,16 @@ Underscore_Face:db      UNDERSCORE_CHAR     // Underscore  Cursor face
                 db      0
 
 // +02A
-IX_Echo:        dw      0                   // Echo IX after NextOS call
+IX_Echo:        dw      $6434               // Echo IX after NextOS call
 
 // +02C
-SP_Saved:       dw      0                   // Saved SP dufing NextOS call
+SP_Saved:       dw      $D0E8               // Saved SP dufing NextOS call
 
 // +02E
 USER_Pointer:   dw      USER_system
 
 // +030
-RP_Pointer:     dw      R0_system
+RP_Pointer:     dw      $d17A // R0_system
 
 // +32
 // SP_Basic        dw      0
@@ -538,6 +538,33 @@ Enclose_NonSeparator:
 
 //  ______________________________________________________________________ 
 //
+// (map)        a2 a1 n c1 -- c2
+// translate character c using mapping string a2 and a2
+// c2 = c2 if it is not translated. n is the length of bot a1 and a2.
+                New_Def C_MAP, "(MAP)", is_code, is_normal
+                exx
+                pop     hl
+                ld      a, l
+                pop     bc
+                pop     hl
+                ld      d, b
+                ld      e, c
+                cpir 
+                pop     hl
+                jr      nz, C_Map_Then:
+                    add     hl, de
+                    dec     hl
+                    sbc     hl, bc
+                    ld      a, (hl)
+C_Map_Then:
+                ld      l, a
+                ld      h, 0
+                push    hl
+                exx
+                next
+
+//  ______________________________________________________________________ 
+//
 // (compare)    a1 a2 n -- b 
 // this word performs a lexicographic compare of n bytes of text at address a1 
 // with n bytes of text at address a2. It returns numeric a value: 
@@ -897,11 +924,11 @@ Um_Mul_Loop:
 Um_Mul_NoCarry: 
                     dec     a    
                 jr      nz, Um_Mul_Loop
-                ex      de, hl
+
                 pop     bc
-
-
-                psh2
+                push    hl
+                push    de
+                next
 
 //  ______________________________________________________________________ 
 //

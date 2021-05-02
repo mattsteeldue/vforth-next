@@ -376,7 +376,7 @@ Traverse_Begin:                                 // begin
                                                 // until
                 dw      ZBRANCH
                 dw      Traverse_Begin - $
-                dw      SWAP, DROP              //  swap drop
+                dw      NIP                     //  nip
                 dw      EXIT                    //  ;  
 
 //  ______________________________________________________________________ 

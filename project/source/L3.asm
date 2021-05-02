@@ -176,7 +176,7 @@ Flush_Do:                                       // do
                 dw      LIT, 44, QERROR         // 44 ?error        ( a  d  )  \  fh
                 
                 dw      ROT, DUP, BBUF          // rot dup b/buf    ( d  a  a  512 )  \  fh
-                dw      TWO_DUP, BLANKS         // 2dup blanks      ( d  a  a  512 )  \  fh
+//              dw      TWO_DUP, BLANKS         // 2dup blanks      ( d  a  a  512 )  \  fh
 
                 dw      CELL_MINUS              //  cell-           ( d  a  a  510 )  \  fh
                 dw      SWAP, ONE_PLUS, SWAP    // swap 1+ swap     ( d  a  a+1  510 )  \  fh
@@ -188,10 +188,10 @@ Flush_Do:                                       // do
                 dw      ZBRANCH
                 dw      FGetline_Else - $
                 dw          LIT, 10, ENCLOSE    //      10 enclose       ( d  a   i j k )  \  fh
-                dw          DROP, SWAP, DROP    //      drop swap drop   ( d  a  j  )  \  fh
+                dw          DROP, NIP           //      drop nip         ( d  a  j  )  \  fh
                 dw          SWAP                //      drop swap        ( d  j  a  )  \  fh
                 dw          LIT, 13, ENCLOSE    //      13 enclose       ( d  j  a   i j k )  \  fh
-                dw          DROP, SWAP, DROP    //      drop swap drop   ( d  jnl  a  jcr  )  \  fh
+                dw          DROP, NIP           //      drop nip         ( d  jnl  a  jcr  )  \  fh
                 dw          ROT, MIN            //      rot min          ( d  a  n  )  \  fh
                 dw          DUP, TO_R           //      dup >r           ( d  a  n  )    \  fh n
                 dw          TWO_SWAP, R_TO      //      2swap r>         ( a  n  d  n  )  \  fh
@@ -237,10 +237,12 @@ FInclude_Endif_1:
                 dw      TO_R, TO_R              // >r >r
                 dw      SOURCE_ID, STORE        // source-id !
 FInclude_Begin:                                 // begin
-                dw          ONE, BLOCK          //      1 block
+                dw          ONE, BUFFER         //      1 buffer
+                dw          DUP, BBUF, BLANKS   //      dup b/buf blanks
+                dw          ONE_PLUS            //      1+
                 dw          SOURCE_ID, FETCH    //      source-id @
                 dw          F_GETLINE           //      f_getline
-                dw          SWAP, DROP          //      swap drop
+                dw          NIP                 //      nip
                                                 // while
                 dw      ZBRANCH
                 dw      FInclude_Repeat - $  
@@ -325,6 +327,13 @@ Needs_2:
                 dw      EXIT                    // ;
 
 
+                New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
+                db $5E, $60, $25, $26, $24, $5F, $7B, $7D, $7E
+
+                New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
+                db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
+
+
 // Replace illegal character in filename with tilde ~
 // at the moment we need only  "
                 Colon_Def NEEDS_CHECK, "NEEDS-CHECK", is_normal
@@ -332,11 +341,10 @@ Needs_2:
                 dw      PLUS, SWAP
                 dw      C_DO
 Needs_3:
+                dw          NCDM, NDOM, LIT, 9 
                 dw          I, CFETCH
-                dw          LIT, 34, EQUALS
-                dw          ZBRANCH
-                dw          Needs_4 - $
-                dw              LIT, 126, I, CSTORE
+                dw          C_MAP
+                dw          I, CSTORE
 Needs_4:
                 dw      C_LOOP    
                 dw      Needs_3 - $
@@ -642,7 +650,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210425", 13
+                db      "build 20210430", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -953,6 +961,7 @@ CDoBack_Endif:
                 dw      HERE, THREE
                 dw      EXIT
 
+Latest_Definition:
 //  ______________________________________________________________________ 
 //
 // \
@@ -977,77 +986,7 @@ Backslash_Else_1:
 Backslash_Endif_1:
                 dw      EXIT
 
-//  ______________________________________________________________________ 
-//
-// rename
-//              Colon_Def RENAME, "RENAME", is_normal
-//              dw      TICK, TO_BODY, NFA
-//              dw      DUP, CFETCH, LIT, $1F, AND_OP
-//              dw      TWO_DUP, PLUS
-//              dw      TO_R
-//              dw      BL, WORD, LIT, 32, ALLOT
-//              dw      COUNT, LIT, $1F, AND_OP, ROT, MIN
-//              dw      TO_R
-//              dw      SWAP, ONE_PLUS
-//              dw      R_TO
-//              dw      CMOVE
-//              dw      R_OP, CFETCH, LIT, END_BIT, OR_OP
-//              dw      R_TO
-//              dw      CSTORE
-//              dw      LIT, -32, ALLOT
-//              dw      EXIT
-
-//  ______________________________________________________________________ 
-//
-// value        n cccc --
-                Colon_Def VALUE, "VALUE", is_immediate
-                dw      CONSTANT                // [compile] constant
-                dw      EXIT                    // ;
-
-Latest_Definition:
-//  ______________________________________________________________________ 
-//
-// to           n -- cccc
-// mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
-// All terms are unsigned.
-                Colon_Def TO, "TO", is_immediate
-                dw  TICK, TO_BODY               // ' >body'
-                dw  STATE, FETCH                // state @
-                                                // if
-                dw  ZBRANCH
-                dw  To_Else - $
-                dw      COMPILE, LIT            //      compile lit 
-                dw      COMMA                   //      ,
-                dw      COMPILE, STORE          //      compile !
-                                        // else
-                dw  BRANCH
-                dw  To_Endif - $
-To_Else:
-                dw      STORE                   //      !
-To_Endif:                                       // endif
-                dw  EXIT                        // ;    
-
 Fence_Word:
-
-//  ______________________________________________________________________ 
-//
-// m+           d1 n -- d2
-// returns the unsigned sum of two top values
-                New_Def MPLUS, "M+", is_code, is_normal
-                ld      h, b
-                ld      l, c
-                pop     de                  // < de := d1-H
-                pop     bc                  // < n
-                ex      (sp),hl             // < hl := d1-L > IP
-                add     hl, bc
-                pop     bc
-
-                jr      nc, MPlus_Skip
-                    inc     de
-MPlus_Skip:                
-                ex      de, hl                
-                psh2
-      
 //  ______________________________________________________________________ 
 //
 

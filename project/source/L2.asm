@@ -111,7 +111,7 @@ Vocabulary_Does:
                 dw      Vocabulary_Does
                 db      $81, $A0
 Forth_Latest_Ptr:                
-                dw      Fence_Word // Latest_Definition
+                dw      Latest_Definition // Fence_Word // Latest_Definition
 Voclink_Ptr:                
                 dw      0
 // Any new vocabulary is structured as follow:
@@ -352,7 +352,7 @@ DPlus_Minus_Endif:                              // endif
 // /            n1 n2 -- n3
 // division
                 Colon_Def DIV, "/", is_normal
-                dw      DIVMOD, SWAP, DROP      // /mod swap drop
+                dw      DIVMOD, NIP             // /mod nip
                 dw      EXIT                    // ;
    
 //  ______________________________________________________________________ 
@@ -379,8 +379,8 @@ DPlus_Minus_Endif:                              // endif
 // (n1 * n2) / n3. The intermediate passage through a double number avoids loss of precision
                 Colon_Def MUL_DIV, "*/", is_normal
                 dw     MUL_DIV_MOD              // */mod 
-                dw     SWAP, DROP               // swap drop            
-                dw      EXIT                    // ;
+                dw     NIP                      // nip
+                dw     EXIT                     // ;
 
 
 //  ______________________________________________________________________ 

@@ -1,7 +1,7 @@
 \
 \ .pad.f
 \
-.( .pad )
+.( .PAD )
 \
 \ .pad
 : .PAD ( -- ) \ show PAD content

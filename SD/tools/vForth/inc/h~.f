@@ -7,6 +7,7 @@
 \
 .( H" ) 
 \
+NEEDS >FAR
 NEEDS HP@
 NEEDS HEAP
 \

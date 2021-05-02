@@ -7,6 +7,8 @@
 \
 .( FAR ) 
 \
+NEEDS >FAR
+\
 \ Convert an "heap-pointer address" (ha) into a real address (a)
 \ between E000h and FFFFh and fit the correct 8K page on MMU7
 \ An "ha" uses the 3 msb as page-number and the lower bits as offset at E000.
