@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 // v-Forth 1.6 NextZXOS version 
-// build 20210430
+// build 2021509
 // 
 // 
 //  NextZXOS version
@@ -58,7 +58,7 @@
 //  0 for final binary release.
 //  1 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
-DEBUGGING       equ     -1
+DEBUGGING       equ     0
 //
 //  ______________________________________________________________________
 

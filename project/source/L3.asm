@@ -175,13 +175,10 @@ Flush_Do:                                       // do
                 dw      F_FGETPOS               // f_fgetpos        ( a  d  f )  \  fh
                 dw      LIT, 44, QERROR         // 44 ?error        ( a  d  )  \  fh
                 
-                dw      ROT, DUP, BBUF          // rot dup b/buf    ( d  a  a  512 )  \  fh
-//              dw      TWO_DUP, BLANKS         // 2dup blanks      ( d  a  a  512 )  \  fh
+                dw      TWO_SWAP, OVER          // 2swap over       
+                dw      ONE_PLUS, SWAP          // swap 1+ swap     ( d  a  a+1  m )  \  fh
 
-                dw      CELL_MINUS              //  cell-           ( d  a  a  510 )  \  fh
-                dw      SWAP, ONE_PLUS, SWAP    // swap 1+ swap     ( d  a  a+1  510 )  \  fh
-
-                dw      ONE_SUBTRACT, R_OP      // 1- r             ( d  a  a+1  509  fh )  \  fh
+                dw      R_OP                    // r                ( d  a  a+1  m  fh )  \  fh
                 dw      F_READ                  // f_read           ( d  a  n  f )  \  fh
                 dw      LIT, 46, QERROR         // 46 ?error        ( d  a  n )  \  fh
                                                 // if ( at least 1 chr was read )  \  fh
@@ -206,11 +203,11 @@ FGetline_Else:
                 dw          TWO_SWAP, TWO_DROP  //      2swap 2drop     ( a  fh  )
                 dw          DROP, ZERO          //      drop, 0         ( a  0 )
 FGetline_Endif:                                 // endif
-                dw      TWO_DUP, PLUS, OVER     // 2dup + over          ( a  n  a+n  n )
-                dw      BBUF, SWAP, SUBTRACT    // b/buf swap -         ( a  n  a+n  512-n )
-                dw      BLANKS                  // blanks               ( a  n )
-                dw      TWO_DUP, PLUS, ZERO     // 2dup + 0             ( a  n  a+n  0 )
-                dw      SWAP, CSTORE            // swap c!              ( a  n )
+//              dw      TWO_DUP, PLUS, OVER     // 2dup + over          ( a  n  a+n  n )
+//              dw      BBUF, SWAP, SUBTRACT    // b/buf swap -         ( a  n  a+n  512-n )
+//              dw      BLANKS                  // blanks               ( a  n )
+//              dw      TWO_DUP, PLUS, ZERO     // 2dup + 0             ( a  n  a+n  0 )
+//              dw      SWAP, CSTORE            // swap c!              ( a  n )
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -237,16 +234,21 @@ FInclude_Endif_1:
                 dw      TO_R, TO_R              // >r >r
                 dw      SOURCE_ID, STORE        // source-id !
 FInclude_Begin:                                 // begin
-                dw          ONE, BUFFER         //      1 buffer
+                dw          ONE, BLOCK          //      1 block
                 dw          DUP, BBUF, BLANKS   //      dup b/buf blanks
                 dw          ONE_PLUS            //      1+
+                dw          LIT, 300            //      500
                 dw          SOURCE_ID, FETCH    //      source-id @
                 dw          F_GETLINE           //      f_getline
+                dw          TWO_DUP, PLUS, OVER //      2dup + over
+                dw          BBUF, SWAP          //      b/buf swap
+                dw          SUBTRACT            //      - 
+                dw          BLANKS              //      blanks
                 dw          NIP                 //      nip
                                                 // while
                 dw      ZBRANCH
                 dw      FInclude_Repeat - $  
-                dw          UPDATE              //      update
+//              dw          UPDATE              //      update
                 dw          ONE, BLK, STORE     //      1 blk !
                 dw          ZERO, TO_IN, STORE  //      0 >in !    
                 dw          INTERPRET           //      interpret
@@ -277,13 +279,24 @@ FInclude_Endif_2:                               // endif
 
 //  ______________________________________________________________________ 
 //
+// open<         -- fh
+// Open the following filename and return it file-handle
+// Used in the form OPEN CCCC
+                Colon_Def OPEN_FH, "OPEN<", is_normal
+                dw      BL
+                dw      WORD, COUNT, OVER       // bl word count over
+                dw      PLUS, ZERO, SWAP, STORE // + 0 swap !
+                dw      PAD, ONE, F_OPEN        // pad 1 f_open
+                dw      LIT, 43                 // 43
+                dw      QERROR                  // ?error
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
 // include      -- cccc
 // Include the following filename
                 Colon_Def INCLUDE, "INCLUDE", is_normal
-                dw      BL, WORD, COUNT, OVER   // bl word count over
-                dw      PLUS, ZERO, SWAP, STORE // + 0 swap !
-                dw      PAD, ONE, F_OPEN        // pad 1 f_open
-                dw      LIT, 43, QERROR         // 43 ?error
+                dw      OPEN_FH                 // open
                 dw      DUP, F_INCLUDE          // dup f_include
                 dw      F_CLOSE, DROP           // f_close drop
                 dw      EXIT                    // ;
@@ -334,9 +347,9 @@ Needs_2:
                 db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
 
 
-// Replace illegal character in filename with tilde ~
+// Replace illegal character in filename using the map here above
 // at the moment we need only  "
-                Colon_Def NEEDS_CHECK, "NEEDS-CHECK", is_normal
+                Colon_Def NEEDS_CHECK, "NEEDS-CH", is_normal
                 dw      NEEDS_W, COUNT, OVER
                 dw      PLUS, SWAP
                 dw      C_DO
@@ -353,7 +366,7 @@ Needs_4:
 
 // include  "path/cccc.f" if cccc is not defined
 // filename cccc.f is temporary stored at NEEDS-W
-                Colon_Def NEEDS_PATH, "NEEDS-PATH", is_normal
+                Colon_Def NEEDS_PATH, "NEEDS-F", is_normal
                 dw      LFIND, ZEQUAL           
                 dw      ZBRANCH
                 dw      Needs_5 - $
@@ -650,7 +663,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210430", 13
+                db      "build 20210509", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

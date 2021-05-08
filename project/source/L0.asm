@@ -47,7 +47,7 @@ Underscore_Face:db      UNDERSCORE_CHAR     // Underscore  Cursor face
                 db      0
 
 // +02A
-IX_Echo:        dw      $6434               // Echo IX after NextOS call
+IX_Echo:        dw      $0000               // Echo IX after NextOS call
 
 // +02C
 SP_Saved:       dw      $D0E8               // Saved SP dufing NextOS call
@@ -73,8 +73,8 @@ RP_Pointer:     dw      $d17A // R0_system
 // This address must always be pointed by IX
 // "next" macro simply does a  jp(ix)  instruction
 
-Psh2_Ptr:       push    de
-Psh1_Ptr:       push    hl
+// Psh2_Ptr:       push    de
+// Psh1_Ptr:       push    hl
 
 Next_Ptr:       // This address must always be kept in IX: "next" relies on that
 
@@ -750,7 +750,7 @@ Key_Wait:
                     call    $1601               // SELECT Standard-ROM Routine
     
                     // software-flash: flips face every 320 ms
-                    ld      a, $20              // Timing based
+                    ld      a, $10              // Timing based
                     and     (iy + $3E)          // FRAMES (5C3A+3E)
     
                     ld      a, (Block_Face)     // see origin.asm
@@ -909,25 +909,34 @@ CmoveV_NoMove:
                 pop     de                    // de has u2 operand
                 pop     hl                    // hl has u1 operand
                 push    bc                    // Save Instruction Pointer
-                ld      b, h
-                ld      c, l
-                ld      hl, 0
-                ld      a, 16                   // 16 steps
-Um_Mul_Loop:    
-                    add     hl, hl                  // shift DEHL
-                    rl      e                       // consuming one bit at a time
-                    rl      d
-                    jr      nc, Um_Mul_NoCarry      // if msb of DEHL was set then 
-                        add     hl, bc                  // add bc to hl and carry to de
-                        jr      nc, Um_Mul_NoCarry      // this carry doesn't happen before de (u1) is consumed
-                            inc     de                      // transfer the carry to de
-Um_Mul_NoCarry: 
-                    dec     a    
-                jr      nz, Um_Mul_Loop
-
-                pop     bc
+                ld      b, l
+                ld      c, e
+                ld      e, l
+                ld      l, d
                 push    hl
+                ld      l, c
+                mul
+                ex      de, hl
+                mul
+                xor     a
+                add     hl, de
+                adc     a
+                ld      e, c
+                ld      d, b
+                mul
+                ld      b, a
+                ld      c, h
+                ld      a, d
+                add     l
+                ld      h, a
+                ld      l, e
+                pop     de
+                mul
+                ex      de, hl
+                adc     hl, bc
+                pop     bc
                 push    de
+                push    hl
                 next
 
 //  ______________________________________________________________________ 

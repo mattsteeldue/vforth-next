@@ -76,7 +76,8 @@ Fixed CASEOFF and CASEON to accept lower-case input.
 
 \ build 20200808
 Introducing FAR address and POINTER based on MMU7.
-System now starts with a write-only OPEN#13 stream attached to file "c:/FORTH/output.txt": text file to collect any output redirected to device #13 via some   13 SELECT   followed by some output word. See Screen#252 to see an example of it.
+System now starts with a write-only OPEN#13 stream attached to file "c:/tools\vFORTH/output.txt": 
+text file to collect any output redirected to device #13 via some   13 SELECT   followed by some output word. See Screen#252 to see an example of it.
 This release comes in two version: 
 - forth15a.bin : as usual
 - forth15e.bin : with upper 8K RAM freed to experiment with MMU7.
@@ -165,19 +166,36 @@ Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
 Cursor keys (or Cursor Joystick maybe)
 It's a work-in-progress though.
 
+
 \ build 20210328
 Using Visual Studio Code with some "Next extension", I've ported the whole source
 code into a new project that produce the very same output as before.
 This opens the way to change the Forth's core in a more effective way.
 
+
 \ build 20210407
 minor fix and docs.
+
 
 \ build 20210416
 Introducing NEEDS definition and the corresponding inc/ including directory.
 ( Reading source file via OPEN# stream is now deemed obsolete and deprecated )
 
+
 \ build 20210425
 Bugfix on NEEDS and INCLUDE definitions.
 Bugfix on PITCH-BEND (Screen# 52) credits: Derek Bolli).
 First experiment on TRACE definitions (Screen# 260)
+
+
+\ build 20210430
+Improved NEEDS to cope with invalid "WinDOS Filename Characters".
+introducing (MAP) to help substitute such invalid characters.
+Substituting every SWAP DROP sequence by equivalent NIP definition.
+VALUE, TO, >FAR and <FAR definition removed from core and available via NEEDS
+
+\ build 20210509
+Now unsigned multiplication UM* uses native Z80N opcode "mul".
+Now HEAP uses pages $20-$27 instead of $40-47.
+Improved F_GETLINE and F_INCLUDE
+

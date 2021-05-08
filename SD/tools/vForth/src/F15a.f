@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210430 ) CR
+.( build 20210509 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -1171,7 +1171,7 @@ CODE key ( -- c )
             CALL    HEX 1601 AA,
 
             \ software-flash: flips face every 320 ms
-            LDN     A'| HEX 20 N,             \ Timing  
+            LDN     A'| HEX 10 N,             \ Timing  
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
 \           LDN     A'| HEX 8F N,             \ block character
@@ -1494,26 +1494,34 @@ CODE um* ( u1 u2 -- ud )
         POP     DE|
         POP     HL|
         PUSH    BC|
-
-        LD      B'|    H|
-        LD      C'|    L|
-        LDX     HL|    0 NN,
-        LDN     A'|   DECIMAL 16 N,
-        HERE \ BEGIN, 
-            ADDHL   HL|
-            RL      E|
-            RL      D|
-            JRF     NC'|  HOLDPLACE  
-                ADDHL   BC| 
-                JRF     NC'|  HOLDPLACE  
-                    INCX    DE|
-                HERE DISP, \ THEN,
-            HERE DISP, \ THEN,
-            DEC     A'|
-        JRF     NZ'|   HOLDPLACE  SWAP DISP, \ -UNTIL, 
-        POP     BC|
+        LD      B'|    L|
+        LD      C'|    E|
+        LD      E'|    L|
+        LD      L'|    D|
         PUSH    HL|
+        LD      L'|    C|
+        MUL
+        EXDEHL
+        MUL
+        XORA     A|
+        ADDHL   DE|
+        ADCA     A|
+        LD      E'|    C|
+        LD      D'|    B|
+        MUL
+        LD      B'|    A|
+        LD      C'|    H|
+        LD      A'|    D|
+        ADDA     L|
+        LD      H'|    A|
+        LD      L'|    E|
+        POP     DE|
+        MUL
+        EXDEHL
+        ADCHL   BC|
+        POP     BC|
         PUSH    DE|
+        PUSH    HL|
         Next
         C;
 
@@ -4362,17 +4370,17 @@ CODE mmu7! ( n -- )
 
 
 \ .( >FAR )
-\ \ decode bits 765 of H as one of the 8K-page between 64 and 71 (40h-47h)
+\ \ decode bits 765 of H as one of the 8K-page between 32 and 63 (20h-27h)
 \ \ take lower bits of H and L as an offset from E000h
 \ \ then return address  a  between E000h-FFFFh 
 \ \ and page number n  between 64-71 (40h-47h)
 \ \ For example, in hex: 
-\ \   0000 >FAR  gives  40.E000
-\ \   1FFF >FAR  gives  40.FFFF
-\ \   2000 >FAR  gives  41.E000
-\ \   3FFF >FAR  gives  41.FFFF
-\ \   EFFF >FAR  gives  47.EFFF
-\ \   FFFF >FAR  gives  47.FFFF
+\ \   0000 >FAR  gives  20.E000
+\ \   1FFF >FAR  gives  20.FFFF
+\ \   2000 >FAR  gives  21.E000
+\ \   3FFF >FAR  gives  21.FFFF
+\ \   EFFF >FAR  gives  27.EFFF
+\ \   FFFF >FAR  gives  27.FFFF
 \ CODE >far ( ha -- a n )
 \         POP     DE|
 \         LD      A'|      D|
@@ -4380,7 +4388,7 @@ CODE mmu7! ( n -- )
 \         RLCA
 \         RLCA
 \         RLCA
-\         ADDN    HEX 40 N,
+\         ADDN    HEX 20 N,
 \         LD      L'|      A|
 \         LDN     H'|    HEX 00 N,
 \         LD      A'|      D|
@@ -4653,15 +4661,15 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     
 
 .( F_GETLINE )
-\ Given an open filehandle read next line (terminated with $0D or $0A)
+\ Given an open filehandle read at most  m  characters to get next line
+\ terminated with $0D or $0A.
 \ Address a is left for subsequent processing
 \ and n as the actual number of byte read, that is the length of line 
 decimal
-: f_getline ( a fh -- a n )
-    dup >r f_fgetpos [ 44 ] Literal ?error  \ a d
-    rot     dup b/buf                       \ d a a 512    2dup blanks
-    cell- swap 1+ swap                      \ d a a+1 510
-    1- r  f_read [ 46 ] Literal ?error      \ d a n
+: f_getline ( a m fh -- a n )
+    dup >r f_fgetpos [ 44 ] Literal ?error  \ a m d
+    2swap over 1+ swap                      \ d a a+1 m 
+    r  f_read [ 46 ] Literal ?error         \ d a n
     If \ at least 1 chr was read
         [ 10 ] Literal enclose drop nip     \ d a b 
         swap                                \ d b a
@@ -4672,8 +4680,6 @@ decimal
     Else
         r> 2swap 2drop drop 0               \ a 0
     Endif
-    2dup + over b/buf swap - blanks 
-    2dup + 0 swap c! 
 ;
 
 
@@ -4700,15 +4706,17 @@ decimal
 
     \ read text from file using  block #1 as a temporary buffer.
     Begin
-        1 buffer 
+        1 block
         dup b/buf blanks           
-        1+
+        1+ 
+        [ decimal 300 ] Literal
         source-id @ 
         f_getline     \ a source text line can be up to 510 characters
-      \ cr 2dup type  \ during code-debugging phase
+      \ cr 1 block over type  \ during code-debugging phase
+        2dup + over b/buf swap - blanks
         nip
     While             \ stay in loop while there is text to be read
-        update        \ toggle it again to avoid write it back to disk     
+      \ update        \ toggle it again to avoid write it back to disk     
         1 blk ! 0 >in !  
         interpret
     Repeat
@@ -4734,12 +4742,22 @@ decimal
 ;
 
 
+.( OPEN< )
+\ Open the following filename and return it file-handle
+\ Used in the form OPEN CCCC
+decimal
+: open< ( -- fh )
+    bl
+    word count over + 0 swap !
+    pad 1 f_open [ 43 ] Literal ?error
+;
+
+
 .( INCLUDE )
 \ Include the following filename
 decimal
 : include  ( -- cccc )
-    bl word count over + 0 swap !
-    pad 1 f_open [ 43 ] Literal ?error
+    open<
     dup f_include
     f_close drop
 ;
@@ -4788,7 +4806,7 @@ create ndom hex    (   \ : ? / * | \ < > "   )
 
 \ Replace illegal character in filename 
 decimal
-: needs-check ( -- )
+: needs-ch ( -- )
     needs-w count over + swap
     Do
         ncdm ndom [ 9 ] Literal i c@ (map) i c!
@@ -4799,13 +4817,13 @@ decimal
 \ include  "path/cccc.f" if cccc is not defined
 \ filename cccc.f is temporary stored at NEEDS-W
 decimal 
-: needs-path  ( a -- )
+: needs-f  ( a -- )
     -find 0= If
         needs-w    [ 35 ] literal  
         erase                           \ a
         here c@ 1+ here over            \ a n here n
         needs-w    swap cmove           \ a n
-        needs-check
+        needs-ch
         needs-w    +                    \ a a1+n
         [ hex 662E decimal ] literal    \ a a1+n ".F"
         swap !                          \ a
@@ -4821,9 +4839,9 @@ decimal
 \ search in inc subdirectory
 decimal
 : needs
-    needs-inc needs-path     \ search in "inc/"
+    needs-inc needs-f     \ search in "inc/"
 \ needs-w c@ minus >in +!  \ re-feed cccc
-\ needs-lib needs-path     \ 2nd chance at "lib/"
+\ needs-lib needs-f     \ 2nd chance at "lib/"
 ;
 
 
@@ -5089,7 +5107,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210430" -1 allot ]
+    [ decimal 13 here ," build 20210509" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5193,7 +5211,7 @@ decimal
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 11     ] Literal  
+    [ decimal 10 0 +origin 32768 u< + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
@@ -5530,8 +5548,8 @@ RENAME   '              '
 RENAME   -->            -->
 RENAME   load+          LOAD+
 RENAME   needs          NEEDS 
-RENAME   needs-path     NEEDS-PATH
-RENAME   needs-check    NEEDS-CHECK
+RENAME   needs-f        NEEDS-F
+RENAME   needs-ch       NEEDS-CH
 RENAME   ndom           NDOM
 RENAME   ncdm           NCDM
 RENAME   needs/         NEEDS/
@@ -5539,6 +5557,7 @@ RENAME   needs-inc      NEEDS-INC
 RENAME   needs-fn       NEEDS-FN
 RENAME   needs-w        NEEDS-W
 RENAME   include        INCLUDE
+RENAME   open<          OPEN<
 RENAME   f_include      F_INCLUDE
 RENAME   f_getline      F_GETLINE
 RENAME   flush          FLUSH
@@ -5847,7 +5866,7 @@ DECIMAL
 CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 50" CR CR
 CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 
-caseoff
+CASEOFF
 
 \ ______________________________________________________________________ 
 

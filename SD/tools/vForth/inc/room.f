@@ -1,7 +1,7 @@
 \
 \ room.f
 \
-.( room )
+.( ROOM )
 \
 NEEDS UNUSED
 \ room

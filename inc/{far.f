@@ -7,7 +7,7 @@
 \
  .( <FAR )
 \
-\ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
+\ given an address E000-FFFF and a page number n (32-39) or 20h-27h)
 \ reverse of >FAR: encodes a FAR address compressing
 \ to bits 765 of H, lower bits of HL address offset from E000h
 CODE <FAR ( a n -- ha )
@@ -15,7 +15,7 @@ CODE <FAR ( a n -- ha )
     D1 C,             \     pop     de   // page number in e  
     E1 C,             \     pop     hl   // address in hl     
     7B C,             \     ld      a, e                      
-    D6 C, 40 C,       \     sub     $40  // reduced to 0-7    
+    D6 C, 20 C,       \     sub     $20  // reduced to 0-7    
     0F C,             \     rrca                              
     0F C,             \     rrca                              
     0F C,             \     rrca                              
@@ -27,3 +27,5 @@ CODE <FAR ( a n -- ha )
     E5 C,             \     push    hl     
     DD C, E9 C,       \     jp      (ix)   
 SMUDGE
+
+DECIMAL
