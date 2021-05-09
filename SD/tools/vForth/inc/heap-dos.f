@@ -7,13 +7,14 @@
 \
 .( HEAP-DOS )
 \
-\ allocate or free 8K-pages number $40 to $47.
+\ allocate or free 8K-pages number $20 to $27.
 \ This is 64K of ram avalable for Heap Management
 \ passed parameter must be 2 for alloc, or 3 for free
 \
 HEX
 : HEAP-DOS ( n -- )
-    48 40 DO
+    20 27               \ decimal 32-39 
+    DO
         DUP             \  n1 = hl register parameter value 
         I              \  n2 = de register parameter value 
         0              \  n3 = bc register parameter value 
