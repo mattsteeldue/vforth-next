@@ -196,6 +196,8 @@ VALUE, TO, >FAR and <FAR definition removed from core and available via NEEDS
 
 \ build 20210509
 Now unsigned multiplication UM* uses native Z80N opcode "mul".
-Now HEAP uses pages $20-$27 instead of $40-47. Anyway this is an easily change.
+Now HEAP uses pages $20-$27 instead of $40-47. Anyway this is an easy change.
 Improved F_GETLINE and F_INCLUDE
+Recompilation of the whole system is now possible simply via  10 LOAD
+
 
