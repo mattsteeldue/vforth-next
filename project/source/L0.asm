@@ -14,7 +14,7 @@ Warm_origin:
                 jp      WarmRoutine
 
 // +008
-SP_Basic:       dw      $D0E8               // These are bits with some "standard" meaning... 0101
+SP_Basic:       dw      $D0E6               // These are bits with some "standard" meaning... 0101
 
 // +00A                
                 dw      $0E00               
@@ -50,13 +50,13 @@ Underscore_Face:db      UNDERSCORE_CHAR     // Underscore  Cursor face
 IX_Echo:        dw      $0000               // Echo IX after NextOS call
 
 // +02C
-SP_Saved:       dw      $D0E8               // Saved SP dufing NextOS call
+SP_Saved:       dw      $0000               // Saved SP dufing NextOS call
 
 // +02E
 USER_Pointer:   dw      USER_system
 
 // +030
-RP_Pointer:     dw      $d17A // R0_system
+RP_Pointer:     dw      $d188 // R0_system
 
 // +32
 // SP_Basic        dw      0

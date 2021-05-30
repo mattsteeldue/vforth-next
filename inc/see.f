@@ -1,7 +1,7 @@
 \
 \ see.f
 \
-.( SEE Decompiler ) CR
+.( SEE Decompiler ) 
 \
 DECIMAL
 \

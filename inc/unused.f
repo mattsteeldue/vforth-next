@@ -1,7 +1,7 @@
 \
 \ unused.f
 \
-.( UNUSED ) CR
+.( UNUSED ) 
 \
 \ unused
 : UNUSED ( -- n ) \ return free dictionary space

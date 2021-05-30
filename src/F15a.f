@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210509 ) CR
+.( build 20210529 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -4663,23 +4663,30 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 .( F_GETLINE )
 \ Given an open filehandle read at most  m  characters to get next line
 \ terminated with $0D or $0A.
-\ Address a is left for subsequent processing
-\ and n as the actual number of byte read, that is the length of line 
+\ n is the actual number of byte read, that is the length of line.
+\ Buffer must be m+1 bytes long to accomodate a trailing 0x00
 decimal
-: f_getline ( a m fh -- a n )
-    dup >r f_fgetpos [ 44 ] Literal ?error  \ a m d
-    2swap over 1+ swap                      \ d a a+1 m 
-    r  f_read [ 46 ] Literal ?error         \ d a n
+: f_getline ( a m fh -- n )
+    >r tuck r f_fgetpos [ 44 ] Literal ?error   \ m a m d
+    2swap over 1+ swap                          \ m d a a+1 m 
+    r  f_read [ 46 ] Literal ?error             \ m d a f
     If \ at least 1 chr was read
-        [ 10 ] Literal enclose drop nip     \ d a b 
-        swap                                \ d b a
-        [ 13 ] Literal enclose drop nip     \ d b a c
-        rot min                             \ d a n+1
-        dup >r 2swap r>    0 d+             \ a n d+n+1
-        r> f_seek [ 45 ] Literal ?error     \ a n
+        [ 10 ] Literal enclose drop nip swap    \ m d a
+        [ 13 ] Literal enclose drop nip rot min \ m d b a
+        dup >r 2swap r>    0 d+                 \ m a n d+n
+        r> f_seek [ 45 ] Literal ?error         \ m a n
     Else
-        r> 2swap 2drop drop 0               \ a 0
+        r> 2swap 2drop drop 0                   \ m a 0
     Endif
+    >r                                          \ m a
+    dup dup 1+ swap                             \ m a a+1 a
+    r cmove                                     \ m a
+    2dup +                                      \ m a m+a
+    0 swap cell- !                              \ m a
+    r + 1-                                      \ m a+n-1
+    swap r -                                    \ a+n-1 m-n
+    blanks 
+    r>
 ;
 
 
@@ -4706,17 +4713,14 @@ decimal
 
     \ read text from file using  block #1 as a temporary buffer.
     Begin
-        1 block
-        dup b/buf blanks           
-        1+ 
-        [ decimal 300 ] Literal
+        1 block 
+        b/buf 2dup blanks           
+        swap 1+ 
+        swap cell-
         source-id @ 
         f_getline     \ a source text line can be up to 510 characters
       \ cr 1 block over type  \ during code-debugging phase
-        2dup + over b/buf swap - blanks
-        nip
     While             \ stay in loop while there is text to be read
-      \ update        \ toggle it again to avoid write it back to disk     
         1 blk ! 0 >in !  
         interpret
     Repeat
@@ -5107,7 +5111,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210509" -1 allot ]
+    [ decimal 13 here ," build 20210529" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

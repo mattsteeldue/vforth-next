@@ -111,7 +111,7 @@ Vocabulary_Does:
                 dw      Vocabulary_Does
                 db      $81, $A0
 Forth_Latest_Ptr:                
-                dw      Latest_Definition // Fence_Word // Latest_Definition
+                dw      Here_Dictionary // Fence_Word // Latest_Definition
 Voclink_Ptr:                
                 dw      0
 // Any new vocabulary is structured as follow:

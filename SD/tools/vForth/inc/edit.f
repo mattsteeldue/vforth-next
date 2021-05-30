@@ -1,7 +1,7 @@
 \
 \ edit.f
 \
-.( Full Screen Editor. ) CR
+.( Full Screen Editor. ) 
 \
 NEEDS H
 NEEDS S

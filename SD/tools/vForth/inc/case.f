@@ -3,7 +3,7 @@
 \
 \ Case-of structure 
 \
-.( Case-of structure. )   CR
+.( Case-of structure. )  
 \ Used in the form:
 \  n0 CASE  n1 OF ... ENDOF
 \           ...

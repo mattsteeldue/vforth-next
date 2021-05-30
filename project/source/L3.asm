@@ -166,48 +166,53 @@ Flush_Do:                                       // do
 
 //  ______________________________________________________________________ 
 //
-// f_getline    a fh -- a n
+// f_getline    a m fh -- n
 // Given an open filehandle read next line (terminated with $0D or $0A)
 // Address a is left for subsequent processing
 // and n as the actual number of byte read, that is the length of line 
                 Colon_Def F_GETLINE, "F_GETLINE", is_normal
-                dw      DUP, TO_R               // dup >r           ( a  fh )  \  fh
-                dw      F_FGETPOS               // f_fgetpos        ( a  d  f )  \  fh
-                dw      LIT, 44, QERROR         // 44 ?error        ( a  d  )  \  fh
+                dw      TO_R                    // >r               ( a  m  )     \  fh
+                dw      TUCK                    // tuck             ( m a m )
+                dw      R_OP, F_FGETPOS         // r f_fgetpos      ( m a m d f ) 
+                dw      LIT, 44, QERROR         // 44 ?error        ( m a m d )     
                 
-                dw      TWO_SWAP, OVER          // 2swap over       
-                dw      ONE_PLUS, SWAP          // swap 1+ swap     ( d  a  a+1  m )  \  fh
+                dw      TWO_SWAP, OVER          // 2swap over       ( m d a m )
+                dw      ONE_PLUS, SWAP          // 1+ swap          ( m d a a+1 m )
 
-                dw      R_OP                    // r                ( d  a  a+1  m  fh )  \  fh
-                dw      F_READ                  // f_read           ( d  a  n  f )  \  fh
-                dw      LIT, 46, QERROR         // 46 ?error        ( d  a  n )  \  fh
+                dw      R_OP, F_READ            // r f_read         ( m d a n f ) 
+                dw      LIT, 46, QERROR         // 46 ?error        ( m d a n )  
                                                 // if ( at least 1 chr was read )  \  fh
                 dw      ZBRANCH
                 dw      FGetline_Else - $
-                dw          LIT, 10, ENCLOSE    //      10 enclose       ( d  a   i j k )  \  fh
-                dw          DROP, NIP           //      drop nip         ( d  a  j  )  \  fh
-                dw          SWAP                //      drop swap        ( d  j  a  )  \  fh
-                dw          LIT, 13, ENCLOSE    //      13 enclose       ( d  j  a   i j k )  \  fh
-                dw          DROP, NIP           //      drop nip         ( d  jnl  a  jcr  )  \  fh
-                dw          ROT, MIN            //      rot min          ( d  a  n  )  \  fh
-                dw          DUP, TO_R           //      dup >r           ( d  a  n  )    \  fh n
-                dw          TWO_SWAP, R_TO      //      2swap r>         ( a  n  d  n  )  \  fh
-                dw          ZERO, DPLUS         //      0 d+             ( a  n  d+n  )  \  fh
-                dw          R_TO, F_SEEK        //      r> f_seek        ( a  n  f )
-                dw          LIT, 45, QERROR     //      45 ?error        ( a  n  )
+                dw          LIT, 10, ENCLOSE    //      10 enclose       ( m d a x b x )
+                dw          DROP, NIP           //      drop nip         ( m d a b )
+                dw          SWAP                //      drop swap        ( m d b a )
+                dw          LIT, 13, ENCLOSE    //      13 enclose       ( m d b a x c x )
+                dw          DROP, NIP           //      drop nip         ( m d b a c )
+                dw          ROT, MIN            //      rot min          ( m d a n )
+                dw          DUP, TO_R           //      dup >r           ( m d a n )      \ fh n
+                dw          TWO_SWAP, R_TO      //      2swap r>         ( m a n d n )    \ fh
+                dw          ZERO, DPLUS         //      0 d+             ( m a n d+n )
+                dw          R_TO, F_SEEK        //      r> f_seek        ( m a n f )    
+                dw          LIT, 45, QERROR     //      45 ?error        ( m a n )
                                                 // else                
                 dw      BRANCH
                 dw      FGetline_Endif - $
 FGetline_Else:
-                dw          R_TO                //      r>              ( d  a  fh  ) 
-                dw          TWO_SWAP, TWO_DROP  //      2swap 2drop     ( a  fh  )
-                dw          DROP, ZERO          //      drop, 0         ( a  0 )
+                dw          R_TO                //      r>              ( m d a fh ) 
+                dw          TWO_SWAP, TWO_DROP  //      2swap 2drop     ( m a fh )
+                dw          DROP, ZERO          //      drop, 0         ( m a 0 )
 FGetline_Endif:                                 // endif
-//              dw      TWO_DUP, PLUS, OVER     // 2dup + over          ( a  n  a+n  n )
-//              dw      BBUF, SWAP, SUBTRACT    // b/buf swap -         ( a  n  a+n  512-n )
-//              dw      BLANKS                  // blanks               ( a  n )
-//              dw      TWO_DUP, PLUS, ZERO     // 2dup + 0             ( a  n  a+n  0 )
-//              dw      SWAP, CSTORE            // swap c!              ( a  n )
+                dw      TO_R, DUP, DUP          // >r dup dup           ( m a a a )
+                dw      ONE_PLUS, SWAP          // 1+ swap              ( m a a+1 a )
+                dw      R_OP, CMOVE             // r cmove              ( m a )
+                dw      TWO_DUP, PLUS           // 2dup +               ( m a m+a )
+                dw      ZERO, SWAP              // 0 swap
+                dw      CELL_MINUS,  STORE      // cell-  !             ( m a )
+                dw      R_OP, PLUS, ONE_SUBTRACT// r + 1-               ( m a+n1 )
+                dw      SWAP, R_OP, SUBTRACT    // swap r -             ( a+n+1 m-n )           
+                dw      BLANKS                  // blanks
+                dw      R_TO                    // r>                   ( n )
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -234,21 +239,15 @@ FInclude_Endif_1:
                 dw      TO_R, TO_R              // >r >r
                 dw      SOURCE_ID, STORE        // source-id !
 FInclude_Begin:                                 // begin
-                dw          ONE, BLOCK          //      1 block
-                dw          DUP, BBUF, BLANKS   //      dup b/buf blanks
-                dw          ONE_PLUS            //      1+
-                dw          LIT, 300            //      500
+                dw          ONE, BLOCK, BBUF    //      1 block b/buf
+                dw          TWO_DUP, BLANKS     //      2dup blanks
+                dw          SWAP, ONE_PLUS      //      swap 1+
+                dw          SWAP, CELL_MINUS    //      swap cell-
                 dw          SOURCE_ID, FETCH    //      source-id @
                 dw          F_GETLINE           //      f_getline
-                dw          TWO_DUP, PLUS, OVER //      2dup + over
-                dw          BBUF, SWAP          //      b/buf swap
-                dw          SUBTRACT            //      - 
-                dw          BLANKS              //      blanks
-                dw          NIP                 //      nip
                                                 // while
                 dw      ZBRANCH
                 dw      FInclude_Repeat - $  
-//              dw          UPDATE              //      update
                 dw          ONE, BLK, STORE     //      1 blk !
                 dw          ZERO, TO_IN, STORE  //      0 >in !    
                 dw          INTERPRET           //      interpret
@@ -663,7 +662,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210509", 13
+                db      "build 20210529", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

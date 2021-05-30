@@ -7,7 +7,9 @@
 \
 .( Call utility. )        CR
 \ CALL# ( n1 a -- n2 )
-\ 
+\ First argument n1 is passed via bc register AND a register
+\ Routine can return bc register which is pushed on TOS
+\
 HEX
 CODE  CALL#  ( n1 -- n2 )
     E1 C, D1 C,             \ pop hl    pop de
@@ -19,6 +21,6 @@ CODE  CALL#  ( n1 -- n2 )
     E5 C,                   \ push hl
     DD C, E9 C,             \ jp ix
     SMUDGE
+\
 DECIMAL
-
 \

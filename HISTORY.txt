@@ -199,6 +199,10 @@ Now unsigned multiplication UM* uses native Z80N opcode "mul".
 Now HEAP uses pages $20-$27 instead of $40-47. Anyway this is an easy change.
 Improved F_GETLINE and F_INCLUDE
 Recompilation of the whole system is now possible simply via  10 LOAD
-
 Added LAYER 2 Color-Picker in Screen # 520 onward.
 
+\ build 20210429
+Latest brush hits on F_GETLINE and F_INCLUDE.
+Color-Picker in Screen # 520 onward now returns the chosen byte.
+
+    

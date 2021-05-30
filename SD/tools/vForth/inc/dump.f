@@ -1,7 +1,7 @@
 \
 \ dump.f
 \
-.( DUMP Inspector ) CR
+.( DUMP Inspector ) 
 \
 DECIMAL
 \
