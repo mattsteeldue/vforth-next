@@ -6,42 +6,42 @@ First working  DOSCALL that uses NEXTZXOS primitives.
 
 \ build 20200529
 Tentative project branch to use IX as return-stack-pointer (RP).
-This test show that there is no speed nor room improvement in using IX instead of a fixed memory location.
-More, I found IX useful as a spare couple of registers.
+This test shows that there is no speed nor room improvement in using IX instead of a fixed memory location.
+More, I found IX useful as a spare couple of registers, (but see below what IX is useful for now)
 
 
 \ build 20200608
 SP register must be below C000 in  INKEY  and  SELECT  too.
-Removed  floating-point primitives to save room.
+Removed  floating-point primitives to save room, these will be reintroduced later as libraries to be included.
 LOAD  now can be interrupted using Break key.
 
 
 \ build 20200619
-Changed behaviour of  WORD  to return the value of HERE 
-Removed  CALL#   from core and left only in Screens library 
+Changed behaviour of  WORD  to return the value of HERE. This is a discontinuity from evious versions.
+Removed  CALL#   from core and left only in Screens library (later in NEEDS library)
 Replacing  DO  with  ?DO  in  TYPE  and  SPACES
-Introducing  PICK  at  Scr# 209
+Introducing  PICK  at  Scr# 209, planning to put it in the core.
 Fixed  ?STACK  to ignore errors when DP is beyond S0: purpose is to use higher 8K RAM as vocabulary extension.
 
 
 \ build 20200624
 Removed  MOVE-SP,  MOVE-RP,  MOVE-LIMIT  from core and moved to  Blocks  library  at Screen # 220-223
-Removed 128-RAM bank switch  (BANK!)  from core in perspective to abandon all references to non-Next version
+Removed 128-RAM bank switch  (BANK!)  from core in perspective to abandon all references to non-Next version.
 Fixed  SEE  to detect  ?DO  when on decompiling.
 Fixed  BLEEP  and introduced  some BLEEP-CALC  and  BEEP-PITCH  to cope with it.
 Experiment on  MMU7  and corrections on  MOVE-SP,  MOVE-RP,  MOVE-LIMIT 
-Experiment on  UPPER
+Experiment on  UPPER with the purpose to make this Forth Case-Insensitive (if one need to).
 
 
 \ build 20200628
 Introducing  AUTOEXEC  for the first time: now at first startup  AUTOEXEC is executed first. 
-Changed "name" to  "Next Forth" and removed references to Microdrive
-Improving  MMU7  banking study using words  +FAR -FAR  FAR-HL and moved previous example of  FAR-HL  from screen #290 to #300 
-Bakup of first 350 screens to 10001 onward, just to be safe. Accessing upper Screens is slower.
+Changed "name" to  "Next Forth" and removed references to Microdrive.
+Improving  MMU7  banking study using words  >FAR  and moved away previous example from screen #290 to #300 
+Bakup of first 350 screens to 10001 onward, just to be safe. Accessing high number Screens is much slower.
 
 
 \ build 20200702
-Introduced a quick'n'dirty audible click on  KEY 
+Introduced a quick'n'dirty audible click on  KEY.
 Word  BASIC, on returning to Basic, retuns the value currently on top-of-stack. Useful to return ORIGIN and make faster rebuild.
 Test on  AUTOEXEC  in core, run 11 LOAD. Useful at startup, as already seen..
 Verified and corrected words MOVE-SP; copied words MOVE-SP, MOVE-RP, MOVE-LIMIT to screen 220-223: useful to free MMU7 last 8K bank (D000-FFFF)
@@ -49,13 +49,14 @@ Introduced screen #100 to compile the whole ASSEMBLER (screens 101-162). And Scr
 
 
 \ build 20200705
-Finally fixed  AUTOEXEC  in core, to correctly run 11 LOAD
-Added NIP and TUCK to core.
+Finally fixed  AUTOEXEC  in core, to correctly run 11 LOAD. This is my definitive choice.
+Added NIP and TUCK to core, this will save a few bytes in the future.
 SP register to be below C000 in  ?TERMINAL  and  KEY  too.
 Fixed  RND  in !blocks.bin library and told Marcus Cruz to correct his GitHub's Afera library.
-Improving MMU7 banking study using words  >FAR <FAR. Moved previous example of FAR-HL from screen #290 to #300 
+Improving MMU7 banking using words  >FAR <FAR. Moved previous example of FAR-HL from screen #290 to #300 
 Finally fixed the Z80N  NEXTREG op-code  to use "N," commaer instead of the duplicated "V,"
 Experiment on  .RESET  to force a soft-reset. Maybe this could become a dot-command if there isn't any yet.
+
 
 \ build 20200714
 Introducing case-insensitive vocabulary search (FIND). Wow! this is an achievement.
@@ -111,7 +112,7 @@ Stable version of POINTER.
 \ build 20200928
 Test "Heap Memory Management" to store counted-string, i.e. strings 255 bytes in length. 
 In Screens #80-85 there is some definitions: FAR HP@ POINTER HEAP H" S"
-I put in this this release CHOMP2.F source, a simple pacman style game written in Forth that explores how to use Heap Memory to store data.
+I put in this this release a simple pacman style game written in Forth that explores how to use Heap Memory to store data.
 This is the first step into Next's Hardware: hopefully next will be sprites.
 
 
@@ -119,7 +120,7 @@ This is the first step into Next's Hardware: hopefully next will be sprites.
 Now the following word are available: M_P3DOS  F_SYNC  F_OPEN  F_CLOSE  F_READ  F_WRITE  F_SEEK  that use RST 8 calls for NextZXOS interaction, fast and neat indeed since there is no more need for BANK paging during DOSCALL.
 Screens/Blocks system doesn't need  OPEN# from Basic anymore, instead Block's file is opened during COLD or WARM and closed during  BYE.
 Now CREATE is more ISO compliant and a new MARKER definition is now available.
-Also, a better compiled strings are now available to create string to hold a filename. Still, an  USE  definition is lacking, ... la prochaine fois.
+Also, a better compiled strings are now available to create string to hold a filename. Still, an  USE or NEEDS  definition is lacking, ... la prochaine fois.
 ASSEMBLER vocabulary doesn't occupy Dictionary space anymore, instead it uses some HEAP VOCABULARY extending what I am already doing with HEAP STRINGs. 
 
 
@@ -133,8 +134,8 @@ Documentation upgraded and revised.
 
 \ build 20201115
 Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way. The bug is in (LOOP) definition that does a JP C instead of a JP M.
-Changed  STRING"  into  ,"  in Forth Inc. style.
-Re-introduced  PICK  INVV  TRUV  
+Changed   STRING"   into   ,"    à la  Forth Inc. style.
+Re-introduced  PICK  INVV  TRUV, but planne to move them in include directory.
 Introducing a new  Full Screen Editor  that can be loaded from library.
 Attached block-system file  !Blocks64.bin  has become integral part of this Forth system, since many features come along with it.
    20: SEE debugger facility
@@ -142,8 +143,9 @@ Attached block-system file  !Blocks64.bin  has become integral part of this Fort
    90: Line Editor
   100: Z80 Assembler
   190: Full Screen Editor
-  
-  
+But, as already stated, I have plans to move them into include directory.  
+
+
 \ build 20201129
 Introducing F_GETLINE and first version of INCLUDE definition. Introducing also 
 SOURCE-ID user variable to keep track of nested calls to INCLUDE definition.
@@ -161,7 +163,7 @@ DOSCALL definition is now removed since a better M_P3DOS is now available.
 
 \ build 20210215
 Everything is moved in  C:/tools/vForth to avoid future collisions with C:/forth.
-Introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
+Again, introducing example game "Chomp" in blocks 600-670. It's a PacMan style.
 Once AUTOEXEC completes its LOAD, give 600 LOAD, then GAME.
 Cursor keys (or Cursor Joystick maybe)
 It's a work-in-progress though.
@@ -194,6 +196,7 @@ introducing (MAP) to help substitute such invalid characters.
 Substituting every SWAP DROP sequence by equivalent NIP definition.
 VALUE, TO, >FAR and <FAR definition removed from core and available via NEEDS
 
+
 \ build 20210509
 Now unsigned multiplication UM* uses native Z80N opcode "mul".
 Now HEAP uses pages $20-$27 instead of $40-47. Anyway this is an easy change.
@@ -201,8 +204,9 @@ Improved F_GETLINE and F_INCLUDE
 Recompilation of the whole system is now possible simply via  10 LOAD
 Added LAYER 2 Color-Picker in Screen # 520 onward.
 
+
 \ build 20210429
 Latest brush hits on F_GETLINE and F_INCLUDE.
 Color-Picker in Screen # 520 onward now returns the chosen byte.
 
-    
+
