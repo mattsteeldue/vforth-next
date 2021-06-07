@@ -11,7 +11,7 @@ NEEDS FAR
 NEEDS H"
 \
 \ immutable  string on heap
-: (S") R @ FAR COUNT R> CELL+ >R ;
+: (S") R@ @ FAR COUNT R> CELL+ >R ;
 \
 : S"  ( -- a n )
     STATE @

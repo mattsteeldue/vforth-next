@@ -205,8 +205,28 @@ Recompilation of the whole system is now possible simply via  10 LOAD
 Added LAYER 2 Color-Picker in Screen # 520 onward.
 
 
-\ build 20210429
+\ build 20210529
 Latest brush hits on F_GETLINE and F_INCLUDE.
 Color-Picker in Screen # 520 onward now returns the chosen byte.
 
+
+\ build 20210606
+In addition to  inc/  now NEEDS searches  lib/  too.
+  inc/ should hold single word definitions.
+  lib/ should keep large library files to be included with the same semantic.
+
+In this picture, I moved from   inc/   to   lib/   the following files:
+    needs.f
+    edit.f
+    see.f
+    locate.f
+    bsearch.f
+    heap.f
+    assembler.f
+    dummy.f
+
+Introducing a mixed scaling-operator  M*/  as described in https://specnext.dev/blog/2021/06/05/programming-the-80s-way-3/  
+To be more ANS compliant, I renamed some words:
+ R to R@ (but I left both in dictionary, for now),
+ MINUS to NEGATE and DMINUS to DNEGATE.
 

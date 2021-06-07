@@ -5,6 +5,9 @@
 \
 .( LAYER13 ) 
 \
+\ Layer 1,3 – Timex HiColour (Enhanced ULA) mode, 256 w x 192 h pixels,
+\ 256 colours total, 32 x 192 cells, each capable of displaying 2 colours
+\ 
 NEEDS IDE_MODE!
 
 : LAYER13

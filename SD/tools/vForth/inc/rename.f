@@ -25,7 +25,7 @@ HEX
         \ overwrite cccc name with nnnn 
         CMOVE
         \ correct last character of name
-        R  C@  [ HEX 80 ] LITERAL  OR
+        R@  C@  [ HEX 80 ] LITERAL  OR
     R>      
     C!
     \ free space allocated for dddd.

@@ -3,6 +3,8 @@
 \
 .( PERM )
 \
+\ makes permanent the last color setting
+\
 NEEDS CALL#
 \
 HEX

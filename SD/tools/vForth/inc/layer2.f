@@ -5,6 +5,8 @@
 \
 .( LAYER2 ) 
 \
+\ Layer 2 – 256 w x 192 h pixels, 256 colours total, one colour per pixel
+\
 NEEDS IDE_MODE!
 
 : LAYER2

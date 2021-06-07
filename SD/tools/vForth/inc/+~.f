@@ -20,8 +20,8 @@ NEEDS FAR
     DUP FAR C@
     [CHAR] " WORD
     DUP C@ >R 1+
-    HP@ FAR R CMOVE
-    R HP +!
+    HP@ FAR R@ CMOVE
+    R@ HP +!
     R> +
     OVER FAR C!
     DUP FAR HP@ SWAP !
