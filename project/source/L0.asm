@@ -1152,7 +1152,14 @@ Um_DivMod_OutOfRange:
 // r            -- n
 // return on top of stack the value of top of return-stack
 // Since this is the same as I, we alter R's CFA to jump there
-                New_Def R_OP, "R", I_Ptr, is_normal
+                New_Def R_OP, "R@", I_Ptr, is_normal
+
+//  ______________________________________________________________________ 
+//
+// r            -- n
+// return on top of stack the value of top of return-stack
+// Since this is the same as I, we alter R's CFA to jump there
+                New_Def R_OLD, "R", I_Ptr, is_normal
 
 //  ______________________________________________________________________ 
 //
@@ -1296,9 +1303,9 @@ Two_Plus:
 
 //  ______________________________________________________________________ 
 //
-// minus        n1 -- n2
+// negate        n1 -- n2
 // change the sign of number
-                New_Def MINUS, "MINUS", is_code, is_normal
+                New_Def MINUS, "NEGATE", is_code, is_normal
                 ld      hl, 0               // subtract from 0
                 pop     de
                 or      a
@@ -1310,7 +1317,7 @@ Two_Plus:
 //
 // dminus       d1 -- d2
 // change the sign of a double number
-                New_Def DMINUS, "DMINUS", is_code, is_normal
+                New_Def DMINUS, "DNEGATE", is_code, is_normal
                 pop     hl                  // d1.H
                 pop     de                  // d1.L
                 push    bc                  // Save Instruction Pointer

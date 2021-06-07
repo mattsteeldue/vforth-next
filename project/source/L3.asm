@@ -315,6 +315,8 @@ FInclude_Endif_2:                               // endif
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
                 db      4, "inc/", 0
+                New_Def NEEDS_LIB,  "NEEDS-LIB", Create_Ptr, is_normal  
+                db      4, "lib/", 0
 
 // Concatenate path at a and filename and include it
 // No error is issued if filename doesn't exist.
@@ -392,7 +394,10 @@ Needs_6:
 // if it doesn't then  INCLUDE  inc/cccc.F
 // search in inc subdirectory
                 Colon_Def NEEDS, "NEEDS", is_normal
+                dw      TO_IN, FETCH
                 dw      NEEDS_INC, NEEDS_PATH
+                dw      TO_IN, STORE
+                dw      NEEDS_LIB, NEEDS_PATH
                 dw      EXIT
 
 
@@ -662,7 +667,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210529", 13
+                db      "build 20210606", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 
