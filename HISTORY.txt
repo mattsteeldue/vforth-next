@@ -230,3 +230,5 @@ To be more ANS compliant, I renamed some words:
  R to R@ (but I left both in dictionary, for now),
  MINUS to NEGATE and DMINUS to DNEGATE.
 
+\ build 20210606
+Fixed some bugs in  NEEDS. Introducing  BOUNDS.

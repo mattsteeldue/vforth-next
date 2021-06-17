@@ -72,9 +72,9 @@ ASSEMBLER TOOLS-ASM DEFINITIONS
   DP @ LP ! HEX E080 DP !
   
 : INVERT -1 XOR ;
-: @+ >R R CELL+ R> @ ;
-: !+ >R R ! R> CELL+ ;
-: @- 0 CELL+ - >R R @ R> ;
+: @+ >R R@ CELL+ R> @ ;
+: !+ >R R@ ! R> CELL+ ;
+: @- 0 CELL+ - >R R@ @ R> ;
 1 VARIABLE TABL1 1 ,
 : ROTLEFT  TABL1 + @
   UM* \ U*
@@ -137,9 +137,9 @@ HEX
 
 \ Screen# 107 
 ( Assembler Z80 )
-: OR!         >R R @ CHECK28 OR R> ! ;
-: OR!U        >R R @ OR R> ! ;
-: AND!        >R INVERT R @  CHECK29 AND R> ! ;
+: OR!         >R R@ @ CHECK28 OR R> ! ;
+: OR!U        >R R@ @ OR R> ! ;
+: AND!        >R INVERT R@ @  CHECK29 AND R> ! ;
 
 \ Screen# 108 
 ( Assembler Z80 )
@@ -180,10 +180,10 @@ IS-A IS-2PI : 2PI CHECK33
 IS-A IS-3PI : 3PI CHECK33
     <BUILDS , , , , 3 , DOES>
     REMEMBER POSTIT ;
-: IS-PI >R R IS-1PI
-    R IS-2PI R IS-3PI OR OR
-    R IS-CBPI R IS-EDPI OR OR
-    R IS-DDPI R IS-FDPI OR OR
+: IS-PI >R R@ IS-1PI
+    R@ IS-2PI  R@ IS-3PI OR OR
+    R@ IS-CBPI R@ IS-EDPI OR OR
+    R@ IS-DDPI R@ IS-FDPI OR OR
     R> DROP ;
 
 \ Screen# 111 

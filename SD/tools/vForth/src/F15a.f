@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210529 ) CR
+.( build 20210608 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -17,7 +17,7 @@
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
 \  
 \ This is the complete compiler for v.Forth for SINCLAIR ZX Spectrum Next.
-\ Each line of this source list mustn't exceed 80 bytes.
+\ Each line of this source list mustn't exceed 510 bytes.
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
@@ -1770,10 +1770,16 @@ CODE r> ( -- n )
 
 
 \ 6526h
-.( R )
+.( R@ )
 \ return on top of stack the value of top of return-stack
 \ Since this is the same as I, we alter R's CFA to jump there
-CODE r ( -- n )         
+CODE r@ ( -- n )         
+         
+        \ this way we will have a real duplicate of I
+        ' i  >BODY  LATEST PFA CFA ! 
+        C;
+
+CODE r  ( -- n )         
          
         \ this way we will have a real duplicate of I
         ' i  >BODY  LATEST PFA CFA ! 
@@ -1793,6 +1799,13 @@ CODE 0= ( n -- f )
             INC     L'|
         HERE DISP, \ THEN,
         Psh1
+        C;
+
+
+CODE not  ( n -- f )         
+         
+        \ this way we will have a real duplicate of 0=
+        ' 0=  >BODY  LATEST PFA CFA ! 
         C;
 
 
@@ -1923,19 +1936,30 @@ CODE cell+ ( n1 -- n2 )
 
 
 .( CELL- )
+\ decrement by 2 top of stack 
 CODE cell- ( n1 -- n2 )
 
-        POP     HL|         \ address
+        POP     HL|         \ address 
         DECX    HL|
         DECX    HL|
         Psh1
         C;
 
 
+.( 2- )
+\ decrement by 2 top of stack 
+CODE 2- ( n1 -- n2 )
+
+         
+        \ this way we will have a real duplicate of 2+
+        ' cell-  >BODY  LATEST PFA CFA ! 
+        C;
+
+
 \ 658Bh
-.( MINUS   ( or NEGATE )
+.( NEGATE   ( or MINUS )
 \ change the sign of number
-CODE minus ( n1 -- n2 )
+CODE negate ( n1 -- n2 )
          
         LDX     HL|    0 NN,
         POP     DE|
@@ -1946,11 +1970,11 @@ CODE minus ( n1 -- n2 )
 
 
 \ 659Fh
-.( DMINUS   ( or DNEGATE )
+.( DNEGATE   ( or DMINUS )
 \ change the sign of a double number
 \ SP : LHED
 \ SP :+0123
-CODE dminus ( d1 -- d2 )
+CODE dnegate ( d1 -- d2 )
 
         POP     HL|            \ hd1
         POP     DE|            \ ld1
@@ -2054,8 +2078,22 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
         C;
 
 
+.( -ROT )
+\ Rotates the 3 top values of stack by picking the 1st in access-order
+\ and putting back to 3rd place. The other two are shifted down one place.
+CODE -rot ( n1 n2 n3  -- n3 n1 n2 )
+         
+        POP     HL|  \ n3
+        POP     DE|  \ n2
+        EX(SP)HL     \ n1 <-> n3
+        PUSH    HL|  \ n1
+        PUSH    DE|  \ n2
+        Next
+        C;
+
+
 .( PICK )
-\ picks the nth element from TOS
+\ picks the nth element from current top of stack and copy it on top
 CODE pick ( n -- v )
 
         POP     HL| 
@@ -2128,46 +2166,46 @@ CODE 2dup  ( d -- d d )
         C;
 
 
-\ 6EA9h >>>
-\ 2ROT
-\      d3  |d2  |d1  |
-\      h l |h l |h l |
-\ SP   LHED|LHED|LHED|
-\ SP  +0123|4567|89ab|
-CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
-        
-        LDX     HL|  HEX 000B NN,
-        ADDHL   SP|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        DECX    HL|
-        PUSH    DE|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        DECX    HL|
-        PUSH    DE|
-
-\      d1  |d3  |d2  |d1  |
-\      h l |h l |h l |h l |
-\ SP   LHED|LHED|LHED|LHED|
-\ SP       +0123|4567|89ab|
-
-        LD      D'|    H|
-        LD      E'|    L|
-        INCX    DE|
-        INCX    DE|
-        INCX    DE|
-        INCX    DE|
-        PUSH    BC|
-        LDX     BC|  HEX 000C NN,
-        LDDR        
-        POP     BC|
-        POP     DE|
-        POP     DE|
-        Next
-        C;
+\ \ 6EA9h >>>
+\ \ 2ROT
+\ \      d3  |d2  |d1  |
+\ \      h l |h l |h l |
+\ \ SP   LHED|LHED|LHED|
+\ \ SP  +0123|4567|89ab|
+\ CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
+\         
+\         LDX     HL|  HEX 000B NN,
+\         ADDHL   SP|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         DECX    HL|
+\         PUSH    DE|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         DECX    HL|
+\         PUSH    DE|
+\ 
+\ \      d1  |d3  |d2  |d1  |
+\ \      h l |h l |h l |h l |
+\ \ SP   LHED|LHED|LHED|LHED|
+\ \ SP       +0123|4567|89ab|
+\ 
+\         LD      D'|    H|
+\         LD      E'|    L|
+\         INCX    DE|
+\         INCX    DE|
+\         INCX    DE|
+\         INCX    DE|
+\         PUSH    BC|
+\         LDX     BC|  HEX 000C NN,
+\         LDDR        
+\         POP     BC|
+\         POP     DE|
+\         POP     DE|
+\         Next
+\         C;
 
 
 \ 6603h
@@ -2787,10 +2825,10 @@ CODE <  ( n1 n2 -- f )
 
 
 \ 69C7h
-.( -DUP )
+.( ?DUP )
 \ ?DUP 
 \ duplicate if not zero
-CODE -dup ( n -- 0 | n n )
+CODE ?dup ( n -- 0 | n n )
         POP     HL|
         LD      A'|    H|
         ORA      L|
@@ -2801,19 +2839,19 @@ CODE -dup ( n -- 0 | n n )
         C;
 
 
-.( ?DUP ) \ is as -DUP
-CODE ?dup ( n -- 0 | n n )
-        \ This way we will have a real duplicate of -DUP.
+.( -DUP ) \ is as -DUP
+CODE -dup ( n -- 0 | n n )
+        \ This way we will have a real duplicate of ?DUP.
         C;
 
-        ' -dup >BODY   LATEST  PFA CFA !
+        ' ?dup >BODY   LATEST  PFA CFA !
 
 
 \ 62CFh <<< moved here because of OUT
 .( EMIT )
 : emit  ( c -- )
     (?emit)
-    -dup If 
+    ?dup If 
         emitc
         1 out +!
     Endif
@@ -3101,11 +3139,18 @@ CODE ?dup ( n -- 0 | n n )
     ;
 
 
+: bounds  ( a n -- a+n a )
+\ given an address and a length ( a n ) calculate the bound addresses
+\ suitable for DO-LOOP
+    over + swap
+    ;
+
+
 \ 6C1Ah
 .( TYPE )
 \ Sends to current output channel n characters starting at address a.
 : type   ( a n -- )
-    over + swap
+    bounds
     ?Do
         i c@ emit
     Loop
@@ -3138,7 +3183,7 @@ CODE ?dup ( n -- 0 | n n )
 \ n2 is the string length. n2 is kept in span user variable also.
 : accept ( a n1 -- n2 )
     over + over   ( a  n1+a a       ) 
-    0 rot rot     ( a  0    a+n1  a ) 
+    0 -rot        ( a  0    a+n1  a ) 
     Do            ( a  0 ) 
         drop key  ( a  c ) 
         dup       ( a  c  c )
@@ -3295,7 +3340,7 @@ CODE fill ( a n c -- )
     here [ decimal 34 ] Literal blanks
     >in +!
     over - >r
-    r here c!
+    r@ here c!
     +
     here 1+ r> cmove 
     here  \  bl word
@@ -3307,7 +3352,7 @@ CODE fill ( a n c -- )
 \ Direct procedure compiled by ." and  .(
 \ It executes TYPE.
 : (.")
-    r count dup 1+
+    r@ count dup 1+
     r> + >r
     type
     ;
@@ -3533,7 +3578,7 @@ CODE fill ( a n c -- )
     Endif
     c@ bl - 0 ?error
     r> If
-        dminus
+        dnegate
     Endif
     ;
 
@@ -3541,7 +3586,7 @@ CODE fill ( a n c -- )
 \ 7178h
 .( -FIND )
 \ used in the form -FIND "cccc"                                                                                                                                                                                    
-\ searches the vocabulary giving CFA and the heading byte 
+\ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
     bl word 
@@ -3593,7 +3638,7 @@ CODE fill ( a n c -- )
     .( ? )
     [ HERE TO msg1^ ] MESSAGE  \ ___ forward ___
     s0 @ sp!
-    blk @ -dup
+    blk @ ?dup
     If 
         >in @ swap
     Endif \ Then
@@ -4092,7 +4137,7 @@ CODE basic ( n -- )
 : +-  ( n1 n2 -- n3 )
     0<
     If
-        minus
+        negate
     Endif
     ;
 
@@ -4103,7 +4148,7 @@ CODE basic ( n -- )
 : d+-  ( d1 n -- d2 )
     0<
     If
-        dminus
+        dnegate
     Endif
     ;
 
@@ -4140,13 +4185,18 @@ CODE basic ( n -- )
 \ 75EAh
 \ divides a double into n giving quotient q and remainder r 
 \ the remainder has the sign of d.
-.( M/ )
-: m/  ( d n -- q r ) 
-    over >r >r
-    dabs r abs um/mod
-    r> 
-    r xor +- swap 
-    r>    +- swap
+.( M/MOD )
+: m/mod  ( d n -- r q ) 
+    over >r >r              \ d     R: h n
+    dabs r@ abs um/mod      \ r q
+    r>                      \ r q n
+    r@ xor +- swap          \ +q r
+    r>     +- swap          \ +r +q
+    ;
+
+
+: m/ ( d n -- n )
+    m/mod nip 
     ;
 
 
@@ -4164,7 +4214,7 @@ CODE basic ( n -- )
 \ the remainder has the sign of n1.
 : /mod  ( n1 n2 -- n3 n4 )
     >r s->d r>
-    m/
+    m/mod 
     ;
 
 
@@ -4190,7 +4240,7 @@ CODE basic ( n -- )
 \ (n1 * n2) / n3. The intermediate passage through a double number
 \ avoids loss of precision
 : */mod  ( n1 n2 n3 -- n4 n5 )
-    >r  m*  r>  m/
+    >r  m*  r>  m/mod 
     ;
     
 
@@ -4204,16 +4254,16 @@ CODE basic ( n -- )
 
 
 \ 766Fh
-.( M/MOD )
+.( #/MOD )
 \ mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
-\ All terms are unsigned.
-: m/mod  ( ud1 u2 -- u3 ud4 )
-    >r          \ ud1
-    0 r um/mod  \ l rem1 h/r
-    r> swap >r  \ l rem1
-    um/mod      \ rem2 l/r
-    r>          \ rem2 l/r h/r
-    ;
+\ used by # during number representation.
+\ : #/mod  ( d1 u2 -- n3 d4 )
+\     >r           \ ud1
+\     0 r@ um/mod  \ l rem1 h/r
+\     r> swap >r   \ l rem1
+\     um/mod       \ rem2 l/r
+\     r>           \ rem2 l/r h/r
+\     ;
     
 
 \ 768Dh
@@ -4256,7 +4306,7 @@ CODE basic ( n -- )
 : message
     warning @
     If
-        \ -dup
+        \ ?dup
         \ If
             [ decimal 4 ] literal
             offset @
@@ -4602,14 +4652,14 @@ decimal #SEC constant #sec
         +buf 
     Until 
     use !  
-    r @ 0< 
+    r@ @ 0< 
     If  
-        r cell+  
-        r @ [ hex 7FFF ] Literal and  
+        r@ cell+  
+        r@ @ [ hex 7FFF ] Literal and  
         0 r/w  
     Endif
-    r !  
-    r prev !  
+    r@ !  
+    r@ prev !  
     r>  cell+ 
     ;
 
@@ -4624,16 +4674,16 @@ decimal #SEC constant #sec
 : block  ( n -- a )
     offset @ + >r 
     prev @  
-    dup @  r - dup +   \ check equality without most significant bit
+    dup @  r@ - dup +   \ check equality without most significant bit
     If  
         Begin  
             +buf 0=  
             If  
                 drop 
-                r buffer dup 
-                r 1  r/w  2 - 
+                r@ buffer dup 
+                r@ 1  r/w  2 - 
             Endif
-            dup @ r - dup +  0= 
+            dup @ r@ - dup +  0= 
         Until
         dup prev ! 
     Endif
@@ -4664,12 +4714,12 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ Given an open filehandle read at most  m  characters to get next line
 \ terminated with $0D or $0A.
 \ n is the actual number of byte read, that is the length of line.
-\ Buffer must be m+1 bytes long to accomodate a trailing 0x00
+\ Buffer must be m bytes long to accomodate a trailing 0x00 at m-th byte.
 decimal
 : f_getline ( a m fh -- n )
-    >r tuck r f_fgetpos [ 44 ] Literal ?error   \ m a m d
+    >r tuck r@ f_fgetpos [ 44 ] Literal ?error  \ m a m d
     2swap over 1+ swap                          \ m d a a+1 m 
-    r  f_read [ 46 ] Literal ?error             \ m d a f
+    r@ f_read [ 46 ] Literal ?error             \ m d a f
     If \ at least 1 chr was read
         [ 10 ] Literal enclose drop nip swap    \ m d a
         [ 13 ] Literal enclose drop nip rot min \ m d b a
@@ -4680,11 +4730,11 @@ decimal
     Endif
     >r                                          \ m a
     dup dup 1+ swap                             \ m a a+1 a
-    r cmove                                     \ m a
+    r@ cmove                                    \ m a
     2dup +                                      \ m a m+a
     0 swap cell- !                              \ m a
-    r + 1-                                      \ m a+n-1
-    swap r -                                    \ a+n-1 m-n
+    r@ + 1-                                     \ m a+n-1
+    swap r@ -                                   \ a+n-1 m-n
     blanks 
     r>
 ;
@@ -4701,9 +4751,9 @@ decimal
 
     \ if SOURCE-ID was non zero (i.e. this is a recursed F_INCLUDE)
     \ try to save its position and close the file-handle.
-    r 
+    r@ 
     If 
-        r f_fgetpos [ 44 ] Literal ?error 
+        r@ f_fgetpos [ 44 ] Literal ?error 
     Else 
         0 0         \ 0 0 fake handle-position
     Endif 
@@ -4777,9 +4827,9 @@ needs-w 35 erase
 \ temp complete path+filename
 create   needs-fn    40 allot
 needs-fn 40 erase
-\ constant path
+\ constant paths
 create   needs-inc   ," inc/"
-\ create   needs-lib   ," lib/"
+create   needs-lib   ," lib/"
 
 
 \ Concatenate path at a and filename and include it
@@ -4793,14 +4843,19 @@ decimal
     cmove                         \         \ Filename
     needs-fn                      \ a3
     pad 1 f_open
+    0=
     If 
-        needs-w count type space
-        [ 43 ] Literal message drop
-    Else 
         f_include
+    Else 
+    \   needs-w count type space
+    \   [ 43 ] Literal message 
+        drop
     Endif
 ;
 
+( map-into )
+(   \ : ? / * | \ < > "   )
+(   \ ^ ` % & $ _ { } ~   )
 
 create ncdm hex    (   \ ^ ` % & $ _ { } ~   )
     5E C,  60 C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
@@ -4811,7 +4866,7 @@ create ndom hex    (   \ : ? / * | \ < > "   )
 \ Replace illegal character in filename 
 decimal
 : needs-ch ( -- )
-    needs-w count over + swap
+    needs-w count bounds
     Do
         ncdm ndom [ 9 ] Literal i c@ (map) i c!
     Loop
@@ -4822,7 +4877,9 @@ decimal
 \ filename cccc.f is temporary stored at NEEDS-W
 decimal 
 : needs-f  ( a -- )
-    -find 0= If
+    -find If
+        drop 2drop
+    Else
         needs-w    [ 35 ] literal  
         erase                           \ a
         here c@ 1+ here over            \ a n here n
@@ -4832,20 +4889,26 @@ decimal
         [ hex 662E decimal ] literal    \ a a1+n ".F"
         swap !                          \ a
         needs/
-    Else
-        drop 2drop
     Endif 
 ;
 
 
 \ check for cccc exists in vocabulary
-\ if it doesn't then  INCLUDE  inc/cccc.F
-\ search in inc subdirectory
+\ if it doesn't then  INCLUDE  inc/cccc.f searching in inc subdirectory
+\ when file is not found, gives a 2nd chance with  lib/cccc.f
 decimal
 : needs
+    >in @ dup
     needs-inc needs-f     \ search in "inc/"
-\ needs-w c@ minus >in +!  \ re-feed cccc
-\ needs-lib needs-f     \ 2nd chance at "lib/"
+    >in !                 \ re-feed it
+    needs-lib needs-f     \ 2nd chance at "lib/"
+    >in !                 \ re-feed it
+    -find If
+        2drop
+    Else 
+        needs-w count type space
+        [ 43 ] Literal message 
+    Endif 
 ;
 
 
@@ -4937,7 +5000,7 @@ decimal
 
 \ 7cbf
 .( #> )
-: #>
+: #>    
     2drop
     hld @ pad over -
     ;
@@ -4956,7 +5019,16 @@ decimal
 \ 7ced
 .( # )
 : #   ( d1 -- d2 )
-    base @ m/mod rot  
+    base @ 
+
+    \ #/mod 
+    >r           \ ud1
+    0 r@ um/mod  \ l rem1 h/r
+    r> swap >r   \ l rem1
+    um/mod       \ rem2 l/r
+    r>           \ rem2 l/r h/r
+
+    rot  
     [ 9 ] Literal over <
     If [ 7 ] Literal + Endif    
     [ decimal 48 ] Literal 
@@ -5097,7 +5169,7 @@ decimal
 
 
 \ 7e86
-.( CLS )
+.( CLS or PAGE )
 \ CODE cls 
 \ Chr$ 14 is NextZXOS version CLS (LAYER0 don't work this way, though)
 : cls 
@@ -5111,7 +5183,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210529" -1 allot ]
+    [ decimal 13 here ," build 20210608" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5435,7 +5507,7 @@ decimal
 \             swap 1+
 \         r>
 \         cmove
-\         r  c@  [ hex 80 ] Literal  or
+\         r@  c@  [ hex 80 ] Literal  or
 \     r>      
 \     c!
 \     [ hex -20 ] Literal allot
@@ -5557,6 +5629,7 @@ RENAME   needs-ch       NEEDS-CH
 RENAME   ndom           NDOM
 RENAME   ncdm           NCDM
 RENAME   needs/         NEEDS/
+RENAME   needs-lib      NEEDS-LIB
 RENAME   needs-inc      NEEDS-INC
 RENAME   needs-fn       NEEDS-FN
 RENAME   needs-w        NEEDS-W
@@ -5595,14 +5668,15 @@ RENAME   device         DEVICE
 RENAME   message        MESSAGE
 RENAME   .line          .LINE
 RENAME   (line)         (LINE)
-RENAME   m/mod          M/MOD
+\ RENAME   #/mod          #/MOD
 RENAME   */             */
 RENAME   */mod          */MOD
 RENAME   mod            MOD
 RENAME   /              /
 RENAME   /mod           /MOD
 RENAME   *              *
-RENAME   m/             M/
+RENAME   m/             M/ 
+RENAME   m/mod          M/MOD 
 RENAME   m*             M*
 RENAME   dabs           DABS
 RENAME   abs            ABS
@@ -5667,6 +5741,7 @@ RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
 RENAME   -trailing      -TRAILING
 RENAME   type           TYPE  
+RENAME   bounds         BOUNDS  
 RENAME   count          COUNT 
 RENAME   does>          DOES> 
 \ RENAME   recurse        RECURSE
@@ -5785,12 +5860,13 @@ RENAME   @              @
 
 RENAME   toggle         TOGGLE
 RENAME   +!             +!    
-RENAME   2rot           2ROT  
+\ RENAME   2rot           2ROT  
 RENAME   2dup           2DUP  
 RENAME   2swap          2SWAP 
 RENAME   2drop          2DROP 
 RENAME   2over          2OVER 
 RENAME   pick           PICK  
+RENAME   -rot           -ROT   
 RENAME   rot            ROT   
 RENAME   dup            DUP   
 RENAME   swap           SWAP  
@@ -5798,9 +5874,10 @@ RENAME   tuck           TUCK
 RENAME   nip            NIP  
 RENAME   drop           DROP  
 RENAME   over           OVER  
-RENAME   dminus         DMINUS
-RENAME   minus          MINUS 
+RENAME   dnegate        DNEGATE
+RENAME   negate         NEGATE 
 RENAME   cell-          CELL-  
+RENAME   2-             2- 
 \ RENAME   align          ALIGN 
 RENAME   cell+          CELL+  
 RENAME   2+             2+ 
@@ -5810,8 +5887,10 @@ RENAME   d+             D+
 RENAME   +              +  
 RENAME   0>             0> 
 RENAME   0<             0< 
+RENAME   not            NOT
 RENAME   0=             0= 
-RENAME   r              R  
+RENAME   r              R 
+RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
 RENAME   leave          LEAVE

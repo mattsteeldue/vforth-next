@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 MDR/MGT version ) CR
-.( build 20210131 ) CR 
+.( build 20210608 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -397,7 +397,7 @@ HERE TO org^
 \ end of data for COLD start
 
 \ +026
-                 HEX 8F C, 88 C,    \ Used by KEY
+                 HEX 8F C, 88 C,    \ Cursor faces used by KEY
 \ +028
                  HEX 5F C, 00 C,    \ Used by KEY
 \ +02A   ( Echoed IX after +3DOS call )
@@ -718,7 +718,7 @@ CODE digit ( c n -- u 1  |  0 )
 \ no other register is altered
     ASSEMBLER
     HERE TO upper^
-        RET                 \ CASEON is default. This location is patched
+        NOP                 \ CASEOFF is default. This location is patched
                             \ at runtime by CASEON and CASEOFF
         CPN     HEX 61 N,   \ lower-case "a"
         RETF    CY|
@@ -1222,7 +1222,7 @@ CODE key ( -- c )
 
 \ 637Bh
 .( ?TERMINAL )
-\ Tests the terminal-break. Leaves tf if [SPACE/BREAK] is pressed, or ff.
+\ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
 CODE ?terminal ( -- 0 | 1 ) ( true if BREAK-SPACE pressed )
          
         LDX     HL| 0 NN,
@@ -1576,10 +1576,17 @@ CODE r> ( -- n )
 
 
 \ 6526h
-.( R )
+.( R@ )
 \ return on top of stack the value of top of return-stack
 \ Since this is the same as I, we alter R's CFA to jump there
-CODE r ( -- n )         
+CODE r@ ( -- n )         
+         
+        \ this way we will have a real duplicate of I
+        ' i  >BODY  LATEST PFA CFA ! 
+        C;
+
+
+CODE r  ( -- n )         
          
         \ this way we will have a real duplicate of I
         ' i  >BODY  LATEST PFA CFA ! 
@@ -1599,6 +1606,13 @@ CODE 0= ( n -- f )
             INC     L'|
         HERE DISP, \ THEN,
         Psh1
+        C;
+
+
+CODE not  ( n -- f )         
+         
+        \ this way we will have a real duplicate of 0=
+        ' 0=  >BODY  LATEST PFA CFA ! 
         C;
 
 
@@ -1722,13 +1736,14 @@ CODE cell+ ( n1 -- n2 )
         C;
 
 
-.( ALIGN )
-CODE align ( a1 -- a2 )
-        Next
-        C;
+\ .( ALIGN )
+\ CODE align ( a1 -- a2 )
+\         Next
+\         C;
 
 
 .( CELL- )
+\ decrement by 2 top of stack 
 CODE cell- ( n1 -- n2 )
 
         POP     HL|         \ address
@@ -1738,10 +1753,20 @@ CODE cell- ( n1 -- n2 )
         C;
 
 
+.( 2- )
+\ decrement by 2 top of stack 
+CODE 2- ( n1 -- n2 )
+
+         
+        \ this way we will have a real duplicate of 2+
+        ' cell-  >BODY  LATEST PFA CFA ! 
+        C;
+
+
 \ 658Bh
-.( MINUS   ( or NEGATE )
+.( NEGATE   ( or MINUS )
 \ change the sign of number
-CODE minus ( n1 -- n2 )
+CODE negate ( n1 -- n2 )
          
         LDX     HL|    0 NN,
         POP     DE|
@@ -1752,11 +1777,11 @@ CODE minus ( n1 -- n2 )
 
 
 \ 659Fh
-.( DMINUS   ( or DNEGATE )
+.( DNEGATE   ( or DMINUS )
 \ change the sign of a double number
 \ SP : LHED
 \ SP :+0123
-CODE dminus ( d1 -- d2 )
+CODE dnegate ( d1 -- d2 )
 
         POP     HL|            \ hd1
         POP     DE|            \ ld1
@@ -1860,6 +1885,20 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
         C;
 
 
+.( -ROT )
+\ Rotates the 3 top values of stack by picking the 1st in access-order
+\ and putting back to 3rd place. The other two are shifted down one place.
+CODE -rot ( n1 n2 n3  -- n3 n1 n2 )
+         
+        POP     HL|  \ n3
+        POP     DE|  \ n2
+        EX(SP)HL     \ n1 <-> n3
+        PUSH    HL|  \ n1
+        PUSH    DE|  \ n2
+        Next
+        C;
+
+
 .( PICK )
 \ picks the nth element from TOS
 CODE pick ( n -- v )
@@ -1934,46 +1973,46 @@ CODE 2dup  ( d -- d d )
         C;
 
 
-\ 6EA9h >>>
-\ 2ROT
-\      d3  |d2  |d1  |
-\      h l |h l |h l |
-\ SP   LHED|LHED|LHED|
-\ SP  +0123|4567|89ab|
-CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
-        
-        LDX     HL|  HEX 000B NN,
-        ADDHL   SP|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        DECX    HL|
-        PUSH    DE|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        DECX    HL|
-        PUSH    DE|
-
-\      d1  |d3  |d2  |d1  |
-\      h l |h l |h l |h l |
-\ SP   LHED|LHED|LHED|LHED|
-\ SP       +0123|4567|89ab|
-
-        LD      D'|    H|
-        LD      E'|    L|
-        INCX    DE|
-        INCX    DE|
-        INCX    DE|
-        INCX    DE|
-        PUSH    BC|
-        LDX     BC|  HEX 000C NN,
-        LDDR        
-        POP     BC|
-        POP     DE|
-        POP     DE|
-        Next
-        C;
+\ \ 6EA9h >>>
+\ \ 2ROT
+\ \      d3  |d2  |d1  |
+\ \      h l |h l |h l |
+\ \ SP   LHED|LHED|LHED|
+\ \ SP  +0123|4567|89ab|
+\ CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
+\         
+\         LDX     HL|  HEX 000B NN,
+\         ADDHL   SP|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         DECX    HL|
+\         PUSH    DE|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         DECX    HL|
+\         PUSH    DE|
+\ 
+\ \      d1  |d3  |d2  |d1  |
+\ \      h l |h l |h l |h l |
+\ \ SP   LHED|LHED|LHED|LHED|
+\ \ SP       +0123|4567|89ab|
+\
+\        LD      D'|    H|
+\        LD      E'|    L|
+\        INCX    DE|
+\        INCX    DE|
+\        INCX    DE|
+\        INCX    DE|
+\        PUSH    BC|
+\        LDX     BC|  HEX 000C NN,
+\        LDDR        
+\        POP     BC|
+\        POP     DE|
+\        POP     DE|
+\        Next
+\        C;
 
 
 \ 6603h
@@ -2592,10 +2631,10 @@ CODE <  ( n1 n2 -- f )
 
 
 \ 69C7h
-.( -DUP )
+.( ?DUP )
 \ ?DUP  
 \ duplicate if not zero
-CODE -dup ( n -- 0 | n n )
+CODE ?dup ( n -- 0 | n n )
         POP     HL|
         LD      A'|    H|
         ORA      L|
@@ -2606,19 +2645,19 @@ CODE -dup ( n -- 0 | n n )
         C;
 
 
-.( ?DUP ) \ is as -DUP
-CODE ?dup ( n -- 0 | n n )
-        \ This way we will have a real duplicate of -DUP.
+.( -DUP ) \ is as ?DUP
+CODE -dup ( n -- 0 | n n )
+        \ This way we will have a real duplicate of ?DUP.
         C;
 
-        ' -dup >BODY   LATEST  PFA CFA !
+        ' ?dup >BODY   LATEST  PFA CFA !
 
 
 \ 62CFh <<< moved here because of OUT
 .( EMIT )
 : emit  ( c -- )
     (?emit)
-    -dup If 
+    ?dup If 
         emitc
         1 out +!
     Endif
@@ -2648,7 +2687,7 @@ CODE ?dup ( n -- 0 | n n )
         [ DECIMAL 127 ] Literal
         over c@ <
     Until
-    swap drop
+    nip
     ;
 
 
@@ -2862,12 +2901,12 @@ CODE ?dup ( n -- 0 | n n )
     ;
 
 
-.( RECURSE )
-: recurse
-    ?comp
-    latest pfa cfa ,
-    ; 
-    immediate
+\ .( RECURSE )
+\ : recurse
+\     ?comp
+\     latest pfa cfa ,
+\     ; 
+\     immediate
 
 
 \ 6BDFh
@@ -2907,11 +2946,18 @@ CODE ?dup ( n -- 0 | n n )
     ;
 
 
+: bounds  ( a n -- a+n a )
+\ given an address and a length ( a n ) calculate the bound addresses
+\ suitable for DO-LOOP
+    over + swap
+    ;
+
+
 \ 6C1Ah
 .( TYPE )
 \ Sends to current output channel n characters starting at address a.
 : type   ( a n -- )
-    over + swap
+    bounds
     ?Do
         i c@ emit
     Loop
@@ -2944,7 +2990,7 @@ CODE ?dup ( n -- 0 | n n )
 \ n2 is the string length. n2 is kept in span user variable also.
 : accept ( a n1 -- n2 )
     over + over   ( a  n1+a a       ) 
-    0 rot rot     ( a  0    a+n1  a ) 
+    0 -rot        ( a  0    a+n1  a ) 
     Do            ( a  0 ) 
         drop key  ( a  c ) 
         dup       ( a  c  c )
@@ -3083,7 +3129,7 @@ CODE fill ( a n c -- )
 \ Other occurrences of c are ignored.
 \ If BLK is zero, text is taken from terminal buffer TIB.
 \ Otherwise text is taken from the disk-block given by BLK.
-\ "in" variable is incremented of the number of character read.
+\ ">in" variable is incremented of the number of character read.
 \ The number of characters read is given by ENCLOSE.
 : word  ( c -- a )
     blk @ 
@@ -3101,7 +3147,7 @@ CODE fill ( a n c -- )
     here [ decimal 34 ] Literal blanks
     >in +!
     over - >r
-    r here c!
+    r@ here c!
     +
     here 1+ r> cmove 
     here  \  bl word
@@ -3113,7 +3159,7 @@ CODE fill ( a n c -- )
 \ Direct procedure compiled by ." and  .(
 \ It executes TYPE.
 : (.")
-    r count dup 1+
+    r@ count dup 1+
     r> + >r
     type
     ;
@@ -3131,8 +3177,8 @@ CODE fill ( a n c -- )
 
 \ new
 .( ," )
-\ compiles a string terminated by " as a counted string
-\ from next input stream
+\ read text from input stream until a " in encontered and 
+\ compiles a string as a "counted string" appending a trailing 0x00
 : ," ( -- )
     [ CHAR " ] Literal word
     c@ 1+ allot
@@ -3339,15 +3385,15 @@ CODE fill ( a n c -- )
     Endif
     c@ bl - 0 ?error
     r> If
-        dminus
+        dnegate
     Endif
     ;
 
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "ccc"
-\ searches the vocabulary giving CFA and the heading byte 
+\ used in the form -FIND "cccc"
+\ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
     bl word 
@@ -3399,7 +3445,7 @@ CODE fill ( a n c -- )
     .( ? )
     [ HERE TO msg1^ ] MESSAGE  \ ___ forward ___
     s0 @ sp!
-    blk @ -dup
+    blk @ ?dup
     If 
         >in @ swap
     Endif \ Then
@@ -3852,8 +3898,8 @@ here warm^ ! \ patch
         LDN     A'|    1 N,
         LD()A   hex 5C6B AA,   \ DF_SZ system variable
 
-        LDX()   HL|    hex  14 +origin AA, \ forth's RP
-        LD()X   HL|    hex 030 +origin AA,
+        LDHL()  hex  14 +origin AA, \ forth's RP
+        LD()HL  hex 030 +origin AA,
         LDX     BC|    y^              NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,
 
@@ -3877,7 +3923,7 @@ CODE basic ( n -- )
         LDX     HL|    0 NN,
         ADDHL   SP|
         LDX()   SP|    hex  08 +origin AA, \ retrieve SP just before...
-        LD()X   HL|    hex  08 +origin AA, \ ...saving Forth SP.
+        LD()HL  hex  08 +origin AA, \ ...saving Forth SP.
 
         EXX
         POP     HL|    \ retrieve Basic HL'
@@ -3897,7 +3943,7 @@ CODE basic ( n -- )
 : +-  ( n1 n2 -- n3 )
     0<
     If
-        minus
+        negate
     Endif
     ;
 
@@ -3908,7 +3954,7 @@ CODE basic ( n -- )
 : d+-  ( d1 n -- d2 )
     0<
     If
-        dminus
+        dnegate
     Endif
     ;
 
@@ -3945,13 +3991,18 @@ CODE basic ( n -- )
 \ 75EAh
 \ divides a double into n giving quotient q and remainder r 
 \ the remainder has the sign of d.
-.( M/ )
-: m/  ( d n -- q r ) 
-    over >r >r
-    dabs r abs um/mod
-    r> 
-    r xor +- swap 
-    r>    +- swap
+.( M/MOD )
+: m/mod  ( d n -- r q ) 
+    over >r >r              \ d     R: h n
+    dabs r@ abs um/mod      \ r q
+    r>                      \ r q n
+    r@ xor +- swap          \ +q r
+    r>     +- swap          \ +r +q
+    ;
+
+
+: m/ ( d n -- n )
+    m/mod nip 
     ;
 
 
@@ -3969,7 +4020,7 @@ CODE basic ( n -- )
 \ the remainder has the sign of n1.
 : /mod  ( n1 n2 -- n3 n4 )
     >r s->d r>
-    m/
+    m/mod
     ;
 
 
@@ -3977,7 +4028,7 @@ CODE basic ( n -- )
 .( / )
 \ quotient 
 : /  ( n1 n2 -- n3 )
-    /mod swap drop
+    /mod nip
     ; 
 
 
@@ -3995,7 +4046,7 @@ CODE basic ( n -- )
 \ (n1 * n2) / n3. The intermediate passage through a double number
 \ avoids loss of precision
 : */mod  ( n1 n2 n3 -- n4 n5 )
-    >r  m*  r>  m/
+    >r  m*  r>  m/mod
     ;
     
 
@@ -4004,21 +4055,21 @@ CODE basic ( n -- )
 \ (n1 * n2) / n3. The intermediate passage through a double number
 \ avoids loss of precision
 : */  ( n1 n2 n3 --	n4 )
-    */mod swap drop
+    */mod nip
     ;
 
 
 \ 766Fh
 .( M/MOD )
 \ mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
-\ All terms are unsigned.
-: m/mod  ( ud1 u2 -- u3 ud4 )
-    >r          \ ud1
-    0 r um/mod  \ l rem1 h/r
-    r> swap >r  \ l rem1
-    um/mod      \ rem2 l/r
-    r>          \ rem2 l/r h/r
-    ;
+\ used by # during number representation.
+\ : m/mod  ( ud1 u2 -- u3 ud4 )
+\     >r          \ ud1
+\     0 r um/mod  \ l rem1 h/r
+\     r> swap >r  \ l rem1
+\     um/mod      \ rem2 l/r
+\     r>          \ rem2 l/r h/r
+\     ;
     
 
 \ 768Dh
@@ -4061,7 +4112,7 @@ CODE basic ( n -- )
 : message
     warning @
     If
-        \ -dup
+        \ ?dup
         \ If
             [ decimal 4 ] literal
             offset @
@@ -4436,14 +4487,14 @@ decimal #SEC constant #sec
         +buf 
     Until 
     use !  
-    r @ 0< 
+    r@ @ 0< 
     If  
-        r cell+  
-        r @ [ hex 7FFF ] Literal and  
+        r@ cell+  
+        r@ @ [ hex 7FFF ] Literal and  
         0 r/w  
     Endif
-    r !  
-    r prev !  
+    r@ !  
+    r@ prev !  
     r>  cell+ 
     ;
 
@@ -4458,16 +4509,16 @@ decimal #SEC constant #sec
 : block  ( n -- a )
     offset @ + >r 
     prev @  
-    dup @  r - dup +   \ check equality without most significant bit
+    dup @  r@ - dup +   \ check equality without most significant bit
     If  
         Begin  
             +buf 0=  
             If  
                 drop 
-                r buffer dup 
-                r 1  r/w  2 - 
+                r@ buffer dup 
+                r@ 1  r/w  2 - 
             Endif
-            dup @ r - dup +  0= 
+            dup @ r@ - dup +  0= 
         Until
         dup prev ! 
     Endif
@@ -4494,7 +4545,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     
 
 \ 7ac4h    
-.( load+ )
+.( LOAD+ )
 : load+  ( n -- )
     blk @  >r  
     >in  @  >r
@@ -4600,7 +4651,16 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ 7ced
 .( # )
 : #   ( d1 -- d2 )
-    base @ m/mod rot  
+    base @ 
+
+    \ #/mod 
+    >r           \ ud1
+    0 r@ um/mod  \ l rem1 h/r
+    r> swap >r   \ l rem1
+    um/mod       \ rem2 l/r
+    r>           \ rem2 l/r h/r
+    
+    rot  
     [ 9 ] Literal over <
     If [ 7 ] Literal + Endif    
     [ decimal 48 ] Literal 
@@ -4741,7 +4801,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 
 \ 7e86
-.( CLS )
+.( CLS or PAGE )
 CODE cls
         PUSH    BC| 
         PUSH    IX|
@@ -4755,10 +4815,12 @@ CODE cls
 \ 7e96
 .( SPLASH )
 : splash
-    cls cr
-    .( v-Forth 1.5m MDR/MGT version)  cr
-    .( build 20210131)  cr
-    .( 1990-2021 Matteo Vitturi)  cr
+    cls
+    [compile] (.")
+    [ decimal 68 here ," v-Forth 1.5 MDR/MGT version" -1 allot ]
+    [ decimal 13 here ," build 20210608" -1 allot ]
+    [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
+    [ decimal 13 c, c! c! c! ] 
     ;
 
     ' splash splash^ ! \ patch 
@@ -4798,23 +4860,22 @@ CODE cls
 \ returns n2 as the number of read characters.
 : accept- ( a n1 -- n2 )
     >r    ( a )
-    0     ( a 0 )
-    swap  ( 0 a )
-    dup   ( 0 a a )
-    r>    ( 0 a a n )
-    +     ( 0 a n+a )
-    swap  ( 0 n+a a )
-    Do    ( 0 )
+    0     ( a n2 as the final counter )
+    swap  ( n2 a )
+    dup   ( n2 a a )
+    r>    ( n2 a a n1 )
+    +     ( n2 a n1+a )
+    swap  ( n2 n1+a a )
+    Do    ( n2 )
         inkey 
         dup 0= If video quit Endif
         dup [ decimal 13 ] literal = If drop 0 Endif \ Then
         dup [ decimal 10 ] literal = If drop 0 Endif \ Then
         dup  0=  If leave Endif \ Then
-        i c!
-        1+
+        i c! ( n2 )
+        1+ ( increment n2 )
     Loop  ( n2 )
     ;
-
 
 
 .( LOAD- )
@@ -4859,7 +4920,7 @@ CODE cls
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 11     ] Literal  
+    [ decimal 10 0 +origin 32768 u< + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
@@ -4892,10 +4953,10 @@ CODE cls
     ;
     
 
-\ MARK
-: mark ( a n -- )
-    invv type truv
-    ;
+\ \ MARK
+\ : mark ( a n -- )
+\     invv type truv
+\     ;
 
 
 .( BACK )
@@ -5179,7 +5240,7 @@ RENAME   then           THEN
 RENAME   endif          ENDIF
 RENAME   if             IF
 RENAME   back           BACK
-RENAME   mark           MARK
+\ RENAME   mark           MARK
 RENAME   truv           TRUV
 RENAME   invv           INVV
 RENAME   bye            BYE
@@ -5249,7 +5310,7 @@ RENAME   strm           STRM
 RENAME   message        MESSAGE
 RENAME   .line          .LINE
 RENAME   (line)         (LINE)
-RENAME   m/mod          M/MOD
+\ RENAME   #/mod          #/MOD
 RENAME   */             */
 RENAME   */mod          */MOD
 RENAME   mod            MOD
@@ -5257,6 +5318,7 @@ RENAME   /              /
 RENAME   /mod           /MOD
 RENAME   *              *
 RENAME   m/             M/
+RENAME   m/mod          M/MOD 
 RENAME   m*             M*
 RENAME   dabs           DABS
 RENAME   abs            ABS
@@ -5323,7 +5385,7 @@ RENAME   -trailing      -TRAILING
 RENAME   type           TYPE  
 RENAME   count          COUNT 
 RENAME   does>          DOES> 
-RENAME   recurse        RECURSE
+\ RENAME   recurse        RECURSE
 RENAME   <builds        <BUILDS
 RENAME   ;code          ;CODE  
 RENAME   (;code)        (;CODE)
@@ -5351,8 +5413,8 @@ RENAME   latest         LATEST
 RENAME   traverse       TRAVERSE
 RENAME   space          SPACE
 RENAME   emit           EMIT 
-RENAME   ?dup           ?DUP 
 RENAME   -dup           -DUP 
+RENAME   ?dup           ?DUP 
 RENAME   max            MAX  
 RENAME   min            MIN  
 RENAME   >              >    
@@ -5438,12 +5500,13 @@ RENAME   @              @
 
 RENAME   toggle         TOGGLE
 RENAME   +!             +!    
-RENAME   2rot           2ROT  
+\ RENAME   2rot           2ROT  
 RENAME   2dup           2DUP  
 RENAME   2swap          2SWAP 
 RENAME   2drop          2DROP 
 RENAME   2over          2OVER 
 RENAME   pick           PICK  
+RENAME   -rot           -ROT   
 RENAME   rot            ROT   
 RENAME   dup            DUP   
 RENAME   swap           SWAP  
@@ -5451,10 +5514,11 @@ RENAME   tuck           TUCK
 RENAME   nip            NIP  
 RENAME   drop           DROP  
 RENAME   over           OVER  
-RENAME   dminus         DMINUS
-RENAME   minus          MINUS 
+RENAME   dnegate        DNEGATE
+RENAME   negate         NEGATE 
 RENAME   cell-          CELL-  
-RENAME   align          ALIGN
+RENAME   2-             2- 
+\ RENAME   align          ALIGN
 RENAME   cell+          CELL+  
 RENAME   2+             2+ 
 RENAME   1-             1- 
@@ -5463,8 +5527,10 @@ RENAME   d+             D+
 RENAME   +              +  
 RENAME   0>             0> 
 RENAME   0<             0< 
+RENAME   not            NOT
 RENAME   0=             0= 
 RENAME   r              R  
+RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
 RENAME   leave          LEAVE
