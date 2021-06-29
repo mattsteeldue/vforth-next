@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 MDR/MGT version ) CR
-.( build 20210608 ) CR 
+.( build 20210627 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -3223,87 +3223,88 @@ CODE fill ( a n c -- )
 \ )
 
 
-\ \ ______________________________________________________________________
+\ ______________________________________________________________________
+
+\ A floating point number is stored in stack in 4 bytes (HLDE) 
+\ instead of the usual 5 bytes, so there is a little precision loss
+\ Maybe in the future we'll be able to extend and fix this fact.
+\
+\ Sign is the msb of H, so you can check for sign in the integer-way.
+\ Exponent +128 is stored in the following 8 bits of HL
+\ Mantissa is stored in L and 16 bits of DE. B is defaulted.
 \ 
-\ \ A floating point number is stored in stack in 4 bytes (HLDE) 
-\ \ instead of the usual 5 bytes, so there is a little precision loss
-\ \ Maybe in the future we'll be able to extend and fix this fact.
-\ \
-\ \ Sign is the msb of H, so you can check for sign in the integer-way.
-\ \ Exponent +128 is stored in the following 8 bits of HL
-\ \ Mantissa is stored in L and 16 bits of DE. B is defaulted.
-\ \ 
-\ \ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
-\ \ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
-\ \  H   <->  A    # 0   -> a
-\ \  LDE <->  EDC  # 0DE -> eCD
-\ \  0   <->  B    # 0
-\ 
-\ \ 6E11h
-\ \ >W    ( d -- )
-\ \ takes a double-number from stack and put to floating-pointer stack 
-\ CODE >w
-\         POP     HL|     
-\         POP     DE|     
-\         PUSH    BC|     
-\         RL       L|         \ To keep sign as the msb of H,   
-\         RL       H|         \ so you can check for sign in the
-\         RR       L|         \ integer-way. Sorry.
-\         LDN     B'|    hex C0 N,  
-\ \       LD      B'|    E|    \ maybe a better fit than C0h
-\         LD      C'|    E|    
-\         LD      E'|    L|    
-\         LD      A'|    H|    
-\         ANDA     A|
-\         JRF    NZ'|   HOLDPLACE
-\             LD      H'|    D|  \ swap C and D 
-\             LD      D'|    C|
-\             LD      C'|    H|
-\         HERE DISP, \ THEN,       
-\         CALL    hex 2AB6 AA,
-\         POP     BC|
-\         Next
-\         C;
-\ 
-\ 
-\ \ 6E33h
-\ \ W>    ( -- d )
-\ \ takes a double-number from stack and put to floating-pointer stack 
-\ CODE w>
-\         PUSH    BC|     
-\         CALL    hex 2BF1 AA,
-\         ANDA     A|
-\         JRF    NZ'|   HOLDPLACE
-\             LD      H'|    D|   \ Swap C and D
-\             LD      D'|    C|
-\             LD      C'|    H|
-\         HERE DISP, \ THEN,       
-\         LD      H'|    A|
-\         LD      L'|    E|
-\         LD      E'|    C|    \ B is lost precision
-\         RL       L|         \ To keep sign as the msb of H,
-\         RR       H|         \ so you can check for sign in the 
-\         RR       L|         \ integer-way. Sorry.
-\         POP     BC|
-\         Psh2
-\         C;
-\ 
-\ 
-\ \ 6E51h
-\ \ FOP    ( n -- )
-\ \ Floating-Point-Operation
-\ CODE fop
-\         POP     HL|     
-\         LD      A'|    L|
-\         LD()A   HERE 0 AA,
-\         PUSH    BC|
-\         RST     28|
-\                 HERE SWAP !
-\                 hex 04 C, \ this location is patched each time
-\                 hex 38 C, \ end of calculation
-\         POP     BC|
-\         Next
-\         C;
+\ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
+\ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
+\  H   <->  A    # 0   -> a
+\  LDE <->  EDC  # 0DE -> eCD
+\  __  <->  B    # 0
+\ When A is zero, then the float repressent a whole positive number 
+
+\ 6E11h
+\ >W    ( d -- )
+\ takes a double-number from stack and put to floating-pointer stack 
+CODE >w
+        POP     HL|     
+        POP     DE|     
+        PUSH    BC|     
+        RL       L|         \ To keep sign as the msb of H,   
+        RL       H|         \ so you can check for sign in the
+        RR       L|         \ integer-way. Sorry.
+        LDN     B'|    hex FC N,  
+\       LD      B'|    E|    \ maybe a better fit than C0h
+        LD      C'|    E|    
+        LD      E'|    L|    
+        LD      A'|    H|    
+        ANDA     A|
+        JRF    NZ'|   HOLDPLACE
+            LD      H'|    D|  \ swap C and D 
+            LD      D'|    C|
+            LD      C'|    H|
+        HERE DISP, \ THEN,       
+        CALL    hex 2AB6 AA,
+        POP     BC|
+        Next
+        C;
+
+
+\ 6E33h
+\ W>    ( -- d )
+\ takes a double-number from stack and put to floating-pointer stack 
+CODE w>
+        PUSH    BC|     
+        CALL    hex 2BF1 AA,
+        ANDA     A|
+        JRF    NZ'|   HOLDPLACE
+            LD      H'|    D|   \ Swap C and D
+            LD      D'|    C|
+            LD      C'|    H|
+        HERE DISP, \ THEN,       
+        LD      H'|    A|
+        LD      L'|    E|
+        LD      E'|    C|    \ B is lost precision
+        RL       L|         \ To keep sign as the msb of H,
+        RR       H|         \ so you can check for sign in the 
+        RR       L|         \ integer-way. Sorry.
+        POP     BC|
+        Psh2
+        C;
+
+
+\ 6E51h
+\ FOP    ( n -- )
+\ Floating-Point-Operation
+CODE fop
+        POP     HL|     
+        LD      A'|    L|
+        LD()A   HERE 0 AA,
+        PUSH    BC|
+        RST     28|
+                HERE SWAP !
+                hex 04 C, \ this location is patched each time
+                hex 38 C, \ end of calculation
+        POP     BC|
+        Next
+        C;
 
 
 \ ______________________________________________________________________
@@ -3680,12 +3681,12 @@ CODE fill ( a n c -- )
             here number 
             dpl @ 1+ 
             If 
-                nmode @ 
-                If 
-                    1 0
-                    2drop       \ Integer option
-                    \ f/        \ Floating point option
-                Endif \ Then 
+\               nmode @ 
+\               If 
+\                   1 0
+\                   2drop       \ Integer option
+\                   \ f/        \ Floating point option
+\               Endif \ Then 
                 [compile] dliteral 
             Else
                 drop
@@ -4818,7 +4819,7 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.5 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20210608" -1 allot ]
+    [ decimal 13 here ," build 20210627" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5359,9 +5360,9 @@ RENAME   number         NUMBER
 \ RENAME   f+             F+    
 \ RENAME   f/             F/    
 \ RENAME   f*             F*    
-\ RENAME   fop            FOP   
-\ RENAME   w>             W>    
-\ RENAME   >w             >W    
+RENAME   fop            FOP   
+RENAME   w>             W>    
+RENAME   >w             >W    
 
 RENAME   (number)       (NUMBER)
 RENAME   (sgn)          (SGN) 

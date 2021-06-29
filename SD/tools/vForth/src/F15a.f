@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210608 ) CR
+.( build 20210627 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________
@@ -389,6 +389,8 @@ HERE TO org^
 \ +020
                  0           ,  \ VOC-LINK
 \ +022
+
+.( here! )
                  FIRST @     , 
 \ +024
                  LIMIT @     ,
@@ -414,7 +416,6 @@ HEX 030 +ORIGIN TO rp^
  
 \ from this point we can use LDHL,RP and LDRP,HL Assembler macros
 \ instead of their equivalent long sequences.
-
 
 \ 6126h
 \ hook for Psh2
@@ -2107,23 +2108,23 @@ CODE pick ( n -- v )
         C;
 
 
-\ 6E8Bh >>>
-.( 2OVER )
-CODE 2over ( d1 d2 -- d1 d2 d1 )
-         
-        LDX     HL| 0007 NN,
-        ADDHL   SP|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        PUSH    DE|
-        DECX    HL|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        PUSH    DE|
-        Next
-        C;
+\ \ 6E8Bh >>>
+\ .( 2OVER )
+\ CODE 2over ( d1 d2 -- d1 d2 d1 )
+\          
+\         LDX     HL| 0007 NN,
+\         ADDHL   SP|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         PUSH    DE|
+\         DECX    HL|
+\         LD      D'| (HL)|
+\         DECX    HL|
+\         LD      E'| (HL)|
+\         PUSH    DE|
+\         Next
+\         C;
 
 
 \ 6E66h >>>
@@ -3435,6 +3436,7 @@ CODE fill ( a n c -- )
 \ \ 6E11h
 \ \ >W    ( d -- )
 \ \ takes a double-number from stack and put to floating-pointer stack 
+\ \ When A is zero, then the float repressent a whole positive number 
 \ CODE >w
 \         POP     HL|     
 \         POP     DE|     
@@ -3442,7 +3444,7 @@ CODE fill ( a n c -- )
 \         RL       L|         \ To keep sign as the msb of H,   
 \         RL       H|         \ so you can check for sign in the
 \         RR       L|         \ integer-way. Sorry.
-\         LDN     B'|    hex C0 N,  
+\         LDN     B'|    hex FC N,  
 \ \       LD      B'|    E|    \ maybe a better fit than C0h
 \         LD      C'|    E|    
 \         LD      E'|    L|    
@@ -3497,9 +3499,9 @@ CODE fill ( a n c -- )
 \         POP     BC|
 \         Next
 \         C;
-
-
-\ ______________________________________________________________________
+\ 
+\ 
+\ \ ______________________________________________________________________
 
 
 \ 6F4A
@@ -3871,12 +3873,12 @@ CODE fill ( a n c -- )
             here number 
             dpl @ 1+ 
             If 
-                nmode @ 
-                If 
-                    1 0
-                    2drop       \ Integer option
-                    \ f/        \ Floating point option
-                Endif \ Then 
+\               nmode @ 
+\               If 
+\                   1 0
+\                   2drop       \ Integer option
+\                   \ f/        \ Floating point option
+\               Endif \ Then 
                 [compile] dliteral 
             Else
                 drop
@@ -3921,7 +3923,7 @@ immediate
 \ possible patch for first FORTH vocabulary is
     -2 ALLOT 0 ,
 \ this should set to ZERO the voc-link-chain, so this "forth" vocabulary
-\ will be the sole vocabulary available after cut-off.
+\ will be the only vocabulary available after cut-off.
 
 \ Any new vocabulary is structured as follow:
 \ PFA+0 points to DOES> part of VOCABULARY to perform CELL+ CONTEXT !
@@ -4012,7 +4014,7 @@ immediate
 
 \ 74AEh 
 .( WARM )
-: warm
+: warm 
 
     [ here TO xi/o2^ ]    
     BLK-INIT                 \ ___ forward ___
@@ -5008,7 +5010,7 @@ decimal
 
 \ 7cd4
 .( SIGN )
-: sign    ( n d -- n )
+: sign    ( n d -- d )
     rot 0<
     If
         [ decimal 45 ] Literal hold
@@ -5183,7 +5185,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210608" -1 allot ]
+    [ decimal 13 here ," build 20210627" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5307,18 +5309,18 @@ decimal
     -2 ALLOT    \ we can save two bytes because BASIC quits to BASIC.
 
 
-\ INVV
-: invv ( -- )
-    [ decimal 20 ] Literal emitc
-    1 emitc
-    ;
-    
-
-\ TRUV
-: truv ( -- )
-    [ decimal 20 ] Literal emitc 
-    0 emitc
-    ;
+\ \ INVV
+\ : invv ( -- )
+\     [ decimal 20 ] Literal emitc
+\     1 emitc
+\     ;
+\     
+\ 
+\ \ TRUV
+\ : truv ( -- )
+\     [ decimal 20 ] Literal emitc 
+\     0 emitc
+\     ;
     
 
 \ \ MARK
@@ -5587,8 +5589,8 @@ RENAME   endif          ENDIF
 RENAME   if             IF
 RENAME   back           BACK
 \ RENAME   mark           MARK
-RENAME   truv           TRUV
-RENAME   invv           INVV
+\ RENAME   truv           TRUV
+\ RENAME   invv           INVV
 RENAME   bye            BYE
 RENAME   autoexec       AUTOEXEC 
 RENAME   load           LOAD
@@ -5864,7 +5866,7 @@ RENAME   +!             +!
 RENAME   2dup           2DUP  
 RENAME   2swap          2SWAP 
 RENAME   2drop          2DROP 
-RENAME   2over          2OVER 
+\ RENAME   2over          2OVER 
 RENAME   pick           PICK  
 RENAME   -rot           -ROT   
 RENAME   rot            ROT   

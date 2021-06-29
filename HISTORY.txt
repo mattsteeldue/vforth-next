@@ -230,5 +230,9 @@ To be more ANS compliant, I renamed some words:
  R to R@ (but I left both in dictionary, for now),
  MINUS to NEGATE and DMINUS to DNEGATE.
 
-\ build 20210608
+
+\ build 20210627
 Fixed some bugs in  NEEDS. Introducing  BOUNDS used by TYPE.
+Improved VALUE TO and +TO.
+First re-introduction of Floatin-Point Option.
+

@@ -329,14 +329,16 @@ FInclude_Endif_2:                               // endif
                 dw      CMOVE
                 dw      NEEDS_FN
                 dw      PAD, ONE, F_OPEN
+                dw      ZEQUAL
                 dw      ZBRANCH
                 dw      Needs_1 - $
-                dw          NEEDS_W, COUNT, TYPE, SPACE
-                dw          LIT, 43, MESSAGE, DROP
+                dw          F_INCLUDE
                 dw      BRANCH
                 dw      Needs_2 - $
 Needs_1:
-                dw          F_INCLUDE
+//              dw          NEEDS_W, COUNT, TYPE, SPACE
+//              dw          LIT, 43, MESSAGE
+                dw          DROP
 Needs_2:
                 dw      EXIT                    // ;
 
@@ -351,8 +353,7 @@ Needs_2:
 // Replace illegal character in filename using the map here above
 // at the moment we need only  "
                 Colon_Def NEEDS_CHECK, "NEEDS-CH", is_normal
-                dw      NEEDS_W, COUNT, OVER
-                dw      PLUS, SWAP
+                dw      NEEDS_W, COUNT, BOUNDS
                 dw      C_DO
 Needs_3:
                 dw          NCDM, NDOM, LIT, 9 
@@ -368,9 +369,14 @@ Needs_4:
 // include  "path/cccc.f" if cccc is not defined
 // filename cccc.f is temporary stored at NEEDS-W
                 Colon_Def NEEDS_PATH, "NEEDS-F", is_normal
-                dw      LFIND, ZEQUAL           
+                dw      LFIND
                 dw      ZBRANCH
                 dw      Needs_5 - $
+
+                dw          DROP, TWO_DROP
+                dw      BRANCH
+                dw      Needs_6 - $
+Needs_5:                
                 dw          NEEDS_W
                 dw          LIT, 35
                 dw          ERASE                   // a
@@ -382,10 +388,6 @@ Needs_4:
                 dw          LIT, $662E              // a a1+1 ".F"
                 dw          SWAP, STORE             // a
                 dw          NEEDS_SLASH         
-                dw      BRANCH
-                dw      Needs_6 - $
-Needs_5:                
-                dw          DROP, TWO_DROP
 Needs_6:
                 dw      EXIT
 
@@ -395,9 +397,21 @@ Needs_6:
 // search in inc subdirectory
                 Colon_Def NEEDS, "NEEDS", is_normal
                 dw      TO_IN, FETCH
+                dw      DUP
                 dw      NEEDS_INC, NEEDS_PATH
                 dw      TO_IN, STORE
                 dw      NEEDS_LIB, NEEDS_PATH
+                dw      TO_IN, STORE
+                dw      LFIND
+                dw      ZBRANCH
+                dw      Needs_10 - $
+                dw          TWO_DROP
+                dw      BRANCH
+                dw      Needs_11 - $
+Needs_10:   
+                dw      NEEDS_W, COUNT, TYPE, SPACE
+                dw      LIT, 43, MESSAGE
+Needs_11:                                
                 dw      EXIT
 
 
@@ -517,7 +531,15 @@ Sign_Endif:
 //
 // #           d1 -- d2
                 Colon_Def DASH, "#", is_normal
-                dw      BASE, FETCH, MDIV_MOD, ROT
+                dw      BASE, FETCH
+
+                dw      TO_R                    // >r           ( ud1 )
+                dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )            
+                dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
+                dw      UMDIVMOD                // um/mod       ( rem2 l/r )
+                dw      R_TO                    // r>           ( rem2 l/r h/r )
+
+                dw      ROT
                 dw      LIT, 9, OVER, LESS
                 dw      ZBRANCH
                 dw      Dash_Endif - $
@@ -667,7 +689,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210606", 13
+                db      "build 20210627", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -796,17 +818,17 @@ Load_Endif:
 //
 // invv     --
 //
-                Colon_Def INVV, "INVV", is_normal
-                dw      LIT, 20, EMITC, ONE, EMITC
-                dw      EXIT
+//              Colon_Def INVV, "INVV", is_normal
+//              dw      LIT, 20, EMITC, ONE, EMITC
+//              dw      EXIT
 
 //  ______________________________________________________________________ 
 //
 // truv     --
 //
-                Colon_Def TRUV, "TRUV", is_normal
-                dw      LIT, 20, EMITC, ZERO, EMITC
-                dw      EXIT
+//              Colon_Def TRUV, "TRUV", is_normal
+//              dw      LIT, 20, EMITC, ZERO, EMITC
+//              dw      EXIT
 
 //  ______________________________________________________________________ 
 //

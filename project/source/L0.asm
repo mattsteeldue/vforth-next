@@ -1166,6 +1166,7 @@ Um_DivMod_OutOfRange:
 // 0=           n -- f
 // true (non zero) if n is zero, false (0) elsewere
                 New_Def ZEQUAL, "0=", is_code, is_normal
+Zero_Equal:                
                 pop     hl
                 ld      a, l
                 or      h
@@ -1174,6 +1175,12 @@ Um_DivMod_OutOfRange:
                     inc     l
 ZEqual_Skip:    
                 psh1
+
+//  ______________________________________________________________________ 
+//
+// not         a1 -- a2
+// increment by 2 top of stack
+                New_Def NOT_OP, "NOT", Zero_Equal, is_normal
 
 //  ______________________________________________________________________ 
 //
@@ -1295,11 +1302,18 @@ Two_Plus:
 // cell-        a1 -- a2
 // decrement by 2 top of stack
                 New_Def CELL_MINUS, "CELL-", is_code, is_normal
+CellMinus:                
                 pop     hl
                 dec     hl
                 dec     hl
 
                 psh1
+
+//  ______________________________________________________________________ 
+//
+// 2-           a1 -- a2
+// decrement by 2 top of stack
+                New_Def TWO_MINUS, "2-", CellMinus, is_normal
 
 //  ______________________________________________________________________ 
 //
@@ -1405,11 +1419,24 @@ Two_Plus:
 // Rotates the 3 top values of stack by picking the 3rd in access-order
 // and putting it on top. The other two are shifted down one place.
                 New_Def ROT, "ROT", is_code, is_normal
-                pop     de                  // < n2
-                pop     hl                  // < n1
-                ex      (sp),hl             // > n2
+                pop     de                  // < n3
+                pop     hl                  // < n2
+                ex      (sp),hl             // > n2 < n1 
                 push    de                  // > n3
                 push    hl                  // copy n1 to TOS
+                next
+
+//  ______________________________________________________________________ 
+//
+// -rot         n1 n2 n3 -- n3 n1 n2 
+// Rotates the 3 top values of stack by picking the 1st in access-order
+// and putting back to 3rd place. The other two are shifted down one place.
+                New_Def DASH_ROT, "-ROT", is_code, is_normal
+                pop     hl                  // < n3
+                pop     de                  // < n2
+                ex      (sp),hl             // > n3 < n1
+                push    hl                  // > n1
+                push    de                  // copy n3 to TOS
                 next
 
 //  ______________________________________________________________________ 
@@ -1433,20 +1460,20 @@ Two_Plus:
 // 2over        d1 d2 -- d1 d2 d1
 //              n1 n2 n3 n4 -- n1 n2 n3 n4 n1 n2
 // copy the second double of stack and put on top.
-                New_Def TWO_OVER, "2OVER", is_code, is_normal
-
-                ld      hl, 7
-                add     hl, sp
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)             // d1-L
-                push    de
-                dec     hl
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)             // d1-H
-                push    de
-                next
+//              New_Def TWO_OVER, "2OVER", is_code, is_normal
+//
+//              ld      hl, 7
+//              add     hl, sp
+//              ld      d, (hl)
+//              dec     hl
+//              ld      e, (hl)             // d1-L
+//              push    de
+//              dec     hl
+//              ld      d, (hl)
+//              dec     hl
+//              ld      e, (hl)             // d1-H
+//              push    de
+//              next
 
 //  ______________________________________________________________________ 
 //
@@ -1511,44 +1538,44 @@ Two_Plus:
 // and putting it on top. The other two are shifted down one place.
 //              New_Def TWO?ROT, 4, "2rot"
 //              ...
-                New_Def TWO_ROT, "2ROT", is_code, is_normal
-
+//              New_Def TWO_ROT, "2ROT", is_code, is_normal
+//
 //      d3  |d2  |d1  |
 //      h l |h l |h l |
 // SP   LHED|LHED|LHED|
 // SP  +0123|4567|89ab|
-                ld      hl, $000B
-                add     hl, sp
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)
-                dec     hl
-                push    de
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)
-                dec     hl
-                push    de
+//              ld      hl, $000B
+//              add     hl, sp
+//              ld      d, (hl)
+//              dec     hl
+//              ld      e, (hl)
+//              dec     hl
+//              push    de
+//              ld      d, (hl)
+//              dec     hl
+//              ld      e, (hl)
+//              dec     hl
+//              push    de
 
 //      d1  |d3  |d2  |d1  |
 //      h l |h l |h l |h l |
 // SP   LHED|LHED|LHED|LHED|
 // SP       +0123|4567|89ab|
 
-                ld      d, h
-                ld      e, l
-                inc     de
-                inc     de
-                inc     de
-                inc     de
-                push    bc
-                ld      bc, $000C
-                lddr
-                pop     bc
-                pop     de
-                pop     de
-
-                next
+//              ld      d, h
+//              ld      e, l
+//              inc     de
+//              inc     de
+//              inc     de
+//              inc     de
+//              push    bc
+//              ld      bc, $000C
+//              lddr
+//              pop     bc
+//              pop     de
+//              pop     de
+//
+//              next
 
 
 //  ______________________________________________________________________ 

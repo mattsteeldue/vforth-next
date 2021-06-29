@@ -46,13 +46,13 @@ Interpret_Else_1:
                                                         //          if
                 dw              ZBRANCH
                 dw              Interpret_Else_3 - $
-                dw                  NMODE, FETCH        //              nmode @
-                                                        //              if
-                dw                  ZBRANCH
-                dw                  Interpret_Endif_4 - $
-                dw                      ONE, ZERO       //                  1 0
-                dw                      TWO_DROP        //                  2drop    
-Interpret_Endif_4:                                      //              endif
+//              dw                  NMODE, FETCH        //              nmode @
+//                                                      //              if
+//              dw                  ZBRANCH
+//              dw                  Interpret_Endif_4 - $
+//              dw                      ONE, ZERO       //                  1 0
+//              dw                      TWO_DROP        //                  2drop    
+//Interpret_Endif_4:                                      //              endif
                 dw                  DLITERAL            //              [compile] dliteral
                                                         //          else
                 dw              BRANCH
@@ -316,9 +316,9 @@ DPlus_Minus_Endif:                              // endif
 
 //  ______________________________________________________________________ 
 //
-// m/         d n -- q r
+// m/mod        d n -- q r
 // multiply two integer giving a double
-                Colon_Def MDIV, "M/", is_normal
+                Colon_Def MDIVM, "M/MOD", is_normal
                 dw      OVER, TO_R, TO_R        // over >r >r
                 dw      DABS, R_OP, ABS_OP      // dabs r abs 
                 dw      UMDIVMOD                // um/mod
@@ -327,6 +327,14 @@ DPlus_Minus_Endif:                              // endif
                 dw      PLUS_MINUS, SWAP        // +- swap
                 dw      R_TO                    // r>
                 dw      PLUS_MINUS, SWAP        // +- swap
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// m/           d n -- q
+// multiply two integer giving a double
+                Colon_Def MDIV, "M/", is_normal
+                dw      MDIVM, NIP
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -344,7 +352,7 @@ DPlus_Minus_Endif:                              // endif
 // The remainder has the sign of n1
                 Colon_Def DIVMOD, "/MOD", is_normal
                 dw      TO_R, S_TO_D, R_TO      // >r s->d r>
-                dw      MDIV                    // m/
+                dw      MDIVM                   // m/mod
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -370,7 +378,7 @@ DPlus_Minus_Endif:                              // endif
 // avoids loss of precision
                 Colon_Def MUL_DIV_MOD, "*/MOD", is_normal
                 dw      TO_R, MMUL              // >r  m*
-                dw      R_TO, MDIV              // r>  m/
+                dw      R_TO, MDIVM             // r>  m/mod
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -388,13 +396,13 @@ DPlus_Minus_Endif:                              // endif
 // m/mod        ud1 u2 -- u3 ud4
 // mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
 // All terms are unsigned.
-                Colon_Def MDIV_MOD, "M/MOD", is_normal
-                dw      TO_R                    // >r           ( ud1 )
-                dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )            
-                dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
-                dw      UMDIVMOD                // um/mod       ( rem2 l/r )
-                dw      R_TO                    // r>           ( rem2 l/r h/r )
-                dw      EXIT                    // ;
+//              Colon_Def MDIV_MOD, "M/MOD", is_normal
+//              dw      TO_R                    // >r           ( ud1 )
+//              dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )            
+//              dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
+//              dw      UMDIVMOD                // um/mod       ( rem2 l/r )
+//              dw      R_TO                    // r>           ( rem2 l/r h/r )
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //

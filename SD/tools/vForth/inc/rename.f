@@ -1,7 +1,7 @@
 \
 \ rename.f
 \ 
-.( Simple word renamer ) CR
+.( RENAME Simple word renamer ) 
 \
 \ old and new word-names must have the same length
 \

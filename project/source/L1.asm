@@ -316,9 +316,9 @@ Max_Skip:                                       // endif
 
 //  ______________________________________________________________________ 
 //
-// -dup         n -- 0 | n n
+// ?dup         n -- 0 | n n
 // duplicate if not zero
-                New_Def LDUP, "-DUP", is_code, is_normal
+                New_Def QDUP, "?DUP", is_code, is_normal
 QDup_Ptr:
                 pop     hl
                 ld      a, h
@@ -330,16 +330,16 @@ QDup_Skip:
 
 //  ______________________________________________________________________ 
 //
-// ?dup         n -- 0 | n n
+// -dup         n -- 0 | n n
 // duplicate if not zero
-                New_Def QDUP, "?DUP", QDup_Ptr, is_normal
+                New_Def LDUP, "-DUP", QDup_Ptr, is_normal
 
 //  ______________________________________________________________________ 
 //
 // emit         c --
                 Colon_Def EMIT, "EMIT", is_normal
                 dw      C_EMIT                      // (?emit)
-                dw      LDUP                        // ?dup
+                dw      QDUP                        // ?dup
                                                     // if                   
                 dw      ZBRANCH
                 dw      Emit_Skip - $
@@ -671,12 +671,19 @@ Does_Ptr:
 
 //  ______________________________________________________________________ 
 //
+// bounds       a n -- a+n n
+// given an address and a length ( a n ) calculate the bound addresses
+// suitable for DO-LOOP
+                Colon_Def BOUNDS, "BOUNDS", is_normal
+                dw      OVER, PLUS, SWAP        // over + swap
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
 // type         a n --
 // Sends to current output channel n characters starting at address a.
                 Colon_Def TYPE, "TYPE", is_normal
-                dw      OVER                    // over
-                dw      PLUS                    // +
-                dw      SWAP                    // swap    
+                dw      BOUNDS                  // bounds
                 dw      C_Q_DO                  // ?do
                 dw      Type_Skip - $
 Type_Loop:                
@@ -724,7 +731,7 @@ LTrailing_Endif:                                //      endif
 // n2 is the string length. n2 is kept in span user variable also.
                 Colon_Def ACCEPT, "ACCEPT", is_normal
                 dw      OVER, PLUS, OVER        //                      ( a  n1+a  a )
-                dw      ZERO, ROT, ROT          //                      ( a  0     a+n1  a )
+                dw      ZERO, DASH_ROT          //                      ( a  0     a+n1  a )
                                                 // do                   
                 dw      C_DO                    //                      ( a  0 )
 Accept_Loop:                                                            
@@ -1128,7 +1135,7 @@ Error_Endif_1:                                  // endif
                 db      2, "? " 
                 dw      MESSAGE                 // message  ( forward )
                 dw      S0, FETCH, SPSTORE      // s0 @ sp!
-                dw      BLK, FETCH, LDUP        // blk @ -dup
+                dw      BLK, FETCH, QDUP        // blk @ ?dup
                                                 // if
                 dw      ZBRANCH
                 dw      Error_Endif_2 - $

@@ -4,8 +4,10 @@
 
 NEEDS CODE      \ just to be sure we are fine
 
-CODE 2ROT
+HEX 
 
+CODE 2ROT   ( d1 d2 d3 -- d2 d3 d1 )
+   ( n1 n2 n3 n4 n5 n6 -- n3 n4 n5 n6 n1 n2 )
 \      d3  |d2  |d1  |
 \      h l |h l |h l |
 \ SP   LHED|LHED|LHED|
@@ -41,7 +43,8 @@ CODE 2ROT
     C1  C,               \  pop     bc       
     D1  C,               \  pop     de       
     D1  C,               \  pop     de       
-    DD  C,  E9           \  jp (ix)
+    DD  C,  E9   C,      \  jp (ix)
     
+    FORTH
     SMUDGE
-
+    DECIMAL

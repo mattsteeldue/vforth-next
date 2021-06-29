@@ -1,5 +1,4 @@
 \
-\
 \ truv.f
 \
 \ Inverse/True Video character sequence
