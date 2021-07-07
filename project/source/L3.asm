@@ -689,7 +689,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210627", 13
+                db      "build 20210708", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

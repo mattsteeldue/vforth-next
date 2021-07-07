@@ -1,8 +1,8 @@
 \ z80n-asm.f
 \ 
-CR
-.( Zilog Z80 ) CR
-.( also Z80N Next extensions are available ) CR
+\ CR
+\ .( Zilog Z80 ) CR
+\ .( also Z80N Next extensions are available ) CR
 \ 
 \ This is a tentative Z80 adaptation of Albert van der Horst's work available 
 \ at  <https://github.com/albertvanderhorst/ciasdis>

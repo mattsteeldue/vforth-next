@@ -130,7 +130,7 @@ User_Ptr:
 //
 // +origin         --
                 Colon_Def PLUS_ORIGIN, "+ORIGIN", is_normal
-                dw      LIT, Cold_origin        // [ hex 6400 ] literal
+                dw      LIT, Cold_origin        // [ hex 6366 ] literal
                 dw      PLUS                    // +
                 dw      EXIT                    // ;
 
@@ -533,6 +533,15 @@ QError_Endif:                                   // endif
 
 //  ______________________________________________________________________ 
 //
+// compile,     --
+// compiles the following word
+                Colon_Def COMPILE_XT, "COMPILE,", is_normal
+                dw      QCOMP                   // ?comp
+                dw      COMMA                   // ,
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
 // [            --
 // stop compilation
                 Colon_Def SQUARED_OPEN, "[", is_immediate
@@ -808,9 +817,9 @@ Accept_Endif_0:                                 //      endif
 // Accepts at most n1 characters from terminal and stores them at address a 
 // CR stops input. A 'nul' is added as trailer.
 // n2 is the string length. n2 is kept in span user variable also.
-                Colon_Def EXPECT, "EXPECT", is_normal
-                dw      ACCEPT, DROP            // accept drop
-                dw      EXIT                    // ;
+//              Colon_Def EXPECT, "EXPECT", is_normal
+//              dw      ACCEPT, DROP            // accept drop
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
@@ -820,7 +829,7 @@ Accept_Endif_0:                                 //      endif
                 Colon_Def QUERY, "QUERY", is_normal
                 dw      TIB, FETCH              // tib @
                 dw      LIT, 80                 // 80
-                dw      EXPECT                  // expect
+                dw      ACCEPT, DROP            // accept drop
                 dw      ZERO, TO_IN, STORE      // 0 >in !
                 dw      EXIT                    // ;
 

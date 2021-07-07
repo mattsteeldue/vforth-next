@@ -1,15 +1,15 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210627 ) CR
+.( build 20210708 ) CR
 \
 \ NextZXOS version
-\ ______________________________________________________________________
+\ ______________________________________________________________________ 
 \
 \ This work is available as-is with no whatsoever warranty.
 \ Copying, modifying and distributing this software is allowed 
 \ provided that the copyright notice is kept.  
-\ ______________________________________________________________________
+\ ______________________________________________________________________ 
 \
 \ by Matteo Vitturi, 1990-2021
 \
@@ -73,7 +73,8 @@ HEX
     0 +ORIGIN 08000 U< 0=
     IF
         \ 6100 \ 24832 \ = origin of v1.2. it allows 1 microdrive channel
-          6400 \ 25600 \ = origin of v1.413. it allows 2 microdrive channels
+        \ 6400 \ 25600 \ = origin of v1.413. it allows 2 microdrive channels
+          6363 \ 25443 \ = origin of v1.5. Allow 64 bytes of OS-call stack.
         \ 6500 \ 25856 \ = plus another 256 page to host TIB/RP/User vars.
         \ 6A00 \ 27136 \ = room for 3 buffers below ORIGIN
         \ 8000 \ 32768 \ = final
@@ -335,6 +336,11 @@ SET-DP-TO-ORG
 \
 \ ______________________________________________________________________
 \
+
+\ Interrupt vector 6363
+       ASSEMBLER
+       JP HEX 0038 AA,      \ 6363h
+                            \ 6366h
 \
 .( Origin )
 \
@@ -342,8 +348,8 @@ SET-DP-TO-ORG
 
      
 HERE TO org^
-\ 6100h or 6400h or 8000h depending on which version is compiling
-\ this addresses simply is a "remind" for myself.
+\ 6100h or 6366h or 8000h depending on which version is compiling
+\ this addresses simply are a "remind" for myself.
 
 \ +000
         ASSEMBLER
@@ -412,6 +418,7 @@ HERE TO vars^       R0 @ ,       \ HEX EAE0    ,
 HEX 030 +ORIGIN TO rp^     
  
        R0 @ , \ 2  - \ was HEX EADE    ,  
+
 
  
 \ from this point we can use LDHL,RP and LDRP,HL Assembler macros
@@ -1161,7 +1168,7 @@ CODE key ( -- c )
         PUSH    IX|
 
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
 
         RES      5| (IY+ 1 )|
         HERE  \ BEGIN, 
@@ -1253,7 +1260,7 @@ CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
          
         LDX     HL| 0 NN,
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         CALL    HEX 1F54 AA,
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         JRF    CY'| HOLDPLACE
@@ -2683,7 +2690,7 @@ DECIMAL
   62     user    lp        \ line printer (not used)
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
-  68     user    span      \ number of character of last EXPECT
+  68     user    span      \ number of character of last ACCEPT
   70     user    hp        \ heap-pointer address
   
   
@@ -2712,7 +2719,7 @@ DECIMAL
     2 allot
     ;
 
-    
+
 \ 6940h    
 .( C, )
 : c,  ( c -- )
@@ -3014,6 +3021,13 @@ CODE -dup ( n -- 0 | n n )
     ;
 
 
+.( COMPILE, )
+: compile, ( xt -- )
+    ?comp 
+    ,
+    ;
+
+
 \ 6b1b
 .( [ )
 : [ ( -- )  
@@ -3106,14 +3120,14 @@ CODE -dup ( n -- 0 | n n )
 \ 6BDFh
 .( DOES> )
 : does>    ( -- ) 
-    r>
-    latest pfa !
+    r>                       \ at compile-time, address of word after DOES>
+    latest pfa !             \ is put in PFA of LATEST defined word 
     ;code 
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
 
-        DECX    HL| 
+        DECX    HL|          \ save current IP just like an ENTER
         LD   (HL)'|    B|
         DECX    HL|
         LD   (HL)'|    C|
@@ -3121,13 +3135,13 @@ CODE -dup ( n -- 0 | n n )
         HERE !rp^
         LDRP,HL              \ macro 30h +Origin
         
-        INCX    DE|
-        EXDEHL 
-        LD      C'| (HL)|
+        INCX    DE|          \ this is PFA of defined word that keeps the
+        EXDEHL               \ address of words after DOES> part
+        LD      C'| (HL)|    \ Use it as new IP to execute DOES> part
         INCX    HL|
         LD      B'| (HL)|
-        INCX    HL|
-        Psh1
+        INCX    HL|          \ now this is PFA+2 which is passed to DOES> part. 
+        Psh1                 \ Puts on TOS the PFA+2 of LATEST defined word   
         
     smudge
 
@@ -3234,11 +3248,11 @@ CODE -dup ( n -- 0 | n n )
     ;
 
 
-\ 6CC3h
-.( EXPECT )
-: expect ( a n -- )
-    accept drop
-    ;
+\ \ 6CC3h
+\ .( EXPECT )
+\ : expect ( a n -- )
+\     accept drop
+\     ;
 
 
 \ 6D40h
@@ -3248,7 +3262,7 @@ CODE -dup ( n -- 0 | n n )
 : query ( -- )
     tib @ 
     [ decimal 80 ] Literal
-    expect
+    accept drop  
     0 >in ! 
     ;
 
@@ -4348,7 +4362,7 @@ CODE inkey ( -- c )
          
         PUSH    BC|
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         PUSH    IX|
         CALL    HEX  15E6  AA,  ( instead of 15E9 )
         POP     IX|
@@ -4372,7 +4386,7 @@ CODE select ( n -- )
         PUSH    BC|
         LD      A'|    L|
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         PUSH    IX|
         CALL    HEX  1601 AA,
         POP     IX|
@@ -4502,7 +4516,7 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         PUSH    IX| 
 
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -2 org^ +  NN, \ temp stack just below ORIGIN
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         LDN     C'|    7   N,              \ use 7 RAM bank
         
         RST     08|    HEX 094  C,
@@ -5185,7 +5199,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210627" -1 allot ]
+    [ decimal 13 here ," build 20210708" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5739,7 +5753,7 @@ RENAME   blanks         BLANKS
 RENAME   erase          ERASE 
 RENAME   fill           FILL  
 RENAME   query          QUERY 
-RENAME   expect         EXPECT
+\ RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
 RENAME   -trailing      -TRAILING
 RENAME   type           TYPE  
@@ -5756,6 +5770,7 @@ RENAME   immediate      IMMEDIATE
 RENAME   smudge         SMUDGE
 RENAME   ]              ]
 RENAME   [              [
+RENAME   compile,       COMPILE,   
 RENAME   compile        COMPILE 
 RENAME   ?loading       ?LOADING
 RENAME   ?csp           ?CSP  
@@ -5977,8 +5992,12 @@ CASEOFF
 \          *STKBOT  Floating point Stack Bottom
 \          *STKEND  Floating point end
 \          *SP      Z80 Stack Pointer register in Basic
-\ 62FF     *RAMTOP  Logical RAM top (RAMTOP var is 23730)
-\ 6400      ORIGIN  Forth Origin
+\ 61FF     *RAMTOP  Logical RAM top (RAMTOP system var is at 23730)
+\ 6200              Interrupt Vector table to $6363
+\ 6302              Saved SP during Interrupt Routine
+\ 6363              Interrupt routine
+\ 6366      ORIGIN  Forth Origin
+\ 63..     *IX      Inner Interpreter pointed by IX.
 \                   FENCE @
 \                   LATEST @
 \           HERE    DP @

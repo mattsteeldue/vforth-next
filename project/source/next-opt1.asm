@@ -133,7 +133,7 @@
                 push    ix
 
                 ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 2
+                ld      sp, Cold_origin - 5
                 ld      c, 7                // use 7 RAM Bank
 
                 rst     08

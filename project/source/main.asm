@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 // v-Forth 1.6 NextZXOS version 
-// build 2021627
+// build 2021708
 // 
 // 
 //  NextZXOS version
@@ -63,12 +63,12 @@ DEBUGGING       equ     -1
 //  ______________________________________________________________________
 
                 if ( -1 == DEBUGGING ) 
-ORIGIN          equ     $6380                   // for binary comparison
+ORIGIN          equ     $62E6                   // for binary comparison
                 endif
 //  ______________________________________________________________________
 
                 if (  0 == DEBUGGING ) 
-ORIGIN          equ     $6400                   // binary
+ORIGIN          equ     $6366                   // binary
                 endif
 //  ______________________________________________________________________
 

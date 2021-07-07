@@ -474,7 +474,7 @@ Message_ENdif:                                  // endif
 
                 push    bc
                 ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 2
+                ld      sp, Cold_origin - 5
                 push    ix
                 call    $15E6                   // instead of 15E9
                 pop     ix
@@ -494,7 +494,7 @@ Message_ENdif:                                  // endif
                 push    bc
                 ld      a, l
                 ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 2
+                ld      sp, Cold_origin - 5
                 push    ix
                 call    $1601         
                 pop     ix

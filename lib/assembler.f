@@ -57,5 +57,6 @@ CR
 NEEDS RENAME        \ this is just a patch to be removed in the future
 NEEDS CODE          \ this is just a patch to be removed in the future 
 
-DECIMAL 100 LOAD
+\ DECIMAL 100 LOAD
+INCLUDE SRC/Z80n-asm.f
 

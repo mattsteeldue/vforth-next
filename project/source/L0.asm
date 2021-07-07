@@ -741,7 +741,7 @@ Key_MapTo:
                 push    ix  
 
                 ld      (SP_Saved), sp      // be sure to not to be paged out.
-                ld      sp, Cold_origin - 2 // maybe $4000 in the future...
+                ld      sp, Cold_origin - 5 // maybe $4000 in the future...
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
 Key_Wait:       
@@ -818,7 +818,7 @@ Key_NoCapsLock: ld      l, a
                 New_Def QTERMINAL, "?TERMINAL", is_code, is_normal
                 ld      hl, 0
                 ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 2
+                ld      sp, Cold_origin - 5
                 call    $1F54
                 ld      sp, (SP_Saved)
 
