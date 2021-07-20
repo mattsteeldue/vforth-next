@@ -344,7 +344,7 @@ Needs_2:
 
 
                 New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
-                db $5E, $60, $25, $26, $24, $5F, $7B, $7D, $7E
+                db $25, $5E, $25, $26, $24, $5F, $7B, $7D, $7E
 
                 New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
                 db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
@@ -353,7 +353,7 @@ Needs_2:
 // Replace illegal character in filename using the map here above
 // at the moment we need only  "
                 Colon_Def NEEDS_CHECK, "NEEDS-CH", is_normal
-                dw      NEEDS_W, COUNT, BOUNDS
+                dw      COUNT, BOUNDS
                 dw      C_DO
 Needs_3:
                 dw          NCDM, NDOM, LIT, 9 
@@ -383,7 +383,7 @@ Needs_5:
                 dw          HERE, CFETCH, ONE_PLUS  // a n
                 dw          HERE, OVER              // a n here n
                 dw          NEEDS_W, SWAP, CMOVE    // a n
-                dw          NEEDS_CHECK
+                dw          NEEDS_W, NEEDS_CHECK
                 dw          NEEDS_W, PLUS           // a a1+1
                 dw          LIT, $662E              // a a1+1 ".F"
                 dw          SWAP, STORE             // a
@@ -689,7 +689,7 @@ Index_Endif:
                 dw      C_DOT_QUOTE
                 db      69
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20210708", 13
+                db      "build 20210719", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

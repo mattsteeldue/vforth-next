@@ -14,6 +14,6 @@ DECIMAL
     DUP @           \ a n
     31421 * 6927 +  \ a n
     TUCK            \ n a n
-    SWAP !          \ n n a 
+    SWAP !          \ n  
 ;
 

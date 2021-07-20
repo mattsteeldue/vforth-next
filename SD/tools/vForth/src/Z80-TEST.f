@@ -13,10 +13,10 @@ ASSEMBLER
 :  r|  ASSEMBLER    E| ;
 : r'|  ASSEMBLER   E'| ;
 : rr|  ASSEMBLER   DE| ;
-:  b|  ASSEMBLER    7| ;
+:  n|  ASSEMBLER    7| ;
 :  f|  ASSEMBLER   PE| ;
 : f'|  ASSEMBLER   Z'| ;
-:  a|  ASSEMBLER   08| ;
+: aa|  ASSEMBLER   08| ;
 
 \ FORTH ASSEMBLER
 
@@ -43,9 +43,9 @@ CODE Z80-TESTER
     ANDA (IY+ n )|
     ANDN        n    N,
     ANDA        r|
-    BIT         b|     (HL)|
-    BIT         b| (IY+ d )|
-    BIT         b|        r|
+    BIT         n|     (HL)|
+    BIT         n| (IY+ d )|
+    BIT         n|        r|
     BRLCDE,B                 \ Next extension
     BSLADE,B                 \ Next extension
     BSRADE,B                 \ Next extension
@@ -88,8 +88,8 @@ CODE Z80-TESTER
     INC     (HL)'|
     INC (IY'+ d )|
     INCX       rr|
-    INCX       IY|
     INCX       IX|
+    INCX       IY|
     INC        r'|
     IND
     INDR
@@ -159,8 +159,6 @@ CODE Z80-TESTER
     OUTINB
     PIXELAD
     PIXELDN
-    
-    
     POP         AF|
     POP         rr|
     POP         IX|
@@ -169,10 +167,10 @@ CODE Z80-TESTER
     PUSH        IX|
     PUSH        IY|    
     PUSHN       nn   LH,
-    RES          b|     (HL)|
-    RES          b| (IY+ d )|
-    RES          b|        r|
-\   RES          b|        r|  (IY+ d )|    
+    RES          n|     (HL)|
+    RES          n| (IY+ d )|
+    RES          n|        r|
+\   RES          n|        r|  (IY+ d )|    
     RET       
     RETF         f|
     RETI
@@ -199,17 +197,17 @@ CODE Z80-TESTER
 \   RRC          r| (IY+ d )|         
     RRCA  
     RRD   
-    RST          a|
+    RST         aa|
     SBCA      (HL)|
     SBCA  (IY+ d )|
     SBCN         n   N,
     SBCA         r|
     SBCHL       rr|
     SCF   
-    SET          b|     (HL)|
-    SET          b| (IY+ d )|
-    SET          b|        r|
-\   SET          b|        r|  (IY+ d )|    
+    SET          n|     (HL)|
+    SET          n| (IY+ d )|
+    SET          n|        r|
+\   SET          n|        r|  (IY+ d )|    
     SETAE 
     SLL       (HL)|
     SLL   (IY+ d )|
@@ -237,7 +235,6 @@ CODE Z80-TESTER
     XORA  (IY+ d )|
     XORN         n   N,
     XORA         r|
-
 C;  
 
 QUIT

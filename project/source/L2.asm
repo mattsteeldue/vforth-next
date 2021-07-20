@@ -30,7 +30,7 @@ Interpret_Begin:                                        // begin
                                                         //          if   
                 dw              ZBRANCH
                 dw              Interpret_Else_2 - $
-                dw                  COMMA               //              ,
+                dw                  COMPILE_XT          //              compile,
                                                         //          else       
                 dw              BRANCH
                 dw              Interpret_Endif_2 - $

@@ -1,8 +1,8 @@
 \ z80n-asm.f
 \ 
 \ CR
-\ .( Zilog Z80 ) CR
-\ .( also Z80N Next extensions are available ) CR
+.( Zilog Z80 ) CR
+.( also Z80N Next extensions are available ) CR
 \ 
 \ This is a tentative Z80 adaptation of Albert van der Horst's work available 
 \ at  <https://github.com/albertvanderhorst/ciasdis>
@@ -56,6 +56,7 @@
 
 NEEDS RENAME        \ this is just a patch to be removed in the future
 NEEDS CODE          \ this is just a patch to be removed in the future 
+NEEDS INVERT   \   : INVERT -1 XOR ;
 
 FORTH DEFINITIONS 
 
@@ -71,7 +72,7 @@ DECIMAL
 ASSEMBLER TOOLS-ASM DEFINITIONS
   DP @ LP ! HEX E080 DP !
   
-: INVERT -1 XOR ;
+\  : INVERT -1 XOR ;
 : @+ >R R@ CELL+ R> @ ;
 : !+ >R R@ ! R> CELL+ ;
 : @- 0 CELL+ - >R R@ @ R> ;
@@ -85,16 +86,16 @@ CHAR ~ CONSTANT &~
 
 \ Screen# 102 
 
-: %           COMPILE ' <NAME ;
-\ : %           POSTPONE ' <NAME ;
-: %ID.        ID. ;
+\ ## : %           COMPILE ' <NAME ;
+\ ## : %           POSTPONE ' <NAME ;
+\ ## : %ID.        ID. ;
 : %>BODY      PFA CELL+ ;
-: %BODY>      0 CELL+ - NFA ;
+\ ## : %BODY>      0 CELL+ - NFA ;
 : %>CODE      PFA CFA CELL+ ;
-: IGNORE?     1+ C@ &~ = ;
+\ ## : IGNORE?     1+ C@ &~ = ;
 : (>NEXT%)    PFA LFA @ ;
-: VOCEND?     @ FFFF AND A081 = ;
-: >NEXT%      BEGIN (>NEXT%)  DUP 1+ C@ &- - UNTIL ;
+\ ## : VOCEND?     @ FFFF AND A081 = ;
+\ ## : >NEXT%      BEGIN (>NEXT%)  DUP 1+ C@ &- - UNTIL ;
 
 \ Screen# 103 
 ( Z80 Utility - Sys depend )
@@ -121,7 +122,7 @@ CHAR ~ CONSTANT &~
 : AT-REST?    TALLY-BI @ 0= TALLY-BY @ 0= AND ;
 : BADPAIRS?   DUP 2 * AND AAAAAAAA AND ;
 : BAD?        TALLY-BA @ BADPAIRS? ;
-: COMPATIBLE? TALLY-BA @ OR BADPAIRS? 0= ;
+\ ## : COMPATIBLE? TALLY-BA @ OR BADPAIRS? 0= ;
 DECIMAL
 
 \ Screen# 106 
@@ -143,12 +144,12 @@ HEX
 
 \ Screen# 108 
 ( Assembler Z80 )
-: >DATA       %>BODY ;
-: >BI         %>BODY CELL+ ;
-: >BY         %>BODY 2 CELLS + ;
-: >BA         %>BODY 3 CELLS + ;
-: >CNT        %>BODY 4 CELLS + ;
-: >DIS        %>BODY 5 CELLS ;
+\ ## : >DATA       %>BODY ;
+\ ## : >BI         %>BODY CELL+ ;
+\ ## : >BY         %>BODY 2 CELLS + ;
+\ ## : >BA         %>BODY 3 CELLS + ;
+\ ## : >CNT        %>BODY 4 CELLS + ;
+\ ## : >DIS        %>BODY 5 CELLS ;
 : CORRECT,-   ISL @ 1 CELLS - ALLOT ;
 : !POSTIT     HERE ISS ! 0 PREVIOUS ! ;
 : TALLY:,     @+ TALLY-BI !  @+ TALLY-BY ! @+ TALLY-BA !  @ ISL ! ;

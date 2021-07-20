@@ -10,6 +10,6 @@
     192 < IF 
         COMPILE COMPILE 
     THEN
-    ' , 
+    COMPILE, 
 ; IMMEDIATE    
 

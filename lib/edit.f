@@ -3,19 +3,15 @@
 \
 .( Full Screen Editor. ) 
 \
-NEEDS H
-NEEDS S
-NEEDS RE
-NEEDS INS
-NEEDS D
-NEEDS N
-NEEDS B
-NEEDS P
 
 NEEDS INVV
 NEEDS TRUV
 NEEDS LINE
 NEEDS CASE
+
+NEEDS EDITOR
+
+EDITOR DEFINITIONS
     
 \
 DECIMAL   0 VARIABLE NROW               \ current row
@@ -126,7 +122,13 @@ DECIMAL
        07 OF CMD            ENDOF
     ENDCASE ;
 \
+
+FORTH DEFINITIONS 
+
 : EDIT     ( -- )
+
+    EDITOR
+
     CLS HOMEC PUTPAGE EDIT-FRAME
     BEGIN
         EDIT-STAT  INITC
@@ -140,4 +142,5 @@ DECIMAL
     AGAIN  \ quit using EDIT-key + Q
 ;
 
+FORTH DEFINITIONS
 

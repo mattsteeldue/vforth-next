@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210708 ) CR
+.( build 20210719 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________ 
@@ -930,8 +930,9 @@ HEX
 
 
 ." (MAP) "
-\ translate character c using mapping string a2 and a2
-\ c2 = c2 if it is not translated. n is the length of bot a1 and a2.
+\ translate character c1 using mapping string a2 and a2
+\ if c1 is not present within string a1 then 
+\ c2 = c2 if it is not translated. n is the length of both a1 and a2.
 CODE (map) ( a2 a1 n c1 -- c2 )
         EXX
         POP     HL|
@@ -3876,10 +3877,10 @@ CODE fill ( a n c -- )
         If
             state @ <
             If 
-                \ already cfa
-                , 
+                \ already cfa aka xt
+                compile, 
             Else
-                \ already cfa 
+                \ already cfa aka xt
                 execute 
                 noop            \ need this to avoid LIT to crash the system
             Endif
@@ -4870,19 +4871,19 @@ decimal
 ;
 
 ( map-into )
-(   \ : ? / * | \ < > "   )
-(   \ ^ ` % & $ _ { } ~   )
+(   \ : ? / * | \ < > "    )
+(   \ % ^ % & $ _ { } ~  ` )
 
-create ncdm hex    (   \ ^ ` % & $ _ { } ~   )
-    5E C,  60 C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
+create ncdm hex    (   \ % ^ % & $ _ { } ~   )
+    25 C,  5E C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
 create ndom hex    (   \ : ? / * | \ < > "   )
     3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
 
 
 \ Replace illegal character in filename 
 decimal
-: needs-ch ( -- )
-    needs-w count bounds
+: needs-ch ( a -- )
+    count bounds
     Do
         ncdm ndom [ 9 ] Literal i c@ (map) i c!
     Loop
@@ -4900,7 +4901,7 @@ decimal
         erase                           \ a
         here c@ 1+ here over            \ a n here n
         needs-w    swap cmove           \ a n
-        needs-ch
+        needs-w    needs-ch
         needs-w    +                    \ a a1+n
         [ hex 662E decimal ] literal    \ a a1+n ".F"
         swap !                          \ a
@@ -5199,7 +5200,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210708" -1 allot ]
+    [ decimal 13 here ," build 20210719" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
