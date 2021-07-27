@@ -244,7 +244,7 @@ IM2 Vector Table is placed at $6200-6300 and Interrupt Routine will be at $6363 
 
 
 \ build 20210719
-Introduced INTERRUPT vocabulary to hold  IM 2  ISR 
+Introduced INTERRUPT vocabulary to hold  IM 2  Interrupt Service Routine (ISR)
 ISR tested to move a couple of sprite (Screen # 412 and  https://www.youtube.com/watch?v=gRZfHnZ7eDQ )
 Fixed character "£" as invalid "NEXTZXOS Filename Character".
 Introducing EDITOR vocabulay to collect some EDITOR words.
