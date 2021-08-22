@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210719 ) CR
+.( build 20210814 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________ 
@@ -146,7 +146,7 @@ DECIMAL
      0  VALUE     xi/o2^        \ patch of BLK-INIT in WARM 
      0  VALUE     y^            \ patch of COLD/WARM start
      0  VALUE     splash^       \ patch of SPLASH in WARM
-     0  VALUE     autoexec^     \ patch of LOAD in WARM
+     0  VALUE     autoexec^     \ patch of NOOP in ABORT
      0  VALUE     .^            \ patch of .    in MESSAGE
 
 .( Psh2 Psh1 Next )
@@ -395,8 +395,6 @@ HERE TO org^
 \ +020
                  0           ,  \ VOC-LINK
 \ +022
-
-.( here! )
                  FIRST @     , 
 \ +024
                  LIMIT @     ,
@@ -419,10 +417,10 @@ HEX 030 +ORIGIN TO rp^
  
        R0 @ , \ 2  - \ was HEX EADE    ,  
 
-
  
 \ from this point we can use LDHL,RP and LDRP,HL Assembler macros
 \ instead of their equivalent long sequences.
+
 
 \ 6126h
 \ hook for Psh2
@@ -1024,7 +1022,7 @@ HEX 06 C, \ comma
 HEX 07 C, \ bel
 HEX 08 C, \ bs
 HEX 09 C, \ tab
-HEX 0D C, \ cr
+HEX 0D C, \ cr --> cr
 HEX 0A C, \ lf Unix newline
 HEX 20 C, \ not used
 HEX 20 C, \ not used
@@ -1103,7 +1101,7 @@ HERE    EMIT-A^ 06 +  !
 \ 0D cr        
 EMIT-2^ EMIT-A^ 08 +  !
 
-\ 0A nl
+\ 0A nl --> cr
 HERE    EMIT-A^ 0A +  ! 
         ASSEMBLER 
         LDX     HL| 0D NN,
@@ -1140,15 +1138,15 @@ HERE TO KEY-1^
     C6   C,   \  5: AND   --> SYMBOL+Y : [
     C5   C,   \  6: OR    --> SYMBOL+U : ]
     AC   C,   \  7: AT    --> SYMBOL+I : (C) copyright symbol
-    C7   C,   \  8: <=
-    C8   C,   \  9: >=
+    C7   C,   \  8: <=    --> SYMBOL+Q : same as SHIFT-1 [EDIT]
+    C8   C,   \  9: >=    --> SYMBOL+E : same as SHIFT-0 [BACKSPACE]
     C9   C,   \ 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
     06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-    20   C,   \  9: not used
-    20   C,   \  8: not used
+    0C   C,   \  9: SYMBOL+E : same as SHIFT-0 [BACKSPACE]
+    07   C,   \  8: SYMBOL+Q : same as SHIFT-1 [EDIT]
     7F   C,   \  7: SYMBOL+I : (C) copyright symbol
     5D   C,   \  6: SYMBOL+U : ]
     5B   C,   \  5: SYMBOL+Y : [
@@ -1257,7 +1255,7 @@ CODE key ( -- c )
 \ 637Bh
 .( ?TERMINAL )
 \ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
-CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
+CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
          
         LDX     HL| 0 NN,
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
@@ -1265,7 +1263,7 @@ CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
         CALL    HEX 1F54 AA,
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         JRF    CY'| HOLDPLACE
-            INC     L'|
+            DECX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1696,9 +1694,9 @@ CODE rp! ( a -- )
 
 
 \ 64D1h
-.( ;S )
+.( EXIT )
 \ exits back to the caller word
-CODE ;s ( -- )
+CODE exit ( -- )
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
@@ -1797,7 +1795,7 @@ CODE r  ( -- n )
 
 \ 652Ch
 .( 0= )
-\ true (1) if n is zero, false (0) elsewere
+\ true (-1) if n is zero, false (0) elsewere
 CODE 0= ( n -- f )
          
         POP     HL|
@@ -1805,7 +1803,7 @@ CODE 0= ( n -- f )
         ORA      H|
         LDX     HL|    0 NN,
         JRF    NZ'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1820,14 +1818,14 @@ CODE not  ( n -- f )
 
 \ 6540h
 .( 0< )
-\ true (1) if n is less than zero, false (0) elsewere
+\ true (-1) if n is less than zero, false (0) elsewere
 CODE 0< ( n -- f )
          
         POP     HL|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    NC'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1835,7 +1833,7 @@ CODE 0< ( n -- f )
 
 \ 6553h
 .( 0> )
-\ true (1) if n is greater than zero, false (0) elsewere
+\ true (-1) if n is greater than zero, false (0) elsewere
 CODE 0> ( n -- f )
          
         POP     HL|
@@ -1846,7 +1844,7 @@ CODE 0> ( n -- f )
         JRF    CY'|    HOLDPLACE    
         ANDA     A|
         JRF     Z'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|
         HERE DISP, HERE DISP, \ THEN, THEN,
         Psh1  
         C;
@@ -2313,9 +2311,6 @@ CODE c! ( c a -- )
 \ where HL is on the top of the stack and DE is the second from top,
 \ so the sign of the number can be checked on top of stack
 \ and in the stack memory it appears as LHED.
-\ Instead, a 32 bits number d is kept in memory as EDLH
-\ with the lowest significant word in the lower location
-\ and the highest significant word in the higher location.
 CODE 2@ ( a -- d )
          
         POP     HL|
@@ -2327,7 +2322,9 @@ CODE 2@ ( a -- d )
         INCX    HL|
         LD      H'| (HL)|
         LD      L'|    A|
-        Psh2
+        PUSH    HL|
+        PUSH    DE|
+        Next
         C;
 
 
@@ -2340,30 +2337,27 @@ CODE 2@ ( a -- d )
 \ where HL is on the top of the stack and DE is the second from top,
 \ so in the stack memory it appears as LHED.
 \ and the sign of the number can be checked on top of stack.
-\ Instead, a 32 bits number d is kept in memory as EDLH
-\ with the lowest significant word in the lower location
-\ and the highest significant word in the higher location.
 CODE 2! ( d a -- )
 
         LD      H'|    B|
         LD      L'|    C|
 
         POP     DE|        \ address
-        POP     BC|        \ highest
+        POP     BC|        \ higher
 
-        EX(SP)HL           \ lowest
+        EX(SP)HL           \ lower (swapped)
         EXDEHL
-
-        LD   (HL)'|    E|
-        INCX    HL|
-        LD   (HL)'|    D|
-
-        INCX    HL|
 
         LD   (HL)'|    C|
         INCX    HL|
-
         LD   (HL)'|    B|
+
+        INCX    HL|
+
+        LD   (HL)'|    E|
+        INCX    HL|
+
+        LD   (HL)'|    D|
 
         POP     BC|
 
@@ -2522,7 +2516,7 @@ CODE cells ( n2 -- n2 )
 .( ; ) \ ___ late-patch ___ 
 : ; 
     ?CSP
-    COMPILE   ;s     
+    COMPILE   exit     
     SMUDGE    
     [COMPILE] [    \ previous version
     ;
@@ -2692,7 +2686,8 @@ DECIMAL
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last ACCEPT
-  70     user    hp        \ heap-pointer address
+  70     user    handler   \ throw-catch handler
+  72     user    hp        \ heap-pointer address
   
   
 \ 1+  has moved backward
@@ -2730,9 +2725,9 @@ DECIMAL
 
 
 \ 754Ch
-.( S->D )
+.( S>D )
 \ converts a single precision integer in a double precision
-CODE s->d   ( n -- d )
+CODE s>d   ( n -- d )
         POP     DE|
         LDX     HL|    0 NN,
         LD      A'|    D|
@@ -2766,15 +2761,15 @@ CODE - ( n1 n2 -- n3 )
 
 \ 6987h
 .( U< )
-\ true (1) if unsigned u1 is less than u2.
+\ true (-1) if unsigned u1 is less than u2.
 CODE u< ( u1 u2 -- f )
         POP     DE|
         POP     HL|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| 1 NN,
+        LDX     HL| -1 NN,
         JRF    CY'| HOLDPLACE
-            DEC     L'|
+            INCX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -2782,20 +2777,21 @@ CODE u< ( u1 u2 -- f )
 
 \ 696Bh
 .( < )
+\ true (-1) if n1 is less than n2
 CODE <  ( n1 n2 -- f )
         POP     DE|
         POP     HL|
-        LD      A'|  H|
+        LD      A'|   H|
         XORN    HEX 80   N,  DECIMAL
-        LD      H'|  A|
-        LD      A'|  D|
+        LD      H'|   A|
+        LD      A'|   D|
         XORN    HEX 80   N,  DECIMAL
-        LD      D'|  A|
+        LD      D'|   A|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| 1 NN,
+        LDX     HL| -1 NN,
         JRF    CY'| HOLDPLACE
-            DEC     L'|
+            INCX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -2804,6 +2800,7 @@ CODE <  ( n1 n2 -- f )
 
 \ 699Dh
 .( > )
+\ true (-1) if n1 is greater than n2
 : >   ( n1 n2 -- f )
     swap < 
     ; 
@@ -3210,6 +3207,7 @@ CODE -dup ( n -- 0 | n n )
 
             drop        ( a )
             dup i =     ( a a=i )
+                 1 and
             dup         ( a a=i a=i )
             r> 2 - + >r  \ decrement i by 1 or 2.
             If
@@ -3738,10 +3736,10 @@ CODE fill ( a n c -- )
     ' ; 
         cell+ ' ?csp      over !
         cell+ ' compile   over !
-        cell+ ' ;s        over !
+        cell+ ' exit      over !
         cell+ ' smudge    over !
         cell+ ' [         over !
-        cell+ ' ;s        over !
+        cell+ ' exit      over !
     drop
 
 
@@ -3824,7 +3822,9 @@ CODE fill ( a n c -- )
 \ 7306h    
 .( 0x00 ) \ i.e. nul word
 : ~             \ to be RENAME'd via patch
-    blk @ 1 > If 
+    blk @ 
+    1 >         \ BLOCK #1 is special and exploited by F_GETLINE
+    If 
         1 blk +!  
         0  >in !  
         blk @ b/scr 1- and 0= 
@@ -4230,7 +4230,7 @@ CODE basic ( n -- )
 \ leaves quotient n4 and remainder n3 of the integer division n1 / n2.
 \ the remainder has the sign of n1.
 : /mod  ( n1 n2 -- n3 n4 )
-    >r s->d r>
+    >r s>d r>
     m/mod 
     ;
 
@@ -4274,7 +4274,7 @@ CODE basic ( n -- )
 .( #/MOD )
 \ mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
 \ used by # during number representation.
-\ : #/mod  ( d1 u2 -- n3 d4 )
+\ : #/mod  ( ud1 u2 -- n3 ud4 )
 \     >r           \ ud1
 \     0 r@ um/mod  \ l rem1 h/r
 \     r> swap >r   \ l rem1
@@ -4828,9 +4828,9 @@ decimal
 \ Include the following filename
 decimal
 : include  ( -- cccc )
-    open<
-    dup f_include
-    f_close drop
+    open< >r
+    r@ f_include
+    r> f_close drop
 ;
 
 
@@ -5079,7 +5079,7 @@ decimal
 \ 7d50
 .( .R )
 : .r
-    >r  s->d  r>
+    >r  s>d  r>
     d.r
     ;
 
@@ -5094,7 +5094,7 @@ decimal
 \ 7d70
 .( . )
 : .    
-    s->d  d.
+    s>d  d.
     ;
     
     ' . .^ ! \ patch
@@ -5200,7 +5200,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210719" -1 allot ]
+    [ decimal 13 here ," build 20210814" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5212,7 +5212,7 @@ decimal
 \ XI/O
 \ : xi/o
 \     0 channel !
-\     0 map !
+\     0 mmap !
 \     [ decimal 4 ] Literal mdr
 \     ;
 \ 
@@ -5304,7 +5304,7 @@ decimal
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 10 0 +origin 32768 u< + ] Literal  \ this give 10 or 11 
+    [ decimal 10 0 +origin 32768 u< 1 AND + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
@@ -5699,7 +5699,7 @@ RENAME   dabs           DABS
 RENAME   abs            ABS
 RENAME   d+-            D+-
 RENAME   +-             +-
-RENAME   s->d           S->D
+RENAME   s>d            S>D
 RENAME   basic          BASIC
 RENAME   cold           COLD
 RENAME   warm           WARM
@@ -5804,6 +5804,7 @@ RENAME   ,              ,
 RENAME   allot          ALLOT
 RENAME   here           HERE 
 RENAME   hp             HP 
+RENAME   handler        HANDLER 
 RENAME   span           SPAN 
 RENAME   source-id      SOURCE-ID
 RENAME   place          PLACE
@@ -5912,7 +5913,7 @@ RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
 RENAME   leave          LEAVE
-RENAME   ;s             ;S  
+RENAME   exit           EXIT  
 RENAME   rp!            RP! 
 RENAME   rp@            RP@ 
 RENAME   sp!            SP! 

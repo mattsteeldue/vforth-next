@@ -17,8 +17,8 @@
     STATE @
     IF
         COMPILE LIT 
-        ,    \ compile  body address
-        ,    \ compiles xt ! or +!
+        COMPILE,    \ compile  body address
+        COMPILE,    \ compiles xt ! or +!
     ELSE
         SWAP EXECUTE 
     ENDIF

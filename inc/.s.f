@@ -8,9 +8,10 @@ NEEDS DEPTH
 \
 : .S ( -- )
     DEPTH IF
-        CR SP@ CELL-  S0 @
-        CELL-  DO
-            I @ U.
+        CR 
+        SP@  S0 @ CELL-  
+        DO
+            I @ .
         -2 +LOOP
     ENDIF 
 ;

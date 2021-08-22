@@ -1,9 +1,9 @@
 \
-\ defer.f
+\ defer!.f
 \
 .( DEFER! )
 \
 : DEFER! ( xt -- )
-    >BODY ! ;
+    >BODY ! 
 ; 
 

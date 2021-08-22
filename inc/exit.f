@@ -5,6 +5,7 @@
 \
 \ Used inside colon-definition to return control to caller.
 \
-: EXIT ( -- )
-    COMPILE ;S
-; IMMEDIATE
+CREATE EXIT ( -- )
+
+    ' ;S      >BODY
+    ' EXIT    !

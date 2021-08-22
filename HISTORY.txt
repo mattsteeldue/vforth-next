@@ -248,3 +248,9 @@ Introduced INTERRUPT vocabulary to hold  IM 2  Interrupt Service Routine (ISR)
 ISR tested to move a couple of sprite (Screen # 412 and  https://www.youtube.com/watch?v=gRZfHnZ7eDQ )
 Fixed character "£" as invalid "NEXTZXOS Filename Character".
 Introducing EDITOR vocabulay to collect some EDITOR words.
+
+
+\ build 20210814
+Introducing a quasi-standard Test Suite (https://forth-standard.org/standard/testsuite)
+Large-File Editor (LED) - Improving work-in-progress
+

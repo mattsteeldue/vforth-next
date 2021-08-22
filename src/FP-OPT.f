@@ -363,7 +363,7 @@ DECIMAL
 
 
 : FLOAT  ( n -- fp )
-    S->D D>F ;
+    S>D D>F ;
 
 
 : FIX    ( fp -- n )
