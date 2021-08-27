@@ -1,8 +1,11 @@
 \ z80n-asm.f
 \ 
-CR
-.( Zilog Z80 ) CR
-.( also Z80N Next extensions are available ) CR
+CR DECIMAL 
+
+INCLUDE SRC/Z80N-ASM.F
+
+EXIT
+
 \ 
 \ This is a tentative Z80 adaptation of Albert van der Horst's work available 
 \ at  <https://github.com/albertvanderhorst/ciasdis>
@@ -54,9 +57,9 @@ CR
 \    REG,       used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
-NEEDS RENAME        \ this is just a patch to be removed in the future
-NEEDS CODE          \ this is just a patch to be removed in the future 
+\ NEEDS RENAME        \ this is just a patch to be removed in the future
+\ NEEDS CODE          \ this is just a patch to be removed in the future 
 
-DECIMAL 100 LOAD
+\ DECIMAL 100 LOAD
 \ INCLUDE src/Z80N-asm.f
 

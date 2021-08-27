@@ -996,7 +996,7 @@ needs .s
   pacman xy-pos@ swap . .
   3 24 at. LASTK c@ .
 \ 22 1 at. hex sprite 8 +
-\ sprite@ (dump) decimal
+\ sprite@ (dmp) decimal
   5 24 at. total 2@ D.
   7 24 at. counting @ .
   9 24 at.

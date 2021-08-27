@@ -254,3 +254,8 @@ Introducing EDITOR vocabulay to collect some EDITOR words.
 Introducing a quasi-standard Test Suite (https://forth-standard.org/standard/testsuite)
 Large-File Editor (LED) - Improving work-in-progress
 
+
+\ build 20210824
+Fix to 20210814 that has some bug.
+Working on LED, i inadvertently messed up normal LOAD and NEEDS.
+Sorry for the trouble

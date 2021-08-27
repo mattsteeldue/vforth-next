@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210814 ) CR
+.( build 20210824 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________ 
@@ -395,6 +395,8 @@ HERE TO org^
 \ +020
                  0           ,  \ VOC-LINK
 \ +022
+
+.( here! )
                  FIRST @     , 
 \ +024
                  LIMIT @     ,
@@ -417,10 +419,10 @@ HEX 030 +ORIGIN TO rp^
  
        R0 @ , \ 2  - \ was HEX EADE    ,  
 
+
  
 \ from this point we can use LDHL,RP and LDRP,HL Assembler macros
 \ instead of their equivalent long sequences.
-
 
 \ 6126h
 \ hook for Psh2
@@ -1255,7 +1257,7 @@ CODE key ( -- c )
 \ 637Bh
 .( ?TERMINAL )
 \ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
-CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
+CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
          
         LDX     HL| 0 NN,
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
@@ -1263,7 +1265,7 @@ CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
         CALL    HEX 1F54 AA,
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         JRF    CY'| HOLDPLACE
-            DECX     HL|
+            INC     L'|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1733,6 +1735,23 @@ CODE leave ( -- )
         C;       
 
 
+\ CODE (leave) ( -- )
+\ 
+\         HERE !rp^ 
+\         LDHL,RP              \ macro 30h +Origin
+\         
+\         LDX     DE|  4  NN,        
+\         ADDHL   DE|
+\ 
+\         HERE !rp^
+\         LDRP,HL              \ macro 30h +Origin
+\         
+\         JP      branch^  AA,
+\ 
+\         Next
+\         C;       
+
+
 \ 64FCh
 .( >R )
 \ pop from calculator-stack and push into return-stack
@@ -1795,7 +1814,7 @@ CODE r  ( -- n )
 
 \ 652Ch
 .( 0= )
-\ true (-1) if n is zero, false (0) elsewere
+\ true (1) if n is zero, false (0) elsewere
 CODE 0= ( n -- f )
          
         POP     HL|
@@ -1803,7 +1822,7 @@ CODE 0= ( n -- f )
         ORA      H|
         LDX     HL|    0 NN,
         JRF    NZ'|    HOLDPLACE
-            DECX      HL|
+            INC     L'|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1818,14 +1837,14 @@ CODE not  ( n -- f )
 
 \ 6540h
 .( 0< )
-\ true (-1) if n is less than zero, false (0) elsewere
+\ true (1) if n is less than zero, false (0) elsewere
 CODE 0< ( n -- f )
          
         POP     HL|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    NC'|    HOLDPLACE
-            DECX      HL|
+            INC     L'|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1833,7 +1852,7 @@ CODE 0< ( n -- f )
 
 \ 6553h
 .( 0> )
-\ true (-1) if n is greater than zero, false (0) elsewere
+\ true (1) if n is greater than zero, false (0) elsewere
 CODE 0> ( n -- f )
          
         POP     HL|
@@ -1844,7 +1863,7 @@ CODE 0> ( n -- f )
         JRF    CY'|    HOLDPLACE    
         ANDA     A|
         JRF     Z'|    HOLDPLACE
-            DECX      HL|
+            INC     L'|
         HERE DISP, HERE DISP, \ THEN, THEN,
         Psh1  
         C;
@@ -2516,7 +2535,7 @@ CODE cells ( n2 -- n2 )
 .( ; ) \ ___ late-patch ___ 
 : ; 
     ?CSP
-    COMPILE   exit     
+    COMPILE   exit   
     SMUDGE    
     [COMPILE] [    \ previous version
     ;
@@ -2682,7 +2701,7 @@ DECIMAL
   56     user    hld       \ last character during a number conversion output
   58     user    use       \ address of last used block
   60     user    prev      \ address of previous used block
-  62     user    lp        \ line printer (not used)
+  62     user    lp        \ Loop Pointer...    
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last ACCEPT
@@ -2761,15 +2780,15 @@ CODE - ( n1 n2 -- n3 )
 
 \ 6987h
 .( U< )
-\ true (-1) if unsigned u1 is less than u2.
+\ true (1) if unsigned u1 is less than u2.
 CODE u< ( u1 u2 -- f )
         POP     DE|
         POP     HL|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| -1 NN,
+        LDX     HL| 1 NN,
         JRF    CY'| HOLDPLACE
-            INCX     HL|
+            DEC     L'|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -2777,21 +2796,20 @@ CODE u< ( u1 u2 -- f )
 
 \ 696Bh
 .( < )
-\ true (-1) if n1 is less than n2
 CODE <  ( n1 n2 -- f )
         POP     DE|
         POP     HL|
-        LD      A'|   H|
+        LD      A'|  H|
         XORN    HEX 80   N,  DECIMAL
-        LD      H'|   A|
-        LD      A'|   D|
+        LD      H'|  A|
+        LD      A'|  D|
         XORN    HEX 80   N,  DECIMAL
-        LD      D'|   A|
+        LD      D'|  A|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| -1 NN,
+        LDX     HL| 1 NN,
         JRF    CY'| HOLDPLACE
-            INCX     HL|
+            DEC     L'|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -3207,7 +3225,7 @@ CODE -dup ( n -- 0 | n n )
 
             drop        ( a )
             dup i =     ( a a=i )
-                 1 and
+            1 and
             dup         ( a a=i a=i )
             r> 2 - + >r  \ decrement i by 1 or 2.
             If
@@ -4828,9 +4846,9 @@ decimal
 \ Include the following filename
 decimal
 : include  ( -- cccc )
-    open< >r
-    r@ f_include
-    r> f_close drop
+    open<
+    dup f_include
+    f_close drop
 ;
 
 
@@ -5200,7 +5218,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210814" -1 allot ]
+    [ decimal 13 here ," build 20210824" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5304,7 +5322,7 @@ decimal
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 10 0 +origin 32768 u< 1 AND + ] Literal  \ this give 10 or 11 
+    [ decimal 10 0 +origin 32768 u< 1 and + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
@@ -5443,11 +5461,12 @@ decimal
 \ peculiar version of BACK fitted for ?DO and LOOP
 : ?do-
     back
-    sp@ csp @ -
-    \ dup 0= 
-    If 
+    Begin
+        sp@ csp @ -
+        \ dup 0= 
+    While
         2+ [compile] endif 
-    Endif 
+    Repeat 
     ?csp csp !      
     ;
 
@@ -5490,6 +5509,21 @@ decimal
     here 3
     ; 
     immediate
+
+
+\ .( LEAVE )
+\ : leave ( -- )
+\     compile (leave)
+\     here >r 0 ,
+\     0 0
+\     sp@ dup cell+ cell+
+\     tuck
+\     csp @ swap -
+\     cmove
+\     csp @ cell -
+\     r> over !
+\     cell- 0 swap !
+\ ; immediate    
 
 
 \ 7fa0 new

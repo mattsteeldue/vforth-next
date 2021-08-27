@@ -1134,15 +1134,15 @@ HERE TO KEY-1^
     C6   C,   \  5: AND   --> SYMBOL+Y : [
     C5   C,   \  6: OR    --> SYMBOL+U : ]
     AC   C,   \  7: AT    --> SYMBOL+I : (C) copyright symbol
-    C7   C,   \  8: <=
-    C8   C,   \  9: >=
+    C7   C,   \  8: <=    --> SYMBOL+Q : same as SHIFT-1 [EDIT]
+    C8   C,   \  9: >=    --> SYMBOL+E : same as SHIFT-0 [BACKSPACE]
     C9   C,   \ 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
     06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-    20   C,   \  9: not used
-    20   C,   \  8: not used
+    0C   C,   \  9: SYMBOL+E : same as SHIFT-0 [BACKSPACE]
+    07   C,   \  8: SYMBOL+Q : same as SHIFT-1 [EDIT]
     7F   C,   \  7: SYMBOL+I : (C) copyright symbol
     5D   C,   \  6: SYMBOL+U : ]
     5B   C,   \  5: SYMBOL+Y : [
@@ -2139,9 +2139,6 @@ CODE c! ( c a -- )
 \ where HL is on the top of the stack and DE is the second from top,
 \ so the sign of the number can be checked on top of stack
 \ and in the stack memory it appears as LHED.
-\ Instead, a 32 bits number d is kept in memory as EDLH
-\ with the lowest significant word in the lower location
-\ and the highest significant word in the higher location.
 CODE 2@ ( a -- d )
          
         POP     HL|
@@ -2153,7 +2150,9 @@ CODE 2@ ( a -- d )
         INCX    HL|
         LD      H'| (HL)|
         LD      L'|    A|
-        Psh2
+        PUSH    HL|
+        PUSH    DE|
+        Next
         C;
 
 
@@ -2166,30 +2165,27 @@ CODE 2@ ( a -- d )
 \ where HL is on the top of the stack and DE is the second from top,
 \ so in the stack memory it appears as LHED.
 \ and the sign of the number can be checked on top of stack.
-\ Instead, a 32 bits number d is kept in memory as EDLH
-\ with the lowest significant word in the lower location
-\ and the highest significant word in the higher location.
 CODE 2! ( d a -- )
 
         LD      H'|    B|
         LD      L'|    C|
 
         POP     DE|        \ address
-        POP     BC|        \ highest
+        POP     BC|        \ higher
 
-        EX(SP)HL           \ lowest
+        EX(SP)HL           \ lower (swapped)
         EXDEHL
-
-        LD   (HL)'|    E|
-        INCX    HL|
-        LD   (HL)'|    D|
-
-        INCX    HL|
 
         LD   (HL)'|    C|
         INCX    HL|
-
         LD   (HL)'|    B|
+
+        INCX    HL|
+
+        LD   (HL)'|    E|
+        INCX    HL|
+
+        LD   (HL)'|    D|
 
         POP     BC|
 
@@ -2518,6 +2514,7 @@ DECIMAL
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last ACCEPT
+  70     user    handler   \ used by CATCH-THROW
   
   
 \ 1+  has moved backward
@@ -5466,6 +5463,7 @@ RENAME   c,             C,
 RENAME   ,              ,    
 RENAME   allot          ALLOT
 RENAME   here           HERE 
+RENAME   handler        HANDLER
 RENAME   span           SPAN 
 RENAME   source-id      SOURCE-ID
 RENAME   place          PLACE
@@ -5649,6 +5647,7 @@ CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
 \          *SP      Z80 Stack Pointer register in Basic
 \ 62FF     *RAMTOP  Logical RAM top (RAMTOP var is 23730)
 \ 6400      ORIGIN  Forth Origin
+\ 64..     *IX      Inner Interpreter pointed by IX.
 \                   FENCE @
 \                   LATEST @
 \           HERE    DP @
@@ -5658,7 +5657,7 @@ CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
 \           ...     Stack grows downward
 \ SP                SP@
 \ F840              S0 @
-\ F840              TIB     TIB @
+\ F840              #TIB     TIB @
 \                   #...     Return stack grows downward: it can hold 80 entries
 \                   #RP@
 \ F8E0              #R0 @

@@ -14,20 +14,20 @@ NEEDS .S
 \
 
 \
-: DEB-N ." Nfa: "   NFA DUP U. C@ . CR ;
-: DEB-C ." Cfa: "   CFA DUP U. @ U. CR ;
-: DEB-L ." Lfa: "   LFA DUP U. @ ID. CR ;
-: DEB-P ." Pfa: " DUMP ;
-: DEB-LIT 2+ DUP @ . ;
-: DEB-BRN DUP @ .WORD INVV
+: DEB-N   ( pfa -- ) ." Nfa: "   NFA DUP U. C@ . CR ;
+: DEB-C   ( pfa -- ) ." Cfa: "   CFA DUP U. @ U. CR ;
+: DEB-L   ( pfa -- ) ." Lfa: "   LFA DUP U. @ ID. CR ;
+: DEB-P   ( pfa -- ) ." Pfa: "   32 DUMP ;
+: DEB-LIT ( pfa -- ) 2+ DUP @ . ;
+: DEB-BRN ( pfa -- ) DUP @ .WORD INVV
   DEB-LIT TRUV ;
-: DEB-DOT DUP @ .WORD CELL+
+: DEB-DOT ( pfa -- ) DUP @ .WORD CELL+
   COUNT 2DUP INVV TYPE + CELL-
   TRUV SPACE ;
 \
 ' : @      CONSTANT <:>
 ' ABORT    CONSTANT <AB>
-' ;S       CONSTANT <;S>
+' EXIT     CONSTANT <;S>
 ' (?DO)    CONSTANT <D>
 ' (+LOOP)  CONSTANT <+L>
 ' (LOOP)   CONSTANT <L>
@@ -40,9 +40,10 @@ NEEDS .S
 ' VARIABLE CONSTANT <V>
 ' WARM     CONSTANT <!>
 \
-: ?FWD DUP DUP @ U< IF INVV THEN ;
+: ?FWD ( pfa -- pfa ) DUP DUP @ U< IF INVV THEN ;
 \
-: (DELOAD)
+: (DELOAD) ( pfa a  -- )      
+    DUP @
     CASE
         <D>   OF DEB-BRN ENDOF
         <+L>  OF DEB-BRN ENDOF
@@ -55,21 +56,23 @@ NEEDS .S
     ENDCASE
 ; 
 \
-: DELOAD
+: DELOAD ( pfa -- pfa ) 
     BEGIN
-        ?FWD DUP @
+        ?FWD    ( pfa -- )
         (DELOAD)
         CELL+
-        TRUV ?TERMINAL
-        OVER @ <AB> = OR
-        OVER @ <Q>  = OR
-        OVER @ <;S> = OR
-        OVER @ <!>  = OR
+        TRUV ?TERMINAL      \ exit for BREAK keypress
+        OVER @ <AB> = OR    \ or ABORT
+        OVER @ <Q>  = OR    \ or QUIT
+        OVER @ <;S> = OR    \ or EXIT
+        OVER @ <!>  = OR    \ or WARM
     UNTIL 
+    (DELOAD)
 ;
 \
-: (SEE)  ( cfa -- )
-    BASE @ SWAP HEX CELL+
+: (SEE)  ( xt -- )
+    BASE @ SWAP HEX 
+    >BODY
     DUP DEB-N  
     DUP DEB-L
     DUP DEB-C  

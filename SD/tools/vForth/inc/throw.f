@@ -1,15 +1,21 @@
 \
-\ catch.f
+\ throw.f
 \
 \  
 \
-: CATCH ( xt -- n | ff )
-  SP@       >R           \ xt   save data stack pointer
-  HANDLER @ >R           \ xt   and previous handler
-  RP@ HANDLER !          \ xt   set current handler
-  EXECUTE                \      execute returns if no THROW
-  R> HANDLER !           \      restore previous handler
-  R> DROP                \      discard saved data stack ptr
-  0                      \ ff
+: THROW ( ... n -- ... n )
+  ?DUP IF                \ n       0 THROW is no-op
+    HANDLER @ ?DUP IF    \ n       there was a CATCH to
+      RP!                \ n       restore prev return stack
+      R> HANDLER !       \ n       restore prev handler
+      R> SWAP >R         \ sp      n on return stack
+      SP! DROP R>        \ n       restore stack
+      \ Return to the caller of CATCH because return
+      \ stack is restored to the state that existed
+      \ when CATCH began execution
+    ELSE
+      ERROR              \         default error handler
+    THEN
+  THEN
 ;
 
