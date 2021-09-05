@@ -1,7 +1,7 @@
 \
 \ DEB.f
 \
-.( DEB ) 
+.( DEB included ) 6 EMIT
 \
 NEEDS .S
 \ debugging display

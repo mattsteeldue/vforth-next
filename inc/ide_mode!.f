@@ -1,7 +1,7 @@
 \
 \ ide_mode!.f
 \
-.( IDE_MODE! ) 
+.( IDE_MODE! included ) 6 EMIT
 \
 \ Set current NextBasic display mode
 \

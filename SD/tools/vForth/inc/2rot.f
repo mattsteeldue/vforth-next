@@ -2,6 +2,8 @@
 \ 2rot.f
 \
 
+.( 2ROT included ) 6 EMIT
+
 NEEDS CODE      \ just to be sure we are fine
 
 HEX 

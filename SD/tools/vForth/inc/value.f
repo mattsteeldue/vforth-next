@@ -1,7 +1,7 @@
 \
 \ value.f
 \
-.( VALUE )
+.( VALUE included ) 6 EMIT
 \
 : VALUE ( n ccc --   )
         (       -- n )

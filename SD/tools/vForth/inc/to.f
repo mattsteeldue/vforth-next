@@ -1,7 +1,7 @@
 \
 \ to.f
 \
-.( TO )
+.( TO included ) 6 EMIT
 \
 NEEDS [']
 NEEDS (TO)

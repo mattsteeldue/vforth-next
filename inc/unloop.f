@@ -1,7 +1,7 @@
 \
 \ unloop.f
 \
-.( UNLOOP )
+.( UNLOOP included ) 6 EMIT
 \
 \ Discards DO-LOOP limit and index from Return Stack
 \

@@ -4,6 +4,9 @@ CR DECIMAL
 
 INCLUDE SRC/Z80N-ASM.F
 
+CR
+.( ASSEMBLER Vocabulary ) 6 EMIT
+
 EXIT
 
 \ 

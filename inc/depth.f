@@ -1,7 +1,7 @@
 \
 \ DEPTH.f
 \
-.( DEPTH ) 
+.( DEPTH included ) 6 EMIT
 \
 \ return the current calculator stack depth
 \

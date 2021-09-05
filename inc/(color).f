@@ -1,7 +1,7 @@
 \
 \ (color).f
 \
-.( (COLOR) )
+.( (COLOR) included ) 6 EMIT
 \
 NEEDS PERM
 \

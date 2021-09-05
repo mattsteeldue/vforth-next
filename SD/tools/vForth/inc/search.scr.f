@@ -1,7 +1,7 @@
 \
 \ search.scr.f
 \
-.( SEARCH.SCR ) 
+.( SEARCH.SCR included ) 6 EMIT
 \
 \ accepts the next word-tex from the current input stream
 \ and compare it with the PAD content.

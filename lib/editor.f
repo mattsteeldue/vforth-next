@@ -1,7 +1,7 @@
 \
 \ editor.f
 \
-.( Line Editor vocabulary ) 
+.( EDITOR vocabulary ) 6 EMIT
 \
 
 NEEDS TEXT

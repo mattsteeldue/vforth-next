@@ -1,7 +1,7 @@
 \
 \ is.f
 \
-.( IS )
+.( IS included ) 6 EMIT
 \
 \ Tipical usage is
 \   DEFER print

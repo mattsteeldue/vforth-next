@@ -3,7 +3,7 @@
 \
 \ Hi-Col
 \
-.( LAYER13 ) 
+.( LAYER13 included ) 6 EMIT
 \
 \ Layer 1,3 – Timex HiColour (Enhanced ULA) mode, 256 w x 192 h pixels,
 \ 256 colours total, 32 x 192 cells, each capable of displaying 2 colours

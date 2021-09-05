@@ -1,7 +1,7 @@
 \
 \ 2variable.f
 \
-.( 2VARIABLE ) CR
+.( 2VARIABLE included ) 6 EMIT
 \
 \ 2variable ( d -- )  compile time (initial value)
 \           ( -- a )  run-time

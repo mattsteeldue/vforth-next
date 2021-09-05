@@ -1,9 +1,9 @@
 \
 \ s-}d.f
 \
-.( s->d )
+.( S->D is obsolete: prefer S>D ) 6 EMIT
 \
-\ Used inside colon-definition to return control to caller.
+\ Convert a number to double precision.
 \
 CREATE S->D ( n -- d )
     

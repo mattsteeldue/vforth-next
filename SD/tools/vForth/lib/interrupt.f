@@ -1,7 +1,7 @@
 \
 \ interrupt.f
 \
-.( Interrupt Handler )
+.( INTERRUPT Handler ) 6 EMIT
 \
 
 VOCABULARY INTERRUPT IMMEDIATE

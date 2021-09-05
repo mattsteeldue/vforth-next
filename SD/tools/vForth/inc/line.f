@@ -3,7 +3,7 @@
 \
 \ leave address of current screen line n
 \
-.( LINE ) 
+.( LINE included ) 6 EMIT
 \
 \ LINE
 : LINE ( n -- a )   

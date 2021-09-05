@@ -1,7 +1,7 @@
 \
 \ SQRT.f
 \
-.( SQRT )
+.( SQRT included ) 6 EMIT
 \
 \ Square root
 \

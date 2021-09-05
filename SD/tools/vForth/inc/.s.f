@@ -1,7 +1,7 @@
 \
 \ .S.f
 \
-.( .S ) 
+.( .S included ) 6 EMIT
 \
 \ show the stack content without modify it
 NEEDS DEPTH

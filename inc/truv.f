@@ -3,7 +3,7 @@
 \
 \ Inverse/True Video character sequence
 \
-.( TRUV )
+.( TRUV included ) 6 EMIT
 \
 \ TRUV
 : TRUV ( -- )

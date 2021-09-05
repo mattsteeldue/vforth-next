@@ -3,7 +3,7 @@
 \
 \ move from a to current screen line n
 \
-.( -MOVE ) 
+.( -MOVE included ) 6 EMIT
 \
 NEEDS LINE
 \

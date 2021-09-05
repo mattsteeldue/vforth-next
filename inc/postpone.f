@@ -1,7 +1,7 @@
 \
 \ postpone.f
 \
-.( POSTPONE )
+.( POSTPONE included ) 6 EMIT
 \
 : POSTPONE ( -- cccc )
     ?COMP

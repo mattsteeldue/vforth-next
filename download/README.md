@@ -9,7 +9,7 @@ HOW TO START
 
 HOW TO CONTINUE
 ---------------
-1. forth15_loader.bas  loads the CODE part, It CLEARs RAMTOP to 25343, so little Basic space is left.
+1. forth15_loader.bas  loads the CODE part, It CLEARs RAMTOP to 25087, so little Basic space is left.
 2. It then loads another small Basic program that runs LINE 20 to perform a COLD start to Forth.
 3. From Forth, BYE to quit to Basic.
 5. From Basic, RUN to perform a WARM start to Forth.

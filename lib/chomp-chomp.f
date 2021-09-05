@@ -2,7 +2,7 @@
 \ chomp-chomp.f
 \
 
-.( Chomp-Chomp.f )
+.( Chomp-Chomp GAME ) 6 EMIT
 
 MARKER CHOMP-CHOMP
 FORTH DEFINITIONS 
@@ -114,7 +114,7 @@ CODE sync-vid HEX
 
 : d+! ( n a )
   tuck 2@      \ a n d
-  rot s->d d+  \ a d+n
+  rot s>d d+  \ a d+n
   rot 2! ;
 decimal
 

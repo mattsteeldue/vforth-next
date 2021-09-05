@@ -1,7 +1,7 @@
 \
 \ (to).f
 \
-." (TO) "
+." (TO) included " 6 EMIT
 \
 \ Primitive definition used by  TO  and  +TO
 \ It shouldn't be used directly.

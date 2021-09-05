@@ -4,7 +4,7 @@
 \ Leo Brodie - Starting Forth
 \ RANDOM definition
 \ 
-.( RANDOM ) 
+.( RANDOM included ) 6 EMIT
 \
 DECIMAL
 \

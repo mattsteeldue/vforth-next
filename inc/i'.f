@@ -1,7 +1,7 @@
 \
 \ I'.f
 \
-.( I' )
+.( I' included ) 6 EMIT
 \
 \ Used inside a DO-LOOP gives the limit of this loop.
 \

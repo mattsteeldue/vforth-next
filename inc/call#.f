@@ -1,11 +1,10 @@
 \
 \ call#.f
 \
-.( call# )
+.( call# included ) 6 EMIT
 \
 \ call utility. must save BC and IX
 \
-.( Call utility. )        CR
 \ CALL# ( n1 a -- n2 )
 \ First argument n1 is passed via bc register AND a register
 \ Routine can return bc register which is pushed on TOS

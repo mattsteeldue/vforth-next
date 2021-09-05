@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210824 ) CR
+.( build 20210828 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________ 
@@ -166,9 +166,9 @@ DECIMAL
 
 \ at the end, we need to patch every reference to RP-address.
 \ we ALLOT some area to keep track of them whenever we need.
-     0  VARIABLE rp# DECIMAL 40 ALLOT
+     0  VARIABLE rp# DECIMAL 42 ALLOT
     rp# VARIABLE rp#^ 
-    rp# DECIMAL 42 ERASE
+    rp# DECIMAL 44 ERASE
 
 \ accumulate pointers to be patched at the end using final_rp_patch
 : !rp^ ( address -- )
@@ -395,8 +395,6 @@ HERE TO org^
 \ +020
                  0           ,  \ VOC-LINK
 \ +022
-
-.( here! )
                  FIRST @     , 
 \ +024
                  LIMIT @     ,
@@ -530,6 +528,75 @@ CODE 0branch ( f -- )
         C;
         
         ' 0branch TO 0branch~
+
+
+\ \ 6181h
+\ ." (+LOOP) "
+\ \ compiled by LOOP. it uses the top two values of return-stack to
+\ \ keep track of index and limit
+\ CODE (+loop) ( -- )
+\ 
+\     HERE TO loop^
+\         
+\         LDX     HL|    2 NN,    \ to consume increment
+\         ADDHL   SP|             \ save SP+2
+\         EXX
+\         POP     BC|             \ increment
+\ 
+\         HERE !rp^ 
+\         LDHL,RP              \ macro 30h +Origin
+\         
+\         LDSPHL               \ Use SP as temporary RP
+\         POP     HL|
+\         POP     DE|
+\         ANDA     A|
+\         SBCHL   DE|             \ index - limit
+\         ADDHL   BC|             \ index - limit + increment
+\         BIT      7|    B|       \ opposite of increment sign
+\         JRF     Z'|    HOLDPLACE \ if increment is negative then
+\             CCF
+\         HERE DISP, \ THEN,
+\         JRF    CY'|    HOLDPLACE
+\             \ stay in loop, increment index
+\             
+\             HERE !rp^ 
+\             LDHL,RP              \ macro 30h +Origin
+\             
+\             LDSPHL
+\             POP     HL|
+\             ADDHL   BC|             \ index + increment
+\             PUSH    HL|
+\             EXX
+\             LDSPHL
+\             JP         branch^  AA,
+\         HERE DISP, \ THEN,
+\         LDX     HL|    0 NN,   
+\         ADDHL   SP|            
+\ 
+\         HERE !rp^
+\         LDRP,HL              \ macro 30h +Origin
+\         
+\         EXX
+\         LDSPHL
+\         INCX    BC|
+\         INCX    BC|
+\         Next
+\         C;
+\ 
+\ 
+\ \ 61BAh
+\ ." (LOOP) "
+\ \ same as (LOOP) but index is incremented by n (instead of just 1)
+\ CODE (loop)    ( n -- )
+\ 
+\         LDX     HL|    1 NN,
+\         PUSH    HL|             \ increment
+\         JP      loop^  AA,
+\         C;
+\ 
+\         ' (loop) TO (loop)~
+\ 
+
 
 
 \ 6181h
@@ -1257,7 +1324,7 @@ CODE key ( -- c )
 \ 637Bh
 .( ?TERMINAL )
 \ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
-CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
+CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
          
         LDX     HL| 0 NN,
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
@@ -1265,7 +1332,7 @@ CODE ?terminal ( -- 0 | 1 ) ( true if BREAK pressed )
         CALL    HEX 1F54 AA,
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
         JRF    CY'| HOLDPLACE
-            INC     L'|
+            DECX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1716,10 +1783,10 @@ CODE exit ( -- )
 
 
 \ 64E5h
-.( LEAVE )
+.( lastl aka old LEAVE )
 \ set the limit-of-loop equal to the current index
 \ this forces to leave from loop at the end of the current iteration
-CODE leave ( -- )
+CODE lastl ( -- )
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
@@ -1735,21 +1802,21 @@ CODE leave ( -- )
         C;       
 
 
-\ CODE (leave) ( -- )
-\ 
-\         HERE !rp^ 
-\         LDHL,RP              \ macro 30h +Origin
-\         
-\         LDX     DE|  4  NN,        
-\         ADDHL   DE|
-\ 
-\         HERE !rp^
-\         LDRP,HL              \ macro 30h +Origin
-\         
-\         JP      branch^  AA,
-\ 
-\         Next
-\         C;       
+CODE (leave) ( -- )
+
+        HERE !rp^ 
+        LDHL,RP              \ macro 30h +Origin
+        
+        LDX     DE|  4  NN,  \ UNLOOP index & limit from Return Stack      
+        ADDHL   DE|
+
+        HERE !rp^
+        LDRP,HL              \ macro 30h +Origin
+        
+        JP      branch^  AA, \ jump out of loop
+
+        Next
+        C;       
 
 
 \ 64FCh
@@ -1814,7 +1881,7 @@ CODE r  ( -- n )
 
 \ 652Ch
 .( 0= )
-\ true (1) if n is zero, false (0) elsewere
+\ true (-1) if n is zero, false (0) elsewere
 CODE 0= ( n -- f )
          
         POP     HL|
@@ -1822,7 +1889,7 @@ CODE 0= ( n -- f )
         ORA      H|
         LDX     HL|    0 NN,
         JRF    NZ'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|           \ true
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1837,14 +1904,14 @@ CODE not  ( n -- f )
 
 \ 6540h
 .( 0< )
-\ true (1) if n is less than zero, false (0) elsewere
+\ true (-1) if n is less than zero, false (0) elsewere
 CODE 0< ( n -- f )
          
         POP     HL|
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    NC'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|           \ true
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1852,7 +1919,7 @@ CODE 0< ( n -- f )
 
 \ 6553h
 .( 0> )
-\ true (1) if n is greater than zero, false (0) elsewere
+\ true (-1) if n is greater than zero, false (0) elsewere
 CODE 0> ( n -- f )
          
         POP     HL|
@@ -1863,7 +1930,7 @@ CODE 0> ( n -- f )
         JRF    CY'|    HOLDPLACE    
         ANDA     A|
         JRF     Z'|    HOLDPLACE
-            INC     L'|
+            DECX      HL|           \ true
         HERE DISP, HERE DISP, \ THEN, THEN,
         Psh1  
         C;
@@ -2701,7 +2768,7 @@ DECIMAL
   56     user    hld       \ last character during a number conversion output
   58     user    use       \ address of last used block
   60     user    prev      \ address of previous used block
-  62     user    lp        \ Loop Pointer...    
+  62     user    lp        \ Case Pointer...    
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last ACCEPT
@@ -2780,15 +2847,15 @@ CODE - ( n1 n2 -- n3 )
 
 \ 6987h
 .( U< )
-\ true (1) if unsigned u1 is less than u2.
+\ true (-1) if unsigned u1 is less than u2.
 CODE u< ( u1 u2 -- f )
         POP     DE|
         POP     HL|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| 1 NN,
+        LDX     HL| -1 NN,          \ true
         JRF    CY'| HOLDPLACE
-            DEC     L'|
+            INCX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -2796,20 +2863,21 @@ CODE u< ( u1 u2 -- f )
 
 \ 696Bh
 .( < )
+\ true (-1) if n1 is less than n2
 CODE <  ( n1 n2 -- f )
         POP     DE|
         POP     HL|
-        LD      A'|  H|
+        LD      A'|   H|
         XORN    HEX 80   N,  DECIMAL
-        LD      H'|  A|
-        LD      A'|  D|
+        LD      H'|   A|
+        LD      A'|   D|
         XORN    HEX 80   N,  DECIMAL
-        LD      D'|  A|
+        LD      D'|   A|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| 1 NN,
+        LDX     HL| -1 NN,          \ true
         JRF    CY'| HOLDPLACE
-            DEC     L'|
+            INCX     HL|
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -3188,6 +3256,23 @@ CODE -dup ( n -- 0 | n n )
     ;
 
 
+.( LEAVE )
+: leave ( -- )
+    compile (leave)         \ unloop and branch
+    here >r 0 ,             \ save HERE and compile placeholder
+    0 0                     \ dummy stack entry.
+                            \ rotate stack from csp to sp.
+    sp@ dup cell+ cell+     ( csp h 0 h 3 h 2 x x sp sp+4 )
+    tuck                    
+    csp @ swap -            ( csp h 0 h 3 h 2 x x sp+4 sp csp-sp+4 )
+    cmove                   ( csp x x h 0 h 3 h 2 )
+    csp @ cell-             
+                            \ put saved HERE at csp-2 
+    r> over !               ( csp H x h 0 h 3 h 2 )
+    cell- 0 swap !          ( csp H 0 h 0 h 3 h 2 )
+; immediate    
+
+
 \ 6C43h
 .( -TRAILING )
 \ Assumes that an n1 bytes-long string is stored at address a 
@@ -3195,7 +3280,7 @@ CODE -dup ( n -- 0 | n n )
 \ Finds n2 as the position of the first character after the word.
 : -trailing ( a n1 -- a n2 )
     dup 0
-    Do
+    ?Do
         2dup + 1-
         c@ bl -
         If
@@ -3215,7 +3300,7 @@ CODE -dup ( n -- 0 | n n )
 : accept ( a n1 -- n2 )
     over + over   ( a  n1+a a       ) 
     0 -rot        ( a  0    a+n1  a ) 
-    Do            ( a  0 ) 
+    ?Do           ( a  0 ) 
         drop key  ( a  c ) 
         dup       ( a  c  c )
         [ hex 0E ] Literal +origin 
@@ -3242,11 +3327,11 @@ CODE -dup ( n -- 0 | n n )
             If 
                 drop bl ( a  bl )
                 0       ( a  c  0 )
-                leave
+                \ lastl
             Else 
                 dup     ( a  c  c )
             Endif
-            
+
             i c!        ( a  c )
             dup bl <    ( a  c  c<BL )  \ patch ghost word
             If
@@ -3259,6 +3344,7 @@ CODE -dup ( n -- 0 | n n )
         
         0 i 1+ ! \ zero pad
         i 
+        i c@ 0= If leave Endif
     Loop 
     swap - 1+ 
     dup span ! 
@@ -5187,9 +5273,10 @@ decimal
         .r space
         0 i .line 
         ?terminal If
-            leave
+            leave 
         Endif
     Loop
+    cr
     ;
 
 
@@ -5218,7 +5305,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210824" -1 allot ]
+    [ decimal 13 here ," build 20210828" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5273,9 +5360,12 @@ decimal
         dup 0= If video quit Endif
         dup [ decimal 13 ] literal = If drop 0 Endif \ Then
         dup [ decimal 10 ] literal = If drop 0 Endif \ Then
-        dup  0=  If leave Endif \ Then
+        \ dup  0=  If 
+        \     lastl
+        \ Endif \ Then
         i c! ( n2 )
         1+ ( increment n2 )
+        i c@ 0= If leave Endif
     Loop  ( n2 )
     ;
 
@@ -5509,21 +5599,6 @@ decimal
     here 3
     ; 
     immediate
-
-
-\ .( LEAVE )
-\ : leave ( -- )
-\     compile (leave)
-\     here >r 0 ,
-\     0 0
-\     sp@ dup cell+ cell+
-\     tuck
-\     csp @ swap -
-\     cmove
-\     csp @ cell -
-\     r> over !
-\     cell- 0 swap !
-\ ; immediate    
 
 
 \ 7fa0 new
@@ -5791,6 +5866,7 @@ RENAME   query          QUERY
 \ RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
 RENAME   -trailing      -TRAILING
+RENAME   leave          LEAVE
 RENAME   type           TYPE  
 RENAME   bounds         BOUNDS  
 RENAME   count          COUNT 
@@ -5946,7 +6022,8 @@ RENAME   r              R
 RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
-RENAME   leave          LEAVE
+RENAME   (leave)        (LEAVE)
+\ RENAME   lastl          LASTL
 RENAME   exit           EXIT  
 RENAME   rp!            RP! 
 RENAME   rp@            RP@ 

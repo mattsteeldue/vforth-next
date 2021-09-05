@@ -1,7 +1,7 @@
 \
 \ locate.f
 \
-.( LOCATE )
+.( LOCATE Utility ) 6 EMIT
 \
 
 NEEDS TEXT

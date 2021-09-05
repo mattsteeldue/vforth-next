@@ -3,18 +3,20 @@
 \
 \ Case-of structure 
 \
-.( Case-of structure. )  
+.( CASE included ) 6 EMIT
+\
 \ Used in the form:
-\  n0 CASE  n1 OF ... ENDOF
-\           ...
-\           nz OF ... ENDOF  
-\                 ... ( else-part )
+\  n0  CASE 
+\   n1  OF  ...  ENDOF
+\   ...
+\   nz  OF  ...  ENDOF  
+\   ... ( else-part )
 \  ENDCASE
 \
 : CASE ( n0 -- ) \ begin case-of structure
     ?COMP 
-    CSP @ 
-    !CSP 
+    LP @        \ CSP @ 
+    SP@ LP !    \ !CSP 
     4 
 ; IMMEDIATE
 
@@ -47,10 +49,11 @@
     4 ?PAIRS 
     COMPILE DROP
     BEGIN 
-        SP@ CSP @ -
+        SP@ 
+        LP @ -      \ CSP @ -
     WHILE 
         2 [COMPILE] THEN
     REPEAT 
-    CSP ! 
+    LP !            \ CSP ! 
 ; IMMEDIATE
 \

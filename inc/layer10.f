@@ -3,7 +3,7 @@
 \
 \ Lo-Res
 \
-.( LAYER10 ) 
+.( LAYER10 included ) 6 EMIT
 \
 \ Layer 1,0 – LoRes (Enhanced ULA) mode, 128 w x 96 h pixels, 256 colours
 \ total, 1 colour per pixel

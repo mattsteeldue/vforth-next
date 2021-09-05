@@ -1,7 +1,7 @@
 \
 \ see.f
 \
-.( SEE Decompiler ) 
+.( SEE Inspector ) 6 EMIT
 \
 DECIMAL
 \
@@ -32,6 +32,7 @@ NEEDS .S
 ' (+LOOP)  CONSTANT <+L>
 ' (LOOP)   CONSTANT <L>
 ' BRANCH   CONSTANT <B>
+' (LEAVE)  CONSTANT <LE>
 ' 0BRANCH  CONSTANT <0B>
 ' LIT      CONSTANT <LIT>
 ' (.")     CONSTANT <.">
@@ -49,6 +50,7 @@ NEEDS .S
         <+L>  OF DEB-BRN ENDOF
         <L>   OF DEB-BRN ENDOF
         <B>   OF DEB-BRN ENDOF
+        <LE>  OF DEB-BRN ENDOF
         <0B>  OF DEB-BRN ENDOF
         <LIT> OF DEB-LIT ENDOF
         <.">  OF DEB-DOT ENDOF

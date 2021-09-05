@@ -1,7 +1,7 @@
 \
 \ bsearch.f
 \
-.( BSEARCH )
+.( BSEARCH Block search utility ) 6 EMIT
 \ search for text word inside the first 1000 screens.
 
 NEEDS TEXT

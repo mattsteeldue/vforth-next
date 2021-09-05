@@ -1,7 +1,7 @@
 \
 \ chars.f
 \
-.( CHAR+ )
+.( CHAR+ included ) 6 EMIT 
 \
 \
 : CHAR+ ( a1 -- a2 )

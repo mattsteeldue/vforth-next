@@ -259,3 +259,17 @@ Large-File Editor (LED) - Improving work-in-progress
 Fix to 20210814 that has some bug.
 Working on LED, i inadvertently messed up normal LOAD and NEEDS.
 Sorry for the trouble
+
+
+\ build 20210828
+Migrating standard  
+  ;S    is obsolete, prefer EXIT 
+  S->D  is obsolete, prever S>D
+but for backward compatibility both ;S and S->D are available via NEEDS
+Improved LEAVE: now it really jumps off the DO-LOOP structure, while until now it just set the loop-limit to current index.
+Quasi-standard Test Suite (https://forth-standard.org/standard/testsuite) is quite reliable now: try  
+  NEEDS TESTING 
+  INCLUDE test/core-tests.f
+  
+  
+  

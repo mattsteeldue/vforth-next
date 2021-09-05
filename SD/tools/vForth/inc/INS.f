@@ -1,7 +1,7 @@
 \
 \ INS.f
 \
-.( INS ) 
+.( INS included ) 6 EMIT
 \
 \ Quick reference
 \ [ TIB ]  <->  [ PAD ]  <->   [BLOCK]

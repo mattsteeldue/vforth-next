@@ -1,7 +1,7 @@
 \
 \ recurse.f
 \
-.( RECURSE ) CR
+.( RECURSE included ) 6 EMIT
 \
 \ recurse ( -- )  compile time 
 : RECURSE ( -- )

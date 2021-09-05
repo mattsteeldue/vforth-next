@@ -1,7 +1,7 @@
 \
 \ bcopy.f
 \
-.( BCOPY ) CR
+.( BCOPY included ) 6 EMIT
 \
 \ move from a to current screen line n
 \

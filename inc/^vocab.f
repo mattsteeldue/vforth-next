@@ -1,7 +1,7 @@
 \
 \ .vocab.f
 \
-.( ?VOCAB ) 
+.( ?VOCAB included ) 6 EMIT
 \
 
 : .VOCAB    ( voc-link -- ) 

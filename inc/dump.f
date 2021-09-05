@@ -1,7 +1,7 @@
 \
 \ dump.f
 \
-.( DUMP Inspector ) 
+.( DUMP included ) 6 EMIT
 \
 DECIMAL
 \
@@ -10,6 +10,7 @@ DECIMAL
         I C@ S>D <# # # #> TYPE SPACE 
     LOOP 
 ;
+
 \
 : DUMP  ( a u -- )
     BASE @ >R 

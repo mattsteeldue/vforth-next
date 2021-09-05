@@ -3,7 +3,7 @@
 \
 \ accept following text to PAD
 \
-.( TEXT ) 
+.( TEXT included ) 6 EMIT
 \
 \ TEXT
 : TEXT ( c -- )     

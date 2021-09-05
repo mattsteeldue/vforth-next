@@ -1,7 +1,7 @@
 \
 \ rename.f
 \ 
-.( RENAME Simple word renamer ) 
+.( RENAME  included ) 6 EMIT
 \
 \ old and new word-names must have the same length
 \

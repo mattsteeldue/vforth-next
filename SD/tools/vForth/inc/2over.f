@@ -1,6 +1,7 @@
 \
 \ 2over.f
 \
+.( 2OVER included ) 6 EMIT
 
 NEEDS CODE      \ just to be sure we are fine
 

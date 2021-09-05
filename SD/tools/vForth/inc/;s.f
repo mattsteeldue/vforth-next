@@ -1,7 +1,7 @@
 \
 \ ;s.f
 \
-.( ;s )
+.( ;S is obsolete: prefer EXIT ) 6 EMIT
 \
 \ Used inside colon-definition to return control to caller.
 \

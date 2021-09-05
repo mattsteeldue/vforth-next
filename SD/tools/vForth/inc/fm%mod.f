@@ -14,7 +14,7 @@
 
 NEEDS SM/REM 
 
-.( FM/MOD ) 
+.( FM/MOD included ) 6 EMIT
 
 : FM/MOD
   DUP >R SM/REM OVER DUP

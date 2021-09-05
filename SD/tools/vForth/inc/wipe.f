@@ -1,7 +1,7 @@
 \
 \ WIPE.f
 \
-.( WIPE )
+.( WIPE included ) 6 EMIT
 \
 \ Set content of current Screen to blanks
 \

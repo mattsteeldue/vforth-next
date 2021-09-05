@@ -19,7 +19,7 @@
 \ No Floating-Point support yet.
 \
 
-.( Test Suite )
+.( TESTING Suite ) 6 EMIT
 
 DECIMAL 
 

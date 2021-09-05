@@ -1,7 +1,7 @@
 \
 \ within.f
 \
-.( WITHIN )
+.( WITHIN included ) 6 EMIT
 \
 : WITHIN ( test low high -- )
     OVER -

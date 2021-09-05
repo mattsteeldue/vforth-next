@@ -1,7 +1,7 @@
 \
 \ line-editor.f
 \
-.( Line Editor ) 
+.( LINE-EDITOR included ) 6 EMIT
 \
 MARKER LINE-EDITOR
 \

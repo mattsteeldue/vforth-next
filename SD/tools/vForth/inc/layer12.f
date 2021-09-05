@@ -3,7 +3,7 @@
 \
 \ Hi-Res
 \
-.( LAYER12 ) 
+.( LAYER12 included ) 6 EMIT
 \
 \ Layer 1,2 – Timex HiRes (Enhanced ULA) mode, 512 w x 192 h pixels,
 \ 256 colours total, only 2 colours on screen
