@@ -10,7 +10,7 @@ ON REAL Sinclair ZX Spectrum Next
 
 
 
-ON EMULATOR CSpect
+ON EMULATOR #CSpect
 ------------------
 
 The operations of points 1. and 2. has to be performed within an SD image like   tbblue.mmc  
