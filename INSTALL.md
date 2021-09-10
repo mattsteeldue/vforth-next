@@ -4,7 +4,8 @@ ON REAL Sinclair ZX Spectrum Next
 ---------------------------------
 
 1. Intall, just copy SD/tools/vForth content into SD  at C:/tools/vForth
-   or extract the very same content from the latest vforth-next/download/vForth_15e*.zip file
+   or extract the very same content from the latest zipped file
+   vforth-next/download/vForth_15e*.zip file
 
 2. Run, from File-Browser execute the Basic program C:/tools/vForth/Forth15_Loader.bas
 
