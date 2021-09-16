@@ -1,7 +1,7 @@
 \
 \ ink..f
 \
-.( INK. included ) 6 EMIT
+.( INK. )
 \
 NEEDS (COLOR)
 \

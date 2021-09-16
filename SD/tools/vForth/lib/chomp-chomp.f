@@ -2,7 +2,7 @@
 \ chomp-chomp.f
 \
 
-.( Chomp-Chomp GAME ) 6 EMIT
+.( Chomp-Chomp GAME ) 
 
 MARKER CHOMP-CHOMP
 FORTH DEFINITIONS 

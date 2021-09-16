@@ -1,7 +1,7 @@
 \
 \ 2over.f
 \
-.( 2OVER included ) 6 EMIT
+.( 2OVER )
 
 NEEDS CODE      \ just to be sure we are fine
 

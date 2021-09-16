@@ -5,7 +5,7 @@
 \ FAR HP@ HEAP H" S" +C +" HEAP-INIT HEAP-DONE
 \ See "Heap memory facility" in PDF documentation for details
 \
-.( POINTER included ) 6 EMIT
+.( POINTER )
 \
 NEEDS FAR
 NEEDS HEAP

@@ -1,7 +1,7 @@
 \
 \ s-}d.f
 \
-.( S->D is obsolete: prefer S>D ) 6 EMIT
+.( S->D is obsolete: prefer S>D ) 
 \
 \ Convert a number to double precision.
 \

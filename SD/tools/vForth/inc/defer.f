@@ -1,7 +1,7 @@
 \
 \ defer.f
 \
-.( DEFER included ) 6 EMIT
+.( DEFER )
 \
 \ Tipical usage is
 \   DEFER print

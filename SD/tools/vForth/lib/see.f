@@ -1,7 +1,7 @@
 \
 \ see.f
 \
-.( SEE Inspector ) 6 EMIT
+.( SEE Inspector ) 
 \
 DECIMAL
 \

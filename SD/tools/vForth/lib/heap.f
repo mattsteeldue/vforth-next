@@ -6,7 +6,7 @@
 \ See "Heap memory facility" in PDF documentation for details
 \
 \
-.( HEAP memory management ) 6 EMIT
+.( HEAP memory management ) 
 \
 NEEDS SKIP-PAGE
 NEEDS FAR

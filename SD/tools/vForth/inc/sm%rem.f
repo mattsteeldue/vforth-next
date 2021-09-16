@@ -12,7 +12,7 @@
 
 \
 
-.( SM/REM included ) 6 EMIT 
+.( SM/REM )
 
 : SM/REM
   DUP >R ABS                \  d  un        \  ns

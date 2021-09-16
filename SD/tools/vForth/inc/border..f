@@ -1,7 +1,7 @@
 \
 \ border..f
 \
-.( BORDER. included ) 6 EMIT
+.( BORDER. )
 \
 NEEDS CALL#
 \

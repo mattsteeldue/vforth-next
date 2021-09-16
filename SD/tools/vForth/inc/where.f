@@ -1,7 +1,7 @@
 \
 \ where.f
 \
-.( WHERE included ) 6 EMIT
+.( WHERE )
 \
 \ \ usually used after an error during LOAD:
 \

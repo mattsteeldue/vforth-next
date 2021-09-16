@@ -1,7 +1,7 @@
 \
 \ .cpu.f
 \
-.( .cpu included ) 6 EMIT
+.( .cpu )
 \
 \ .cpu
 \ shows the cpu name (Z80)

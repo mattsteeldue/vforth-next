@@ -1,7 +1,7 @@
 \
 \ unused.f
 \
-.( UNUSED included ) 6 EMIT
+.( UNUSED )
 \
 \ unused
 : UNUSED ( -- n ) \ return free dictionary space

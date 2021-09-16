@@ -1,7 +1,7 @@
 \
 \ dump.f
 \
-.( DUMP included ) 6 EMIT
+.( DUMP )
 \
 DECIMAL
 \

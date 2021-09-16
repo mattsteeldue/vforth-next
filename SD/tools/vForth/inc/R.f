@@ -1,7 +1,7 @@
 \
 \ R.f
 \
-.( R obsolete: prefer R@ ) 6 EMIT
+.( R obsolete: prefer R@ ) 
 \
 \ Return-Stack Top value - OLD VERSION
 \

@@ -1,7 +1,7 @@
 \
 \ find.f
 \
-.( FIND included ) 6 EMIT
+.( FIND )
 \
 ( c-addr -- c-addr 0 | xt 1 | xt -1 )
 \ Find the definition named in the counted string at c-addr. 

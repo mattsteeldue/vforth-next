@@ -1,7 +1,7 @@
 \
 \ align.f
 \
-.( ALIGN included ) 6 EMIT
+.( ALIGN )
 \
 \ force HERE to an even address.
 : ALIGN ( -- )

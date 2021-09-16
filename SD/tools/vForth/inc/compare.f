@@ -1,7 +1,7 @@
 \
 \ compare.f
 \
-.( COMPARE included ) 6 EMIT
+.( COMPARE )
 \
 \ Compare two strings and return  0 if they're equal
 \ or  1 if s1 > s2  or  -1 if s1 < s2

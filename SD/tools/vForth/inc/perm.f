@@ -1,7 +1,7 @@
 \
 \ perm.f
 \
-.( PERM included ) 6 EMIT
+.( PERM )
 \
 \ makes permanent the last color setting
 \

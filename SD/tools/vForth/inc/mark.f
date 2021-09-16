@@ -4,7 +4,7 @@
 \
 \ print in reverse the text using TYPE
 \
-.( MARK included ) 6 EMIT
+.( MARK )
 
 \
 NEEDS INVV
