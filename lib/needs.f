@@ -1,4 +1,4 @@
-.( NEEDS included ) 6 EMIT
+.( NEEDS included ) 
 \ check for cccc exists in vocabulary
 \ if it doesn't then  INCLUDE  inc/cccc.F
 DECIMAL

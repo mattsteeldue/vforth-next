@@ -1,7 +1,7 @@
 \
 \ edit.f
 \
-.( EDIT Full Screen Editor ) 6 EMIT
+.( EDIT Full Screen Editor ) 
 \
 
 NEEDS INVV

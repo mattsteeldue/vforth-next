@@ -1,7 +1,7 @@
 \
 \ editor.f
 \
-.( EDITOR vocabulary ) 6 EMIT
+.( EDITOR vocabulary ) 
 \
 
 NEEDS TEXT
