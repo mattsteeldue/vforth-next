@@ -1,7 +1,7 @@
 \
 \ s}d.f
 \
-.( S>D included. It substitutes S->D ) 6 EMIT
+.( S>D included. It substitutes S->D ) 
 \
 \ Convert a number to double precision.
 \

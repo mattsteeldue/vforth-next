@@ -1,7 +1,7 @@
 \
 \ source.f
 \
-.( SOURCE included ) 6 EMIT
+.( SOURCE )
 
 \ a is the address of, and u is the number of characters in, the input buffer.
 

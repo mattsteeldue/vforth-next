@@ -5,7 +5,7 @@
 \ FAR HP@ POINTER H" S" +C +" HEAP-INIT HEAP-DONE
 \ See "Heap memory facility" in PDF documentation for details
 \
- .( <FAR included s) 6 EMIT
+ .( <FAR )
 \
 \ given an address E000-FFFF and a page number n (32-39) or 20h-27h)
 \ reverse of >FAR: encodes a FAR address compressing

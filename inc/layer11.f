@@ -3,7 +3,7 @@
 \
 \ ULA
 \
-.( LAYER11 included ) 6 EMIT
+.( LAYER11 )
 \
 \ Layer 1,1 – Standard Res (Enhanced ULA) mode, 256 w x 192 h pixels,
 \ 256 colours total, 32 x 24 cells, each capable of displaying 2 colours

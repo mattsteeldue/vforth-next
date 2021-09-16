@@ -1,7 +1,7 @@
 \
 \ K.f
 \
-.( K included ) 6 EMIT
+.( K )
 \
 \ Used inside a DO-LOOP gives the index of the second outer loop 
 \

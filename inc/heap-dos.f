@@ -5,7 +5,7 @@
 \ FAR HP@ POINTER HEAP H" S" +C +" HEAP-INIT HEAP-DONE
 \ See "Heap memory facility" in PDF documentation for details
 \
-.( HEAP-DOS included ) 6 EMIT
+.( HEAP-DOS )
 \
 \ allocate or free 8K-pages number $20 to $27.
 \ This is 64K of ram avalable for Heap Management

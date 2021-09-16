@@ -1,7 +1,7 @@
 \
 \ save.f
 \
-.( SAVE included ) 6 EMIT
+.( SAVE )
 \
 \ save
 : SAVE ( -- ) \ save all modified screens flushing to disk

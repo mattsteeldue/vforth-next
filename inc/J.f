@@ -1,7 +1,7 @@
 \
 \ J.f
 \
-.( J included ) 6 EMIT
+.( J )
 \
 \ Used inside a DO-LOOP gives the index of the first outer loop 
 \

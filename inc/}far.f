@@ -5,7 +5,7 @@
 \ FAR HP@ POINTER H" S" +C +" HEAP-INIT HEAP-DONE
 \ See "Heap memory facility" in PDF documentation for details
 \
-.( >FAR included ) 6 EMIT
+.( >FAR )
 \
 \ decode bits 765 of H as one of the 8K-page between 32 and 39 (20h-27h)
 \ take lower bits of H and L as an offset from E000h

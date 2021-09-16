@@ -1,7 +1,7 @@
 \
 \ aligned.f
 \
-.( ALIGNED included ) 6 EMIT
+.( ALIGNED )
 \
 \ force to an even address.
 : ALIGNED ( a1 -- a2 )

@@ -3,7 +3,7 @@
 \
 \ Case-of structure 
 \
-.( CASE included ) 6 EMIT
+.( CASE )
 \
 \ Used in the form:
 \  n0  CASE 

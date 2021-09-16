@@ -1,7 +1,7 @@
 \
 \ catch.f
 \
-.( CATCH included ) 6 EMIT
+.( CATCH )
 \  
 \
 : CATCH ( xt -- n | ff )

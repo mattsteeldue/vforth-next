@@ -6,7 +6,7 @@
 \ avoids any loss of precision
 
 \
-.( M*/ included ) 6 EMIT
+.( M*/ )
 \
 \     dH dL  x
 \         m  =

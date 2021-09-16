@@ -1,7 +1,7 @@
 \
 \ throw.f
 \
-.( TEXT included ) 6 EMIT
+.( TEXT )
 \
 : THROW ( ... n -- ... n )
   ?DUP IF                \ n       0 THROW is no-op

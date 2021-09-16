@@ -1,7 +1,7 @@
 \
 \ binary.f  
 \
-.( BINARY included ) 6 EMIT
+.( BINARY )
 \
 : BINARY ( -- )
     2 BASE !

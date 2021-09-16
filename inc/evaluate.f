@@ -5,7 +5,7 @@
 \ In this implementation EVAULATE cannot be nested.
 \ Maximum string length is 512.
 \
-.( EVALUATE included ) 6 EMIT
+.( EVALUATE )
 \
 : EVALUATE ( a u -- )
 

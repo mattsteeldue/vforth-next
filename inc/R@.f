@@ -1,7 +1,7 @@
 \
 \ R@.f
 \
-.( R@ included. It substitutes R ) 6 EMIT
+.( R@ included. It substitutes R ) 
 \
 \ Return-Stack Top value
 \

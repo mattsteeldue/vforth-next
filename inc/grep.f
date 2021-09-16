@@ -1,7 +1,7 @@
 \
 \ grep.f
 \
-.( GREP included ) 6 EMIT
+.( GREP )
 \ search for text word inside the first 1000 screens.
 
 NEEDS BSEARCH

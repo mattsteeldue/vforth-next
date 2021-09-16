@@ -1,7 +1,7 @@
 \
 \ room.f
 \
-.( ROOM included ) 6 EMIT
+.( ROOM )
 \
 NEEDS UNUSED
 \ room

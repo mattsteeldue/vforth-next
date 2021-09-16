@@ -1,7 +1,7 @@
 \
 \ call#.f
 \
-.( call# included ) 6 EMIT
+.( call# )
 \
 \ call utility. must save BC and IX
 \

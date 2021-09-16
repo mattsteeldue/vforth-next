@@ -2,7 +2,7 @@
 \ 2rot.f
 \
 
-.( 2ROT included ) 6 EMIT
+.( 2ROT )
 
 NEEDS CODE      \ just to be sure we are fine
 

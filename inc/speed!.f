@@ -7,7 +7,7 @@
 \ 2 --> 14.0 MHz
 \ 3 --> 28.0 MHz
 \
-.( SPEED! included ) 6 EMIT
+.( SPEED! )
 \
 HEX
 \

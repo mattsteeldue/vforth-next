@@ -1,7 +1,7 @@
 \
 \ chars.f
 \
-.( CHARS included ) 6 EMIT
+.( CHARS )
 \
 \
 : CHARS ( n1 -- n2 )

@@ -1,7 +1,7 @@
 \
 \ %noname.f
 \
-.( :NONAME included ) 6 EMIT
+.( :NONAME )
 \
 \ Tipical usage is
 \   DEFER print

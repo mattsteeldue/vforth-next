@@ -1,7 +1,7 @@
 \
 \ 3DUP.f
 \
-.( 3DUP included ) 6 EMIT
+.( 3DUP )
 \
 \ duplicate the 3 top element on stack.
 \

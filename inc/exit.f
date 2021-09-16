@@ -1,7 +1,7 @@
 \
 \ exit.f
 \
-.( EXIT included. It substitutes ;S ) 6 EMIT
+.( EXIT included. It substitutes ;S ) 
 \
 \ Used inside colon-definition to return control to caller.
 \

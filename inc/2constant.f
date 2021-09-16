@@ -1,7 +1,7 @@
 \
 \ 2constant.f
 \
-.( 2CONSTANT included ) 6 EMIT
+.( 2CONSTANT )
 \
 \ 2constant ( d -- )  compile time
 \           ( -- d )  run-time
