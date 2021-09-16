@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210828 ) CR
+.( build 20210916 ) CR
 \
 \ NextZXOS version
 \ ______________________________________________________________________ 
@@ -1783,23 +1783,23 @@ CODE exit ( -- )
 
 
 \ 64E5h
-.( lastl aka old LEAVE )
+\ .( lastl aka old LEAVE )
 \ set the limit-of-loop equal to the current index
 \ this forces to leave from loop at the end of the current iteration
-CODE lastl ( -- )
-
-        HERE !rp^ 
-        LDHL,RP              \ macro 30h +Origin
-
-        LD      E'| (HL)|  
-        INCX    HL|
-        LD      D'| (HL)|  
-        INCX    HL|
-        LD   (HL)'|    E|  
-        INCX    HL|
-        LD   (HL)'|    D|
-        Next
-        C;       
+\ CODE lastl ( -- )
+\ 
+\         HERE !rp^ 
+\         LDHL,RP              \ macro 30h +Origin
+\ 
+\         LD      E'| (HL)|  
+\         INCX    HL|
+\         LD      D'| (HL)|  
+\         INCX    HL|
+\         LD   (HL)'|    E|  
+\         INCX    HL|
+\         LD   (HL)'|    D|
+\         Next
+\         C;       
 
 
 CODE (leave) ( -- )
@@ -5172,7 +5172,7 @@ decimal
 .( D.R )
 : d.r    ( d n -- )
     >r
-    swap over dabs 
+    tuck dabs 
     <# #s sign #> 
     r>
     over - spaces
@@ -5305,7 +5305,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20210828" -1 allot ]
+    [ decimal 13 here ," build 20210916" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

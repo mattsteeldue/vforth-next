@@ -3,6 +3,8 @@
 \ Floating point option
 \ _________________
 
+.( Floating point option )
+
 \ ______________________________________________________________________
 
 \ A floating point number is stored in stack in 4 bytes (HLDE) 
@@ -22,16 +24,10 @@
 
 \ NEEDS ASSEMBLER
 NEEDS 2ROT
+NEEDS 2OVER
 NEEDS [']
 
-MARKER TASK
-
-: FORGET-FP
-    \ Patch INTERPRET 
-    ['] NUMBER
-    [ ' INTERPRET >BODY HEX 20 + ] LITERAL !
-    TASK
-;
+MARKER FP-MARKER
 
 DECIMAL 
 
@@ -44,10 +40,10 @@ CODE FOP
     HEX
     E1 C,           \ POP     HL|     
     7D C,           \ LD      A'|    L|
-    32 C, HERE 0 ,  \ LD()A   HERE 0 AA,
+    32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   *FIX FOLLOWING BYTE*
     C5 C,           \ PUSH    BC|
     EF C,           \ RST     28|
-    HERE SWAP !     \         HERE SWAP !
+    HERE SWAP !     \         HERE SWAP !  *THIS BYTE IS FIXED*
     38 C,           \         HEX 38 C, \ this location is patched each time
     38 C,           \         HEX 38 C, \ end of calculation
     C1 C,           \ POP     BC|
@@ -66,7 +62,7 @@ CODE >W
     CB C, 15 C,     \ RL       L|         \ To keep sign as the msb of H,   
     CB C, 14 C,     \ RL       H|         \ so you can check for sign in the
     CB C, 1D C,     \ RR       L|         \ integer-way. Sorry.
-    06 C, FC C,     \ LDN     B'|    HEX 00 N,  
+    06 C, FC C,     \ LDN     B'|    HEX 0FC N,  
     4B C,           \ LD      C'|    E|    
     5D C,           \ LD      E'|    L|    
     7C C,           \ LD      A'|    H|    
@@ -111,7 +107,8 @@ DECIMAL
 
 
 \ activate floating-point numbers
-: FLOATING 1 NMODE ! ;
+\ : FLOATING 1 NMODE ! ;
+
 
 \ deactivate floating-point numbers
 : INTEGER  0 NMODE ! ;
@@ -119,39 +116,45 @@ DECIMAL
 
 \ build-part of the following  nFOPm  definition
 \ it stores the xt of the following check-word and the op-code
-: ',C,   ( b -- cccc )  '  ,  C,  ;
+: ',C,   ( b -- cccc )
+    <BUILDS 
+    '  ,  C,  
+;
+
 
 \ execute check-word stored during nFOPm creation
-: FCHECK ( a -- a )     >R R@ EXECUTE R> ;
+: FCHECK ( a -- a )     >R R@  @  EXECUTE R> ;
+
 
 \ execute FOP stored at a+2 and bring to TOS the result.
-: 0FOP1  ( a -- d )     CELL+ C@ FOP W> ;
-
-\ takes 2 top-most floating-point 
-: 2>W    ( d d -- )     2SWAP >W >W ;
+: FOP1  ( a -- d )     CELL+ C@ FOP W> ;
 
 
 \ create a FP-word that takes one argument and returns one argument
 : 1FOP1 ( n -- cccc xxxx )
-    <BUILDS ',C, DOES>
-    FCHECK 
-    >R >W R> 0FOP1
+    ',C, DOES>
+    FCHECK              \ d a
+    >R >W R>            \ a
+    FOP1               \ d
 ;
     
 
 \ create a FP-word that takes two arguments and returns one argument
 : 2FOP1 ( n -- cccc xxxx )
-    <BUILDS ',C, DOES>
-    FCHECK 
-    >R 2>W R> 0FOP1
+    ',C, DOES>
+    FCHECK              \ d a
+    >R 2SWAP >W >W R> 
+    FOP1               \ d
 ;
 
 
 \ create a FP-word that takes two arguments and returns two arguments
 : 2FOP2 ( n -- cccc xxxx )
-    <BUILDS ',C, DOES>
-    FCHECK 
-    >R 2>W R> 0FOP1 W> 2SWAP 
+    ',C, DOES>
+    FCHECK              \ d a
+    >R 2SWAP >W >W R> 
+    FOP1               \ d
+    W> 2SWAP            \ d d
 ;
 
 
@@ -163,9 +166,6 @@ DECIMAL
 \ check for negative argument
 : ?FNEG 
     DUP 0< 11 ?ERROR ;      \ Invalid floating point.
-
-
-QUIT
 
     
 \ Aritmethics
@@ -183,6 +183,15 @@ QUIT
 
 : FMOD  F/MOD 2DROP ;
 
+
+: F*/   ( d1 d2 d3 -- d4 )
+    ?ZERO
+    >W >W >W
+    04 FOP 
+    05 FOP
+    W>
+;
+    
 
 \ comparison
 : F0<   NIP   0<  ;
@@ -209,10 +218,10 @@ QUIT
 
 31  1FOP1  FSIN        NOOP         (   d -- d   )  \ sine 
 32  1FOP1  FCOS        NOOP         (   d -- d   )  \ cosine
-33  1FOP1  TAN         NOOP         (   d -- d   )  \ tangent
-34  1FOP1  ARCSIN      ?FTRG        (   d -- d   )  \ arc-sine
-35  1FOP1  ARCCOS      ?FTRG        (   d -- d   )  \ arc-cosine
-36  1FOP1  ARCTAN      NOOP         (   d -- d   )  \ arc-tangent
+33  1FOP1  FTAN        NOOP         (   d -- d   )  \ tangent
+34  1FOP1  FASIN       ?FTRG        (   d -- d   )  \ arc-sine
+35  1FOP1  FACOS       ?FTRG        (   d -- d   )  \ arc-cosine
+36  1FOP1  FATAN       NOOP         (   d -- d   )  \ arc-tangent
 
 
 \ Number Interpretation
@@ -311,7 +320,7 @@ QUIT
 
 
 \ 70C1h
-\ NUMBER
+\ FNUMBER
 : FNUMBER  ( a -- d )
     NMODE @ 
     IF
@@ -362,17 +371,20 @@ DECIMAL
 ;
 
 
+DECIMAL
+
+
 : FLOAT  ( n -- fp )
     S>D D>F ;
 
 
-: FIX    ( fp -- n )
+: FIX    ( fp -- a n )
     F>D DROP ;
 
 
-: F.R    ( fp u -- ) 
+: F>PAD    ( fp -- u ) 
     BASE @ >R DECIMAL
-    >R 2DUP FABS 2DUP OR            \ non zero
+    2DUP FABS 2DUP OR            \ non zero
     IF
         FLN 10 0 FLN F/ F>D         \ magnitude
     ENDIF
@@ -388,7 +400,7 @@ DECIMAL
     ENDIF 
     TUCK
     FABS 10 0  PLACE @ 0 F** F*
-    \ [ 1 0 2 0 F/ ] DLITERAL F+    \ rounding
+    [ 1 0 2 0 F/ ] DLITERAL F+    \ rounding
     F>D 
     PLACE @ ?DUP
     IF 
@@ -396,8 +408,15 @@ DECIMAL
         [CHAR] . HOLD
     ENDIF
     #S SIGN #> 
-    R> OVER - SPACES TYPE 
     R> BASE !
+;
+
+
+: F.R    ( fp u -- ) 
+    >R 
+    F>PAD
+    R> 
+    OVER - SPACES TYPE 
 ;
 
 
@@ -406,15 +425,63 @@ DECIMAL
 : PLACES  PLACE ! ;
 
 
-: FP-INIT
+: PI
+  [
+    1 0 >W 36 FOP  \ atan
+    4 0 >W 04 FOP  \ *4 
+    W>  
+  ] 
+  DLITERAL
+;
+
+
+: 1/2
+  [
+    1 0 2 0 F/
+  ] 
+  DLITERAL
+;
+
+
+: DEG>RAD
+    PI F* 180 0 F/ 
+;
+
+
+: RAD>DEG
+    180 0 F* PI F/ 
+;
+
+
+: FORGET-FP
+    \ Verify 17th word inside INTERPRET is really FNUMBER
+    [ ' INTERPRET >BODY DECIMAL 32 + ] LITERAL
+    DUP @
+    ['] FNUMBER
+    - 14 ?ERROR
+    \
     \ Patch INTERPRET 
     ['] NUMBER
     [ ' INTERPRET >BODY HEX 20 + ] LITERAL !
+    INTEGER
+    FP-MARKER
 ;
 
 
-: PI
-    [ 1 0 ARCTAN 4 0 F* ] DLITERAL
+MARKER FORGET-ME
+
+: FP-INIT
+    \ Verify 17th word inside INTERPRET is really NUMBER
+    [ ' INTERPRET >BODY DECIMAL 32 + ] LITERAL
+    DUP @
+    ['] NUMBER
+    - 14 ?ERROR
+    \    
+    \ Patch INTERPRET 
+    ['] FNUMBER
+    SWAP !
+    FORGET-ME
 ;
 
+FP-INIT
 
