@@ -272,4 +272,8 @@ Quasi-standard Test Suite (https://forth-standard.org/standard/testsuite) is qui
   INCLUDE test/core-tests.f
   
   
+\ build 20210916
+Floating-Point Option Library (experimental but useful)
+  NEEDS FLOATING  loads the library that provide a simple interface to the
+  ZX Spectrum "standard ROM" Floating-Pointer routine (RST $28).
   
