@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Fri Sep 17 23:26:22 2021
+Created: Sat Sep 18 11:42:55 2021
 
 Index:
 
@@ -19,7 +19,7 @@ Index:
    14 ( Autoexec 3/3 - previous version )
    15 ( Autoexec 3/3 )
    16 
-   17 
+   17 task
    18 .( Case-of structure. )   CR
    19 ( Case-Of structure  2/2 )
    20 .( Decompiler / Inspector. ) CR
@@ -472,8 +472,8 @@ Index:
   467 ( Floating Point Support )
   468 ( Floating Point Support )
   469 
-  470 
-  471 
+  470 ( Prepare Sine Table )
+  471 ( Sine Cosine Table )
   472 
   473 
   474 
@@ -1001,7 +1001,7 @@ Index:
   996 
   997 
   998 
-  999 
+  999 ( Sinus )
 
 
 
@@ -1074,7 +1074,7 @@ Scr# 4
  11 Invalid floating point.
  12 Heap full.
  13 Division by zero.
- 14 msg # 14
+ 14 Patching the wrong word.
  15 msg # 15
 
 Scr# 5 
@@ -1115,7 +1115,7 @@ Scr# 6
 
 Scr# 7 
   0 ( Error messages    from #49 to #63 )
-  1 
+  1 \ Test suite errors.
   2 Incorrect result.
   3 Wrong number of results.
   4 Cell number before '->' does not match ...}T spec.
@@ -1226,7 +1226,7 @@ Scr# 13
   1 \
   2 \  NextZXOS version
   3 \
-  4 CR ." Loading the following utilities:" CR
+  4 CR \ ." Loading the following utilities:" CR
   5 \ NEEDS    S"       \ Heap Memory Management
   6 \ NEEDS    POINTER
   7 NEEDS    WHERE    \ Line Editor
@@ -1294,8 +1294,8 @@ Scr# 16
  15 
 
 Scr# 17 
-  0 
-  1 
+  0 task
+  1 include src/fp-opt.f
   2 
   3 
   4 
@@ -4391,20 +4391,20 @@ Scr# 188
 
 Scr# 189 
   0 ( TEST )
-  1  123
-  2  456
-  3    789
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  1 CREATE ANAME ," /tools/vforth/mytest.bin"
+  2 : BUFER 1 BUFFER ;
+  3 \
+  4 : SAVE-BUFER
+  5   1+ 0 [ HEX ] 0E
+  6   F_OPEN   41 ?ERROR
+  7   DUP BUFER 255 ROT
+  8   F_WRITE  47 ?ERROR
+  9   DROP
+ 10   F_CLOSE  42 ?ERROR
+ 11 ;
+ 12 : START
+ 13   ANAME SAVE-BUFER
+ 14 ;
  15 
 
 Scr# 190 
@@ -8193,7 +8193,7 @@ Scr# 400
   2 NEEDS ASSEMBLER
   3 NEEDS OPEN<         \ later we use as OPEN< filename.f
   4 NEEDS J
-  5 NEEDS BINARY
+  5 NEEDS BINARY       needs .s
   6 \
   7 MARKER TASK
   8 \
@@ -8358,9 +8358,9 @@ Scr# 409
   5 E3 41 REG!   \ Palette Data
   6 02 07 REG!   \ Go 7 MHz
   7 \
-  8 BINARY 00001011 HEX 15 REG!
-  9 -->
- 10 
+  8 \ enable Sprite on Border and set Layer-Priority to SLU
+  9 BINARY 00000011 HEX 15 REG!
+ 10 -->
  11 
  12 
  13 
@@ -8369,18 +8369,18 @@ Scr# 409
 
 Scr# 410 
   0 ( Sprite definition )
-  1 DECIMAL
-  2 \
-  3   1  SPRITE  _spriteid   !
-  4 010  SPRITE  _xcoord     !
-  5 010  SPRITE  _ycoord     !
-  6   0  SPRITE  _pattern    c!
-  7   0  SPRITE  _rotmir     c!
-  8   0  SPRITE  _anchor     c!
-  9 \
- 10 SPRITE 0 SPRITE-UPDATE
- 11 -->
- 12 
+  1 NEEDS INVV NEEDS TRUV
+  2 DECIMAL
+  3 \
+  4   1  SPRITE  _spriteid   !
+  5 010  SPRITE  _xcoord     !
+  6 010  SPRITE  _ycoord     !
+  7   0  SPRITE  _pattern    c!
+  8   0  SPRITE  _rotmir     c!
+  9   0  SPRITE  _anchor     c!
+ 10 \
+ 11 SPRITE 0 SPRITE-UPDATE
+ 12 -->
  13 
  14 
  15 
@@ -9090,7 +9090,7 @@ Scr# 449
 Scr# 450 
   0 ( Floating Point Support )
   1 NEEDS ASSEMBLER
-  2 NEEDS 2ROT
+  2 NEEDS 2ROT  NEEDS 2OVER
   3 NEEDS [']
   4 MARKER TASK
   5 : .BIN BASE @ >R 2 BASE ! . R> BASE ! ;
@@ -9448,39 +9448,39 @@ Scr# 469
  15 
 
 Scr# 470 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+  0 ( Prepare Sine Table )
+  1 NEEDS J
+  2 : D>PAD ( d -- a n )
+  3   tuck dabs <# # # # # # sign #> ;
+  4 : prepare
+  5   15 2 do
+  6     i 471 (line) drop update
+  7     07 0 do
+  8       i j 2 - 07 * + 0 deg>rad Fsin 10000 0 F* 1/2 F+ Fint
+  9       d>pad tuck               \   n pad n
+ 10       3 pick swap cmove +      \
+ 11       bl over c! 1+            \ a+n+1
+ 12       [char] , over c! 1+
+ 13       bl over c! 1+
+ 14     loop drop
+ 15   loop ;
 
 Scr# 471 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  0 ( Sine Cosine Table )
+  1 CREATE SINE-TABLE
+  2 00000 , 00175 , 00349 , 00523 , 00698 , 00872 , 01045 ,
+  3 01219 , 01392 , 01564 , 01736 , 01908 , 02079 , 02250 ,
+  4 02419 , 02588 , 02756 , 02924 , 03090 , 03256 , 03420 ,
+  5 03584 , 03746 , 03907 , 04067 , 04226 , 04384 , 04540 ,
+  6 04695 , 04848 , 05000 , 05150 , 05299 , 05446 , 05592 ,
+  7 05736 , 05878 , 06018 , 06157 , 06293 , 06428 , 06561 ,
+  8 06691 , 06820 , 06947 , 07071 , 07193 , 07314 , 07431 ,
+  9 07547 , 07660 , 07771 , 07880 , 07986 , 08090 , 08192 ,
+ 10 08290 , 08387 , 08480 , 08572 , 08660 , 08746 , 08829 ,
+ 11 08910 , 08988 , 09063 , 09135 , 09205 , 09272 , 09336 ,
+ 12 09397 , 09455 , 09511 , 09563 , 09613 , 09659 , 09703 ,
+ 13 09744 , 09781 , 09816 , 09848 , 09877 , 09903 , 09925 ,
+ 14 09945 , 09962 , 09976 , 09986 , 09994 , 09998 , 10000 ,
  15 
 
 Scr# 472 
@@ -18970,19 +18970,19 @@ Scr# 998
  15 
 
 Scr# 999 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
+  0 ( Sinus )
+  1 sinus definitions
+  2 : sin ( grad -- sinus )
+  3   dup >r            \ n
+  4   abs 360 mod       \ r
+  5   dup 180 > if 180 -  -1  else   0   then >r
+  6   dup  90 > if 180 swap - then
+  7   sinus@
+  8   r> +- \     if negate then
+  9   r> +- \  0< if negate then
+ 10 ;
+ 11 : cos 90 + sin ;
+ 12 : tan dup sin swap cos 10000  swap */    ;
  13 
  14 
  15 
