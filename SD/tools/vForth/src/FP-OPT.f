@@ -53,7 +53,7 @@ CODE FOP
 
 \ 6E11h
 \ >W    ( d -- )
-\ takes a double-number from stack and put to floating-pointer stack 
+\ pop number from calculator stack and push it to floating-pointer stack 
 CODE >W
     HEX
     E1 C,           \ POP     HL|     
@@ -80,7 +80,7 @@ CODE >W
 
 \ 6E33h
 \ W>    ( -- d )
-\ takes a double-number from stack and put to floating-pointer stack 
+\ pop a number from floating-pointer stack and push it to top of calculator stack 
 CODE W>
     HEX
     C5 C,           \ PUSH    BC|     
@@ -485,3 +485,6 @@ MARKER FORGET-ME
 
 FP-INIT
 
+.( Use FLOATING to enable FP numbers )
+.(     INTEGER  to disable )
+.( Use n PLACES to set decimal places )
