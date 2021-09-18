@@ -2633,7 +2633,7 @@ Scr# 91
   4   DUP 0 <        3 ?ERROR  \ error 3: No such line.
   5   DUP L/SCR < 0= 3 ?ERROR
   6   SCR @ (LINE) DROP ;
-  7 : -MOVE ( a -- n )  \ move from a to current screen line n
+  7 : -MOVE ( a n -- )  \ move from a to current screen line n
   8   LINE C/L CMOVE UPDATE ;
   9 \
  10 --> \ continues to next

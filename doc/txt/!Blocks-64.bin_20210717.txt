@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Sat Sep 18 11:42:55 2021
+Created: Sat Jul 17 10:29:17 2021
 
 Index:
 
@@ -19,7 +19,7 @@ Index:
    14 ( Autoexec 3/3 - previous version )
    15 ( Autoexec 3/3 )
    16 
-   17 task
+   17 
    18 .( Case-of structure. )   CR
    19 ( Case-Of structure  2/2 )
    20 .( Decompiler / Inspector. ) CR
@@ -57,8 +57,8 @@ Index:
    52 ( Pitch bend )
    53 ( KEYBOARD-TEST )
    54 ( ?ESCAPE experiment       )
-   55 ( ms delay )
-   56 #1
+   55 ( MS delay )
+   56 
    57 ( FRAMES )
    58 ( FRAMES 2 )
    59 ( TEST )
@@ -120,7 +120,7 @@ Index:
   115 ( Assembler Z80 )
   116 ( Assembler Z80 )
   117 ( Assembler z80 )
-  118 ( Assembler MMU config ) EXIT  seems bugged: don't use
+  118 ( Assembler MMU config ) ;S seems bugged: don't use
   119 
   120 .( Z80 definitions. ) CR
   121 ( Z80 ) HEX
@@ -311,7 +311,7 @@ Index:
   306 ( Study: MMU7 / 16th byte )
   307 ( Study: MMU7 / 16th byte )
   308 ( Study: MMU7 / 16th byte )
-  309 #1
+  309 
   310 ( LED - Large EDitor )
   311 ( LED - Large EDitor )
   312 ( LED - Large EDitor )
@@ -320,25 +320,25 @@ Index:
   315 ( LED - Large EDitor )
   316 ( LED - Large EDitor )
   317 ( LED - Large EDitor )
-  318 ( LED - Large EDitor )
-  319 ( LED - Large EDitor )
-  320 ( LED - Large EDitor )
-  321 ( LED - Large EDitor )
-  322 ( LED - Large EDitor )
-  323 ( LED - Large EDitor )
-  324 ( LED - Large EDitor )
-  325 ( LED - Large EDitor )
-  326 ( LED - Large EDitor )
-  327 ( LED - Large EDitor )
-  328 ( MMU7 HEAP )
+  318 
+  319 
+  320 
+  321 
+  322 
+  323 
+  324 ( MMU7 / simplest )
+  325 ( MMU Heap Management )
+  326 ( MMU7 HEAP )
+  327 ( MMU7 HEAP )
+  328 ( MMU7 HEAP STRING )
   329 ( MMU7 HEAP STRING )
   330 ( MMU7 HEAP STRING )
-  331 ( MMU7 HEAP STRING )
-  332 ( MMU7 HEAP POINTER )
-  333 ( S" Counted Strings in Heap )
-  334 \ TEST
+  331 ( MMU7 HEAP POINTER )
+  332 ( S" Counted Strings in Heap )
+  333 \ TEST
+  334 ( Testing where $6000 is paged )
   335 ( Testing where $6000 is paged )
-  336 ( Testing where $6000 is paged )
+  336 
   337 
   338 
   339 
@@ -348,18 +348,18 @@ Index:
   343 ( R/W : BLK-INIT )
   344 ( blk-fname )
   345 ( r/w patch )
-  346 ( study to improve +LOOP )
-  347 ( study to improve +LOOP )
-  348 ( study to improve +LOOP )
-  349 ( study to improve +LOOP )
-  350 ( test )
-  351 ( -- )
-  352 : Do
-  353 : ?Do
-  354 ( leave unlop )
-  355 ( leave unlop )
-  356 ( t )
-  357 ( Matt Davies'  .helloworld )
+  346 ( r/w patch )
+  347 
+  348 
+  349 
+  350 ( Matt Davies'  .helloworld )
+  351 
+  352 
+  353 
+  354 
+  355 
+  356 
+  357 
   358 
   359 
   360 ( F_STAT via RST 8 hook code )
@@ -414,8 +414,8 @@ Index:
   409 ( Sprite Test )
   410 ( Sprite definition )
   411 ( TEST )
-  412 ( ISR-TEST )
-  413 ( SPRITE with ISR-TEST )
+  412 
+  413 
   414 
   415 ( .HEX and .BIN utility )
   416 
@@ -472,8 +472,8 @@ Index:
   467 ( Floating Point Support )
   468 ( Floating Point Support )
   469 
-  470 ( Prepare Sine Table )
-  471 ( Sine Cosine Table )
+  470 
+  471 
   472 
   473 
   474 
@@ -802,34 +802,34 @@ Index:
   797 
   798 
   799 
-  800 ( Test Suite )
-  801 ( Test Suite )
-  802 ( Test Suite )
-  803 ( Test Suite )
-  804 ( Test Suite )
-  805 ( Test Suite )
-  806 ( Test Suite )
-  807 ( Test Suite )
-  808 ( Test Suite )
-  809 ( Test Suite )
-  810 ( Test Suite - Examples          )
-  811 ( Test Suite - Basic assumptions )
-  812 ( Test Suite - Constants         )
-  813 ( Test Suite - Booleans          )
-  814 ( Test Suite - Booleans          )
-  815 ( Test Suite - Booleans          )
-  816 ( Test Suite - Shifts            )
-  817 ( Test Suite - Shifts            )
-  818 ( Test Suite - Numeric Notation  )
-  819 ( Test Suite - Comparison        )
-  820 ( Test Suite - Comparison        )
-  821 ( Test Suite - Comparison        )
-  822 ( Test Suite - Comparison        )
-  823 ( Test Suite - Comparison        )
-  824 ( Test Suite - Comparison        )
-  825 ( Test Suite - Comparison        )
-  826 ( Test Suite - Comparison        )
-  827 ( Test Suite - Comparison        )
+  800 
+  801 
+  802 
+  803 
+  804 
+  805 
+  806 
+  807 
+  808 
+  809 
+  810 
+  811 
+  812 
+  813 
+  814 
+  815 
+  816 
+  817 
+  818 
+  819 
+  820 
+  821 
+  822 
+  823 
+  824 
+  825 
+  826 
+  827 
   828 
   829 
   830 
@@ -1001,7 +1001,7 @@ Index:
   996 
   997 
   998 
-  999 ( Sinus )
+  999 
 
 
 
@@ -1061,12 +1061,12 @@ Scr# 3
 
 Scr# 4 
   0 is undefined.
-  1 Stack empty.
+  1 Stack is empty.
   2 Dictionary full.
-  3 No such a line.
+  3 No such line.
   4 has already been defined.
   5 Invalid stream.
-  6 No such a block.
+  6 No such block.
   7 Stack full.
   8 Old dictionary is full.
   9 Tape error.
@@ -1074,7 +1074,7 @@ Scr# 4
  11 Invalid floating point.
  12 Heap full.
  13 Division by zero.
- 14 Patching the wrong word.
+ 14 msg # 14
  15 msg # 15
 
 Scr# 5 
@@ -1115,12 +1115,12 @@ Scr# 6
 
 Scr# 7 
   0 ( Error messages    from #49 to #63 )
-  1 \ Test suite errors.
-  2 Incorrect result.
-  3 Wrong number of results.
-  4 Cell number before '->' does not match ...}T spec.
-  5 Cell number before AND after '->' does not match.
-  6 Cell number after '->' below ...}T does not match.
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
   7 
   8 
   9 
@@ -1129,7 +1129,7 @@ Scr# 7
  12 
  13 
  14 
- 15 
+ 15 Msg # 63
 
 Scr# 8 
   0 ( Print a complete error list )
@@ -1172,12 +1172,12 @@ Scr# 10
   1 \
   2 \ this screen is loaded during recompilation
   3 \
-  4 needs ;s needs exit needs s>d needs s->d
-  5 \ DECIMAL 230 LOAD
-  6   3 f_close drop
-  7 \ DECIMAL 176 LOAD
-  8   INCLUDE SRC/F15A.F
-  9 \
+  4 \ DECIMAL 230 LOAD
+  5   3 f_close drop
+  6 \ DECIMAL 176 LOAD
+  7   INCLUDE SRC/F15A.F
+  8 \
+  9 
  10 
  11 
  12 
@@ -1189,26 +1189,26 @@ Scr# 11
   0 ( Autoexec 1/3 )
   1 \ This is executed at first COLD start by AUTOEXEC
   2 \ Display System Info
-  3 \ needs ;s needs exit needs s>d needs s->d
-  4 CR 7 REG@  3 AND  35   SWAP LSHIFT 0
-  5 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
-  6 S0 PAD  - U. ." bytes free in Dictionary." CR
-  7 -1 HP @ - U. ." bytes free in Heap." CR
-  8 CR
-  9 -->
- 10 \ __________________________________________________________
- 11 \
- 12 012345678901234567890123456789012345678901234567890123456789
- 13 0    .    1    .    2    .    3    .    4    .    5    .
- 14 \ Fancy 64-Columns Ruler
- 15 \ __________________________________________________________
+  3 CR 7 REG@  3 AND  35   SWAP LSHIFT S->D
+  4 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
+  5 S0 PAD  - U. ." bytes free in Dictionary." CR
+  6 -1 HP @ - U. ." bytes free in Heap." CR
+  7 CR
+  8 -->
+  9 \ __________________________________________________________
+ 10 \
+ 11 012345678901234567890123456789012345678901234567890123456789
+ 12 0    .    1    .    2    .    3    .    4    .    5    .
+ 13 \ Fancy 64-Columns Ruler
+ 14 \ __________________________________________________________
+ 15 
 
 Scr# 12 
   0 ( Autoexec 2/3 )
   1 MARKER FORGET-TASK
   2 : ASK-Y/N ( -- )
-  3 \ ask Y/n to continue loading Screen 13
-  4   ." Autoexec says: "
+  3 \ ask Y/n to continue loading Screen 3
+  4   ." Autoexec says :" CR
   5   ." Do you wish to load Scr# 11 ? (Y/n) "
   6   KEY DUP EMIT
   7   UPPER
@@ -1226,7 +1226,7 @@ Scr# 13
   1 \
   2 \  NextZXOS version
   3 \
-  4 CR \ ." Loading the following utilities:" CR
+  4 CR  ." Loading the following utilities:" CR
   5 \ NEEDS    S"       \ Heap Memory Management
   6 \ NEEDS    POINTER
   7 NEEDS    WHERE    \ Line Editor
@@ -1268,12 +1268,12 @@ Scr# 15
   7 NEEDS    WHERE    \ Line Editor
   8 NEEDS    CASE     \ Case-Of
   9 NEEDS    SEE      \ Decompiler / Inspector
- 10 NEEDS    EDITOR   \ Line Editor Vocabulary
- 11 NEEDS    EDIT     \ Full Screen Editor
- 12 NEEDS    GREP     \ Screen Search utility
- 13 NEEDS    LOCATE
- 14 11 SCR !
- 15 \
+ 10 NEEDS    EDIT     \ Full Screen Editor
+ 11 NEEDS    GREP     \ Screen Search utility
+ 12 NEEDS    LOCATE
+ 13 11 SCR !
+ 14 \
+ 15 
 
 Scr# 16 
   0 
@@ -1294,8 +1294,8 @@ Scr# 16
  15 
 
 Scr# 17 
-  0 task
-  1 include src/fp-opt.f
+  0 
+  1 
   2 
   3 
   4 
@@ -1314,48 +1314,48 @@ Scr# 17
 Scr# 18 
   0 .( Case-of structure. )   CR
   1 \ Used in the form:
-  2 \  n0  CASE
-  3 \   n1  OF  ...  ENDOF
-  4 \   ...
-  5 \   nz  OF  ...  ENDOF
-  6 \   ... ( else-part )
-  7 \  ENDCASE
-  8 : CASE ( n0 -- )     \ begin case-of structure
-  9   ?COMP  LP @  SP@ LP !  4 ; IMMEDIATE
- 10 : (OF)  ( n0 nk -- ) \ run-time compiled by OF
- 11   OVER = DUP IF SWAP DROP ENDIF ;
- 12 : OF  ( n0 nk -- )
- 13   4 ?PAIRS COMPILE (OF) COMPILE 0BRANCH HERE 0 ,
- 14   5 ; IMMEDIATE
+  2 \  n0 CASE  n1 OF .. ENDOF
+  3 \           nz OF .. ENDOF  .. else-part
+  4 \  ENDCASE
+  5 : CASE ( n0 -- ) \ begin case-of structure
+  6   ?COMP CSP @ !CSP 4 ; IMMEDIATE
+  7 : (OF)  ( n0 nk -- ) \ run-time compiled by OF
+  8   OVER = DUP IF SWAP DROP ENDIF ;
+  9 : OF  ( n0 nk -- )
+ 10   4 ?PAIRS COMPILE (OF) COMPILE 0BRANCH HERE 0 ,
+ 11   5 ; IMMEDIATE
+ 12 : ENDOF  ( -- )
+ 13   5 ?PAIRS COMPILE BRANCH HERE 0 ,
+ 14   SWAP 2 [COMPILE] THEN 4 ; IMMEDIATE
  15 -->
 
 Scr# 19 
   0 ( Case-Of structure  2/2 )
-  1 : ENDOF  ( -- )
-  2   5 ?PAIRS COMPILE BRANCH HERE 0 ,
-  3   SWAP 2 [COMPILE] THEN 4 ; IMMEDIATE
-  4 : ENDCASE
-  5   4 ?PAIRS COMPILE DROP
-  6   BEGIN SP@  LP @ -
-  7   WHILE 2 [COMPILE] THEN
-  8   REPEAT  LP ! ; IMMEDIATE
-  9 
- 10 \ Example:
- 11 \ x CASE
- 12 \   1  OF  . .  ENDOF
- 13 \   2  OF  . .  ENDOF
- 14 \ ( else ) . .  ENDCASE
+  1 : ENDCASE
+  2   4 ?PAIRS COMPILE DROP
+  3   BEGIN SP@ CSP @ -
+  4   WHILE 2 [COMPILE] THEN
+  5   REPEAT CSP ! ; IMMEDIATE
+  6 ;S
+  7 \ Example:
+  8 x CASE
+  9 1 OF ... ENDOF
+ 10 2 OF ... ENDOF
+ 11 (else) ... ENDCASE
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 20 
   0 .( Decompiler / Inspector. ) CR
-  1 NEEDS INVV  NEEDS TRUV
+  1 NEEDS INVV NEEDS TRUV
   2 : (DUMP)  ( a+4 a -- ) [ DECIMAL ]
-  3   DO I C@ 0    <# # # #> TYPE SPACE LOOP ;
+  3   DO I C@ S->D <# # # #> TYPE SPACE LOOP ;
   4 : DUMP  ( a -- )
   5   BASE @ SWAP HEX DUP 64 + SWAP
   6   DO
-  7     CR I 0     <# # # # # #> TYPE  2 SPACES
+  7     CR I S->D  <# # # # # #> TYPE  2 SPACES
   8     I 4 + I (DUMP) SPACE  I 8 + I 4 + (DUMP) SPACE
   9     I 8 + I  DO
  10       I C@ DUP 127 > IF INVV ENDIF
@@ -1387,19 +1387,19 @@ Scr# 22
   0 ( Debugger             3/6 )
   1 ' : @      CONSTANT <:>
   2 ' ABORT    CONSTANT <AB>
-  3 ' EXIT     CONSTANT <;S>
+  3 ' ;S       CONSTANT <;S>
   4 ' (?DO)    CONSTANT <D>
   5 ' (+LOOP)  CONSTANT <+L>
   6 ' (LOOP)   CONSTANT <L>
   7 ' BRANCH   CONSTANT <B>
-  8 ' (LEAVE)  CONSTANT <LE>
-  9 ' 0BRANCH  CONSTANT <0B>
- 10 ' LIT      CONSTANT <LIT>
- 11 ' (.")     CONSTANT <.">
- 12 ' QUIT     CONSTANT <Q>
- 13 ' CONSTANT CONSTANT <C>
- 14 ' VARIABLE CONSTANT <V>
- 15 ' WARM     CONSTANT <!>  -->
+  8 ' 0BRANCH  CONSTANT <0B>
+  9 ' LIT      CONSTANT <LIT>
+ 10 ' (.")     CONSTANT <.">
+ 11 ' QUIT     CONSTANT <Q>
+ 12 ' CONSTANT CONSTANT <C>
+ 13 ' VARIABLE CONSTANT <V>
+ 14 ' WARM     CONSTANT <!>
+ 15 -->
 
 Scr# 23 
   0 ( Debugger             4/6 )
@@ -1410,13 +1410,13 @@ Scr# 23
   5       <+L>  OF DEB-BRN ENDOF
   6       <L>   OF DEB-BRN ENDOF
   7       <B>   OF DEB-BRN ENDOF
-  8       <LE>  OF DEB-BRN ENDOF
-  9       <0B>  OF DEB-BRN ENDOF
- 10       <LIT> OF DEB-LIT ENDOF
- 11       <.">  OF DEB-STR ENDOF
- 12       DUP .WORD
- 13     ENDCASE
- 14 ; -->
+  8       <0B>  OF DEB-BRN ENDOF
+  9       <LIT> OF DEB-LIT ENDOF
+ 10       <.">  OF DEB-STR ENDOF
+ 11       DUP .WORD
+ 12     ENDCASE
+ 13 ; -->
+ 14 
  15 
 
 Scr# 24 
@@ -1479,7 +1479,7 @@ Scr# 27
   2 \ usually 13 SELECT to redirect to stream #13 "output"
   3 : LDUMP  ( a1 a2 -- )
   4   SWAP DO
-  5     I 64 DUMP
+  5     I DUMP
   6   \ KEY
   7     ?TERMINAL IF LEAVE THEN
   8   64 +LOOP
@@ -1493,20 +1493,20 @@ Scr# 27
 
 Scr# 28 
   0 ( Vocabulary viewer        )
-  1 : .VOCAB   ( voc-link -- )
-  2   BASE @ SWAP HEX
-  3   DUP U.  CELL- CELL- NFA ID.
-  4   BASE !
-  5 ;
-  6 : ?VOCAB   ( -- )
-  7   CR ." Current "  CURRENT  @ .VOCAB
-  8   CR ." Context "  CONTEXT  @ .VOCAB
-  9   CR ." VocLink "  VOC-LINK @
- 10   BEGIN
- 11     DUP CELL- .VOCAB SPACE
- 12     @ ?DUP 0=
- 13   UNTIL
- 14 ;
+  1 : ?VOCAB
+  2   CR ." Current "
+  3   CURRENT @ 4 - NFA ID.
+  4   CR ." Context "
+  5   CONTEXT @ 4 - NFA ID.
+  6   CR ." VocLink "
+  7   VOC-LINK @ 6 - NFA ID.
+  8 ;
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 29 
@@ -1530,7 +1530,7 @@ Scr# 29
 Scr# 30 
   0 ( 2CONSTANT )
   1 : 2CONSTANT
-  2   <BUILDS , , DOES>
+  2   <BUILDS SWAP , , DOES>
   3   2@
   4 ;
   5 : 2VARIABLE
@@ -1655,21 +1655,21 @@ Scr# 36
 
 Scr# 37 
   0 ( RECURSE - GDC )
-  1 NEEDS RECURSE
-  2 \ here is two examples that use RECURSE
-  3 : GCD ( a b -- gcd ) \ Greatest Commond Divisor between a and b
-  4   ?DUP IF
-  5     TUCK MOD
-  6     RECURSE
-  7   THEN ;
-  8 : FACT1 ( n -- n  ) \ Factorial ( single precision )
-  9   ?DUP IF DUP 1- RECURSE * ELSE 1 THEN ;
- 10 : FACT  ( n -- d )  \ Factorial ( double precision up to 12! )
- 11   1+ 1 0 ROT 1 DO      \ d
- 12     SWAP I UM*         \ dL aL aH
- 13     ROT  I UM*         \ aL aH bL bH
- 14     ROT  0 D+ DROP     \ aL cL
- 15   LOOP ;
+  1 \ here is two examples that use RECURSE
+  2 NEED RECURSE
+  3 \ Greatest Common Divisor betwenn a and b
+  4 : GCD ( a b -- gcd )
+  5   ?DUP IF
+  6     TUCK MOD
+  7     RECURSE
+  8   THEN ;
+  9 \ Factorial
+ 10 : FACT ( n -- d  )
+ 11   ?DUP   IF
+ 12     DUP 1- RECURSE *
+ 13   ELSE
+ 14          1 THEN ;
+ 15 
 
 Scr# 38 
   0 ( RND Test )
@@ -1703,7 +1703,7 @@ Scr# 39
  10 \
  11 : RANDOMIZE
  12   SYS-SEED ! ;
- 13 
+ 13 ;S
  14 
  15 
 
@@ -1723,7 +1723,7 @@ Scr# 40
  12 \
  13 : RANDOMIZE
  14   SYS-SEED ! ;
- 15 
+ 15 ;S
 
 Scr# 41 
   0 .( Color and attributes  ) CR
@@ -1754,7 +1754,7 @@ Scr# 42
   7   2 23659 C! 1 SELECT ;
   8 : ATTR  ( x y --- b )
   9   SWAP 32 * + 22528 + C@ ;
- 10 EXIT
+ 10 ;S
  11 : VIDEO
  12   2 DEVICE !
  13   1 23659 C! 2 SELECT ;
@@ -1970,7 +1970,7 @@ Scr# 54
   7   A3 C, E6 C, 01 C,
   8   26 C, 00 C, 6F C,
   9   E5 C, E9DD , ( PSH1 )
- 10 SMUDGE DECIMAL EXIT
+ 10 SMUDGE DECIMAL ;S
  11 : ESCAPE-TEST
  12   1000 0 DO 2E EMIT
  13     ?ESCAPE IF LEAVE THEN
@@ -1978,25 +1978,25 @@ Scr# 54
  15 DECIMAL
 
 Scr# 55 
-  0 ( ms delay )
-  1 DECIMAL NEEDS ASSEMBLER
-  2 \ at 3.5MHz n ms delay
-  3 CODE (ms) ( n -- )       \ 0 <= n <= 255
-  4   POP  DE|               \   10 T
-  5   LD   D'|  B|           \    4 T
-  6   LDN  H'|  205  N,      \    7 T
-  7   HERE    \ BEGIN,       \
-  8     LD   B'|  H|         \    4 T
-  9     HERE  NOP            \    4 T
- 10     DJNZ  BACK,          \ 13/8 T : 3480 T =(4+13)*204 + 12
- 11     DEC   E'|            \    4 T
- 12   JRF  NZ'| BACK,        \ 12/7 T : 3500 T  ( -5 T on exit)
- 13   LD   B'|  D|           \    4 T
- 14   NEXT C;                \   10 T : 3500*n T + 30 T
- 15 -->
+  0 ( MS delay )
+  1 \ at 3.5MHz n ms delay
+  2 DECIMAL
+  3 CODE ms ( n -- )
+  4   POP DE|
+  5   LD  D'|  B|
+  6   LDN H'|  205  N,
+  7   HERE   \ BEGIN,
+  8     LD  B'|  H|
+  9     HERE
+ 10       NOP
+ 11     DJNZ BACK,
+ 12     DEC  E'|
+ 13   JRF NZ'| BACK,
+ 14   LD  B'| D|
+ 15   NEXT C;
 
 Scr# 56 
-  0 #1
+  0 
   1 
   2 
   3 
@@ -2114,8 +2114,8 @@ Scr# 62
   7   C1 C, D1 C, E1 C,           \ pop bc, de, hl
   8   F1 C, 08 C, F1 C,           \ pop af  ex af,af'  pop af
   9   DD C, E1 C,                 \ pop ix
- 10   FB C,                       \ ei
- 11   C9 C,                       \ ret
+ 10 \
+ 11   C3 C, 0038 ,                \ jp 0038
  12 SMUDGE
  13 DECIMAL -->
  14 
@@ -2142,20 +2142,20 @@ Scr# 63
 Scr# 64 
   0 ( Interrupt Handler )
   1 HEX  CODE  INT-SUB
-  2   FF C,                       \ rst 38h
-  3   F3 C,                       \ di
-  4   DD C, E5 C,                 \ push ix
-  5   F5 C, 08 C, F5 C,           \ push af  ex af,af'  push af
+  2   DD C, E5 C,                 \ push ix
+  3   F5 C, 08 C, F5 C,           \ push af  ex af,af'  push af
+  4   E5 C, D5 C, C5 C,           \ push hl, de, bc
+  5   D9 C,                       \ exx
   6   E5 C, D5 C, C5 C,           \ push hl, de, bc
-  7   D9 C,                       \ exx
-  8   E5 C, D5 C, C5 C,           \ push hl, de, bc
-  9   \ RP
- 10   2A C, 30 +ORIGIN ,          \ ld hl,(RP)
- 11   E5 C,                       \ push hl
- 12   \
- 13   21 C, 6330 ,                \ ld hl,6330h
- 14   22 C, 30 +ORIGIN ,          \ ld (RP),hl
- 15 DECIMAL -->
+  7   \ RP
+  8   2A C, 30 +ORIGIN ,          \ ld hl,(RP)
+  9   E5 C,                       \ push hl
+ 10   \
+ 11   21 C, 6330 ,                \ ld hl,6330h
+ 12   22 C, 30 +ORIGIN ,          \ ld (RP),hl
+ 13 DECIMAL -->
+ 14 
+ 15 
 
 Scr# 65 
   0 ( Interrupt Handler )
@@ -2215,10 +2215,10 @@ Scr# 68
   0 ( INTERRUPT - TEST )
   1 HEX
   2 : TEST
-  3   80 57FF C!
-  4   5701 5700 FF  CMOVE>
-  5   5700 4700 100 CMOVE
-  6   4700 4F00 100 CMOVE
+  3   01 4700 C!
+  4   4700 4701 FF CMOVE
+  5   4700 4F00 100 CMOVE
+  6   4700 5700 100 CMOVE
   7 ;
   8 DECIMAL
   9 \ -->
@@ -2645,21 +2645,21 @@ Scr# 91
 
 Scr# 92 
   0 ( Line Editor          3/6 )
-  1 VOCABULARY EDITOR
-  2 EDITOR DEFINITIONS
-  3 : H ( n -- )        \ hold line n to PAD
-  4   LINE PAD 1+ C/L DUP PAD C! CMOVE ;
-  5 : E ( n -- )        \ blank line n of current screen
-  6   LINE C/L BLANKS UPDATE ;
-  7 : RE ( n -- )       \ replace line n using PAD content
-  8   PAD 1+ SWAP -MOVE ;
-  9 : D ( n -- )        \ remove line n from current screen
- 10   DUP H L/SCR 1- DUP ROT ?DO I 1+ LINE I -MOVE LOOP E ;
- 11 : S ( n -- )        \ shift lines >= n down by one
- 12   DUP  L/SCR 1- DO  I 1- LINE  I -MOVE  -1 +LOOP E ;
- 13 : INS ( n -- )      \ insert line n from PAD
- 14   DUP S RE ;
- 15 -->
+  1 : H ( n -- )        \ hold line n to PAD
+  2   LINE PAD 1+ C/L DUP PAD C! CMOVE ;
+  3 : E ( n -- )        \ blank line n of current screen
+  4   LINE C/L BLANKS UPDATE ;
+  5 : RE ( n -- )       \ replace line n using PAD content
+  6   PAD 1+ SWAP -MOVE ;
+  7 : D ( n -- )        \ remove line n from current screen
+  8   DUP H L/SCR 1- DUP ROT ?DO I 1+ LINE I -MOVE LOOP E ;
+  9 : S ( n -- )        \ shift lines >= n down by one
+ 10   DUP  L/SCR 1- DO  I 1- LINE  I -MOVE  -1 +LOOP E ;
+ 11 : INS ( n -- )      \ insert line n from PAD
+ 12   DUP S RE ;
+ 13 -->
+ 14 \ 14
+ 15 
 
 Scr# 93 
   0 ( Line Editor          4/6 )
@@ -2671,13 +2671,13 @@ Scr# 93
   6   1 SCR +! L ;
   7 : B ( -- ) \ back screen
   8   -1 SCR +! L ;
-  9 FORTH DEFINITIONS
- 10 : BCOPY ( n1 n2 -- ) \ copy screen n1 to n2, overvriting it
- 11   DUP SCR ! B/SCR * SWAP B/SCR *
- 12   B/SCR 0 DO 2DUP
- 13   BLOCK SWAP BLOCK B/BUF CMOVE UPDATE
- 14   SWAP 1+ SWAP 1+
- 15   LOOP 2DROP ;   -->
+  9 : BCOPY ( n1 n2 -- ) \ copy screen n1 to n2, overvriting it
+ 10   DUP SCR ! B/SCR * SWAP B/SCR *
+ 11   B/SCR 0 DO 2DUP
+ 12   BLOCK SWAP BLOCK B/BUF CMOVE UPDATE
+ 13   SWAP 1+ SWAP 1+
+ 14   LOOP 2DROP ;
+ 15 -->
 
 Scr# 94 
   0 ( Line Editor          5/6 )
@@ -2688,13 +2688,13 @@ Scr# 94
   5   ROT B/SCR / (LINE) -TRAILING TYPE
   6   CR 2+ SPACES [CHAR] ^ EMIT SPACE
   7 ;
-  8 -->
-  9 \
- 10 \ quick reference
- 11 [TIB] <> [PAD]  <>  [BLOCK]
- 12               H E RE
- 13      TEXT     D S INS
- 14 
+  8 \
+  9 -->
+ 10 \
+ 11 \ quick reference
+ 12 [TIB] <> [PAD]  <>  [BLOCK]
+ 13               H E RE
+ 14      TEXT     D S INS
  15 
 
 Scr# 95 
@@ -2707,12 +2707,12 @@ Scr# 95
   6   SP@ PAD - ;
   7 : ROOM ( -- ) \ display room available in dictionary
   8   UNUSED U. ." bytes free." CR ;
-  9 EXIT
+  9 ;S
  10 \
  11 \ omitted:
  12 : BMOVE OVER SWAP BCOPY
  13   BCLEAR ;
- 14 EXIT
+ 14 ;S
  15 
 
 Scr# 96 
@@ -2790,20 +2790,20 @@ Scr# 99
 Scr# 100 
   0 ." Assembler. "           CR
   1 \ Loads ASSEMBLER vocabulary
-  2 NEEDS INVERT  NEEDS CODE  NEEDS RENAME  CR
-  3 FORTH  DEFINITIONS   MARKER FORGET-ASSEMBLER \ MARKER-ASM
-  4 VOCABULARY TOOLS-ASM IMMEDIATE
-  5 VOCABULARY FORTH-ASM
-  6 \
-  7 \ DECIMAL 118 LOAD \ MMU allocation ( Seems bugged )
-  8 : ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
-  9 DECIMAL 101 LOAD \ tools
- 10 DECIMAL 120 LOAD \ Z80
- 11 DECIMAL 140 LOAD \ structure
- 12 DECIMAL 160 LOAD \ Z80N
- 13 DECIMAL 117 LOAD \ final CODE patch
- 14 ." Done " CR
- 15 EXIT
+  2 FORTH  DEFINITIONS   MARKER FORGET-ASSEMBLER \ MARKER-ASM
+  3 VOCABULARY TOOLS-ASM IMMEDIATE
+  4 VOCABULARY FORTH-ASM
+  5 \
+  6 \ DECIMAL 118 LOAD \ MMU allocation ( Seems bugged )
+  7 : ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
+  8 DECIMAL 101 LOAD \ tools
+  9 DECIMAL 120 LOAD \ Z80
+ 10 DECIMAL 140 LOAD \ structure
+ 11 DECIMAL 160 LOAD \ Z80N
+ 12 DECIMAL 117 LOAD \ final CODE patch
+ 13 ." Done " CR
+ 14 ;S
+ 15 
 
 Scr# 101 
   0 .( Z80 Assembler. ) CR
@@ -3084,7 +3084,7 @@ Scr# 116
   5   R> FDPI OVER + LOOP
   6   DROP DROP ;
   7 \
-  8 EXIT
+  8 ;S
   9 \ stop
  10 
  11 
@@ -3112,7 +3112,7 @@ Scr# 117
  15 ." Done" CR
 
 Scr# 118 
-  0 ( Assembler MMU config ) EXIT  seems bugged: don't use
+  0 ( Assembler MMU config ) ;S seems bugged: don't use
   1 HEX 1F CONSTANT ASM-PAGE
   2 : ASM-MMU  ( n -- )
   3   DUP 1 - IF  ASM-PAGE 0 0 01BD M_P3DOS  2C ?ERROR
@@ -3532,7 +3532,7 @@ Scr# 141
   3   SWAP THEN, ;
   4 \
   5 DECIMAL
-  6 EXIT
+  6 ;S
   7 
   8 
   9 
@@ -3545,7 +3545,7 @@ Scr# 141
 
 Scr# 142 
   0 ( Z80 Near struct. )
-  1 EXIT
+  1 ;S
   2 \
   3 : IF, JRF Z'|
   4   HOLDPLACE ;
@@ -3563,7 +3563,7 @@ Scr# 142
 
 Scr# 143 
   0 ( Z80 Near struct. )
-  1 EXIT
+  1 ;S
   2 : BEGIN, HERE ;
   3 : UNTIL, IF, SWAP DISP, ;
   4 : -UNTIL, -IF, SWAP DISP, ;
@@ -3581,7 +3581,7 @@ Scr# 143
 
 Scr# 144 
   0 ( Z80 Near struct. )
-  1 EXIT
+  1 ;S
   2 : DJNZ,
   3   DJNZ HOLDPLACE
   4   SWAP DISP, ;
@@ -3757,7 +3757,7 @@ Scr# 153
  12  RES 4| H|  RES 5| L|
  13  SET 6| (HL)| SET 7| A|
  14 C;
- 15 EXIT
+ 15 ;S
 
 Scr# 154 
   0 ( TEST IF, THEN, )
@@ -3810,7 +3810,7 @@ Scr# 156
  11  SET 0| (IY+ 9 )|
  12  LDIX() 1234 AA,
  13 C;
- 14 EXIT
+ 14 ;S
  15 
 
 Scr# 157 
@@ -4183,7 +4183,7 @@ Scr# 177
   6   43 ?ERROR
   7   SOURCE-ID @ >R  BLK @ >R
   8   SOURCE-ID !
-  9   R> R> EXIT
+  9   R> R> ;S
  10   SOURCE-ID @ F_CLOSE DROP
  11   R> BLK ! R> SOURCE-ID !
  12 ;
@@ -4193,19 +4193,19 @@ Scr# 177
 
 Scr# 178 
   0 ( DEFER IS - EXIT UNLOOP )
-  1 : UNLOOP R> R> R> 2DROP >R ;
-  2 : ['] COMPILE LIT ' , ; IMMEDIATE
-  3 : DEFER  ( -- cccc )
-  4   <BUILDS [ ' NOOP ] LITERAL ,
-  5    DOES> @ EXECUTE ; IMMEDIATE
-  6 : IS ( xt -- )
-  7   ' >BODY CELL+
-  8   STATE @ IF
-  9     COMPILE LIT , COMPILE !
- 10   ELSE ! THEN ; IMMEDIATE
- 11 : :NONAME ( -- xt
- 12   ?EXEC HERE [ ' ' @ ] LITERAL , !CSP [COMPILE] ]
- 13 ;
+  1 : EXIT COMPILE ;S ; IMMEDIATE
+  2 : UNLOOP R> R> 2DROP ;
+  3 : ['] COMPILE LIT ' , ; IMMEDIATE
+  4 : DEFER  ( -- cccc )
+  5   <BUILDS [ ' NOOP ] LITERAL ,
+  6   DOES> @ EXECUTE ; IMMEDIATE
+  7 : IS ( xt -- )
+  8   ' >BODY CELL+
+  9   STATE @ IF
+ 10     COMPILE LIT , COMPILE !
+ 11   ELSE
+ 12     !
+ 13   THEN  ;  IMMEDIATE
  14 
  15 
 
@@ -4391,35 +4391,35 @@ Scr# 188
 
 Scr# 189 
   0 ( TEST )
-  1 CREATE ANAME ," /tools/vforth/mytest.bin"
-  2 : BUFER 1 BUFFER ;
-  3 \
-  4 : SAVE-BUFER
-  5   1+ 0 [ HEX ] 0E
-  6   F_OPEN   41 ?ERROR
-  7   DUP BUFER 255 ROT
-  8   F_WRITE  47 ?ERROR
-  9   DROP
- 10   F_CLOSE  42 ?ERROR
- 11 ;
- 12 : START
- 13   ANAME SAVE-BUFER
- 14 ;
+  1  123
+  2  456
+  3    789
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 190 
   0 .( Full Screen Editor. ) CR
-  1 NEEDS EDITOR
-  2 EDITOR DEFINITIONS
-  3 DECIMAL   0 VARIABLE NROW               \ current row
-  4           0 VARIABLE NCOL               \ current columns
-  5 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
-  6 : ADDRC   ( -- a )                      \ calc cursor addr
-  7   NROW @ LINE NCOL @ + ;
-  8 : TO-SCR  ( row1 col1 -- col2 row2 )    \ translate xy
-  9   0 + SWAP 2 + ;
- 10 : AT-XY   ( col row -- )                \ set print position
- 11   22 EMITC  EMITC EMITC ;               \ using standard AT
+  1 DECIMAL   0 VARIABLE NROW               \ current row
+  2           0 VARIABLE NCOL               \ current columns
+  3 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
+  4 : ADDRC   ( -- a )                      \ calc cursor addr
+  5   NROW @ LINE NCOL @ + ;
+  6 : TO-SCR  ( row1 col1 -- col2 row2 )    \ translate xy
+  7   0 + SWAP 2 + ;
+  8 : AT-XY   ( col row -- )                \ set print position
+  9   22 EMITC  EMITC EMITC ;               \ using standard AT
+ 10 : HOME 0 0 AT-XY ;                      \ cursor at home
+ 11 : BUZZ    7 EMIT ;                      \ sound BEL
  12 : CURC! ( c -- )    \ store chr to current screen position
  13   ADDRC  C! UPDATE ;
  14 : CURC@ ( -- c )    \ fetch chr from current screen position
@@ -4429,18 +4429,18 @@ Scr# 191
   0 ( Full Screen Editor   2/7 )
   1 NEEDS INVV NEEDS TRUV
   2 \
-  3 : HOME 0 0 AT-XY ;                      \ cursor at home
-  4 : BUZZ    7 EMIT ;                      \ sound BEL
-  5 : RULER 6 0 DO ." +----.----" LOOP ." +--" ;
-  6 : UPC     NROW @  0 > IF -1  NROW +!  ELSE  BUZZ  THEN ;
-  7 : DOWNC   NROW @ 15 < IF  1  NROW +!  ELSE  BUZZ  THEN ;
-  8 : LEFTC   NCOL @  0 > IF -1  ELSE  UPC    63 THEN NCOL +! ;
-  9 : RIGHTC  NCOL @ 63 < IF  1  ELSE  DOWNC -63 THEN NCOL +! ;
- 10 : PUTPAGE ." Screen # " SCR @ . CR RULER CR
- 11           L/SCR 0 DO I SCR @ (LINE) TYPE CR LOOP RULER ;
- 12 : REFRESH                             \ refresh current line
- 13   NROW @ SCR @  OVER 0 TO-SCR AT-XY  (LINE) TYPE ;
- 14 -->
+  3 : RULER 6 0 DO ." +----.----" LOOP ." +--" ;
+  4 : UPC     NROW @  0 > IF -1  NROW +!  ELSE  BUZZ  THEN ;
+  5 : DOWNC   NROW @ 15 < IF  1  NROW +!  ELSE  BUZZ  THEN ;
+  6 : LEFTC   NCOL @  0 > IF -1  ELSE  UPC    63 THEN NCOL +! ;
+  7 : RIGHTC  NCOL @ 63 < IF  1  ELSE  DOWNC -63 THEN NCOL +! ;
+  8 : PUTPAGE ." Screen # " SCR @ . CR RULER CR
+  9           L/SCR 0 DO I SCR @ (LINE) TYPE CR LOOP RULER ;
+ 10 : REFRESH                             \ refresh current line
+ 11   NROW @ SCR @  OVER 0 TO-SCR AT-XY  (LINE) TYPE ;
+ 12 -->
+ 13 
+ 14 
  15 
 
 Scr# 192 
@@ -4595,7 +4595,7 @@ Scr# 200
   4  3 AND 253B P!
   5 ;
   6 \
-  7 \ EXIT
+  7 \ ;S
   8 \
   9 : .RESET
  10  2 253B P!
@@ -4828,7 +4828,7 @@ Scr# 213
   3   PAD 1 F_OPEN 43 ?ERROR ;
   4 : INCLUDE
   5   OPEN# DUP F_INCLUDE F_CLOSE DROP ;
-  6 EXIT
+  6 ;S
   7 \
   8 \ 5 VALUE FH
   9 \ CREATE FILENAME ," Test.f"
@@ -5118,7 +5118,7 @@ Scr# 229
   5  192 < IF COMPILE COMPILE THEN
   6  ,
   7 ; IMMEDIATE
-  8 EXIT
+  8 ;S
   9 \ test
  10 : TEST1 POSTPONE 0BRANCH HERE 0 ,
  11  2 ; IMMEDIATE
@@ -5206,7 +5206,7 @@ Scr# 234
   3   PAD 1 F_OPEN 43 ?ERROR ;
   4 : INCLUDE
   5   OPEN< DUP F_INCLUDE F_CLOSE DROP ;
-  6 EXIT
+  6 ;S
   7 \
   8 \ 5 VALUE FH
   9 \ CREATE FILENAME ," Test.f"
@@ -5545,7 +5545,7 @@ Scr# 253
   0 ( INITIALIZE-MMC )
   1 \ this erases blocks from
   2 \ # 302 up
-  3 EXIT STOP STOP
+  3 ;S STOP STOP
   4 : INITIALIZE-MMC
   5 #SEC
   6 302
@@ -6550,7 +6550,7 @@ Scr# 308
  15 
 
 Scr# 309 
-  0 #1
+  0 
   1 
   2 
   3 
@@ -6572,18 +6572,18 @@ Scr# 310
   1 \ Large file EDitor: each line can be 85 characters long
   2 \ then maximum line number is 14.592
   3 decimal  marker TASK
-  4  85 CONSTANT COLS/ROW            \ columns per row
-  5   8 1024 * COLS/ROW / CONSTANT ROWS/PAGE   \ rows per 8K
-  6        512 COLS/ROW / CONSTANT LED-CHARSIZE
-  7 1  VARIABLE LED-LN              \ line number
-  8 1  VARIABLE LED-MAX             \ max line number
-  9 0  VARIABLE LED-ROW
- 10 0  VARIABLE LED-COL
- 11 1  VARIABLE LED-HOME            \ first line to display
- 12 CREATE LED-FN DECIMAL  80 ALLOT \ filename
- 13 0 variable LED-FH               \ filehandle of open file
- 14 \
- 15 -->
+  4 85 CONSTANT COLS/ROW
+  5 96 CONSTANT ROWS/PAGE
+  6 0  VARIABLE LED-LN              \ line number
+  7 0  VARIABLE LED-MAX             \ max line number
+  8 0  VARIABLE LED-ROW
+  9 0  VARIABLE LED-COL
+ 10 0  VARIABLE LED-HOME            \ first line to display
+ 11 CREATE LED-FN DECIMAL  80 ALLOT \ filename
+ 12 0 variable LED-FH               \ filehandle of open file
+ 13 \
+ 14 -->
+ 15 
 
 Scr# 311 
   0 ( LED - Large EDitor )
@@ -6591,81 +6591,27 @@ Scr# 311
   2 \ for this Large-file EDitor
   3 : >>FAR ( row -- n a ) \ given a row-number ret page+offset
   4   rows/page /mod  [ decimal ] 40 +
-  5   dup 223 >  if 40 error endif  \ out-of-memory
-  6   swap cols/row  * [ HEX ] E000 OR swap ;
+  5   dup 223 >  if 40 error endif
+  6   swap 85 * [ HEX ] E000 OR swap ;
   7 \
   8 \ Row-ADdress
   9 : LED-RAD  ( row -- a )
  10   >>FAR MMU7! ;
  11 \
  12 : LED-CLOSE
- 13   led-fh @ f_close [ decimal ] 42 ?error
- 14   0 led-fh ! ;
- 15 -->
+ 13   led-fh @ f_close [ decimal ] 42 ?error ;
+ 14 -->
+ 15 
 
 Scr# 312 
   0 ( LED - Large EDitor )
-  1 \ assumes to read page np.
-  2 \ returns actual characters read. 0 means EOF
+  1 \ assume to read page np.
+  2 \ returns the characters read. 0 means EOF
   3 \ row is stored in 8K-pages RAM 40-223
   4 decimal needs SHOW-PROGRESS
-  5 : LED-RD1  ( np -- b )
-  6   1 block   \ use block 1 as special buffer  \ np a a
-  7   dup b/buf 2- led-fh @ f_getline >R         \ np a     \ b
-  8   swap led-rad COLS/ROW 2dup blanks          \ a a1 n1
-  9   cmove R>                                   \ b
- 10 ;
- 11 -->
- 12 
- 13 
- 14 
- 15 
-
-Scr# 313 
-  0 ( LED - Large EDitor )
-  1 \ load filename specified in LED-FN
-  2 \ Filehandle must be already open for read
-  3 decimal
-  4 : LED-LOAD
-  5   begin
-  6     led-ln @  show-progress
-  7     1 led-ln +!
-  8     led-ln @ led-rd1
-  9     ?terminal 1 AND 1- AND
- 10   0= until \ end of file
- 11   led-ln @ 1- led-max !
- 12 ;
- 13 -->
- 14 
- 15 
-
-Scr# 314 
-  0 ( LED - Large EDitor )
-  1 \ accept text for filename and keep it in LED-FN
-  2 decimal
-  3 : LED-FILE
-  4   led-fn 80 erase
-  5   bl word led-fn over c@ 1+   \ a1 a2 n
-  6   cmove
-  7 ;
-  8 : LED-OPEN    \ open file and load to RAM
-  9   led-file
- 10   led-fn 1+ pad 1 f_open 43 ?error led-fh !
- 11   0 led-ln !
- 12   led-load
- 13   led-close
- 14 ;
- 15 -->
-
-Scr# 315 
-  0 ( LED - Large EDitor )
-  1 \ write line # np to file
-  2 \ n.b. trailing spaces are always removed
-  3 : LED-WR1  ( np -- )
-  4   led-rad COLS/ROW -TRAILING                      \ a n
-  5   2DUP  + [ HEX ] 0A  SWAP C!                     \ a n
-  6   2DUP 1+ LED-FH @ F_WRITE [ decimal ] 47 ?ERROR  \ a n n
-  7   DROP  + [ HEX ] 20  SWAP C!                     \
+  5 : LED-RD1  ( np -- nc )
+  6   led-rad COLS/ROW  2dup blanks
+  7   led-fh @ f_getline    \ n
   8 ;
   9 -->
  10 
@@ -6675,209 +6621,101 @@ Scr# 315
  14 
  15 
 
-Scr# 316 
+Scr# 313 
   0 ( LED - Large EDitor )
-  1 \ save current filename
-  2 : LED-SAVE
-  3   led-fn 1+ pad [ hex 0C 02 + ] LITERAL
-  4   f_open [ decimal ] 43 ?error
-  5   led-fh  !
-  6   LED-MAX @ 1+ 1 ?DO
-  7     I show-progress
-  8     I LED-WR1
-  9     ?terminal if leave then \ can be interrupted via BREAK
- 10   LOOP
- 11   led-fh @ f_close
- 12   0 led-fh !
- 13 ;
+  1 \ load filename specified in LED-FN
+  2 decimal
+  3 : LED-LOAD
+  4   led-fn 1+ pad 1 f_open 43 ?error led-fh !
+  5   0 led-ln !
+  6   begin
+  7     led-ln @ show-progress
+  8     1 led-ln +!
+  9     led-ln @ led-rd1
+ 10     ?terminal if quit then
+ 11   0= until \ end of file
+ 12   led-ln @ led-max !
+ 13   led-close ;
  14 -->
  15 
 
-Scr# 317 
+Scr# 314 
   0 ( LED - Large EDitor )
-  1 DECIMAL
-  2 : LED-LINE ( n -- a )     \ address of current screen line n
-  3   LED-HOME @ + LED-RAD ;
-  4 : LED-PAD ( -- a )          \ dedicated PAD
-  5   HERE 168 + ;
-  6 : LED-DISPLAY               \ display current screen
-  7   16 0 DO
-  8     I LED-HOME @ +  LED-MAX @ < IF
-  9       I led-line COLS/ROW TYPE
- 10     ELSE
- 11       COLS/ROW 1 do [char] # emit loop
- 12     ENDIF
- 13     CR
- 14   LOOP
- 15 ; -->
+  1 \ accept a filename and keep it in LED-FN
+  2 decimal
+  3 : LED-FILE
+  4   led-fn 80 erase
+  5   bl word led-fn over c@ 1+   \ a1 a2 n
+  6   cmove
+  7 ;
+  8 \
+  9 : LED-OPEN
+ 10   led-file
+ 11   led-load
+ 12 ;
+ 13 -->
+ 14 
+ 15 
 
-Scr# 318 
+Scr# 315 
   0 ( LED - Large EDitor )
-  1 : LED-MOVE ( a n -- )      \ move from a to line n
-  2   led-line COLS/ROW cmove ;
-  3 : H ( n -- )               \ hold line to pad
-  4   led-line pad 1+ cols/row dup pad c! cmove ;
-  5 : E ( n -- )               \ erase line
-  6   led-line cols/row blanks ;
-  7 : RE ( n -- )              \ restore line from pad
-  8   pad 1+ swap led-move ;
-  9 : D ( n -- )               \ delete line
- 10   dup H led-max @ dup 1- rot     \  m m-1 n
- 11   ?Do
- 12     i 1+ led-line led-pad cols/row cmove
- 13     led-pad i led-move
- 14   Loop E  -1 led-max +! ;
- 15 -->
+  1 \ write line number to file
+  2 : LED-WR1  ( np -- )
+  3   led-rad COLS/ROW -TRAILING
+  4   2DUP + [ HEX ] 0A  SWAP 1- C!
+  5   LED-FH @ F_WRITE [ decimal ] 47 ?ERROR
+  6   DROP
+  7 ;
+  8 -->
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
-Scr# 319 
+Scr# 316 
   0 ( LED - Large EDitor )
-  1 : S ( n -- )                \ insert blank line
-  2   dup 1- led-max @          \ n n m
-  3   ?do
-  4     i       led-line led-pad cols/row cmove
-  5     led-pad i 1+ led-move
-  6   -1 +Loop 1 led-max +!
-  7   E
-  8 ;
-  9 : INS ( n -- )              \ insert line from pad
- 10   dup S RE ;
+  1 : LED-SAVE
+  2   led-fn 1+ pad  14  f_open 43 ?error
+  3   led-fh  !
+  4   LED-MAX @ 1+ 1 DO
+  5     I show-progress
+  6     I LED-WR1
+  7     ?terminal if leave then
+  8   LOOP
+  9   led-fh @ f_close
+ 10 ;
  11 -->
  12 
  13 
  14 
  15 
 
-Scr# 320 
+Scr# 317 
   0 ( LED - Large EDitor )
-  1 DECIMAL   0 VARIABLE NROW               \ current row
-  2           0 VARIABLE NCOL               \ current columns
-  3 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
-  4 : ADDRC   ( -- a )                      \ calc cursor addr
-  5   LED-HOME @ NROW @ + LED-RAD NCOL @ + ;
-  6 : TO-SCR  ( row1 col1 -- col2 row2 )    \ translate xy
-  7   0 + SWAP 2 + ;
-  8 : AT-XY   ( col row -- )                \ set print position
-  9   22 EMITC  EMITC EMITC ;               \ using standard AT.
- 10 : HOME 0 0 AT-XY ;                      \ cursor at home
- 11 : BUZZ    7 EMIT ;                      \ sound BEL
- 12 : CURC! ( c -- )    \ store chr to current screen position
- 13   ADDRC  C! ;
- 14 : CURC@ ( -- c )    \ fetch chr from current screen position
- 15   ADDRC  C@ ; -->
-
-Scr# 321 
-  0 ( LED - Large EDitor )
-  1 : EDIT-FRAME
-  2   0 19 AT-XY
-  3   INVV ."  row:" TRUV 8 SPACES INVV ."  col:" TRUV 5 SPACES
-  4   INVV ."  hex:" TRUV 5 SPACES INVV ."  dec:" TRUV 6 SPACES
-  5   INVV ."  chr:" TRUV
-  6   CR INVV ."  pad:" TRUV PAD COUNT 55 MIN TYPE
-  7   0 21 AT-XY  INVV ."  cmd:" TRUV
-  8   CR ." W-RITE   B-ack    D-el     I-nsert   H-old"
-  9   CR ." Q-uit    N-ext    S-hift   R-eplace  P-ut hex byte"
- 10   COLS/ROW 10 -  0 AT-XY  INVV ."   LED   " TRUV ;
- 11 : EDIT-STAT CURC@
- 12   28 19 AT-XY  HEX DUP 3 .R  39 19 AT-XY  DECIMAL DUP 3 .R
- 13   50 19 AT-XY  32 MAX EMIT
- 14   18 19 AT-XY  NCOL @  3 .R
- 15   05 19 AT-XY  NROW @  LED-HOME @ + 6 .R ; -->
-
-Scr# 322 
-  0 ( LED - Large EDitor )
-  1 NEEDS INVV NEEDS TRUV
-  2 : RULER COLS/ROW 10 DO
-  3         ." |----.----"  10 +LOOP  ;
-  4 : PUTPAGE 0 0 AT-XY LED-FN COUNT TYPE CR RULER CR
-  5           LED-DISPLAY RULER ;
-  6 : PREVP   1 led-home @ < if -16 led-home +! else buzz then ;
-  7 : NEXTP  16 led-home +! led-max @ led-home @ <
-  8             if PREVP buzz then ;
-  9 : UPC    NROW @  0 > IF -1  NROW +!  ELSE  prevp putpage THEN ;
- 10 : DOWNC  NROW @ 15 < IF  1  NROW +!  ELSE  nextp putpage THEN ;
- 11 : LEFTC  NCOL @  0 > IF -1  ELSE  UPC    80 THEN NCOL +! ;
- 12 : RIGHTC NCOL @ 80 < IF  1  ELSE  DOWNC -80 THEN NCOL +! ;
- 13 -->
+  1 DECIMAL
+  2 : LED-DISPLAY
+  3   CLS
+  4   16 0 DO
+  5     I LED-HOME @ + LED-RAD
+  6     COLS/ROW -TRAILING TYPE CR
+  7   LOOP
+  8 ;
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
-Scr# 323 
-  0 ( LED - Large EDitor )
-  1 : BYTE ( -- b ) \ accept two hex digit as a byte
-  2   KEY DUP EMIT 10 DIGIT DROP 4 LSHIFT
-  3   KEY DUP EMIT 10 DIGIT DROP + ;
-  4 HEX
-  5 : DONEC             8F 26 +ORIGIN C!    \ reset cursor face
-  6                     5F 28 +ORIGIN C! ;  \ reset cursor face
-  7 : INITC   CURC@ BL MAX 26 +ORIGIN C!    \ change cursor face
-  8                     8F 28 +ORIGIN C! ;
-  9 DECIMAL
- 10 : REFRESH                           \ refresh current line
- 11   NROW @ 0 TO-SCR AT-XY COLS/ROW  spaces
- 12   NROW @ 0 TO-SCR AT-XY NROW @ LED-line COLS/ROW type ;
- 13 -->
- 14 
- 15 
-
-Scr# 324 
-  0 ( LED - Large EDitor )
-  1 : CMD    ( c -- )   \ handle EDIT key options
-  2   6 21 AT-XY DONEC KEY UPPER BL MAX DUP EMIT CASE
-  3   [CHAR] P OF BYTE CURC! ENDOF  \ put a byte at cursor
-  4   [CHAR] H OF NROW @ H   ENDOF  \ copy to PAD
-  5   [CHAR] S OF NROW @ S   ENDOF  \ shift down one row
-  6   [CHAR] R OF NROW @ RE  ENDOF  \ replace row from PAD
-  7   [CHAR] I OF NROW @ INS ENDOF  \ insert row from PAD
-  8   [CHAR] D OF NROW @ D   ENDOF  \ delete row + copy to PAD
-  9   [CHAR] N OF NEXTP      ENDOF  \ next page
- 10   [CHAR] B OF PREVP      ENDOF  \ prev page
- 11   [CHAR] W OF LED-save   ENDOF
- 12   [CHAR] Q OF ."  ok" CR C/L 2 * SPACES
- 13               0 21 AT-XY 30 EMITC 8 EMITC  QUIT ENDOF
- 14   ENDCASE PUTPAGE EDIT-FRAME ; -->
- 15 
-
-Scr# 325 
-  0 ( LED - Large EDitor )
-  1 : DELC    ( -- )    \ back-space
-  2   NCOL @  0 > IF -1 NCOL +! THEN
-  3   ADDRC DUP 1+ SWAP C/L NCOL @ - 1- CMOVE UPDATE
-  4   BL NROW @ LINE C/L + 1- C! ;
-  5 : INSC    ( -- )    \ insert blank at cursor and shift the rest
-  6   ADDRC DUP 1+      C/L NCOL @ - 1- CMOVE>
-  7   BL ADDRC  C!  UPDATE ;
-  8 : CTRLC  ( c -- )   \ manage control keys
-  9   CASE 08 OF LEFTC  ENDOF      09 OF RIGHTC ENDOF
- 10        10 OF DOWNC  ENDOF      11 OF UPC    ENDOF
- 11        12 OF DELC   REFRESH ENDOF
- 12        13 OF DOWNC 0 NCOL ! ENDOF
- 13        07 OF CMD            ENDOF
- 14   ENDCASE ;
- 15 -->
-
-Scr# 326 
-  0 ( LED - Large EDitor )
-  1 : LED-EDIT ( -- )
-  2   30 EMITC LED-CHARSIZE EMITC  \ change chr width
-  3   1 LED-HOME !
-  4   CLS HOMEC PUTPAGE EDIT-FRAME
-  5   BEGIN
-  6     EDIT-STAT  INITC
-  7     CURC@ NROW @ NCOL @ TO-SCR  2DUP AT-XY
-  8     KEY  ?TERMINAL IF DROP 0 INSC   REFRESH THEN
-  9     DUP BL < IF
- 10       >R AT-XY EMIT R>  CTRLC
- 11     ELSE
- 12       CURC! AT-XY DROP CURC@ EMIT RIGHTC
- 13     THEN
- 14   AGAIN  \ quit using EDIT-key + Q
- 15 ; -->
-
-Scr# 327 
-  0 ( LED - Large EDitor )
-  1 : LED
-  2   LED-OPEN LED-EDIT
-  3 ;
+Scr# 318 
+  0 
+  1 
+  2 
+  3 
   4 
   5 
   6 
@@ -6891,7 +6729,151 @@ Scr# 327
  14 
  15 
 
-Scr# 328 
+Scr# 319 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 320 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 321 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 322 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 323 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 324 
+  0 ( MMU7 / simplest )
+  1 \ visual test
+  2 : .PG-OFFS
+  3   <# # # # # [CHAR] . HOLD # # #> TYPE CR
+  4 ;
+  5 \ visual test
+  6 : T
+  7   HEX CR
+  8   DUP S->D .PG-OFFS
+  9   >FAR 2DUP .PG-OFFS
+ 10   <FAR S->D .PG-OFFS
+ 11 ;
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 325 
+  0 ( MMU Heap Management )
+  1 \ DECIMAL 303 LOAD
+  2 \
+  3 \ Heap Pointer
+  4 \ 70 USER HP
+  5 \
+  6 : HP@ HP @ ;
+  7 : HP+! HP +! ;
+  8 : FAR >FAR MMU7! ;
+  9 \
+ 10 
+ 11 -->
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 326 
+  0 ( MMU7 HEAP )
+  1 \ check for page boundary
+  2 : HP@ HP @ ;
+  3 hex
+  4 : ?PAGE ( n -- ha )
+  5   1fff >r
+  6   hp@ cell+  r@ and +  r@ >
+  7   if
+  8    hp@  r>  or 1+  hp !
+  9   else
+ 10    r> drop
+ 11   then
+ 12   hp@ 0= 12 ?error
+ 13 ;
+ 14 
+ 15 
+
+Scr# 327 
   0 ( MMU7 HEAP )
   1 \ reserve n bytes on heap, retunrs heap-pointer to them
   2 : HEAP ( n -- ha )
@@ -6909,7 +6891,7 @@ Scr# 328
  14 
  15 
 
-Scr# 329 
+Scr# 328 
   0 ( MMU7 HEAP STRING )
   1 \ accepts a string and stores it to Heap,
   2 \ returns a Pointer to a counted string
@@ -6927,7 +6909,7 @@ Scr# 329
  14 
  15 
 
-Scr# 330 
+Scr# 329 
   0 ( MMU7 HEAP STRING )
   1 \ accepts a string and store it to Heap, returns a
   2 \ pointer to a counted string
@@ -6945,7 +6927,7 @@ Scr# 330
  14 
  15 
 
-Scr# 331 
+Scr# 330 
   0 ( MMU7 HEAP STRING )
   1 \ given a pointer, prints the counted string
   2 \
@@ -6963,7 +6945,7 @@ Scr# 331
  14 
  15 
 
-Scr# 332 
+Scr# 331 
   0 ( MMU7 HEAP POINTER )
   1 \ like CONSTANT but it returns a FAR-resolved pointer
   2 : POINTER ( a -- cccc )
@@ -6981,7 +6963,7 @@ Scr# 332
  14 
  15 
 
-Scr# 333 
+Scr# 332 
   0 ( S" Counted Strings in Heap )
   1 : (S")  R@ R> CELL+ >R  @ FAR COUNT ;
   2 \
@@ -6994,12 +6976,12 @@ Scr# 333
   9 ; IMMEDIATE
  10 \
  11 : TEST_S"  S" HELLO WORLD" NOOP ;
- 12 EXIT
+ 12 ;S
  13 CR TEST_S" TYPE
  14 CR S" HELLO WORLD" TYPE
  15 
 
-Scr# 334 
+Scr# 333 
   0 \ TEST
   1 : Q CR
   2  ." HP  " HP@ U. CR
@@ -7017,7 +6999,7 @@ Scr# 334
  14 
  15 
 
-Scr# 335 
+Scr# 334 
   0 ( Testing where $6000 is paged )
   1 HEX
   2 : T
@@ -7035,11 +7017,29 @@ Scr# 335
  14 
  15 
 
-Scr# 336 
+Scr# 335 
   0 ( Testing where $6000 is paged )
   1 DECIMAL 14 EMITC
   2 HEX 8F EMITC 8F EMITC
   3 DECIMAL
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 336 
+  0 
+  1 
+  2 
+  3 
   4 
   5 
   6 
@@ -7216,7 +7216,7 @@ Scr# 345
  15 
 
 Scr# 346 
-  0 ( study to improve +LOOP )
+  0 ( r/w patch )
   1 ' r/w 32 + @ .word
   2 ' r/w 38 + @ .word
   3 ' blk-read ' r/w 32 + !
@@ -7234,84 +7234,12 @@ Scr# 346
  15 
 
 Scr# 347 
-  0 ( study to improve +LOOP )
-  1 CODE (-LOOP)
-  2   ldx      hl|  2  NN,   \ to consume increment
-  3   addhl    sp|           \ save SP+2
-  4   exx
-  5   pop      bc|           \ increment
-  6   ldhl()   hex 30 +origin AA,
-  7   ldsphl                 \ use SP as temp RP
-  8   pop      hl|           \ index
-  9   pop      de|           \ limit
- 10   xora      a|
- 11   sbchl    de|           \ index - limit
- 12   addhl    bc|           \ index - limit + increment
- 13   bit       7|  b|       \ opposite of increment sign
- 14 -->
- 15 
-
-Scr# 348 
-  0 ( study to improve +LOOP )
-  1   jrf      z'|  HOLDPLACE
-  2     ccf
-  3   HERE DISP,
-  4   jrf     cy'|  HOLDPLACE  \   HERE  0  AA,
-  5     \ stay in loop, increment index
-  6     ldhl()   hex 30 +origin AA,
-  7     ldsphl                 \ use SP as temp RP
-  8     pop      hl|           \ index
-  9     addhl    bc|           \ index + increment
- 10     push     hl|
- 11     exx
- 12     ldsphl                 \ restore SP
- 13     jp ' BRANCH >BODY AA,
- 14   HERE DISP,
- 15 -->
-
-Scr# 349 
-  0 ( study to improve +LOOP )
-  1   ldx      hl|  0  NN,
-  2   addhl    sp|
-  3   ld()hl   hex 30 +origin AA,
-  4   exx
-  5   ldsphl
-  6   incx     bc|
-  7   incx     bc|
-  8   Next
-  9   C;
- 10 CODE (*LOOP)
- 11   ldx      hl|  1  NN,
- 12   push     hl|
- 13   jp       '  (-LOOP) 2+ AA,
- 14   C;
- 15 decimal
-
-Scr# 350 
-  0 ( test )
-  1 \ patch to +LOOP
-  2   ' (-loop) ' +loop 8 + !
-  3   ' (*loop) '  loop 8 + !
-  4 0 variable increment
-  5 0 variable iterations
-  6 : t
-  7   0 iterations !
-  8   1  11
-  9   do
- 10     i .
- 11     1 iterations +!
- 12     iterations @ 12 > if quit  then
- 13    -1
- 14   +loop
- 15 ;
-
-Scr# 351 
-  0 ( -- )
-  1 : x
-  2   hex .s
-  3   csp @ 16 - 20 dump
-  4   cr cr
-  5 ;
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
   6 
   7 
   8 
@@ -7323,87 +7251,15 @@ Scr# 351
  14 
  15 
 
-Scr# 352 
-  0 : Do
-  1   ?comp
-  2   lp @
-  3   sp@ lp !
-  4   [compile] do
-  5 ; immediate
-  6 : Loop
-  7 x [compile] loop
-  8 x begin
-  9     sp@ lp @ -
- 10   while
- 11     [compile] then
- 12   repeat
- 13   lp !
- 14 ; immediate
- 15 -->
-
-Scr# 353 
-  0 : ?Do
-  1   ?comp
-  2   lp @
-  3   sp@ lp !
-  4   [compile] ?do
-  5 ; immediate
-  6 : +Loop
-  7 x [compile] +loop
-  8 x begin
-  9     sp@ lp @ -
- 10   while
- 11     [compile] then
- 12   repeat
- 13   lp !
- 14 ; immediate
- 15 -->
-
-Scr# 354 
-  0 ( leave unlop )
-  1 needs assembler
-  2 code (leave)
-  3   ldhl()   hex 30 +origin AA,
-  4   ldx      de|  4  NN,
-  5   addhl    de|
-  6   ld()hl   hex 30 +origin AA,
-  7   jp ' BRANCH >BODY AA,
-  8   c;
-  9 -->
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 355 
-  0 ( leave unlop )
-  1 needs unloop
-  2 : leave
-  3   compile (leave)     \ unloop compile branch
-  4   here >R 0 ,
-  5   0 0                 \ csp h 0 h 3 h 2 x x
-  6   sp@ dup cell+ cell+ \               ^   ^ sp sp+4
-  7   tuck                \                     sp+4 sp sp+4
-  8   csp @ swap -        \                     sp+4 sp csp-sp+4
-  9   cmove               \ csp - - h 0 h 3 h 2
- 10   csp @ cell-         \ csp - - h 0 h 3 h 2 csp-2
- 11   R>   over !         \ csp h - h 0 h 3 h 2 csp-2
- 12   cell- 0 swap !      \ csp h 0 h 0 h 3 h 2 csp-2
- 13 ; immediate
- 14 -->
- 15 
-
-Scr# 356 
-  0 ( t )
-  1 : t
-  2   4 0 ?do
-  3     i .
-  4     i  if  leave  then
-  5     i .
-  6   loop
-  7 ;
+Scr# 348 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
   8 
   9 
  10 
@@ -7413,7 +7269,25 @@ Scr# 356
  14 
  15 
 
-Scr# 357 
+Scr# 349 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 350 
   0 ( Matt Davies'  .helloworld )
   1 CODE .helloworld
   2         ldx  hl|   here  0  NN,
@@ -7427,6 +7301,132 @@ Scr# 357
  10   here  ," Hello, World!"  1+ swap !
  11 \
  12 \
+ 13 
+ 14 
+ 15 
+
+Scr# 351 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 352 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 353 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 354 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 355 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 356 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 357 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
  13 
  14 
  15 
@@ -7839,7 +7839,7 @@ Scr# 380
   8   44 ?ERROR
   9   2DROP ( bc a ) SWAP ( hl,de )
  10 ;
- 11 EXIT
+ 11 ;S
  12 > TEST <
  13 0 IDE_CAPACITY D.
  14 
@@ -7856,7 +7856,7 @@ Scr# 381
   7   DROP ( a ) ROT ( de bc hl ) DROP SWAP
   8   \
   9 ;
- 10 EXIT
+ 10 ;S
  11 > TEST <
  12 CHAR C DOS_FREE_SPACE D.
  13 
@@ -8193,10 +8193,10 @@ Scr# 400
   2 NEEDS ASSEMBLER
   3 NEEDS OPEN<         \ later we use as OPEN< filename.f
   4 NEEDS J
-  5 NEEDS BINARY       needs .s
-  6 \
-  7 MARKER TASK
-  8 \
+  5 \
+  6 MARKER TASK
+  7 \
+  8 : BIN 2 BASE ! ;
   9 : db .s ."  << " ;
  10 CODE WAIT halt next C;
  11 : PAUSE 0 ?DO WAIT LOOP ;
@@ -8225,9 +8225,9 @@ Scr# 401
 
 Scr# 402 
   0 ( Sprite Lib - Derek Bolli et Al. )
-  1 BINARY 00000010 CONSTANT SPRITE-ROT
-  2        00000100 CONSTANT SPRITE-VFLIP
-  3        00001000 CONSTANT SPRITE-HFLIP
+  1 BIN 00000010 CONSTANT SPRITE-ROT
+  2     00000100 CONSTANT SPRITE-VFLIP
+  3     00001000 CONSTANT SPRITE-HFLIP
   4 \
   5 HEX 303B CONSTANT SPRITE-SLOT-SELECT-PORT
   6     0057 CONSTANT SPRITE-ATTRIBUTE-PORT
@@ -8261,15 +8261,15 @@ Scr# 403
 
 Scr# 404 
   0 ( Sprite Lib )
-  1 \ init sprite number id
+  1 \ init sprite number
   2 : SPRITE-INIT ( id -- )
   3   SPRITE-SLOT-SELECT-PORT P!        \ select sprite id
   4   SPRITE-BUFFER
   5   SPRITE-DATA>
   6 ;
-  7 \ set current sprite current attribute
+  7 \
   8 : SPRITE-ATTR ( b -- )
-  9 \ base @ >R dup hex . dup binary . cr R> base !
+  9 \ base @ >R dup hex . dup bin . cr R> base !
  10   SPRITE-ATTRIBUTE-PORT P!
  11 ;
  12 DECIMAL -->
@@ -8329,7 +8329,7 @@ Scr# 407
  12   next
  13   C;
  14 DECIMAL
- 15 -->
+ 15 
 
 Scr# 408 
   0 ( Sprite Test )
@@ -8339,7 +8339,7 @@ Scr# 408
   4 \
   5 SPRITE-LOAD< ../../demos/NextBASIC/basicSprites/DKSprite.spr
   6 \
-  7 -->
+  7 
   8 
   9 
  10 
@@ -8356,11 +8356,11 @@ Scr# 409
   3 E3 14 REG!   \ Global Transparency Colour
   4 18 40 REG!   \ Palette Index Register
   5 E3 41 REG!   \ Palette Data
-  6 02 07 REG!   \ Go 7 MHz
+  6 01 07 REG!   \ Go 7 MHz
   7 \
-  8 \ enable Sprite on Border and set Layer-Priority to SLU
-  9 BINARY 00000011 HEX 15 REG!
- 10 -->
+  8 BIN 00001011 HEX 15 REG!
+  9 
+ 10 
  11 
  12 
  13 
@@ -8369,18 +8369,18 @@ Scr# 409
 
 Scr# 410 
   0 ( Sprite definition )
-  1 NEEDS INVV NEEDS TRUV
-  2 DECIMAL
-  3 \
-  4   1  SPRITE  _spriteid   !
-  5 010  SPRITE  _xcoord     !
-  6 010  SPRITE  _ycoord     !
-  7   0  SPRITE  _pattern    c!
-  8   0  SPRITE  _rotmir     c!
-  9   0  SPRITE  _anchor     c!
- 10 \
- 11 SPRITE 0 SPRITE-UPDATE
- 12 -->
+  1 DECIMAL
+  2 \
+  3   1  SPRITE  _spriteid   !
+  4 010  SPRITE  _xcoord     !
+  5 010  SPRITE  _ycoord     !
+  6   0  SPRITE  _pattern    c!
+  7   0  SPRITE  _rotmir     c!
+  8   0  SPRITE  _anchor     c!
+  9 \
+ 10 SPRITE 0 SPRITE-UPDATE
+ 11 
+ 12 
  13 
  14 
  15 
@@ -8397,39 +8397,39 @@ Scr# 411
   8   LOOP
   9   0 SPRITE-HIDE
  10 ;
- 11 ." Sync TEST "
- 12 TEST
- 13 -->
+ 11 
+ 12 
+ 13 
  14 
  15 
 
 Scr# 412 
-  0 ( ISR-TEST )
-  1 NEEDS INTERRUPT
-  2 : ISR-TEST
-  3   23672 ( FRAMES ) @ 7 AND 0= IF
-  4     SPRITE _xcoord @ 320 >
-  5     IF -20 SPRITE _xcoord ! THEN
-  6     5  SPRITE _xcoord  +!
-  7     SPRITE _xcoord @ 1 AND
-  8     SPRITE _spriteid !
-  9     SPRITE  0  SPRITE-UPDATE
- 10   ENDIF
- 11 ;
- 12 INT-OFF
- 13 ' ISR-TEST INT-W !
- 14 \ INT-ON
- 15 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 413 
-  0 ( SPRITE with ISR-TEST )
-  1 : BYE INT-OFF BYE ;
-  2 INVV CR
-  3 ." GIVE INT-OFF to stop before exit with BYE."
-  4 TRUV CR
-  5 \
-  6   INT-ON
-  7 \
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
   8 
   9 
  10 
@@ -9090,7 +9090,7 @@ Scr# 449
 Scr# 450 
   0 ( Floating Point Support )
   1 NEEDS ASSEMBLER
-  2 NEEDS 2ROT  NEEDS 2OVER
+  2 NEEDS 2ROT
   3 NEEDS [']
   4 MARKER TASK
   5 : .BIN BASE @ >R 2 BASE ! . R> BASE ! ;
@@ -9371,7 +9371,7 @@ Scr# 465
  10   F/MOD FINT   SWAP  2SWAP FINT D+
  11   R> IF DNEGATE THEN
  12 ;
- 13 : FLOAT S>D D>F ;
+ 13 : FLOAT S->D D>F ;
  14 : FIX   F>D DROP ;
  15 -->
 
@@ -9448,39 +9448,39 @@ Scr# 469
  15 
 
 Scr# 470 
-  0 ( Prepare Sine Table )
-  1 NEEDS J
-  2 : D>PAD ( d -- a n )
-  3   tuck dabs <# # # # # # sign #> ;
-  4 : prepare
-  5   15 2 do
-  6     i 471 (line) drop update
-  7     07 0 do
-  8       i j 2 - 07 * + 0 deg>rad Fsin 10000 0 F* 1/2 F+ Fint
-  9       d>pad tuck               \   n pad n
- 10       3 pick swap cmove +      \
- 11       bl over c! 1+            \ a+n+1
- 12       [char] , over c! 1+
- 13       bl over c! 1+
- 14     loop drop
- 15   loop ;
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 471 
-  0 ( Sine Cosine Table )
-  1 CREATE SINE-TABLE
-  2 00000 , 00175 , 00349 , 00523 , 00698 , 00872 , 01045 ,
-  3 01219 , 01392 , 01564 , 01736 , 01908 , 02079 , 02250 ,
-  4 02419 , 02588 , 02756 , 02924 , 03090 , 03256 , 03420 ,
-  5 03584 , 03746 , 03907 , 04067 , 04226 , 04384 , 04540 ,
-  6 04695 , 04848 , 05000 , 05150 , 05299 , 05446 , 05592 ,
-  7 05736 , 05878 , 06018 , 06157 , 06293 , 06428 , 06561 ,
-  8 06691 , 06820 , 06947 , 07071 , 07193 , 07314 , 07431 ,
-  9 07547 , 07660 , 07771 , 07880 , 07986 , 08090 , 08192 ,
- 10 08290 , 08387 , 08480 , 08572 , 08660 , 08746 , 08829 ,
- 11 08910 , 08988 , 09063 , 09135 , 09205 , 09272 , 09336 ,
- 12 09397 , 09455 , 09511 , 09563 , 09613 , 09659 , 09703 ,
- 13 09744 , 09781 , 09816 , 09848 , 09877 , 09903 , 09925 ,
- 14 09945 , 09962 , 09976 , 09986 , 09994 , 09998 , 10000 ,
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 472 
@@ -9995,14 +9995,14 @@ Scr# 500
   4 \ : REG-WR ( v p -- ) REG-SELECT P! REG-DATA P! ;   \ REG!
   5 \
   6 : B.  ( n -- ) \ display a number in binary
-  7  BASE @ >R  S>D  2DUP HEX <# # # #> TYPE SPACE
+  7  BASE @ >R  S->D  2DUP HEX <# # # #> TYPE SPACE
   8  2 BASE ! <# 8 0 DO # LOOP #> TYPE  R> BASE ! ;
   9 \
  10 CR ." Machine ID    " 00 REG@   B.
  11 CR ." Core Version  " 01 REG@   B.
  12 CR ." Machine type  " 03 REG@   B.
  13 CR ." CPU Speed     " 07 REG@   7 AND DUP .
- 14 DECIMAL 35 SWAP LSHIFT S>D <# # CHAR . HOLD #S #>
+ 14 DECIMAL 35 SWAP LSHIFT S->D <# # CHAR . HOLD #S #>
  15 SPACE TYPE SPACE ." MHz" CR
 
 Scr# 501 
@@ -10678,7 +10678,7 @@ Scr# 538
   3  [COMPILE] CONSTANT
   4 ; IMMEDIATE
   5 \
-  6 EXIT
+  6 ;S
   7 123 VALUE XXX
   8 456 VALUE YYY
   9 789 VALUE ZZZ
@@ -11767,7 +11767,7 @@ Scr# 598
  12    until
  13  ;
  14  \
- 15 EXIT
+ 15  ;s
 
 Scr# 599 
   0 \ kempston test
@@ -11779,7 +11779,7 @@ Scr# 599
   6   ?terminal until
   7 ;
   8 \
-  9 EXIT
+  9 ;s
  10 
  11 
  12 
@@ -11817,7 +11817,7 @@ Scr# 601
   8 \
   9 : d+! ( n a )
  10   tuck 2@      \ a n d
- 11   rot s>d d+  \ a d+n
+ 11   rot s->d d+  \ a d+n
  12   rot 2! ;
  13 decimal
  14 -->
@@ -11825,7 +11825,7 @@ Scr# 601
 
 Scr# 602 
   0 ( Chomp.f )
-  1 : b.     ( n -- )
+  1 : bin ( n -- )
   2   base @ swap 2 base !
   3   8 .r  base ! ;
   4 \ double equals
@@ -11982,7 +11982,7 @@ Scr# 610
  11 \ given c print binary repres.
  12 : .UDG ( c -- )
  13  cr UDG@ dup 8 + swap do
- 14   i c@ b.     cr
+ 14   i c@ bin cr
  15  loop ; -->
 
 Scr# 611 
@@ -12156,7 +12156,7 @@ Scr# 620
   5   dup 3 lshift array +
   6   sprite^ ! to sprite-no ;
   7 \
-  8 : sprite@ ( -- a )
+  8 : sprite ( -- a )
   9   sprite^ @ ;
  10 \
  11 : all-ghost  ( v i -- )
@@ -12205,16 +12205,16 @@ Scr# 623
   0 ( chomp.f - Sprite )
   1 \ shorthand for x-pos,y-pos
   2 : xy-pos@  ( -- x y )
-  3   sprite@
+  3   sprite
   4   dup    x-pos c@
   5   swap   y-pos c@ ;
   6 : xy-pre@  ( -- x y )
-  7   sprite@
+  7   sprite
   8   dup    x-pre c@
   9   swap   y-pre c@ ;
  10 : xy-pre! ( x y -- )
- 11   >R sprite@ x-pre c!
- 12   R> sprite@ y-pre c! ;
+ 11   >R sprite x-pre c!
+ 12   R> sprite y-pre c! ;
  13 \
  14 -->
  15 
@@ -12222,10 +12222,10 @@ Scr# 623
 Scr# 624 
   0 ( Chomp.f - Sprite )
   1 : Ghost-color ( -- )
-  2  Inky   1 sprite@ color c!
-  3  Pinky  3 sprite@ color c!
-  4  Blinky 5 sprite@ color c!
-  5  Ted    2 sprite@ color c!
+  2  Inky   1 sprite color c!
+  3  Pinky  3 sprite color c!
+  4  Blinky 5 sprite color c!
+  5  Ted    2 sprite color c!
   6 ;
   7 : Ghost-white ( -- )
   8  7  0 color  all-ghost
@@ -12244,11 +12244,11 @@ Scr# 625
   3  11 0 y-pos  all-ghost
   4  55 0 dir    all-ghost
   5  bl 0 maze   all-ghost
-  6  Inky   10 sprite@ y-pos c!
+  6  Inky   10 sprite y-pos c!
   7  Inky   xy-pos@ xy-pre!
-  8  Pinky  12 sprite@ y-pos c!
+  8  Pinky  12 sprite y-pos c!
   9  Pinky  xy-pos@ xy-pre!
- 10  Ted    11 sprite@ x-pos c!
+ 10  Ted    11 sprite x-pos c!
  11  Ted    xy-pos@ xy-pre!
  12  Blinky xy-pos@ xy-pre!
  13  [char] T udg+
@@ -12260,14 +12260,14 @@ Scr# 626
   1 4 name-of Pacman
   2 : pacman-init
   3   Pacman [char] R UDG+
-  4      sprite@ face  c!
-  5   14 sprite@ x-pos c!
-  6   12 sprite@ y-pos c!
-  7   14 sprite@ x-pre c!
-  8   12 sprite@ y-pre c!
-  9    6 sprite@ color c!
- 10   56 sprite@ dir   c!
- 11   bl sprite@ maze  c!
+  4      sprite face  c!
+  5   14 sprite x-pos c!
+  6   12 sprite y-pos c!
+  7   14 sprite x-pre c!
+  8   12 sprite y-pre c!
+  9    6 sprite color c!
+ 10   56 sprite dir   c!
+ 11   bl sprite maze  c!
  12 ;
  13 ghost-init
  14 pacman-init
@@ -12278,14 +12278,14 @@ Scr# 627
   1 5 name-of Cherry
   2 : cherry-init
   3   Cherry [char] U UDG+
-  4      sprite@ face  c!
-  5   14 sprite@ x-pos c!
-  6   12 sprite@ y-pos c!
-  7   14 sprite@ x-pre c!
-  8   12 sprite@ y-pre c!
-  9    2 sprite@ color c!
- 10   00 sprite@ dir   c!
- 11   bl sprite@ maze  c!
+  4      sprite face  c!
+  5   14 sprite x-pos c!
+  6   12 sprite y-pos c!
+  7   14 sprite x-pre c!
+  8   12 sprite y-pre c!
+  9    2 sprite color c!
+ 10   00 sprite dir   c!
+ 11   bl sprite maze  c!
  12 ;
  13 cherry-init -->
  14 
@@ -12295,10 +12295,10 @@ Scr# 628
   0 ( Chomp.f - Sprite )
   1 \ draw current sprite
   2 : sprite-put ( -- )
-  3   sprite@ face  c@
-  4   sprite@ color c@   16
+  3   sprite face  c@
+  4   sprite color c@   16
   5   xy-pos@ swap      22
-  6   sprite@ maze  c@
+  6   sprite maze  c@
   7   xy-pre@ swap      22
   8   4 16
   9   sync-emit
@@ -12369,15 +12369,15 @@ Scr# 632
   2   Pacman
   3   xy-pos@      1+      maze@
   4   dup [char] \ = if
-  5    1 sprite@ y-pos c!
+  5    1 sprite y-pos c!
   6   endif
   7   ?pac-trail if
   8    [char] R UDG+
-  9    sprite@ face  c!
- 10    1  sprite@ y-pos c+!
+  9    sprite face  c!
+ 10    1  sprite y-pos c+!
  11 \ else 2 choose if key-up
  12 \  else key-down then
- 13 \  sprite@ dir c!
+ 13 \  sprite dir c!
  14   endif ;
  15 -->
 
@@ -12387,15 +12387,15 @@ Scr# 633
   2   Pacman
   3   xy-pos@      1-      maze@
   4   dup [char] / = if
-  5    21 sprite@ y-pos c!
+  5    21 sprite y-pos c!
   6   endif
   7   ?pac-trail if
   8    [char] P UDG+
-  9     sprite@ face  c!
- 10    -1 sprite@ y-pos c+!
+  9     sprite face  c!
+ 10    -1 sprite y-pos c+!
  11 \ else 2 choose if key-up
  12 \  else key-down then
- 13 \  sprite@ dir c!
+ 13 \  sprite dir c!
  14   endif ;
  15 -->
 
@@ -12406,11 +12406,11 @@ Scr# 634
   3   xy-pos@ swap 1- swap maze@
   4   ?pac-trail if
   5    [char] Q UDG+
-  6    sprite@ face  c!
-  7    -1 sprite@ x-pos c+!
+  6    sprite face  c!
+  7    -1 sprite x-pos c+!
   8 \ else 2 choose if
   9 \  key-right else key-left then
- 10 \  sprite@ dir c!
+ 10 \  sprite dir c!
  11   endif ;
  12 -->
  13 
@@ -12424,11 +12424,11 @@ Scr# 635
   3   xy-pos@ swap 1+ swap maze@
   4   ?pac-trail if
   5    [char] S UDG+
-  6    sprite@ face  c!
-  7    1  sprite@ x-pos c+!
+  6    sprite face  c!
+  7    1  sprite x-pos c+!
   8 \ else 2 choose if
   9 \  key-left else key-right then
- 10 \  sprite@ dir c!
+ 10 \  sprite dir c!
  11   endif ;
  12 -->
  13 
@@ -12512,14 +12512,14 @@ Scr# 640
   1 : ghost-right ( c -- )
   2   xy-pos@ 1+ maze@
   3   ?ghost-trail if
-  4      1  sprite@ y-pos c+!
+  4      1  sprite y-pos c+!
   5   else
   6    2 choose if
   7     key-down
   8    else
   9     key-up
  10    endif
- 11    sprite@ dir c!
+ 11    sprite dir c!
  12   endif
  13 ;
  14 -->
@@ -12530,14 +12530,14 @@ Scr# 641
   1 : ghost-left  ( c -- )
   2   xy-pos@ 1- maze@
   3   ?ghost-trail if
-  4     -1  sprite@ y-pos c+!
+  4     -1  sprite y-pos c+!
   5   else
   6    2 choose if
   7     key-up
   8    else
   9     key-down
  10    endif
- 11    sprite@ dir c!
+ 11    sprite dir c!
  12   endif
  13 ;
  14 -->
@@ -12548,14 +12548,14 @@ Scr# 642
   1 : ghost-down  ( c -- )
   2   xy-pos@ swap 1+ swap maze@
   3   ?ghost-trail if
-  4      1  sprite@ x-pos c+!
+  4      1  sprite x-pos c+!
   5   else
   6    2 choose if
   7     key-right
   8    else
   9     key-left
  10    endif
- 11    sprite@ dir c!
+ 11    sprite dir c!
  12   endif
  13 ;
  14 -->
@@ -12566,14 +12566,14 @@ Scr# 643
   1 : ghost-up    ( c -- )
   2   xy-pos@ swap 1- swap maze@
   3   ?ghost-trail if
-  4     -1  sprite@ x-pos c+!
+  4     -1  sprite x-pos c+!
   5   else
   6    2 choose if
   7     key-left
   8    else
   9     key-right
  10    endif
- 11    sprite@ dir c!
+ 11    sprite dir c!
  12   endif
  13 ;
  14 -->
@@ -12609,7 +12609,7 @@ Scr# 645
   8    3 of key-right endof
   9    endcase
  10   endif
- 11   sprite@ dir c!
+ 11   sprite dir c!
  12 ;
  13 -->
  14 
@@ -12781,9 +12781,9 @@ Scr# 655
   0 ( Chomp.f )
   1 : ghost-eaten ( n -- )
   2   sprite#
-  3   12 sprite@ x-pos c!
-  4   12 sprite@ y-pos c!
-  5   bl sprite@ maze  c!
+  3   12 sprite x-pos c!
+  4   12 sprite y-pos c!
+  5   bl sprite maze  c!
   6   10 score d+!
   7   10 total d+!
   8   [  5 20 bip ] 2lit bleep
@@ -12805,7 +12805,7 @@ Scr# 656
   6      score 2@ high-score 2!
   7    endif
   8    0. score 2!
-  9    180. total 2!
+  9    179. total 2!
  10   endif
  11   init-all
  12   interlude
@@ -12889,17 +12889,17 @@ Scr# 661
   0 ( Chomp.f )
   1 : move-four-ghosts
   2   4 0 do
-  3     i sprite# xy-pos@ xy-pre!
-  4     23672 @ 1 and hunt @ - 1- if
-  5   \   ghost-decision
-  6       sprite@ dir c@
-  7       ghost-move then
-  8     sprite-put
-  9     xy-pos@ maze@
- 10     sprite@ maze c!
- 11     catch? if catch! then
- 12   loop
- 13 ; -->
+  3    i sprite# xy-pos@ xy-pre!
+  4 \  ghost-decision
+  5    sprite dir c@ ghost-move
+  6 \  LASTK c@      ghost-move
+  7    sprite-put
+  8    xy-pos@ maze@
+  9    sprite maze c!
+ 10    catch? if catch! then
+ 11   loop
+ 12 ; -->
+ 13 
  14 
  15 
 
@@ -12929,11 +12929,11 @@ Scr# 663
   4   pacman xy-pos@ swap . .
   5   3 24 at. LASTK c@ .
   6 \ 22 1 at. hex sprite 8 +
-  7 \ sprite@ (dump) decimal
+  7 \ sprite (dump) decimal
   8   5 24 at. total 2@ D.
   9   7 24 at. counting @ .
  10   9 24 at.
- 11   sprite@ maze c@ emitc
+ 11   sprite maze c@ emitc
  12   0 0 at. .s
  13   11 24 at. hunt @ .
  14 \ 22 22 at. ." KEY" key drop
@@ -13001,7 +13001,7 @@ Scr# 667
   4   0 paper. 0 border. 4 ink.
   5   1 bright. perm
   6   interlude
-  7   180. total 2!
+  7   179. total 2!
   8   0.   score 2!
   9   init-all
  10   set-maze-run
@@ -13013,17 +13013,17 @@ Scr# 667
 
 Scr# 668 
   0 ( Ghost.f )
-  1 CR CR CR
-  2 TRUV  .( Use: )
-  3 INVV  .(  GAME )  CR
-  4 TRUV  .( Arrorw keys to move. ) CR
-  5       .( Cursor Joystick should work. ) CR
-  6 INVV  .(  BREAK )
-  7 TRUV  .( stops. ) CR .( Give. ) CR
-  8 INVV  .(  LAYER12 )
-  9 TRUV  .( to go at 64 columns and ) CR
- 10 INVV  .(  3 SPEED! )
- 11 TRUV  .( to go at 28 MHz. ) CR
+  1 CR CR
+  2 .( Use GAME to start game. ) CR
+  3 .( Arrorw keys to move. ) CR
+  4 .( Cursor Joystick should work. ) CR
+  5 .( BREAK stops: give LAYER12 to pass to 64 columns. ) CR
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
  12 
  13 
  14 
@@ -15388,50 +15388,50 @@ Scr# 799
  15 
 
 Scr# 800 
-  0 ( Test Suite )
-  1 MARKER TEST-SUITE
-  2 DECIMAL NEEDS DEPTH
-  3 NEEDS <>
-  4 \
-  5 \ FORTH DEFINITIONS  VOCABULARY TEST-SUITE
-  6 \ TEST-SUITE DEFINITIONS
-  7 \
-  8 0 VARIABLE ACTUAL-DEPTH
-  9 CREATE ACTUAL-RESULTS 30 CELLS ALLOT
- 10 0 VARIABLE START-DEPTH
- 11 0 VARIABLE XCURSOR
- 12 ' ERROR VARIABLE ERROR-XT
- 13 : ERROR ERROR-XT @ EXECUTE ;
- 14 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 801 
-  0 ( Test Suite )
-  1 : SOURCE ( -- a b )
-  2   BLK @ IF
-  3     >IN @ BLK @ B/SCR /MOD -ROT          \ scr  in  r
-  4     B/BUF * + C/L / SWAP                 \ row  scr
-  5     (LINE)                               \ a n
-  6   ELSE
-  7     TIB @ 24
-  8   THEN
-  9 ;
- 10 : ERROR1 ( n -- )
- 11   SOURCE -TRAILING CR TYPE CR
- 12   MESSAGE CR
- 13 ;
- 14 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 802 
-  0 ( Test Suite )
-  1 \
-  2 \
-  3 : T{  ( -- )  \ record pre-test depth
-  4   DEPTH START-DEPTH !
-  5   0 XCURSOR !
-  6 ;
-  7 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
   8 
   9 
  10 
@@ -15442,17 +15442,17 @@ Scr# 802
  15 
 
 Scr# 803 
-  0 ( Test Suite )
-  1 \
-  2 : ->   ( ... -- ) \ record depth and contents of stack
-  3   DEPTH DUP ACTUAL-DEPTH !       \ record depth
-  4   START-DEPTH @ > IF             \ is there something on stack
-  5     DEPTH START-DEPTH @ - 0 DO   \ so save them
-  6       ACTUAL-RESULTS I CELLS + !
-  7     LOOP
-  8   THEN
-  9 ;
- 10 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
  11 
  12 
  13 
@@ -15460,35 +15460,35 @@ Scr# 803
  15 
 
 Scr# 804 
-  0 ( Test Suite )
-  1 : }T    ( ... -- )  \  compare stack images
-  2   DEPTH ACTUAL-DEPTH @ = IF
-  3     DEPTH START-DEPTH @ > IF
-  4       DEPTH START-DEPTH @ - 0 DO
-  5         ACTUAL-RESULTS I CELLS + @
-  6         <> IF 50 ERROR   LEAVE THEN
-  7                \ Incorrect result.
-  8       LOOP
-  9     THEN
- 10   ELSE
- 11     51 ERROR
- 12      \ Wrong number of results.
- 13   THEN
- 14 ;
- 15 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 805 
-  0 ( Test Suite )
-  1 : ...}T  \ ( ... -- )
-  2   XCURSOR @ START-DEPTH @ + ACTUAL-DEPTH @ <> IF
-  3     52 ERROR
-  4   \ Number of cell result before '->' does not match ...}T spec
-  5   ELSE DEPTH START-DEPTH @ = NOT IF
-  6     53 ERROR
-  7   \ Number of cell result before and after '->' does not match
-  8   THEN THEN
-  9 ;
- 10 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
  11 
  12 
  13 
@@ -15496,17 +15496,17 @@ Scr# 805
  15 
 
 Scr# 806 
-  0 ( Test Suite )
-  1 : XTESTER \ ( X -- )
-  2   DEPTH 0=  ACTUAL-DEPTH @ XCURSOR @ START-DEPTH @ + 1+ <
-  3   OR IF
-  4     54 ERROR
-  5   ELSE
-  6     50 ERROR
-  7     1 XCURSOR +!
-  8   THEN
-  9 ;
- 10 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
  11 
  12 
  13 
@@ -15514,12 +15514,12 @@ Scr# 806
  15 
 
 Scr# 807 
-  0 ( Test Suite )
-  1 : X}T XTESTER ...}T ;
-  2 : XX}T XTESTER XTESTER ...}T ;
-  3 : XXX}T XTESTER XTESTER XTESTER ...}T ;
-  4 : XXXX}T XTESTER XTESTER XTESTER XTESTER ...}T ;
-  5 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
   6 
   7 
   8 
@@ -15532,29 +15532,29 @@ Scr# 807
  15 
 
 Scr# 808 
-  0 ( Test Suite )
-  1 1 VARIABLE VERBOSE
-  2 \
-  3 : TESTING \ ( -- ) talking comment
-  4   SOURCE
-  5   VERBOSE @ IF
-  6     -TRAILING TYPE
-  7   THEN
-  8   [COMPILE] \
-  9   CR
- 10 ;
- 11 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
  12 
  13 
  14 
  15 
 
 Scr# 809 
-  0 ( Test Suite )
-  1 \
-  2 ' ERROR1 ERROR-XT !      \ this activates new error handler
-  3 \
-  4 TESTING Test Suite
+  0 
+  1 
+  2 
+  3 
+  4 
   5 
   6 
   7 
@@ -15568,15 +15568,15 @@ Scr# 809
  15 
 
 Scr# 810 
-  0 ( Test Suite - Examples          )
-  1 \
-  2 TESTING EXAMPLES
-  3 T{  1 1   +     ->     2  }T  \ Ok
-  4 T{  1 2 3 SWAP  -> 1 3 2  }T  \ Ok
-  5 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
   6 
-  7 T{  1 2 3 SWAP  -> 1 2 3  }T  \ Incorrect result
-  8 T{  1 2   SWAP  -> 1      }T  \ Wrong number of results.
+  7 
+  8 
   9 
  10 
  11 
@@ -15586,47 +15586,47 @@ Scr# 810
  15 
 
 Scr# 811 
-  0 ( Test Suite - Basic assumptions )
-  1 NEEDS INVERT
-  2 \
-  3 TESTING Test Suite - Basic Assumptions
-  4 \
-  5 MARKER DONE  HEX
-  6 \
-  7 T{   ->   }T
-  8 T{   : BITSSET? IF 0 0 ELSE 0 THEN ; ->   }T
-  9 T{   0 BITSSET? -> 0    }T
- 10 T{   1 BITSSET? -> 0 0  }T
- 11 T{  -1 BITSSET? -> 0 0  }T
- 12 \
- 13 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
 Scr# 812 
-  0 ( Test Suite - Constants         )
-  1 \
-  2  0 CONSTANT 0S
-  3 -1 CONSTANT 1S
-  4 1S 1 RSHIFT INVERT CONSTANT  MSB
-  5 \
-  6 TESTING F.6.1.0950 - CONSTANT
-  7 T{  123 CONSTANT X123 ->       }T
-  8 T{  X123              -> 123   }T
-  9 T{  : EQU CONSTANT ;  ->       }T
- 10 T{  X123 EQU Y123     ->       }T
- 11 T{  Y123              -> X123  }T
- 12 \
- 13 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
 Scr# 813 
-  0 ( Test Suite - Booleans          )
-  1 TESTING F.6.1.1720 - INVERT
-  2 T{   0S  INVERT  ->  1S   }T
-  3 T{   1S  INVERT  ->  0S   }T
-  4 -->
+  0 
+  1 
+  2 
+  3 
+  4 
   5 
   6 
   7 
@@ -15640,124 +15640,124 @@ Scr# 813
  15 
 
 Scr# 814 
-  0 ( Test Suite - Booleans          )
-  1 TESTING F.6.1.0720 - AND
-  2 T{ 0 0 AND -> 0 }T
-  3 T{ 0 1 AND -> 0 }T
-  4 T{ 1 0 AND -> 0 }T
-  5 T{ 1 1 AND -> 1 }T
-  6 T{ 0 INVERT 1 AND -> 1 }T
-  7 T{ 1 INVERT 1 AND -> 0 }T
-  8 T{ 0S 0S AND -> 0S }T
-  9 T{ 0S 1S AND -> 0S }T
- 10 T{ 1S 0S AND -> 0S }T
- 11 T{ 1S 1S AND -> 1S }T
- 12 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
  13 
  14 
  15 
 
 Scr# 815 
-  0 ( Test Suite - Booleans          )
-  1 TESTING F.6.1.1980 - OR
-  2 T{ 0S 0S OR  -> 0S }T
-  3 T{ 0S 1S OR  -> 1S }T
-  4 T{ 1S 0S OR  -> 1S }T
-  5 T{ 1S 1S OR  -> 1S }T
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
   6 
-  7 TESTING F.6.1.2490 - XOR
-  8 T{ 0S 0S XOR -> 0S }T
-  9 T{ 0S 1S XOR -> 1S }T
- 10 T{ 1S 0S XOR -> 1S }T
- 11 T{ 1S 1S XOR -> 0S }T
- 12 -->
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
  13 
  14 
  15 
 
 Scr# 816 
-  0 ( Test Suite - Shifts            )
-  1 TESTING F.6.1.0320 - 2*
-  2 T{    0S  2*       ->   0S  }T
-  3 T{     1  2*       ->    2  }T
-  4 T{  4000  2*       -> 8000  }T
-  5 T{    1S  2* 1 XOR ->   1S  }T
-  6 T{   MSB  2*       ->   0S  }T
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
   7 
-  8 TESTING F.6.1.0330 - 2/
-  9 T{           0S 2/ ->   0S  }T
- 10 T{            1 2/ ->    0  }T
- 11 T{         4000 2/ -> 2000  }T
- 12 T{           1S 2/ ->   1S  }T
- 13 T{     1S 1 XOR 2/ ->   1S  }T
- 14 T{  MSB 2/ MSB AND ->  MSB  }T
- 15 -->
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 817 
-  0 ( Test Suite - Shifts            )
-  1 TESTING F.6.1.1805 - LSHIFT
-  2 T{     1 0 LSHIFT  ->    1  }T
-  3 T{     1 1 LSHIFT  ->    2  }T
-  4 T{     1 2 LSHIFT  ->    4  }T
-  5 T{     1 F LSHIFT  -> 8000  }T \ biggest guaranteed shift
-  6 T{    1S 1 LSHIFT 1 XOR -> 1S }T
-  7 T{   MSB 1 LSHIFT  ->    0  }T
-  8 TESTING F.6.1.2162 - RSHIFT
-  9 T{     1 0 RSHIFT  ->    1  }T
- 10 T{     1 1 RSHIFT  ->    0  }T
- 11 T{     2 1 RSHIFT  ->    1  }T
- 12 T{     4 2 RSHIFT  ->    1  }T
- 13 T{  8000 F RSHIFT  ->    1  }T \ biggest
- 14 T{   MSB 1 RSHIFT MSB AND ->   0  }T
- 15 T{   MSB 1 RSHIFT     2*  -> MSB  }T    -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 818 
-  0 ( Test Suite - Numeric Notation  )
-  1 --> DECIMAL TESTING Numeric Notation
-  2 T{  #1289        -> 1289        }T
-  3 T{  #123456789.  -> 123456789.  }T
-  4 T{  #-1289       -> -1289       }T
-  5 T{  #-123456789. -> 123456789.  }T
-  6 T{  $12eF        -> 4847        }T
-  7 T{  $12aBcDeF    -> 313249263.  }T
-  8 T{  $-12eF       -> 4847        }T
-  9 T{  $-12aBcDeF   -> 313249263.  }T
- 10 T{  %10010110    -> 150         }T
- 11 T{  %10010110.   -> 150.        }T
- 12 T{  %-10010110   -> 150         }T
- 13 T{  %-10010110.  -> 150.        }T
- 14 T{  'z'          -> 122         }T
- 15 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 819 
-  0 ( Test Suite - Comparison        )
-  1 TESTING Comparison
-  2 0 INVERT CONSTANT MAX-UINT
-  3 0 INVERT 1 RSHIFT CONSTANT MAX-INT
-  4 0 INVERT 1 RSHIFT INVERT CONSTANT MIN-INT
-  5 0 INVERT 1 RSHIFT CONSTANT MID-UINT
-  6 0 INVERT 1 RSHIFT INVERT CONSTANT MID-UINT+1
-  7 0S CONSTANT <FALSE>
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
   8 
-  9 \ Not standard
- 10 1  CONSTANT <TRUE>
- 11 -->
+  9 
+ 10 
+ 11 
  12 
  13 
  14 
  15 
 
 Scr# 820 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.0270 - 0=
-  2 T{         0 0= -> <TRUE>   }T
-  3 T{         1 0= -> <FALSE>  }T
-  4 T{         2 0= -> <FALSE>  }T
-  5 T{        -1 0= -> <FALSE>  }T
-  6 T{  MAX-UINT 0= -> <FALSE>  }T
-  7 T{  MIN-INT  0= -> <FALSE>  }T
-  8 T{  MAX-INT  0= -> <FALSE>  }T
-  9 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
  10 
  11 
  12 
@@ -15766,16 +15766,16 @@ Scr# 820
  15 
 
 Scr# 821 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.0530 -  =
-  2 T{  0  0      = -> <TRUE>   }T
-  3 T{  1  1      = -> <TRUE>   }T
-  4 T{ -1 -1      = -> <TRUE>   }T
-  5 T{  1  0      = -> <FALSE>  }T
-  6 T{ -1  0      = -> <FALSE>  }T
-  7 T{  0  1      = -> <FALSE>  }T
-  8 T{  0 -1      = -> <FALSE>  }T
-  9 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
  10 
  11 
  12 
@@ -15784,16 +15784,16 @@ Scr# 821
  15 
 
 Scr# 822 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.0250 - 0<
-  2 T{        0 0< -> <FALSE> }T
-  3 T{       -1 0< -> <TRUE>  }T   \ Because it gives 1
-  4 T{  MIN-INT 0< -> <TRUE>  }T   \ Because it gives 1
-  5 T{        1 0< -> <FALSE> }T
-  6 T{  MAX-INT 0< -> <FALSE> }T
-  7 \
-  8 \
-  9 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
  10 
  11 
  12 
@@ -15802,51 +15802,51 @@ Scr# 822
  15 
 
 Scr# 823 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.0480 -  <
-  2 T{        0       1 < -> <TRUE>   }T
-  3 T{        1       2 < -> <TRUE>   }T
-  4 T{       -1       0 < -> <TRUE>   }T
-  5 T{       -1       1 < -> <TRUE>   }T
-  6 T{  MIN-INT       0 < -> <TRUE>   }T
-  7 T{  MIN-INT MAX-INT < -> <TRUE>   }T
-  8 T{        0 MAX-INT < -> <TRUE>   }T
-  9 T{        0       0 < -> <FALSE>  }T
- 10 T{        1       1 < -> <FALSE>  }T
- 11 T{        1       0 < -> <FALSE>  }T
- 12 T{        2       1 < -> <FALSE>  }T
- 13 T{        0      -1 < -> <FALSE>  }T
- 14 T{        1      -1 < -> <FALSE>  }T
- 15 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 824 
-  0 ( Test Suite - Comparison        )
-  1 T{        0 MIN-INT < -> <FALSE>  }T
-  2 T{  MAX-INT MIN-INT < -> <FALSE>  }T
-  3 T{  MAX-INT       0 < -> <FALSE>  }T
-  4 \
-  5 TESTING F.6.1.0540 -  >
-  6 T{        0       1 > -> <FALSE>  }T
-  7 T{        1       2 > -> <FALSE>  }T
-  8 T{       -1       0 > -> <FALSE>  }T
-  9 T{       -1       1 > -> <FALSE>  }T
- 10 T{  MIN-INT       0 > -> <FALSE>  }T
- 11 T{  MIN-INT MAX-INT > -> <FALSE>  }T
- 12 T{        0 MAX-INT > -> <FALSE>  }T
- 13 T{        0       0 > -> <FALSE>  }T
- 14 T{        1       1 > -> <FALSE>  }T
- 15 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
 
 Scr# 825 
-  0 ( Test Suite - Comparison        )
-  1 T{        1       0 > -> <TRUE>   }T
-  2 T{        2       1 > -> <TRUE>   }T
-  3 T{        0      -1 > -> <TRUE>   }T
-  4 T{        1      -1 > -> <TRUE>   }T
-  5 T{        1 MIN-INT > -> <TRUE>   }T
-  6 T{  MAX-INT MIN-INT > -> <TRUE>   }T
-  7 T{  MAX-INT       0 > -> <TRUE>   }T
-  8 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
   9 
  10 
  11 
@@ -15856,38 +15856,38 @@ Scr# 825
  15 
 
 Scr# 826 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.2340 -  U<
-  2 T{         0        1 U< -> <TRUE>   }T
-  3 T{         1        2 U< -> <TRUE>   }T
-  4 T{         0 MID-UINT U< -> <TRUE>   }T
-  5 T{         0 MAX-UINT U< -> <TRUE>   }T
-  6 T{  MID-UINT MAX-UINT U< -> <TRUE>   }T
-  7 T{         0        0 U< -> <FALSE>  }T
-  8 T{         1        1 U< -> <FALSE>  }T
-  9 T{         1        0 U< -> <FALSE>  }T
- 10 T{         2        1 U< -> <FALSE>  }T
- 11 T{  MID-UINT        0 U< -> <FALSE>  }T
- 12 T{  MAX-UINT        0 U< -> <FALSE>  }T
- 13 T{  MID-UINT MID-UINT U< -> <FALSE>  }T
- 14 -->
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
  15 
 
 Scr# 827 
-  0 ( Test Suite - Comparison        )
-  1 TESTING F.6.1.1880 -  MIN
-  2 T{        0       1 MIN ->       0  }T
-  3 T{        1       2 MIN ->       1  }T
-  4 T{       -1       0 MIN ->      -1  }T
-  5 T{       -1       1 MIN ->      -1  }T
-  6 T{  MIN-INT       0 MIN -> MIN-INT  }T
-  7 T{  MIN-INT MAX-INT MIN -> MIN-INT  }T
-  8 T{        0 MAX-INT MIN ->       0  }T
-  9 T{        0       0 MIN ->       0  }T
- 10 T{        1       1 MIN ->       1  }T
- 11 T{        2       1 MIN ->       1  }T
- 12 T{        0      -1 MIN ->      -1  }T
- 13 T{        1      -1 MIN ->      -1  }T
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
@@ -18970,19 +18970,19 @@ Scr# 998
  15 
 
 Scr# 999 
-  0 ( Sinus )
-  1 sinus definitions
-  2 : sin ( grad -- sinus )
-  3   dup >r            \ n
-  4   abs 360 mod       \ r
-  5   dup 180 > if 180 -  -1  else   0   then >r
-  6   dup  90 > if 180 swap - then
-  7   sinus@
-  8   r> +- \     if negate then
-  9   r> +- \  0< if negate then
- 10 ;
- 11 : cos 90 + sin ;
- 12 : tan dup sin swap cos 10000  swap */    ;
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
  13 
  14 
  15 
