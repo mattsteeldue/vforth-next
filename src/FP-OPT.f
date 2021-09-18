@@ -485,6 +485,7 @@ MARKER FORGET-ME
 
 FP-INIT
 
-.( Use FLOATING to enable FP numbers )
-.(     INTEGER  to disable )
-.( Use n PLACES to set decimal places )
+CR
+.( Use FLOATING to enable FP numbers ) CR
+.(     INTEGER  to disable ) CR
+.( Use n PLACES to set decimal places ) CR
