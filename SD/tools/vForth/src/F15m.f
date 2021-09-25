@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 MDR/MGT version ) CR
-.( build 20210814 ) CR 
+.( build 20210916 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -144,10 +144,10 @@ DECIMAL
      0  VALUE     quit^         \ patch of ERROR with QUIT
      0  VALUE     abort^        \ patch of (ABORT)
    \ 0  VALUE     xi/o^         \ patch of XI/O and WARM in COLD
-   \ 0  VALUE     xi/o2^        \ patch of XI/O in WARM 
+   \ 0  VALUE     xi/o2^        \ patch of BLK-INIT in WARM 
      0  VALUE     y^            \ patch of COLD/WARM start
      0  VALUE     splash^       \ patch of SPLASH in WARM
-     0  VALUE     autoexec^     \ patch of LOAD in WARM
+     0  VALUE     autoexec^     \ patch of NOOP in ABORT
      0  VALUE     .^            \ patch of .    in MESSAGE
 
 .( Psh2 Psh1 Next )
@@ -167,9 +167,9 @@ DECIMAL
 
 \ at the end, we need to patch every reference to RP-address.
 \ we ALLOT some area to keep track of them whenever we need.
-     0  VARIABLE rp# DECIMAL 40 ALLOT
+     0  VARIABLE rp# DECIMAL 42 ALLOT
     rp# VARIABLE rp#^ 
-    rp# DECIMAL 42 ERASE
+    rp# DECIMAL 44 ERASE
 
 \ accumulate pointers to be patched at the end using final_rp_patch
 : !rp^ ( address -- )
@@ -412,6 +412,7 @@ HERE TO vars^       R0 @ ,       \ HEX EAE0    ,
 HEX 030 +ORIGIN TO rp^     
  
        R0 @ , \ 2  - \ was HEX EADE    ,  
+
 
  
 \ from this point we can use LDHL,RP and LDRP,HL Assembler macros
@@ -1036,7 +1037,7 @@ CODE (?emit) ( c1 -- c2 )
         ANDN    HEX    7F N,  \ 7-bit ascii only
         PUSH    BC|            \ saves program counter
         LDX     BC|  EMIT-N  NN,
-        LDX     HL|  EMIT-C^ EMIT-N + 1 - NN, \ EMIT-Z^
+        LDX     HL|  EMIT-C^ EMIT-N + 1- NN, \ EMIT-Z^
         CPDR    \ search for c1 in EMIT-C table, backward
         
         JRF    NZ'|  HOLDPLACE    \ Found, decode it
@@ -1541,21 +1542,38 @@ CODE exit ( -- )
 
 
 \ 64E5h
-.( LEAVE )
+\ .( lastl aka old LEAVE )
 \ set the limit-of-loop equal to the current index
 \ this forces to leave from loop at the end of the current iteration
-CODE leave ( -- )
+\ CODE lastl ( -- )
+\ 
+\         HERE !rp^ 
+\         LDHL,RP              \ macro 30h +Origin
+\ 
+\         LD      E'| (HL)|  
+\         INCX    HL|
+\         LD      D'| (HL)|  
+\         INCX    HL|
+\         LD   (HL)'|    E|  
+\         INCX    HL|
+\         LD   (HL)'|    D|
+\         Next
+\         C;       
+
+
+CODE (leave) ( -- )
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
+        
+        LDX     DE|  4  NN,  \ UNLOOP index & limit from Return Stack      
+        ADDHL   DE|
 
-        LD      E'| (HL)|  
-        INCX    HL|
-        LD      D'| (HL)|  
-        INCX    HL|
-        LD   (HL)'|    E|  
-        INCX    HL|
-        LD   (HL)'|    D|
+        HERE !rp^
+        LDRP,HL              \ macro 30h +Origin
+        
+        JP      branch^  AA, \ jump out of loop
+
         Next
         C;       
 
@@ -1613,7 +1631,6 @@ CODE r@ ( -- n )
         ' i  >BODY  LATEST PFA CFA ! 
         C;
 
-
 CODE r  ( -- n )         
          
         \ this way we will have a real duplicate of I
@@ -1631,7 +1648,7 @@ CODE 0= ( n -- f )
         ORA      H|
         LDX     HL|    0 NN,
         JRF    NZ'|    HOLDPLACE
-            DECX      HL|
+            DECX      HL|           \ true
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1653,7 +1670,7 @@ CODE 0< ( n -- f )
         ADDHL   HL|
         LDX     HL|    0 NN,
         JRF    NC'|    HOLDPLACE
-            DECX      HL|
+            DECX      HL|           \ true
         HERE DISP, \ THEN,
         Psh1
         C;
@@ -1672,7 +1689,7 @@ CODE 0> ( n -- f )
         JRF    CY'|    HOLDPLACE    
         ANDA     A|
         JRF     Z'|    HOLDPLACE
-            DECX      HL|
+            DECX      HL|           \ true
         HERE DISP, HERE DISP, \ THEN, THEN,
         Psh1  
         C;
@@ -2510,11 +2527,11 @@ DECIMAL
   56     user    hld       \ last character during a number conversion output
   58     user    use       \ address of last used block
   60     user    prev      \ address of previous used block
-  62     user    lp        \ line printer (not used)
+  62     user    lp        \ Case Pointer...    
   64     user    place     \ number of digits after decimal point in output
   66     user    source-id \ data-stream number in INCLUDE and LOAD-
   68     user    span      \ number of character of last ACCEPT
-  70     user    handler   \ used by CATCH-THROW
+  70     user    handler   \ throw-catch handler
   
   
 \ 1+  has moved backward
@@ -2594,7 +2611,7 @@ CODE u< ( u1 u2 -- f )
         POP     HL|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| -1 NN,
+        LDX     HL| -1 NN,          \ true
         JRF    CY'| HOLDPLACE
             INCX     HL|
         HERE DISP, \ THEN,
@@ -2616,7 +2633,7 @@ CODE <  ( n1 n2 -- f )
         LD      D'|   A|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| -1 NN,
+        LDX     HL| -1 NN,          \ true
         JRF    CY'| HOLDPLACE
             INCX     HL|
         HERE DISP, \ THEN,
@@ -2998,6 +3015,23 @@ CODE -dup ( n -- 0 | n n )
     ;
 
 
+.( LEAVE )
+: leave ( -- )
+    compile (leave)         \ unloop and branch
+    here >r 0 ,             \ save HERE and compile placeholder
+    0 0                     \ dummy stack entry.
+                            \ rotate stack from csp to sp.
+    sp@ dup cell+ cell+     ( csp h 0 h 3 h 2 x x sp sp+4 )
+    tuck                    
+    csp @ swap -            ( csp h 0 h 3 h 2 x x sp+4 sp csp-sp+4 )
+    cmove                   ( csp x x h 0 h 3 h 2 )
+    csp @ cell-             
+                            \ put saved HERE at csp-2 
+    r> over !               ( csp H x h 0 h 3 h 2 )
+    cell- 0 swap !          ( csp H 0 h 0 h 3 h 2 )
+; immediate    
+
+
 \ 6C43h
 .( -TRAILING )
 \ Assumes that an n1 bytes-long string is stored at address a 
@@ -3025,7 +3059,7 @@ CODE -dup ( n -- 0 | n n )
 : accept ( a n1 -- n2 )
     over + over   ( a  n1+a a       ) 
     0 -rot        ( a  0    a+n1  a ) 
-    Do            ( a  0 ) 
+    Do           ( a  0 ) 
         drop key  ( a  c ) 
         dup       ( a  c  c )
         [ hex 0E ] Literal +origin 
@@ -3035,7 +3069,7 @@ CODE -dup ( n -- 0 | n n )
 
             drop        ( a )
             dup i =     ( a a=i )
-                 1 and
+            1 and
             dup         ( a a=i a=i )
             r> 2 - + >r  \ decrement i by 1 or 2.
             If
@@ -3052,7 +3086,7 @@ CODE -dup ( n -- 0 | n n )
             If 
                 drop bl ( a  bl )
                 0       ( a  c  0 )
-                leave
+                \ lastl
             Else 
                 dup     ( a  c  c )
             Endif
@@ -3060,7 +3094,7 @@ CODE -dup ( n -- 0 | n n )
             i c!        ( a  c )
             dup bl <    ( a  c  c<BL )  \ patch ghost word
             If
-                r> 1 - >r  
+                r> 1- >r  
             Endif
 
         Endif
@@ -3069,6 +3103,7 @@ CODE -dup ( n -- 0 | n n )
         
         0 i 1+ ! \ zero pad
         i 
+        i c@ 0= If leave Endif
     Loop 
     swap - 1+ 
     dup span ! 
@@ -3651,6 +3686,7 @@ CODE fop
 .( 0x00 ) \ i.e. nul word
 : ~             \ to be RENAME'd via patch
     blk @ 
+\   1 >         \ BLOCK #1 is special and exploited by F_GETLINE
     If 
         1 blk +!  
         0  >in !  
@@ -3807,6 +3843,7 @@ immediate
 \ Erase the return-stack, stop any compilation and give controlo to 
 \ the console. No message is issued.
 : quit  ( -- )
+\   source-id @ f_close drop  
     0 source-id !
     0 blk !
     [compile] [
@@ -4576,6 +4613,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     Do
         0 buffer drop
     Loop
+\   blk-fh @ f_sync drop
     ;
     
 
@@ -4718,7 +4756,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 .( D.R )
 : d.r    ( d n -- )
     >r
-    swap over dabs 
+    tuck dabs 
     <# #s sign #> 
     r>
     over - spaces
@@ -4822,6 +4860,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
             leave
         Endif
     Loop
+    cr
     ;
 
 
@@ -4853,7 +4892,7 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.5 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20210814" -1 allot ]
+    [ decimal 13 here ," build 20210916" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -4902,13 +4941,18 @@ CODE cls
     +     ( n2 a n1+a )
     swap  ( n2 n1+a a )
     Do    ( n2 )
+
         inkey 
+
         dup 0= If video quit Endif
         dup [ decimal 13 ] literal = If drop 0 Endif \ Then
         dup [ decimal 10 ] literal = If drop 0 Endif \ Then
-        dup  0=  If leave Endif \ Then
+        \ dup  0=  If 
+        \     lastl
+        \ Endif \ Then
         i c! ( n2 )
         1+ ( increment n2 )
+        i c@ 0= If leave Endif
     Loop  ( n2 )
     ;
 
@@ -4955,7 +4999,7 @@ CODE cls
 \ this word is called the first time the Forth system boot to
 \ load Screen# 1. Once called it patches itself to prevent furhter runs.
 : autoexec
-    [ decimal 10 0 +origin 32768 u< 1 AND + ] Literal  \ this give 10 or 11 
+    [ decimal 10 0 +origin 32768 u< 1 and + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
     load
@@ -4968,6 +5012,7 @@ CODE cls
 : bye ( -- )
     flush
     empty-buffers
+
     0 +origin 
     basic
     ;
@@ -5253,7 +5298,6 @@ CODE final_rp_patch
 \ ______________________________________________________________________ 
 
 
-
 RENAME   to             TO
 RENAME   value          VALUE
 RENAME   rename         RENAME 
@@ -5417,6 +5461,7 @@ RENAME   query          QUERY
 \ RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
 RENAME   -trailing      -TRAILING
+RENAME   leave          LEAVE
 RENAME   type           TYPE  
 RENAME   bounds         BOUNDS  
 RENAME   count          COUNT 
@@ -5463,6 +5508,7 @@ RENAME   c,             C,
 RENAME   ,              ,    
 RENAME   allot          ALLOT
 RENAME   here           HERE 
+
 RENAME   handler        HANDLER
 RENAME   span           SPAN 
 RENAME   source-id      SOURCE-ID
@@ -5572,6 +5618,7 @@ RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
 RENAME   leave          LEAVE
+\ RENAME   lastl          LASTL
 RENAME   exit           EXIT  
 RENAME   rp!            RP! 
 RENAME   rp@            RP@ 
@@ -5613,17 +5660,19 @@ RENAME   lit            LIT
 
 SPLASH \ Return to Splash screen
 
+
 \ display address and length
 DECIMAL  
 1 WARNING !
 CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 80" CR CR
-CR CR ." give SAVE f$ CODE A," FENCE @ SWAP - U. CR CR
+CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
+
+CASEOFF
 
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN BASIC
-
+0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN ( SOURCE-ID @ F_CLOSE DROP ) BASIC
 \
 \ Origin area.
 \

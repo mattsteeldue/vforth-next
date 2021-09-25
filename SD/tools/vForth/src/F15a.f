@@ -1276,7 +1276,7 @@ CODE key ( -- c )
         LDN     A'| HEX 08 N,   \ backspace
         RST     10|
         
-        LDA()  HEX 5C08 AA,    \ get typed character
+        LDA()  HEX 5C08 AA,    \ LAST-K to get typed character
 
         \ Decode characters from above table
         LDX     HL|  KEY-1^    NN,
@@ -4378,7 +4378,7 @@ CODE basic ( n -- )
 .( #/MOD )
 \ mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
 \ used by # during number representation.
-\ : #/mod  ( ud1 u2 -- n3 ud4 )
+\ : #/mod  ( ud1 u2 -- u3 ud4 )
 \     >r           \ ud1
 \     0 r@ um/mod  \ l rem1 h/r
 \     r> swap >r   \ l rem1
@@ -5450,6 +5450,7 @@ decimal
 \ : mark ( a n -- )
 \     invv type truv
 \     ;
+
 
 .( BACK )
 : back

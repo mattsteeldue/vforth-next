@@ -400,7 +400,7 @@ DECIMAL
     ENDIF 
     TUCK
     FABS 10 0  PLACE @ 0 F** F*
-    [ 1 0 2 0 F/ ] DLITERAL F+    \ rounding
+    1/2 F+    \ rounding
     F>D 
     PLACE @ ?DUP
     IF 
