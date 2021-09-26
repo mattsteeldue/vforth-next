@@ -382,6 +382,14 @@ DECIMAL
     F>D DROP ;
 
 
+: 1/2
+  [
+    1 0 2 0 F/
+  ] 
+  DLITERAL
+;
+
+
 : F>PAD    ( fp -- u ) 
     BASE @ >R DECIMAL
     2DUP FABS 2DUP OR            \ non zero
@@ -430,14 +438,6 @@ DECIMAL
     1 0 >W 36 FOP  \ atan
     4 0 >W 04 FOP  \ *4 
     W>  
-  ] 
-  DLITERAL
-;
-
-
-: 1/2
-  [
-    1 0 2 0 F/
   ] 
   DLITERAL
 ;
