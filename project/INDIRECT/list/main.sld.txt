@@ -1,9 +1,9 @@
 |SLD.data.version|1
 C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|80||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
-C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|61||0|-1|0|D|DEBUGGING
-C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|61||0|-1|0|L|,DEBUGGING,,+equ,+used
-C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|71||0|-1|25446|D|ORIGIN
-C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|71||0|-1|25446|L|,ORIGIN,,+equ,+used
+C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|61||0|-1|-1|D|DEBUGGING
+C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|61||0|-1|-1|L|,DEBUGGING,,+equ,+used
+C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|66||0|-1|25318|D|ORIGIN
+C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm|66||0|-1|25318|L|,ORIGIN,,+equ,+used
 C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/system.asm|17||0|-1|23692|D|SCR_CT
 C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/system.asm|17||0|-1|23692|L|,SCR_CT,,+equ,+used
 C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/system.asm|18||0|-1|23560|D|LASTK

@@ -4,8 +4,8 @@
    3  0000              //  main.asm
    4  0000              //  ______________________________________________________________________
    5  0000              //
-   6  0000              // v-Forth 1.6 NextZXOS version
-   7  0000              // build 20210828
+   6  0000              // v-Forth 1.5 NextZXOS version
+   7  0000              // build 20210916
    8  0000              //
    9  0000              //
   10  0000              //  NextZXOS version
@@ -59,17 +59,17 @@
   58  0000              //  0 for final binary release.
   59  0000              //  1 for debugging with Visual Studio Code and DeZog
   60  0000              // -1 for for binary comparison with Forth generated code.
-  61  0000              DEBUGGING       equ     0
+  61  0000              DEBUGGING       equ     -1
   62  0000              //
   63  0000              //  ______________________________________________________________________
   64  0000
   65  0000                              if ( -1 == DEBUGGING )
-  66  0000 ~            ORIGIN          equ     $62E6                   // for binary comparison
+  66  0000              ORIGIN          equ     $62E6                   // for binary comparison
   67  0000                              endif
   68  0000              //  ______________________________________________________________________
   69  0000
   70  0000                              if (  0 == DEBUGGING )
-  71  0000              ORIGIN          equ     $6366                   // binary
+  71  0000 ~            ORIGIN          equ     $6366                   // binary
   72  0000                              endif
   73  0000              //  ______________________________________________________________________
   74  0000
@@ -81,10 +81,10 @@
   80  0000                              DEVICE  ZXSPECTRUMNEXT
   81  0000
   82  0000                              ORG     ORIGIN
-  83  6366
-  84  6366                              if ( -1 == DEBUGGING )
-  85  6366 ~                            ds 128                            // for binary comparison
-  86  6366                              endif
+  83  62E6
+  84  62E6                              if ( -1 == DEBUGGING )
+  85  62E6 00 00 00...                  ds 128                            // for binary comparison
+  86  62EA                              endif
   87  6366
   88  6366              //  ______________________________________________________________________
   89  6366              //
@@ -103,7 +103,7 @@
  102  6366              //    - Slash "/" is converted in _DIV or omitted if it is clear what it means
  103  6366              //    - Exclamation mark "!" is converted in STORE
  104  6366              //    - At-Sign "@" is converted in FETCH
- 105  6366              //    - Words that collides with Assembler are normally suffixed with "_OP"
+ 105  6366              //    - Words that collide with Assembler are normally suffixed with "_OP"
  106  6366
  107  6366                              include "system.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/system.asm
@@ -13283,9 +13283,9 @@
  123  8713              //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
  124  8713              //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file
  125  8713
- 126  8713                              SAVETAP "output/F15k.tap", CODE, "forth15k", ORIGIN, 10000
+ 126  8713                              SAVETAP "output/F15e.tap", CODE, "forth15e", ORIGIN, 10000
  127  8713
- 128  8713                              SAVEBIN "output/forth15j.bin", ORIGIN, 10000
+ 128  8713                              SAVEBIN "output/forth15e.bin", ORIGIN, 10000
  129  8713
  130  8713                              END
 # file closed: C:\Zx\CSpect\Projects\vForth15_INDIRECT/source/main.asm

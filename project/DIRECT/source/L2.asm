@@ -185,7 +185,7 @@ Quit_Endif:                                     //      else
                 dw      FORTH                   // [compile] forth
                 dw      DEFINITIONS             // definitions
 Autoexec_Ptr:                
-                dw      NOOP                    // autoexec, patched to noop
+                dw      AUTOEXEC                // autoexec, patched to noop
                 dw      QUIT                    // quit
                 dw      EXIT                    // ;
 

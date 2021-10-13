@@ -65,21 +65,22 @@
 //   3FFF >FAR  gives  41.FFFF
 //   EFFF >FAR  gives  47.EFFF
 //   FFFF >FAR  gives  47.FFFF
-                New_Def TO_FAR, ">FAR", is_code, is_normal
-                pop     hl
-                ld      a, h
-                and     $E0
-                rlca
-                rlca
-                rlca
-                or      $40
-                ld      e, a
-                ld      d, 0
-                ld      a, h
-                or      $E0
-                ld      h, a
-                ex      de, hl
-                psh2
+//                New_Def TO_FAR, ">FAR", is_code, is_normal
+//                pop     de
+//                ld      a, d
+//                and     $E0
+//                rlca
+//                rlca
+//                rlca
+//                add     $40
+//                ld      l, a
+//                ld      h, 0
+//                ld      a, d
+//                or      $E0
+//                ld      d, a
+//                push    hl
+//                push    de
+//                next
 
 //  ______________________________________________________________________ 
 //
@@ -87,21 +88,21 @@
 // given an address E000-FFFF and a page number n (64-71 or 40h-47h)
 // reverse of >FAR: encodes a FAR address compressing
 // to bits 765 of H, lower bits of HL address offset from E000h
-                New_Def FROM_FAR, "<FAR", is_code, is_normal
-                pop     de                  // page number in e
-                pop     hl                  // address in hl
-                ld      a, e
-                and     $07                 // reduced to 0-7
-                rrca
-                rrca
-                rrca
-                ld      d, a                // save to d bits 765 
-                ld      a, h                // drops
-                and     $1F
-                or      d
-                ld      h, a
-
-                psh1
+//                New_Def FROM_FAR, "<FAR", is_code, is_normal
+//                pop     de                  // page number in e
+//                pop     hl                  // address in hl
+//                ld      a, e
+//                sub     $40                 // reduced to 0-7
+//                rrca
+//                rrca
+//                rrca
+//                ld      d, a                // save to d bits 765 
+//                ld      a, h                // drops
+//                and     $1F
+//                or      d
+//                ld      h, a
+//
+//                psh1
 
 //  ______________________________________________________________________ 
 //
@@ -132,7 +133,7 @@
                 push    ix
 
                 ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 2
+                ld      sp, Cold_origin - 5
                 ld      c, 7                // use 7 RAM Bank
 
                 rst     08
