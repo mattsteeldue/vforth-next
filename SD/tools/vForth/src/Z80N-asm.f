@@ -99,7 +99,7 @@ CHAR ~ CONSTANT &~
 
 \ Screen# 103 
 ( Z80 Utility - Sys depend )
-: STARTVOC '  ASSEMBLER 2 + CELL+ @ ;
+: STARTVOC '  ASSEMBLER  >BODY  CELL+ @ ;
 : IS-A        <BUILDS  0 ,  DOES>  @ SWAP %>CODE @ = ;
 : REMEMBER    HERE LATEST  (>NEXT%) %>BODY ! ;  IMMEDIATE
 : CONTAINED-IN OVER AND = ;

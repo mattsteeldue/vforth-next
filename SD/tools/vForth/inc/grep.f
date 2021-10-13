@@ -2,10 +2,10 @@
 \ grep.f
 \
 .( GREP )
-\ search for text word inside the first 1000 screens.
+\ search for text word inside the first 2000 screens.
 
 NEEDS BSEARCH
 
 : GREP       
-    1 1000 BSEARCH 
+    1 2000 BSEARCH 
 ;

@@ -6,7 +6,7 @@
 NEEDS CALL#
 \
 HEX
-: BORDER
+: BORDER.
     2297
     CALL#
     DROP

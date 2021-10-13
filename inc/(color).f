@@ -1,7 +1,7 @@
 \
 \ (color).f
 \
-.( (COLOR) )
+." (COLOR) "    
 \
 NEEDS PERM
 \

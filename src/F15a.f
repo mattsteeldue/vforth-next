@@ -1895,6 +1895,7 @@ CODE 0= ( n -- f )
         C;
 
 
+.( NOT )
 CODE not  ( n -- f )         
          
         \ this way we will have a real duplicate of 0=
@@ -2595,7 +2596,7 @@ CODE cells ( n2 -- n2 )
     \ we defined this peculiar word using "old" colon definition 
     \ behaviour. Now we want to use the ;CODE just coded.
     
-    enter^  LATEST PFA CFA !  \ patch to the correct ;CODE
+    enter^  LATEST PFA CELL- !  \ patch to the correct ;CODE
 
      
 \ 66B2h
@@ -3823,7 +3824,7 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for : colon-definition
     ' :  
-        cell+ ' ?exec     over ! 
+        >body ' ?exec     over ! 
         cell+ ' !csp      over !
         cell+ ' current   over !
         cell+ ' @         over !
@@ -3838,7 +3839,7 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for ; end-colon-definition
     ' ; 
-        cell+ ' ?csp      over !
+        >body ' ?csp      over !
         cell+ ' compile   over !
         cell+ ' exit      over !
         cell+ ' smudge    over !
@@ -3849,7 +3850,7 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for CONSTANT
     ' constant  
-        cell+ ' create    over ! 
+        >body ' create    over ! 
         cell+ ' ,         over ! 
         cell+ ' (;code)   over ! 
     drop
@@ -3857,14 +3858,14 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for VARIABLE
     ' variable  
-        cell+ ' constant  over ! 
+        >body ' constant  over ! 
         cell+ ' (;code)   over !  
     drop
 
 
 \ \ Late-Patch for 2CONSTANT
 \     ' variable  
-\         cell+ ' constant  over ! 
+\         >body ' constant  over ! 
 \         cell+ ' ,         over ! 
 \         cell+ ' (;code)   over !  
 \     drop
@@ -3872,7 +3873,7 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for USER
     ' user  
-        cell+ ' create    over ! 
+        >body ' create    over ! 
         cell+ ' c,        over ! 
         cell+ ' (;code)   over !  
     drop

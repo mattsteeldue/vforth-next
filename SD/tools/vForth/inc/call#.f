@@ -1,7 +1,7 @@
 \
 \ call#.f
 \
-.( call# )
+.( CALL# )
 \
 \ call utility. must save BC and IX
 \
@@ -14,7 +14,7 @@ CODE  CALL#  ( n1 -- n2 )
     E1 C, D1 C,             \ pop hl    pop de
     C5 C, DD C, E5 C,       \ push bc   push ix
     4B C, 42 C, 7B C,       \ ld a,e    ld bc,de
-    CD C,  (NEXT) 0A + ,    \ call hl
+    CD C,  HERE 09 + ,      \ call hl --> jp(hl)
     69 C, 60 C,             \ ld hl,bc
     DD C, E1 C, C1 C,       \ pop ix    pop bc
     E5 C,                   \ push hl

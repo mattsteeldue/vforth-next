@@ -112,7 +112,15 @@ FORTH DEFINITIONS
     63 6200 C! 6200 6201 100 CMOVE   \ setup vector table
     C3 6363 C!   \ jp to INT-SUB address
     INTERRUPT
-    [ ' INT-SUB >BODY ] LITERAL 6364 !
+    
+    \ The start-addresso code of INT-SUB depends on which version
+    \ we have between Direct vs Indirect threaded core.
+    [ 
+        ' INT-SUB >BODY
+        DUP 
+        ' INT-SUB - 1- 2/ 3 * -
+    ] LITERAL 6364 !
+    
     INT-DI
     62 SETIREG INT-IM2
     INT-EI

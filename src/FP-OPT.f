@@ -5,6 +5,10 @@
 
 .( Floating point option )
 
+\ To remove this library and restore "everything" to integer you have to
+\ give FORGET-FP
+
+
 \ ______________________________________________________________________
 
 \ A floating point number is stored in stack in 4 bytes (HLDE) 
@@ -31,8 +35,9 @@ MARKER FP-MARKER
 
 DECIMAL 
 
+\ the following three words are coded in assembler but without using ASSEMBLER
+\ by directly compiling the Hexadecimal values of these routines.
 
-\ 6E51h
 \ FOP    ( n -- )
 \ Floating-Point-Operation.
 \ it calls the FP calculator which is a small Stack-Machine
@@ -107,7 +112,7 @@ DECIMAL
 
 
 \ activate floating-point numbers
-\ : FLOATING 1 NMODE ! ;
+\ : FLOATING 1 NMODE ! ;  ( moved to ./lib )
 
 
 \ deactivate floating-point numbers
@@ -169,7 +174,10 @@ DECIMAL
 
     
 \ Aritmethics
-
+\
+\ Op-Code   Name        Check       Stack figure    \ meaning
+\ -------   ---------   ---------   --------------   ---------
+\
 03  2FOP1   F-          NOOP        ( d d -- d   )  \ subtraction
 04  2FOP1   F*          NOOP        ( d d -- d   )  \ product
 05  2FOP1   F/          ?ZERO       ( d d -- d   )  \ division
