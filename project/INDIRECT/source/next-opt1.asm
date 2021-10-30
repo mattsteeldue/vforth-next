@@ -10,24 +10,34 @@
 // reg@         n -- b
 // read Next REGister n giving byte b
 
-                Colon_Def REG_FETCH, "REG@", is_normal
-                dw      LIT, $243B          
-                dw      PSTORE
-                dw      LIT, $253B          
-                dw      PFETCH
-                dw      EXIT
+                New_Def REG_FETCH, "REG@", is_code, is_normal
+                exx
+                ld      bc, $243B
+                pop     hl
+                out     (c), l
+                inc     b
+                in      l,(c)
+                push    hl
+                exx
+                next
+
 
 //  ______________________________________________________________________ 
 //
 // reg!         b n --
 // write value b to Next REGister n 
 
-                Colon_Def REG_STORE, "REG!", is_normal
-                dw      LIT, $243B          
-                dw      PSTORE
-                dw      LIT, $253B          
-                dw      PSTORE
-                dw      EXIT
+                New_Def REG_STORE, "REG!", is_code, is_normal
+                exx
+                ld      bc, $243B
+                pop     hl
+                out     (c), l
+                inc     b
+                pop     hl
+                out     (c), l
+                exx
+                next
+
 
 //  ______________________________________________________________________ 
 //

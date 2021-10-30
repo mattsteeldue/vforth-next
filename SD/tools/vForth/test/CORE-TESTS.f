@@ -112,13 +112,13 @@ INCLUDE  test/bl.f
 INCLUDE  test/char.f
 INCLUDE  test/[char].f
 INCLUDE  test/[.f
-INCLUDE  test/s~.f              \ USING HEAP CORRUPTS RAM PAGING ?
+INCLUDE  test/s~.f              \ using heap corrupts ram paging ?
 
 \ Dictionary
 
 INCLUDE  test/'.f
 INCLUDE  test/['].f
-INCLUDE  test/find.f            \ fails when included here
+INCLUDE  test/find.f            
 INCLUDE  test/literal.f
 INCLUDE  test/count.f  
 INCLUDE  test/postpone.f
@@ -134,9 +134,9 @@ INCLUDE  test/recurse.f
 \ Counted Loops
 
 INCLUDE  test/loop.f
-INCLUDE  test/+loop.f           \ non standard
-INCLUDE  test/j.f        
-INCLUDE  test/leave.f           \ leave is ok, but it's not standard
-INCLUDE  test/unloop.f          \ ko and Exits to Basic ...
+INCLUDE  test/+loop.f           \ still non-standard
+INCLUDE  test/j.f               \ fails because +LOOP is still non-standard
+INCLUDE  test/leave.f    
+INCLUDE  test/unloop.f        
 
 

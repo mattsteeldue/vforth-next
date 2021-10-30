@@ -59,17 +59,18 @@
 //  0 for final binary release.
 //  1 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
-DEBUGGING       equ     0
+DEBUGGING       equ     -1
 //
 //  ______________________________________________________________________
 
                 if ( -1 == DEBUGGING ) 
 ORIGIN          equ     $62E6                   // for binary comparison
+//ORIGIN          equ     $8CC1                   // for binary comparison
                 endif
 //  ______________________________________________________________________
 
                 if (  0 == DEBUGGING ) 
-ORIGIN          equ     $6366                   // binary
+ORIGIN          equ     $6366                   // binary and Tape
                 endif
 //  ______________________________________________________________________
 

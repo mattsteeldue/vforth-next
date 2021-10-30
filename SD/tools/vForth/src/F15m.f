@@ -397,7 +397,7 @@ HERE TO org^
 \ end of data for COLD start
 
 \ +026
-                 HEX 8F C, 88 C,    \ Cursor faces used by KEY
+                 HEX 8F C, 8C C,    \ Cursor faces used by KEY
 \ +028
                  HEX 5F C, 00 C,    \ Used by KEY
 \ +02A   ( Echoed IX after +3DOS call )
@@ -719,7 +719,7 @@ CODE digit ( c n -- u 1  |  0 )
 \ no other register is altered
     ASSEMBLER
     HERE TO upper^
-        NOP                 \ CASEOFF is default. This location is patched
+        RET                 \ This location is patched
                             \ at runtime by CASEON and CASEOFF
         CPN     HEX 61 N,   \ lower-case "a"
         RETF    CY|
@@ -785,7 +785,7 @@ CODE (find) ( addr voc -- addr 0 | cfa b 1  )
                     INCX    HL|
                     INCX    DE|
                     LDA(X)  DE|
-                    
+
 \ case   sensitive option  
 \                   XORA  (HL)|
 
@@ -806,7 +806,7 @@ CODE (find) ( addr voc -- addr 0 | cfa b 1  )
 
                     ADDA     A|         \ ignore msb in compare
                     JRF    NZ'| HOLDPLACE SWAP \ didn't match, jump (*)
-                
+
                 JRF    NC'| HOLDPLACE SWAP DISP, 
                 \ loop until last byte msb is found set 
                 \ that bit marks the ending char of this word
@@ -983,12 +983,12 @@ CODE (compare) ( a1 a2 n -- b )
                 JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
                       LDX  HL| -1 NN,
                 HERE DISP, \ THEN,
-                POP BC| 
+                POP     BC| 
                 Psh1
             HERE DISP, \ THEN,
         DJNZ BACK,
         LDX HL| 0 NN,
-        POP BC| 
+        POP     BC| 
         Psh1 
         C; 
 
@@ -1019,8 +1019,8 @@ HEX 06 C, \ comma
 HEX 07 C, \ bel
 HEX 08 C, \ bs
 HEX 09 C, \ tab
-HEX 0D C, \ cr
-HEX 0A C, \ nl --> cr
+HEX 0D C, \ cr --> cr
+HEX 0A C, \ lf Unix newline
 HEX 20 C, \ not used
 HEX 20 C, \ not used
 
@@ -1098,8 +1098,8 @@ HERE    EMIT-A^ 06 +  !
 \ 0D cr        
 EMIT-2^ EMIT-A^ 08 +  !
 
-\ 0A nl --> cr        
-HERE    EMIT-A^ 0A +  !
+\ 0A nl --> cr
+HERE    EMIT-A^ 0A +  ! 
         ASSEMBLER 
         LDX     HL| 0D NN,
         Psh1
@@ -1204,7 +1204,7 @@ CODE key ( -- c )
         LDN     A'| HEX 08 N,   \ backspace
         RST     10|
         
-        LDA()  HEX 5C08 AA,    \ get typed character
+        LDA()  HEX 5C08 AA,    \ LAST-K to get typed character
 
         \ Decode characters from above table
         LDX     HL|  KEY-1^    NN,
@@ -1338,7 +1338,6 @@ CODE um* ( u1 u2 -- ud )
         POP     DE|
         POP     HL|
         PUSH    BC|
-
         LD      B'|    H|
         LD      C'|    L|
         LDX     HL|    0 NN,
@@ -1628,13 +1627,13 @@ CODE r> ( -- n )
 CODE r@ ( -- n )         
          
         \ this way we will have a real duplicate of I
-        ' i  >BODY  LATEST PFA CFA ! 
+        ' i  >BODY  LATEST PFA CELL- ! 
         C;
 
 CODE r  ( -- n )         
          
         \ this way we will have a real duplicate of I
-        ' i  >BODY  LATEST PFA CFA ! 
+        ' i  >BODY  LATEST PFA CELL- ! 
         C;
 
 
@@ -1654,10 +1653,11 @@ CODE 0= ( n -- f )
         C;
 
 
+.( NOT )
 CODE not  ( n -- f )         
          
         \ this way we will have a real duplicate of 0=
-        ' 0=  >BODY  LATEST PFA CFA ! 
+        ' 0=  >BODY  LATEST PFA CELL- ! 
         C;
 
 
@@ -1773,11 +1773,11 @@ CODE 2+ ( n1 -- n2 )
 
 
 .( CELL+ )
-\ increment by 1 top of stack
+\ increment by 1 top of stack 
 CODE cell+ ( n1 -- n2 )
          
         \ this way we will have a real duplicate of 2+
-        ' 2+  >BODY  LATEST PFA CFA ! 
+        ' 2+  >BODY  LATEST PFA CELL- ! 
         C;
 
 
@@ -1791,7 +1791,7 @@ CODE cell+ ( n1 -- n2 )
 \ decrement by 2 top of stack 
 CODE cell- ( n1 -- n2 )
 
-        POP     HL|         \ address
+        POP     HL|         \ address 
         DECX    HL|
         DECX    HL|
         Psh1
@@ -1804,7 +1804,7 @@ CODE 2- ( n1 -- n2 )
 
          
         \ this way we will have a real duplicate of 2+
-        ' cell-  >BODY  LATEST PFA CFA ! 
+        ' cell-  >BODY  LATEST PFA CELL- ! 
         C;
 
 
@@ -2314,7 +2314,7 @@ CODE rshift ( n1 u -- n2 )
 .( CELLS )
 CODE cells ( n2 -- n2 )
         \ this way we will have a real duplicate of 2*
-        ' 2*  >BODY  LATEST PFA CFA ! 
+        ' 2*  >BODY  LATEST PFA CELL- ! 
         C;
 
 
@@ -2354,14 +2354,14 @@ CODE cells ( n2 -- n2 )
     \ we defined this peculiar word using "old" colon definition 
     \ behaviour. Now we want to use the ;CODE just coded.
     
-    enter^  LATEST PFA CFA !  \ patch to the correct ;CODE
+    enter^  LATEST PFA CELL- !  \ patch to the correct ;CODE
 
      
 \ 66B2h
 .( ; ) \ ___ late-patch ___ 
 : ; 
     ?CSP
-    COMPILE   exit     
+    COMPILE   exit   
     SMUDGE 
     [COMPILE] [    \ previous version
     ;
@@ -2559,7 +2559,7 @@ DECIMAL
     2 allot
     ;
 
-    
+
 \ 6940h    
 .( C, )
 : c,  ( c -- )
@@ -2676,7 +2676,7 @@ CODE <  ( n1 n2 -- f )
 
 \ 69C7h
 .( ?DUP )
-\ ?DUP  
+\ ?DUP 
 \ duplicate if not zero
 CODE ?dup ( n -- 0 | n n )
         POP     HL|
@@ -2694,7 +2694,7 @@ CODE -dup ( n -- 0 | n n )
         \ This way we will have a real duplicate of ?DUP.
         C;
 
-        ' ?dup >BODY   LATEST  PFA CFA !
+        ' ?dup >BODY   LATEST  PFA CELL- !
 
 
 \ 62CFh <<< moved here because of OUT
@@ -3048,7 +3048,7 @@ CODE -dup ( n -- 0 | n n )
             1-
         Endif \ Then
     Loop 
-    ;
+;
 
 
 \ 6CC3h new
@@ -3090,7 +3090,7 @@ CODE -dup ( n -- 0 | n n )
             Else 
                 dup     ( a  c  c )
             Endif
-            
+
             i c!        ( a  c )
             dup bl <    ( a  c  c<BL )  \ patch ghost word
             If
@@ -3463,7 +3463,7 @@ CODE fop
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "cccc"
+\ used in the form -FIND "cccc" 
 \ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
@@ -3562,11 +3562,11 @@ CODE fop
     here 
     dup c@ width @ min 1+ allot
     dup [ decimal 160 ] Literal toggle
-    here 1 - [ decimal 128 ] Literal toggle
+    here 1- [ decimal 128 ] Literal toggle
     latest ,
     current @ !
     here cell+ ,
-    ;
+;
 
 
 .( CREATE )
@@ -3578,11 +3578,11 @@ CODE fop
         PUSH    DE|
         Next
         C;
-    
+
 
 \ Late-Patch for : colon-definition
     ' :  
-        cell+ ' ?exec     over ! 
+        >body ' ?exec     over ! 
         cell+ ' !csp      over !
         cell+ ' current   over !
         cell+ ' @         over !
@@ -3597,7 +3597,7 @@ CODE fop
 
 \ Late-Patch for ; end-colon-definition
     ' ; 
-        cell+ ' ?csp      over !
+        >body ' ?csp      over !
         cell+ ' compile   over !
         cell+ ' exit      over !
         cell+ ' smudge    over !
@@ -3608,7 +3608,7 @@ CODE fop
 
 \ Late-Patch for CONSTANT
     ' constant  
-        cell+ ' create    over ! 
+        >body ' create    over ! 
         cell+ ' ,         over ! 
         cell+ ' (;code)   over !  
     drop
@@ -3616,14 +3616,14 @@ CODE fop
 
 \ Late-Patch for VARIABLE
     ' variable  
-        cell+ ' constant  over ! 
+        >body ' constant  over ! 
         cell+ ' (;code)   over !  
     drop
 
 
 \ \ Late-Patch for 2CONSTANT
 \     ' variable  
-\         cell+ ' constant  over ! 
+\         >body ' constant  over ! 
 \         cell+ ' ,         over ! 
 \         cell+ ' (;code)   over !  
 \     drop
@@ -3631,7 +3631,7 @@ CODE fop
 
 \ Late-Patch for USER
     ' user  
-        cell+ ' create    over ! 
+        >body ' create    over ! 
         cell+ ' c,        over ! 
         cell+ ' (;code)   over !  
     drop
@@ -4207,13 +4207,6 @@ CODE basic ( n -- )
     
 \ ______________________________________________________________________ 
 
-\ ZX Microdrive / MGT option
-
-\      NXT @ variable nxt
-
-\ 7727h
-.( STRM )
-       STRM @ variable strm
 
 \ \ 7824h
 .( DEVICE )
@@ -4223,6 +4216,13 @@ CODE basic ( n -- )
 \ 
 \ ______________________________________________________________________ 
 
+\ ZX Microdrive / MGT option
+
+\      NXT @ variable nxt
+
+\ 7727h
+.( STRM )
+       STRM @ variable strm
 
 \ 7703h
 .( DRV )
@@ -4306,7 +4306,7 @@ hex 5D2F variable chnl
         + @  \ offset to stream #n    
         [ hex 5C4F ] Literal  \ CHANS
         @ + \ address of channel #n
-        1 - >r
+        1- >r
             r [ decimal 4 ] Literal + c@ [ hex 4D ] Literal - 
                 [ decimal 25 ] Literal ?error
             r [ decimal 26 ] Literal + @
@@ -4630,7 +4630,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     r> >in !
     r> blk !
     ;
-    
+
 
 \ 7af7h    
 .( --> )
@@ -4670,7 +4670,6 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     ;
 
 
-
 .( MARKER )
 : marker ( -- ccc )
     <builds
@@ -4705,7 +4704,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 \ 7cbf
 .( #> )
-: #>
+: #>    
     2drop
     hld @ pad over -
     ;
@@ -4732,7 +4731,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     r> swap >r   \ l rem1
     um/mod       \ rem2 l/r
     r>           \ rem2 l/r h/r
-    
+
     rot  
     [ 9 ] Literal over <
     If [ 7 ] Literal + Endif    
@@ -4857,7 +4856,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
         .r space
         0 i .line 
         ?terminal If
-            leave
+            leave 
         Endif
     Loop
     cr
@@ -4892,7 +4891,7 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.5 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20210916" -1 allot ]
+    [ decimal 13 here ," build 20211006" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5139,11 +5138,12 @@ CODE cls
 \ peculiar version of BACK fitted for ?DO and LOOP
 : ?do-
     back
-    sp@ csp @ -
-    \ dup 0= 
-    If 
+    Begin
+        sp@ csp @ -
+        \ dup 0= 
+    While
         2+ [compile] endif 
-    Endif       
+    Repeat 
     ?csp csp !      
     ;
 
@@ -5259,7 +5259,6 @@ voc-link @ hex 020 +origin !  \ set cold-VOC-LINK
 ' noop asm^ !
 
 forth definitions
-
 
 \ ______________________________________________________________________ 
 
@@ -5384,8 +5383,8 @@ RENAME   mdr            MDR
 RENAME   chnl           CHNL
 RENAME   mmap           MMAP
 RENAME   drv            DRV
-RENAME   device         DEVICE
 RENAME   strm           STRM
+RENAME   device         DEVICE
 RENAME   message        MESSAGE
 RENAME   .line          .LINE
 RENAME   (line)         (LINE)
@@ -5396,7 +5395,7 @@ RENAME   mod            MOD
 RENAME   /              /
 RENAME   /mod           /MOD
 RENAME   *              *
-RENAME   m/             M/
+RENAME   m/             M/ 
 RENAME   m/mod          M/MOD 
 RENAME   m*             M*
 RENAME   dabs           DABS
@@ -5456,7 +5455,7 @@ RENAME   pad            PAD
 RENAME   hold           HOLD
 RENAME   blanks         BLANKS
 RENAME   erase          ERASE 
-RENAME   fill           FILL 
+RENAME   fill           FILL  
 RENAME   query          QUERY 
 \ RENAME   expect         EXPECT
 RENAME   accept         ACCEPT
@@ -5602,7 +5601,7 @@ RENAME   dnegate        DNEGATE
 RENAME   negate         NEGATE 
 RENAME   cell-          CELL-  
 RENAME   2-             2- 
-\ RENAME   align          ALIGN
+\ RENAME   align          ALIGN 
 RENAME   cell+          CELL+  
 RENAME   2+             2+ 
 RENAME   1-             1- 
@@ -5613,11 +5612,11 @@ RENAME   0>             0>
 RENAME   0<             0< 
 RENAME   not            NOT
 RENAME   0=             0= 
-RENAME   r              R  
+RENAME   r              R 
 RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
-RENAME   leave          LEAVE
+RENAME   (leave)        (LEAVE)
 \ RENAME   lastl          LASTL
 RENAME   exit           EXIT  
 RENAME   rp!            RP! 

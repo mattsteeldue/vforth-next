@@ -568,11 +568,12 @@ C_Map_Then:
 // -1 : if string at a1 less than string at a2 
 // strings can be 256 bytes in length at most.
                 New_Def C_COMPARE, "(COMPARE)", is_code, is_normal
+                exx
                 pop     hl                  // Number of bytes
                 ld      a, l
                 pop     hl                  // hl points string a2
                 pop     de                  // hl points string a1
-                push    bc                  // Instruction pointer on stack
+//              push    bc                  // Instruction pointer on stack
                 ld      b, a
 C_Compare_Loop:
                     ld      a, (hl)
@@ -590,16 +591,20 @@ C_Compare_Loop:
 C_Compare_NotLessThan:                
                             ld      hl, -1              // a1 lt a2
 C_Compare_Then:                                 // Endif
-                        pop     bc              // restore Instruction Pointer
+//                      pop     bc              // restore Instruction Pointer
+                        push    hl
+                        exx
 
-                        psh1
+                        next
                 
 C_Compare_Equal:
                 djnz    C_Compare_Loop
                 ld      hl, 0               // a1 eq a2
-                pop     bc                  // restore Instruction Pointer
+//              pop     bc                  // restore Instruction Pointer
+                push    hl
+                exx
 
-                psh1
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -848,19 +853,16 @@ QTerminal_NoBreak:
 // storing then starting at address addr2. 
 // The content of a1 is moved first. See CMOVE> also.
                 New_Def CMOVE, "CMOVE", is_code, is_normal
-                ld      h, b
-                ld      l, c
-
+                exx
                 pop     bc                  // bc has counter
                 pop     de                  // de now has dest
-                ex      (sp), hl            // hl has source, save Instruction Pointer
+                pop     hl                  // hl has source, save Instruction Pointer
                 ld      a, b                
                 or      c
                 jr      z, Cmove_NoMove
                     ldir
 Cmove_NoMove:   
-                pop     bc                  // Restore Instruction Pointer
-
+                exx
                 next
 
 //  ______________________________________________________________________ 
@@ -870,12 +872,10 @@ Cmove_NoMove:
 // storing then starting at address addr2. 
 // The content of a1 is moved last. See cmove.
                 New_Def CMOVE_TO, "CMOVE>", is_code, is_normal
-                ld      h, b
-                ld      l, c
-
+                exx
                 pop     bc                  // bc has counter
                 pop     de                  // de has dest
-                ex      (sp), hl            // hl has source, save Instruction Pointer
+                pop     hl                  // hl has source, save Instruction Pointer
                 ld      a, b                
                 or      c
                 jr      z, CmoveV_NoMove
@@ -887,8 +887,7 @@ Cmove_NoMove:
                     dec     hl               
                     lddr                        // backward
 CmoveV_NoMove:   
-                pop     bc                  // Restore Instruction Pointer
-
+                exx
                 next
 
 //  ______________________________________________________________________ 
@@ -1240,24 +1239,17 @@ ZGreater_Skip:
 // SP   LHEDLHED
 // SP  +01234567
                 New_Def DPLUS, "D+", is_code, is_normal
-
-                ld      hl, 7
-                add     hl, sp
-                ld      d, (hl)
-                ld      (hl), b             // Save IP
-                dec     hl
-                ld      e, (hl)
-                ld      (hl), c             // de := d1.L    
+                exx
                 pop     bc                  // bc := d2.H
+                pop     de
                 pop     hl                  // hl := d2.L
+                ex      (sp), hl
                 add     hl, de              // hl := d2.L + d1.L
-                ex      de, hl              // de := lower
-                pop     hl                  // d1.H
+                ex      (sp), hl
                 adc     hl, bc              // d1.H + d2.H
-                pop     bc                  // Restore IP
-
-
-                psh2
+                push    hl
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -1313,8 +1305,8 @@ CellMinus:
                 pop     hl
                 dec     hl
                 dec     hl
-
-                psh1
+                push    hl
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -1336,27 +1328,24 @@ CellMinus:
 
 //  ______________________________________________________________________ 
 //
-// dminus       d1 -- d2
+// dnegate      d1 -- d2
 // change the sign of a double number
                 New_Def DMINUS, "DNEGATE", is_code, is_normal
-                pop     hl                  // d1.H
+                exx
+                pop     bc                  // d1.H
                 pop     de                  // d1.L
-                push    bc                  // Save Instruction Pointer
-                ld      b, h
-                ld      c, l                // bc := d1.L
                 xor     a
                 ld      h, a                
                 ld      l, a
                 sbc     hl, de              // subtact from zero
-                pop     de                  // Retrieve Instruction Pointer
                 push    hl                  // > d2-L
                 ld      h, a
                 ld      l, a
                 sbc     hl, bc              // subtract from zero with carry
                                             // > d2-H
-                ld      b, d
-                ld      c, e                                            
-                psh1
+                push    hl    
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -1460,6 +1449,39 @@ CellMinus:
                 ld      l, a
 
                 psh1
+
+
+//  ______________________________________________________________________ 
+//
+// roll        n1 n2 n3 ... n -- n2 n3 ... n1
+// picks the nth element from TOS
+//              New_Def ROLL, "ROLL", is_code, is_normal      
+//              exx                     // we need all registers free
+//              pop     hl              // number of cells to roll
+//              ld      a, h 
+//              or       l 
+//              jr      z, Roll_Zero
+//                  add     hl, hl              // number of bytes to move
+//                  ld      b, h 
+//                  ld      c, l 
+//                  add     hl, sp          // address of n1
+//                  ld      a, (hl)         // take n1 into a and a,
+//                  inc     hl 
+//                  ex      af, af'
+//                  ld      a, (hl)         // take n1 into a and a,
+//                  ld      d, h 
+//                  ld      e, l 
+//                  dec     hl 
+//                  dec     hl 
+//                  lddr
+//                  ex      de, hl
+//                  ld      (hl), a 
+//                  dec     hl 
+//                  ex      af, af'
+//                  ld      (hl), a 
+//Roll_Zero: 
+//              exx
+//              next
 
 
 //  ______________________________________________________________________ 
@@ -1699,12 +1721,10 @@ CellMinus:
 // so the sign of the number can be checked on top of stack
 // and in the stack memory it appears as LHED.
                 New_Def TWO_STORE, "2!", is_code, is_normal
-                ld      h, b
-                ld      l, c
-                pop     de                  // de has address
+                exx 
+                pop     hl                  // hl has address
                 pop     bc                  // < high-part
-                ex      (sp), hl            // < low-part > Instruction Pointer
-                ex      de, hl
+                pop     de                  // < low-part > Instruction Pointer
                 ld      (hl), c
                 inc     hl
                 ld      (hl), b
@@ -1712,8 +1732,7 @@ CellMinus:
                 ld      (hl), e
                 inc     hl
                 ld      (hl), d
-                pop     bc                  // Restore Instruction Pointer
-
+                exx 
                 next
 
 //  ______________________________________________________________________ 
@@ -1721,30 +1740,24 @@ CellMinus:
 // p@           a -- c
 // Read one byte from port a and leave the result on top of stack
                 New_Def PFETCH, "P@", is_code, is_normal
-                ld      d, b
-                ld      e, c
-
+                exx
                 pop     bc
                 ld      h, 0
                 in      l, (c)
-                ld      b, d
-                ld      c, e
-                psh1
+                push    hl
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
 // p!           c a --
 // Send one byte (top of stack) to port a
                 New_Def PSTORE, "P!", is_code, is_normal
-                ld      d, b
-                ld      e, c
-
+                exx
                 pop     bc
                 pop     hl                  // < c
                 out     (c), l              // low-byte
-                ld      b, d
-                ld      c, e
-
+                exx
                 next
 
 

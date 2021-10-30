@@ -58,7 +58,7 @@
 //  0 for final binary release.
 //  1 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
-DEBUGGING       equ     0
+DEBUGGING       equ     -1
 //
 //  ______________________________________________________________________
 
@@ -123,8 +123,8 @@ ORIGIN          equ     $8080                   // for DeZog
 //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
 //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file 
                 
-                SAVETAP "output/F15F.tap", CODE, "forth15e", ORIGIN, 10000
+                SAVETAP "output/F15E.tap", CODE, "forth15e", ORIGIN, 10000
 
-                SAVEBIN "output/forth15F.bin", ORIGIN, 10000
+                SAVEBIN "output/forth15E.bin", ORIGIN, 10000
 
                 END

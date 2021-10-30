@@ -16,9 +16,9 @@ NEEDS .S
 \
 : DEB-N   ( pfa -- ) ." Nfa: "   NFA DUP U. C@ . CR ;
 : DEB-L   ( pfa -- ) ." Lfa: "   LFA DUP U. @ ID. CR ;
-: DEB-C   ( pfa -- ) ." Cfa: " CELL- DUP U. @ U. ;
+: DEB-C   ( pfa -- ) ." Cfa: "   CFA DUP U.  2 CFA NEGATE +  @ U. ;
 : DEB-P   ( pfa -- )             CFA 32 DUMP ;
-: DEB-LIT ( pfa -- ) 2+ DUP @ . ;
+: DEB-LIT ( pfa -- ) CELL+ DUP @ . ;
 : DEB-BRN ( pfa -- ) DUP @ .WORD INVV
   DEB-LIT TRUV ;
 : DEB-DOT ( pfa -- ) DUP @ .WORD CELL+

@@ -81,6 +81,7 @@ INTERRUPT DEFINITIONS
 
 CODE  INT-SUB
     FF C,                       \ rst 38h
+    F3 C,                       \ di
     DD C, E5 C,                 \ push ix
     F5 C, 08 C, F5 C,           \ push af  ex af,af'  push af
     E5 C, D5 C, C5 C,           \ push hl, de, bc
@@ -115,6 +116,8 @@ FORTH DEFINITIONS
     
     \ The start-addresso code of INT-SUB depends on which version
     \ we have between Direct vs Indirect threaded core.
+    \ The following calculation determines if the address the ISR jumps to
+    \ is the CFA or CFA >BODY
     [ 
         ' INT-SUB >BODY
         DUP 

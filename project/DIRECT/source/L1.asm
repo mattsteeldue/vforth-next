@@ -129,10 +129,17 @@ User_Ptr:
 //  ______________________________________________________________________ 
 //
 // +origin         --
-                Colon_Def PLUS_ORIGIN, "+ORIGIN", is_normal
-                dw      LIT, Cold_origin        // [ hex 6366 ] literal
-                dw      PLUS                    // +
-                dw      EXIT                    // ;
+//              Colon_Def PLUS_ORIGIN, "+ORIGIN", is_normal
+//              dw      LIT, Cold_origin        // [ hex 6366 ] literal
+//              dw      PLUS                    // +
+//              dw      EXIT                    // ;
+                New_Def  PLUS_ORIGIN, "+ORIGIN", is_code, is_normal
+                pop     hl
+                ld      hl, Cold_origin
+                add     hl, de
+                push    hl
+                next
+
 
 //  ______________________________________________________________________ 
 //
@@ -872,11 +879,10 @@ Accept_Leave:
 // fill        a n c --
 // If n > 0, fills n locations starting from address a with the value c.
                 New_Def FILL, "FILL", is_code, is_normal
-                ld      l, c
-                ld      h, b
+                exx
                 pop     de                  // de has character
                 pop     bc                  // bc has counter
-                ex      (sp), hl            // hl has address, save Instruction Pointer
+                pop     hl                  // hl has address, save Instruction Pointer
 Fill_Loop:                 
                     ld      a, b                
                     or      c
@@ -886,8 +892,7 @@ Fill_Loop:
                     inc     hl
                 jr      Fill_Loop
 Fill_While_End:   
-                pop     bc                  // Restore Instruction Pointer
-
+                exx
                 next
 
 //  ______________________________________________________________________ 

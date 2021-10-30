@@ -9,25 +9,47 @@
 //
 // reg@         n -- b
 // read Next REGister n giving byte b
+//
+//              Colon_Def REG_FETCH, "REG@", is_normal
+//              dw      LIT, $243B          
+//              dw      PSTORE
+//              dw      LIT, $253B          
+//              dw      PFETCH
+//              dw      EXIT
+                New_Def REG_FETCH, "REG@", is_code, is_normal
+                exx
+                ld      bc, $243B 
+                pop     hl 
+                out     (c), l 
+                inc     b
+                in      l, (c)
+                push    hl
+                exx
+                next
 
-                Colon_Def REG_FETCH, "REG@", is_normal
-                dw      LIT, $243B          
-                dw      PSTORE
-                dw      LIT, $253B          
-                dw      PFETCH
-                dw      EXIT
 
 //  ______________________________________________________________________ 
 //
 // reg!         b n --
 // write value b to Next REGister n 
+//
+//              Colon_Def REG_STORE, "REG!", is_normal
+//              dw      LIT, $243B          
+//              dw      PSTORE
+//              dw      LIT, $253B          
+//              dw      PSTORE
+//              dw      EXIT
+                New_Def REG_STORE, "REG!", is_code, is_normal
+                exx
+                ld      bc, $243B 
+                pop     hl 
+                out     (c), l 
+                inc     b
+                pop     hl
+                out     (c), l
+                exx
+                next
 
-                Colon_Def REG_STORE, "REG!", is_normal
-                dw      LIT, $243B          
-                dw      PSTORE
-                dw      LIT, $253B          
-                dw      PSTORE
-                dw      EXIT
 
 //  ______________________________________________________________________ 
 //
@@ -220,8 +242,8 @@
 //  ______________________________________________________________________ 
 //
 // #sec
-// number of 512 Byte "sector" available on thie sysstem.
-// it addd up to 16 MByte of data that can be used as source or pool for almost anything.
+// number of 512-Byte "sectors" available on thie sysstem.
+// it adds up to 16 MByte of data that can be used as source or pool for almost anything.
 
                 Constant_Def NSEC , "#SEC", 32767
 
