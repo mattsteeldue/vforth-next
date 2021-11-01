@@ -3,9 +3,9 @@
 \
 .( WITHIN )
 \
-: WITHIN ( test low high -- )
+: WITHIN ( test low high -- f )
     OVER -
     -ROT -
-    U>
+    SWAP U<
 ; 
 
