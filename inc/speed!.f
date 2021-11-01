@@ -12,7 +12,6 @@
 HEX
 \
 : SPEED! ( n -- )
-    7       243B  P!
-    3 AND   253B  P!
+    3 AND   7 REG!
 ;
 

@@ -3,10 +3,8 @@
 \
 .( INK. )
 \
-NEEDS (COLOR)
-\
-DECIMAL
-: INK.
-    16 7 (COLOR)
+
+: INK.  ( b -- )
+    16 EMITC EMITC
 ;
 
