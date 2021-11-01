@@ -6,6 +6,7 @@
 ( ms delay )
 \ at 3.5MHz n ms delay
 CODE (ms) ( n -- )       \ 0 <= n <= 255
+    HEX
     D1 C,       \   POP  DE|           \   10 T
     50 C,       \   LD   D'|  B|       \    4 T
     26 C, CD C, \   LDN  H'|  205  N,  \    7 T
