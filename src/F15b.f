@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.51 NextZXOS version ) CR
-.( build 20211026 ) CR
+.( build 20211104 ) CR
 \
 \ Direct Thread - NextZXOS version
 \ ______________________________________________________________________ 
@@ -4973,18 +4973,29 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ Buffer must be m bytes long to accomodate a trailing 0x00 at m-th byte.
 decimal
 : f_getline ( a m fh -- n )
-    >r tuck r@ f_fgetpos [ 44 ] Literal ?error  \ m a m d
-    2swap over 1+ swap                          \ m d a a+1 m 
-    r@ f_read [ 46 ] Literal ?error             \ m d a f
-    If \ at least 1 chr was read
-        [ 10 ] Literal enclose drop nip swap    \ m d a
-        [ 13 ] Literal enclose drop nip rot min \ m d b a
-        dup >r 2swap r>    0 d+                 \ m a n d+n
+    >r tuck                                     \ m a m         R: fh
+    r@ f_fgetpos [ 44 ] Literal ?error          \ m a m  d
+    2swap                                       \ m  d  a m
+    over 1+                                     \ m  d  a m a+1
+    swap                                        \ m  d  a a+1 m 
+    r@ f_read [ 46 ] Literal ?error             \ m  d  a k 
+    If \ at least 1 chr was read                \ m  d  a k
+        [ 10 ] Literal enclose                  \ m  d  a n1 b n3
+        drop nip swap                           \ m  d  b a 
+        [ 13 ] Literal enclose                  \ m  d  b a n1 c n3  
+        drop nip rot                            \ m  d  a c b
+        min                                     \ m  d  a n
+        dup span !                              \ m  d  a
+        dup >r                                  \ m  d  a n       R: fh n
+        2swap r>                                \ m a n  d   n    R: fh
+        0 d+                                    \ m a n d+n
         r> f_seek [ 45 ] Literal ?error         \ m a n
-    Else
-        r> 2swap 2drop drop 0                   \ m a 0
+    Else                                        \ m  d  a
+        r> 2swap                                \ m a fh  d 
+        2drop drop                              \ m a 
+        0                                       \ m a 0
     Endif
-    >r                                          \ m a
+    >r                                          \ m a             R: n|0
     dup dup 1+ swap                             \ m a a+1 a
     r@ cmove                                    \ m a
     2dup +                                      \ m a m+a
@@ -4992,7 +5003,7 @@ decimal
     r@ + 1-                                     \ m a+n-1
     swap r@ -                                   \ a+n-1 m-n
     blanks 
-    r>
+    r>                                          \ n|0
 ;
 
 
@@ -5010,6 +5021,8 @@ decimal
     r@ 
     If 
         r@ f_fgetpos [ 44 ] Literal ?error 
+        \ must rewind to the beginning of the current line
+        >in @ 2-  span @  -  s>d d+
     Else 
         0 0         \ 0 0 fake handle-position
     Endif 
@@ -5440,7 +5453,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 86 here ," v-Forth 1.51 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Direct Thread - build 20211026" -1 allot ]
+    [ decimal 13 here ," Direct Thread - build 20211104" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
