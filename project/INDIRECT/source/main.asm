@@ -58,7 +58,7 @@
 //  0 for final binary release.
 //  1 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
-DEBUGGING       equ     -1
+DEBUGGING       equ     0
 //
 //  ______________________________________________________________________
 

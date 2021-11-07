@@ -190,6 +190,7 @@ Flush_Do:                                       // do
                 dw          LIT, 13, ENCLOSE    //      13 enclose       ( m d b a x c x )
                 dw          DROP, NIP           //      drop nip         ( m d b a c )
                 dw          ROT, MIN            //      rot min          ( m d a n )
+                dw          DUP, SPAN, STORE    //      dup span !       ( m d a n )
                 dw          DUP, TO_R           //      dup >r           ( m d a n )      \ fh n
                 dw          TWO_SWAP, R_TO      //      2swap r>         ( m a n d n )    \ fh
                 dw          ZERO, DPLUS         //      0 d+             ( m a n d+n )
@@ -229,6 +230,11 @@ FGetline_Endif:                                 // endif
                 dw      FInclude_Else_1 - $
                 dw          R_OP, F_FGETPOS     //      r f_getpos
                 dw          LIT, 44, QERROR     //      44 ?error
+                dw          TO_IN, FETCH        //      >in @ 2-
+                dw          TWO_MINUS           
+                dw          SPAN, FETCH         //      span @ -
+                dw          SUBTRACT 
+                dw          S_TO_D, DPLUS       //      s>d d+
                                                 // else
                 dw      BRANCH
                 dw      FInclude_Endif_1 - $    
@@ -692,9 +698,9 @@ Index_Leave:
                 Colon_Def SPLASH, "SPLASH", is_normal
                 dw      CLS
                 dw      C_DOT_QUOTE
-                db      69
+                db      87
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "build 20211026", 13
+                db      "Indirect Thread - build 20211104", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 

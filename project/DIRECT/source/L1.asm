@@ -135,7 +135,7 @@ User_Ptr:
 //              dw      EXIT                    // ;
                 New_Def  PLUS_ORIGIN, "+ORIGIN", is_code, is_normal
                 pop     hl
-                ld      hl, Cold_origin
+                ld      de, Cold_origin
                 add     hl, de
                 push    hl
                 next

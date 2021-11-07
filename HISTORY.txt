@@ -282,3 +282,7 @@ Floating-Point Option Library (experimental but useful)
 Release of 1.51 version. From this version vForth is a "direct-thread" instead of an "indirect-thread" Forth system. It brings a overall 25% speed improvement. 
 Any Low-Level definition saves two bytes, but any non Low-Level definitions needs one additional byte because CFA does not contain an address anymore, instead CFA contains the real machine-code to be executed. For non Low-level definitions CFA is a three byte instruction "CALL aaaa" to the ;CODE part routine that handles that kind of definition.
 Some definitions have been speed-improved and space-improved using alternate registers: REG! REG@ FILL +ORIGIN P! P@ 2! DNEGATE D+ CMOVE> CMOVE (COMPARE)
+
+\ build 20211104
+Bug-fix of INCLUDE and NEEDS eventually. There was a bug in that when a NEEDS was encountered the interpreter skipped the rest of the line.
+
