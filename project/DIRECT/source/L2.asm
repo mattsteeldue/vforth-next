@@ -316,9 +316,10 @@ DPlus_Minus_Endif:                              // endif
 
 //  ______________________________________________________________________ 
 //
-// m/mod        d n -- q r
-// multiply two integer giving a double
-                Colon_Def MDIVM, "M/MOD", is_normal
+// sm/rem       d n -- q r
+// Symmetric division: divides a double into n giving quotient q and remainder r 
+// the remainder has the sign of d.
+                Colon_Def SMDIVM, "SM/REM", is_normal
                 dw      OVER, TO_R, TO_R        // over >r >r
                 dw      DABS, R_OP, ABS_OP      // dabs r abs 
                 dw      UMDIVMOD                // um/mod
@@ -327,6 +328,54 @@ DPlus_Minus_Endif:                              // endif
                 dw      PLUS_MINUS, SWAP        // +- swap
                 dw      R_TO                    // r>
                 dw      PLUS_MINUS, SWAP        // +- swap
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// fm/mod       d n -- q r
+// Floored division: divides a double into n giving quotient q and remainder r 
+// the remainder has the sign of d.
+                Colon_Def FMDIVM, "FM/MOD", is_normal
+                dw      DUP, TO_R               // dup >r
+                dw      SMDIVM
+                dw      OVER, DUP
+                dw      ZEQUAL, ZEQUAL
+                dw      SWAP, ZLESS
+                dw      R_OP, ZLESS
+                dw      XOR_OP, AND_OP
+                dw      ZBRANCH
+                dw      Fm_Mod_Else - $
+                dw          ONE_SUBTRACT
+                dw          SWAP, R_TO
+                dw          PLUS, SWAP
+                dw      BRANCH
+                dw      Fm_Mod_Endif - $
+Fm_Mod_Else:
+                dw          R_TO, DROP
+Fm_Mod_Endif:
+                dw      EXIT
+//              dw      TWO_DUP                 // 2dup
+//              dw      XOR_OP, TO_R, TO_R      // xor >r >r
+//              dw      DABS, R_OP, ABS_OP      // dabs r abs 
+//              dw      UMDIVMOD                // um/mod
+//              dw      SWAP                    // swap
+//              dw      II, ZLESS               // i'
+//              dw      ONE, AND_OP, PLUS       // 0< 1 and +
+//              dw      R_TO                    // r>
+//              dw      PLUS_MINUS, SWAP        // +- swap
+//              dw      R_OP                    // r@
+//              dw      ZLESS                   // i'
+//              dw      ONE, AND_OP, PLUS       // 0< 1 and +
+//              dw      R_TO                    // r>
+//              dw      PLUS_MINUS              // +- swap
+//              dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// m/mod        d n -- q r
+// multiply two integer giving a double
+                Colon_Def MDIVM, "M/MOD", is_normal
+                dw      SMDIVM
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 

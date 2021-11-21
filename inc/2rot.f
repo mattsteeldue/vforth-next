@@ -6,6 +6,8 @@
 
 NEEDS CODE      \ just to be sure we are fine
 
+BASE @ \ save base status
+
 HEX 
 
 CODE 2ROT   ( d1 d2 d3 -- d2 d3 d1 )
@@ -49,4 +51,5 @@ CODE 2ROT   ( d1 d2 d3 -- d2 d3 d1 )
     
     FORTH
     SMUDGE
-    DECIMAL
+
+BASE !

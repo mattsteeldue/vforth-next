@@ -4,6 +4,8 @@
 \ Inverse/True Video character sequence
 \
 .( INVV )
+
+BASE @ \ save base status
 \
 \ INVV
 : INVV ( -- )
@@ -11,4 +13,4 @@
   1 EMITC
 ;
 
-DECIMAL
+BASE !

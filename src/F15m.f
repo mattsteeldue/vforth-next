@@ -669,12 +669,25 @@ CODE i ( -- ind )
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
-
+HERE
         LD      E'| (HL)|
         INCX    HL|
         LD      D'| (HL)|
         PUSH    DE|
         Next
+        C;
+
+
+.( I' )
+\ used between DO and LOOP or between DO e +LOOP to copy on top of stack
+\ the limit of the index-loop
+CODE i' ( -- lim )
+
+        HERE !rp^ 
+        LDHL,RP              \ macro 30h +Origin
+        INCX    HL|
+        INCX    HL|
+        JR      BACK,
         C;
 
 
@@ -4073,6 +4086,31 @@ CODE basic ( n -- )
     ;
 
 
+.( FM/REM )
+: fm/rem  ( d n -- r q ) 
+    2dup xor >r >r          \ d        R: x n
+    dabs r@ abs um/mod      \ r  q
+    swap                    \ q  r
+    i' 0< 1 and +           \ r  q     R: x n
+    r> +-                   \ q  +r    R: x
+    swap                    \ r+ q
+    r@ 0< 1 and +           \ r+ q
+    r> +-                   \ r+ q+
+    ;
+
+
+.( M/MOD )
+\ Mixed operation. It leaves the remainder n2 and the quotient n3 of the 
+\ integer division of a double integer d by the divisor n1. 
+: m/mod 
+    fm/rem 
+    \ if you want simmetric division use sm/mod instead of fm/rem
+    ;
+
+
+.( M/ )
+\ Mixed operation. It leaves the quotient n2 of the integer division 
+\ of a double integer d by the divisor n1.
 : m/ ( d n -- n )
     m/mod nip 
     ;

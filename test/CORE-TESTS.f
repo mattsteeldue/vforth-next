@@ -9,7 +9,7 @@ NEEDS TESTING
 NEEDS S"
 NEEDS FIND
 
-HEX
+HEX \ all test needs base 16.
 
 CR
 
@@ -43,6 +43,8 @@ INCLUDE  test/u{.f   \ U<
 INCLUDE  test/min.f
 INCLUDE  test/max.f
 
+INCLUDE  test/not.f  \ NOT
+
 \ Stack Operators
 
 INCLUDE  test/drop.f
@@ -54,6 +56,7 @@ INCLUDE  test/swap.f
 INCLUDE  test/nip.f
 INCLUDE  test/tuck.f
 INCLUDE  test/pick.f
+INCLUDE  test/-rot.f \ -ROT
 
 INCLUDE  test/2drop.f
 INCLUDE  test/2dup.f
@@ -63,6 +66,7 @@ INCLUDE  test/2swap.f
 INCLUDE  test/2rot.f
 
 INCLUDE  test/^dup.f
+INCLUDE  test/-dup.f \ -DUP
 INCLUDE  test/depth.f
 
 \ Return Stack Operators

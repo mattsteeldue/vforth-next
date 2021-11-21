@@ -3,6 +3,8 @@
 \
 .( .cpu )
 \
+BASE @ \ save base status
+
 \ .cpu
 \ shows the cpu name (Z80)
 : .CPU
@@ -13,5 +15,5 @@
     BASE !
 ;
 \
-DECIMAL
+BASE !
 \

@@ -6,6 +6,9 @@
 \ makes permanent the last color setting
 \
 NEEDS CALL#
+
+BASE @
+
 \
 HEX
 : PERM 
@@ -14,4 +17,4 @@ HEX
     DROP
 ;
 
-DECIMAL
+BASE !

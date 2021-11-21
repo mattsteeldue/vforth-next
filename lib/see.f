@@ -3,7 +3,7 @@
 \
 .( SEE Inspector ) 
 \
-DECIMAL
+BASE @ DECIMAL
 \
 NEEDS DUMP
 NEEDS INVV
@@ -93,5 +93,5 @@ NEEDS .S
   CR (SEE) 
 ;
 
-
+BASE !
 

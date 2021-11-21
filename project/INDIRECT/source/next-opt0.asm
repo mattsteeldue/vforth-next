@@ -22,11 +22,51 @@
                 ld      ix, 0
                 rst     $08     
                 db      $9F
+F_Seek_Exit:                
                 pop     bc                  // restore Instruction Pointer
                 pop     ix
                 sbc     hl, hl              // to get 0 or -1
 
                 psh1
+
+//  ______________________________________________________________________ 
+//
+// f_close      u -- f
+// Close file-handle u.
+// Return 0 on success, True flag on error
+
+                New_Def F_CLOSE, "F_CLOSE", is_code, is_normal
+
+                pop     hl
+                ld      a, l                // file-handle
+                push    ix
+                push    bc                  // Save Instruction pointer
+                rst     $08     
+                db      $9B
+                jr      F_Seek_Exit
+//              pop     bc
+//              pop     ix
+//              sbc     hl, hl
+//              psh1
+
+//  ______________________________________________________________________ 
+//
+// f_sync      u -- f
+// Close file-handle u.
+// Return 0 on success, True flag on error
+
+                New_Def F_SYNC, "F_SYNC", is_code, is_normal
+                pop     hl
+                ld      a, l                // file-handle
+                push    ix
+                push    bc
+                rst     $08     
+                db      $9C
+                jr      F_Seek_Exit
+//              pop     bc
+//              pop     ix
+//              sbc     hl, hl
+//              psh1
 
 //  ______________________________________________________________________ 
 //
@@ -67,6 +107,7 @@
                 push    de                  // Save Instruction pointer 
                 rst     $08     
                 db      $9D
+F_Read_Exit:                
                 pop     bc                  // Restore Instruction pointer 
                 pop     ix                  // Restore ix
                 push    de                  // bytes written
@@ -90,32 +131,13 @@
                 push    de                  // Save Instruction pointer 
                 rst     $08     
                 db      $9E
-                pop     bc                  // Restore Instruction pointer 
-                pop     ix                  // Restore ix
-                push    de                  // bytes written
-                sbc     hl, hl
-
-                psh1
-
-//  ______________________________________________________________________ 
+                jr F_Read_Exit
+//              pop     bc                  // Restore Instruction pointer 
+//              pop     ix                  // Restore ix
+//              push    de                  // bytes written
+//              sbc     hl, hl
 //
-// f_close      u -- f
-// Close file-handle u.
-// Return 0 on success, True flag on error
-
-                New_Def F_CLOSE, "F_CLOSE", is_code, is_normal
-
-                pop     hl
-                ld      a, l                // file-handle
-                push    ix
-                push    bc                  // Save Instruction pointer
-                rst     $08     
-                db      $9B
-                pop     bc
-                pop     ix
-                sbc     hl, hl
-
-                psh1
+//              psh1
 
 //  ______________________________________________________________________ 
 //
@@ -145,6 +167,7 @@
                 ld      a, "*"
                 rst     $08     
                 db      $9A
+F_Open_Exit:                
                 pop     bc
                 pop     ix
                 sbc     hl, hl
@@ -159,22 +182,32 @@
 //   \ DROP
 //   \ F_CLOSE
 
+
 //  ______________________________________________________________________ 
 //
-// f_sync      u -- f
-// Close file-handle u.
-// Return 0 on success, True flag on error
-
-                New_Def F_SYNC, "F_SYNC", is_code, is_normal
-                pop     hl
-                ld      a, l                // file-handle
-                push    ix
-                push    bc
+// f_opendir    a1 a2 b -- u f
+// open a file 
+                New_Def F_OPENDIR, "F_OPENDIR", is_code, is_normal
+                ex      (sp), ix            // filespec nul-terminated
+                push    bc                  // Save Instruction pointer
+                ld      b, $10              // file-mode
+                ld      a, "C"
                 rst     $08     
-                db      $9C
-                pop     bc
-                pop     ix
-                sbc     hl, hl
+                db      $A3
+                jr      F_Open_Exit
 
-                psh1
+
+//  ______________________________________________________________________ 
+//
+// f_readdir    a1 a2 b -- u f
+// open a file 
+                New_Def F_READDIR, "F_READDIR", is_code, is_normal
+                pop     hl
+                ld      a, l
+                pop     de
+                ex      (sp), ix            // filespec nul-terminated
+                push    bc                  // Save Instruction pointer
+                rst     $08     
+                db      $A4
+                jr      F_Open_Exit
 

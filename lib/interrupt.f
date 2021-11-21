@@ -11,7 +11,7 @@ INTERRUPT DEFINITIONS
 \ To use this ISR utility you have to define a suitable word 
 \ that can be executed in background in a Interrupt-Driven way
 
-
+BASE @
 
 HEX
 
@@ -114,7 +114,7 @@ FORTH DEFINITIONS
     C3 6363 C!   \ jp to INT-SUB address
     INTERRUPT
     
-    \ The start-addresso code of INT-SUB depends on which version
+    \ The start-address code of INT-SUB depends on which version
     \ we have between Direct vs Indirect threaded core.
     \ The following calculation determines if the address the ISR jumps to
     \ is the CFA or CFA >BODY
@@ -140,5 +140,5 @@ FORTH DEFINITIONS
 
 FORTH
 
-DECIMAL
+BASE !
 

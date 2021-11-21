@@ -8,6 +8,8 @@
 \   :NONAME . ;   IS print 
 \
 
+BASE @ \ save base status
+
 : :NONAME ( -- cccc )
     ?EXEC
 
@@ -30,3 +32,4 @@
     SMUDGE
 ;
 
+BASE !

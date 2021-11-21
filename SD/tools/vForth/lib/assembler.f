@@ -3,7 +3,11 @@
 \ 
 CR DECIMAL 
 
+BASE @
+
 INCLUDE SRC/Z80N-ASM.F
+
+BASE !
 
 CR
 .( ASSEMBLER Vocabulary ) 

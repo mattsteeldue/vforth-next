@@ -3,6 +3,8 @@
 \
 .( DUMP )
 \
+BASE @
+
 DECIMAL
 \
 : (DMP)  ( a+4 a -- )
@@ -34,4 +36,4 @@ DECIMAL
     R> BASE ! 
 ; 
 \
-DECIMAL
+BASE !

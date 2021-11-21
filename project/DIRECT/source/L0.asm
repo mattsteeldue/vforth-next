@@ -286,11 +286,26 @@ Do_Ptr:
 I_Ptr:                
 
                 ldhlrp
+I_Ptr_prime                
                 ld      e, (hl)
                 inc     hl
                 ld      d, (hl)
                 push    de
                 next
+
+
+//  ______________________________________________________________________ 
+//
+// i'            -- n
+// used between DO and LOOP or between DO e +LOOP to copy on top of stack
+// the limit of the index-loop
+
+                New_Def II, "I'", is_code, is_normal
+                ldhlrp
+                inc     hl
+                inc     hl
+                jr      I_Ptr_prime                
+
 
 //  ______________________________________________________________________ 
 //
@@ -879,7 +894,7 @@ Cmove_NoMove:
 
                 pop     bc                  // bc has counter
                 pop     de                  // de has dest
-                pop     hl                  // hl has source
+                pop     hl                  // hl has source, save Instruction Pointer
                 ld      a, b                
                 or      c
                 jr      z, CmoveV_NoMove
@@ -1339,7 +1354,7 @@ CellMinus:
 
 //  ______________________________________________________________________ 
 //
-// dminus       d1 -- d2
+// dnegate      d1 -- d2
 // change the sign of a double number
                 New_Def DMINUS, "DNEGATE", is_code, is_normal
                 exx
@@ -1353,7 +1368,8 @@ CellMinus:
                 ld      h, a
                 ld      l, a
                 sbc     hl, bc              // subtract from zero with carry
-                push    hl                  // > d2-H
+                                            // > d2-H
+                push    hl                  
                 exx
                 next
 

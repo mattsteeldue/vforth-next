@@ -56,7 +56,8 @@
 
 NEEDS RENAME        \ this is just a patch to be removed in the future
 NEEDS CODE          \ this is just a patch to be removed in the future 
-NEEDS INVERT   \   : INVERT -1 XOR ;
+NEEDS INVERT        \   : INVERT -1 XOR ;
+NEEDS FLIP
 
 FORTH DEFINITIONS 
 
@@ -91,7 +92,7 @@ CHAR ~ CONSTANT &~
 \ ## : %ID.        ID. ;
 : %>BODY      PFA CELL+ ;
 \ ## : %BODY>      0 CELL+ - NFA ;
-: %>CODE      PFA CFA CELL+ ;
+: %>CODE      PFA CFA CELL+  2 CFA NEGATE + ( direct/indirect patch ) ;
 \ ## : IGNORE?     1+ C@ &~ = ;
 : (>NEXT%)    PFA LFA @ ;
 \ ## : VOCEND?     @ FFFF AND A081 = ;
@@ -242,11 +243,11 @@ IS-A IS-COMMA : COMMAER
 ASSEMBLER DEFINITIONS HEX
 TOOLS-ASM
 
-0 1 0 800 ' C,        COMMAER N,
-0 0 CELL+ 0 200 ' ,   COMMAER NN,
-0 0 CELL+ 0 400 ' ,   COMMAER AA,
-0 1 0 100 ' C,        COMMAER P,
-0 1 0 1000 ' C,       COMMAER D,
+0 1 0 800       ' C,   COMMAER N,
+0 0 CELL+ 0 200 '  ,   COMMAER NN,
+0 0 CELL+ 0 400 '  ,   COMMAER AA,
+0 1 0 100       ' C,   COMMAER P,
+0 1 0 1000      ' C,   COMMAER D,
 
 
 
@@ -561,7 +562,9 @@ ASSEMBLER DEFINITIONS HEX
 ASSEMBLER DEFINITIONS HEX
 
 \ swaps hi-lo bytes
-: <, 100 /MOD C, C, ;
+\ : <, 100 /MOD C, C, ;
+: <, FLIP , ;
+
 TOOLS-ASM
 
 0 1 0 4000 ' <, COMMAER     LH,

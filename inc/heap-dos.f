@@ -11,6 +11,9 @@
 \ This is 64K of ram avalable for Heap Management
 \ passed parameter must be 2 for alloc, or 3 for free
 \
+
+BASE @
+
 HEX
 : HEAP-DOS ( n -- )
     20 27               \ decimal 32-39 
@@ -25,4 +28,5 @@ HEX
         2DROP 2DROP
     LOOP DROP           \ consume n.
 ;
-DECIMAL
+
+BASE !

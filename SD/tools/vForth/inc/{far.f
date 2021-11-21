@@ -6,6 +6,9 @@
 \ See "Heap memory facility" in PDF documentation for details
 \
  .( <FAR )
+
+BASE @ \ save base status
+
 \
 \ given an address E000-FFFF and a page number n (32-39) or 20h-27h)
 \ reverse of >FAR: encodes a FAR address compressing
@@ -28,4 +31,4 @@ CODE <FAR ( a n -- ha )
     DD C, E9 C,       \     jp      (ix)   
 SMUDGE
 
-DECIMAL
+BASE !

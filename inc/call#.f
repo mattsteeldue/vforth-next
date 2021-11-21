@@ -4,6 +4,9 @@
 .( CALL# )
 \
 \ call utility. must save BC and IX
+
+BASE @ \ save base status
+
 \
 \ CALL# ( n1 a -- n2 )
 \ First argument n1 is passed via bc register AND a register
@@ -21,5 +24,5 @@ CODE  CALL#  ( n1 -- n2 )
     DD C, E9 C,             \ jp ix
     SMUDGE
 \
-DECIMAL
+BASE !
 \

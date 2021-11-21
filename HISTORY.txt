@@ -286,3 +286,6 @@ Some definitions have been speed-improved and space-improved using alternate reg
 \ build 20211104
 Bug-fix of INCLUDE and NEEDS eventually. There was a bug in that when a NEEDS was encountered the interpreter skipped the rest of the line.
 
+\ build 20211119
+Introducing LED, a "Large file EDitor", that uses all RAM available to edit very large text files, 85 characters per line. It comes along with a new CAT definitions to inspect directory content.
+

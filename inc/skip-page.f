@@ -8,6 +8,9 @@
 .( SKIP-PAGE )
 \
 NEEDS HP@
+
+BASE @
+
 \
 \ check if  n  more bytes are available in the current 8K-page in Heap
 \ otherwise skip  HP  to the beginning of next 8K-page
@@ -21,3 +24,5 @@ NEEDS HP@
     THEN
     HP@  0=  [ DECIMAL 12 ] LITERAL  ?ERROR  \ out of memory check
 ;
+
+BASE !

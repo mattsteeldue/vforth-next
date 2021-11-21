@@ -131,7 +131,7 @@ Block_Begin:                                    //      begin
                 dw              DUP             //              dup
                 dw              R_OP, ONE       //              r 1
                 dw              READ_WRITE      //              r/w
-                dw              TWO, SUBTRACT   //              2 -
+                dw              TWO_MINUS       //              2-
 Block_Endif_2:                                  //          endif
                 dw          DUP, FETCH, R_OP    //          dup @ r
                 dw          SUBTRACT, DUP       //          - dup
@@ -700,7 +700,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      87
                 db      "v-Forth 1.5 NextZXOS version", 13
-                db      "Indirect Thread - build 20211104", 13
+                db      "Indirect Thread - build 20211119", 13
                 db      "1990-2021 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -956,7 +956,7 @@ Load_Endif:
                 Colon_Def REPEAT, "REPEAT", is_immediate
                 dw      TWO_SWAP
                 dw      AGAIN
-                dw      TWO, SUBTRACT
+                dw      TWO_MINUS
                 dw      ENDIF
                 dw      EXIT
 

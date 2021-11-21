@@ -6,6 +6,8 @@
 
 NEEDS CODE      \ just to be sure we are fine
 
+BASE @ \ save base status
+
 HEX
 
 \ Roll the nth item to the top of the stack, moving the others
@@ -41,4 +43,5 @@ CODE ROLL  ( n1 n2 .. nk k -- n2 .. nk n1  )
     
     FORTH
     SMUDGE
-    DECIMAL
+
+BASE !

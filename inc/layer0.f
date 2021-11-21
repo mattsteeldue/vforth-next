@@ -8,8 +8,10 @@
 \
 NEEDS IDE_MODE!
 
+BASE @
+
 : LAYER0
     [ HEX ] 0000 IDE_MODE!
 ;
 
-DECIMAL
+BASE !

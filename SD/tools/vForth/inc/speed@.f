@@ -9,7 +9,7 @@
 \
 .( SPEED! )
 \
-HEX
+
 \
 : SPEED@ ( -- n )
     7  REG@  3 AND

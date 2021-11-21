@@ -6,6 +6,9 @@
 \ See "Heap memory facility" in PDF documentation for details
 \
 .( >FAR )
+
+BASE @ \ save base status
+
 \
 \ decode bits 765 of H as one of the 8K-page between 32 and 39 (20h-27h)
 \ take lower bits of H and L as an offset from E000h
@@ -37,4 +40,5 @@ CODE >FAR ( ha -- a n )
     DD C, E9 C,       \     jp      (ix)   
 SMUDGE
 
-DECIMAL
+BASE !
+

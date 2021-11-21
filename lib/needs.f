@@ -1,7 +1,7 @@
 .( NEEDS included ) 
 \ check for cccc exists in vocabulary
 \ if it doesn't then  INCLUDE  inc/cccc.F
-DECIMAL
+BASE @ DECIMAL
 \ temp filename cccc.f as counted string zero-padded
 CREATE   NEEDS-W     35 ALLOT   \ 32 + .F + 0x00 = len 35
 \ temp complete path+filename
@@ -46,3 +46,5 @@ create   needs-lib   ," lib/"
   >IN !
   NEEDS-LIB NEEDS-PATH     \ 2nd chance at "lib/"
 ;
+
+BASE !

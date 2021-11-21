@@ -131,7 +131,7 @@ Block_Begin:                                    //      begin
                 dw              DUP             //              dup
                 dw              R_OP, ONE       //              r 1
                 dw              READ_WRITE      //              r/w
-                dw              TWO, SUBTRACT   //              2 -
+                dw              TWO_MINUS       //              2-
 Block_Endif_2:                                  //          endif
                 dw          DUP, FETCH, R_OP    //          dup @ r
                 dw          SUBTRACT, DUP       //          - dup
@@ -230,11 +230,11 @@ FGetline_Endif:                                 // endif
                 dw      FInclude_Else_1 - $
                 dw          R_OP, F_FGETPOS     //      r f_getpos
                 dw          LIT, 44, QERROR     //      44 ?error
-                dw          TO_IN, FETCH, 
-                dw          TWO_MINUS
-                dw          SPAN, FETCH
-                dw          SUBTRACT
-                dw          S_TO_D, DPLUS
+                dw          TO_IN, FETCH        //      >in @ 2-
+                dw          TWO_MINUS           
+                dw          SPAN, FETCH         //      span @ -
+                dw          SUBTRACT 
+                dw          S_TO_D, DPLUS       //      s>d d+
                                                 // else
                 dw      BRANCH
                 dw      FInclude_Endif_1 - $    
@@ -700,7 +700,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      86
                 db      "v-Forth 1.51 NextZXOS version", 13    // 29
-                db      "Direct Thread - build 20211104", 13  // 31
+                db      "Direct Thread - build 20211119", 13  // 31
                 db      "1990-2021 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
@@ -956,7 +956,7 @@ Load_Endif:
                 Colon_Def REPEAT, "REPEAT", is_immediate
                 dw      TWO_SWAP
                 dw      AGAIN
-                dw      TWO, SUBTRACT
+                dw      TWO_MINUS
                 dw      ENDIF
                 dw      EXIT
 

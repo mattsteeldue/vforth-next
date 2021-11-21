@@ -5,6 +5,9 @@
 \
 \ old and new word-names must have the same length
 \
+
+BASE @
+
 HEX
 \
 \ RENAME
@@ -32,5 +35,5 @@ HEX
     [ HEX -20 ] LITERAL ALLOT
 ;
 \  
-DECIMAL
+BASE !
 \

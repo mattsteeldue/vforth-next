@@ -7,6 +7,9 @@
 \
 \ Layer 2 – 256 w x 192 h pixels, 256 colours total, one colour per pixel
 \
+
+BASE @
+
 NEEDS IDE_MODE!
 
 : LAYER2
@@ -14,4 +17,4 @@ NEEDS IDE_MODE!
     1E EMITC 4 EMITC
 ;
 
-DECIMAL
+BASE !

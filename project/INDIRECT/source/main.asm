@@ -3,9 +3,10 @@
 //  main.asm
 //  ______________________________________________________________________ 
 // 
-// v-Forth 1.5 NextZXOS version 
-// build 20210916
+//  v-Forth 1.5 NextZXOS version 
+//  build 20211119
 // 
+//  Inirect-Thread version.
 // 
 //  NextZXOS version
 //  ______________________________________________________________________
@@ -58,7 +59,7 @@
 //  0 for final binary release.
 //  1 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
-DEBUGGING       equ     0
+DEBUGGING       equ     -1
 //
 //  ______________________________________________________________________
 

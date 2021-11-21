@@ -285,11 +285,25 @@ Do_Ptr:
 I_Ptr:                
 
                 ldhlrp
+I_Ptr_prime                
                 ld      e, (hl)
                 inc     hl
                 ld      d, (hl)
                 push    de
                 next
+
+//  ______________________________________________________________________ 
+//
+// i'            -- n
+// used between DO and LOOP or between DO e +LOOP to copy on top of stack
+// the limit of the index-loop
+
+                New_Def II, "I'", is_code, is_normal
+                ldhlrp
+                inc     hl
+                inc     hl
+                jr      I_Ptr_prime                
+
 
 //  ______________________________________________________________________ 
 //
@@ -1239,13 +1253,14 @@ ZGreater_Skip:
 // SP   LHEDLHED
 // SP  +01234567
                 New_Def DPLUS, "D+", is_code, is_normal
+
                 exx
                 pop     bc                  // bc := d2.H
-                pop     de
-                pop     hl                  // hl := d2.L
-                ex      (sp), hl
+                pop     de                  // hl := d2.L
+                pop     hl                  // d1.H
+                ex      (sp), hl            // d1.L
                 add     hl, de              // hl := d2.L + d1.L
-                ex      (sp), hl
+                ex      (sp), hl            // d1.H
                 adc     hl, bc              // d1.H + d2.H
                 push    hl
                 exx
@@ -1722,7 +1737,7 @@ CellMinus:
 // and in the stack memory it appears as LHED.
                 New_Def TWO_STORE, "2!", is_code, is_normal
                 exx 
-                pop     hl                  // hl has address
+                pop     hl                  // address
                 pop     bc                  // < high-part
                 pop     de                  // < low-part > Instruction Pointer
                 ld      (hl), c

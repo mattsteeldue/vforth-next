@@ -4,6 +4,9 @@
 .( BORDER. )
 \
 NEEDS CALL#
+
+BASE @ \ save base status
+
 \
 HEX
 : BORDER.
@@ -12,4 +15,4 @@ HEX
     DROP
 ;
 
-DECIMAL
+BASE !

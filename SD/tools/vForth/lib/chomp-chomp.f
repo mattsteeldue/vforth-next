@@ -7,6 +7,8 @@
 MARKER CHOMP-CHOMP
 FORTH DEFINITIONS 
 
+BASE @
+
 CASEOFF                 \ ignore case for this source
 
 FLUSH EMPTY-BUFFERS     \ just stay clean
@@ -1064,6 +1066,7 @@ needs .s
   LAYER12 3 SPEED!
 ; 
 
+BASE !
 
 ( Ghost.f )
 CR CR

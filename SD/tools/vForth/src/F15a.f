@@ -1,9 +1,9 @@
-3\ ______________________________________________________________________ 
+\ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20210916 ) CR
+.( build 20211119 ) CR
 \
-\ NextZXOS version
+\ Indirect-Thread - NextZXOS version
 \ ______________________________________________________________________ 
 \
 \ This work is available as-is with no whatsoever warranty.
@@ -152,9 +152,9 @@ DECIMAL
 .( Psh2 Psh1 Next )
 
 \ compile CODE words for Jump to the Psh2, Psh1 or Next addresses.
-\ : Psh2     ASSEMBLER  JP next^  2 -   AA, ;
-\ : Psh1     ASSEMBLER  JP next^  1 -   AA, ;
-\ : Next     ASSEMBLER  JP next^        AA, ;
+\ : Psh2     ASSEMBLER  JP next^  2-   AA, ;
+\ : Psh1     ASSEMBLER  JP next^  1-   AA, ;
+\ : Next     ASSEMBLER  JP next^       AA, ;
 
 : Psh2     ASSEMBLER  PUSH DE|   PUSH HL|   JPIX ;
 : Psh1     ASSEMBLER             PUSH HL|   JPIX ;
@@ -285,7 +285,7 @@ DECIMAL
             (           -- ) \ run-time
     2SWAP
     [COMPILE] Again
-    2 - 
+    2- 
     [COMPILE] Endif \ Then
     ; 
     IMMEDIATE
@@ -743,12 +743,25 @@ CODE i ( -- ind )
 
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
-
+HERE
         LD      E'| (HL)|
         INCX    HL|
         LD      D'| (HL)|
         PUSH    DE|
         Next
+        C;
+
+
+.( I' )
+\ used between DO and LOOP or between DO e +LOOP to copy on top of stack
+\ the limit of the index-loop
+CODE i' ( -- lim )
+
+        HERE !rp^ 
+        LDHL,RP              \ macro 30h +Origin
+        INCX    HL|
+        INCX    HL|
+        JR      BACK,
         C;
 
 
@@ -1378,6 +1391,7 @@ CODE f_seek ( d u -- f )
         PUSH    HL|
         LDX     IX|     0 NN,
         RST     08|     HEX  9F  C,
+HERE DUP       
         POP     BC|
         POP     IX|
         SBCHL   HL|
@@ -1386,6 +1400,42 @@ CODE f_seek ( d u -- f )
         C;        
     
     
+.( F_CLOSE )
+\ Close file-handle u.
+\ Return 0 on success, True flag on error
+CODE f_close ( u -- f )
+        POP     HL|
+        LD      A'|   L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9B  C,
+        JR      BACK,
+\       POP     BC|
+\       POP     IX|
+\       SBCHL   HL|
+\       PUSH    HL|
+\       Next
+        C;        
+    
+    
+.( F_SYNC )
+\ Sync file-handle u changes to disk.
+\ Return 0 on success, True flag on error
+CODE f_sync ( u -- f )
+        POP     HL|
+        LD      A'|     L|
+        PUSH    IX|
+        PUSH    BC|
+        RST     08|   HEX  9C  C,
+        JR      BACK,
+\       POP     BC|
+\       POP     IX|
+\       SBCHL   HL|
+\       PUSH    HL|
+\       Next
+        C;        
+
+
 .( F_FGETPOS )
 \ Get current position d of file-handle u.
 \ Return d and a false-flag 0 on success, or True flag on error
@@ -1395,7 +1445,7 @@ CODE f_fgetpos ( u -- d f )
         PUSH    IX|
         PUSH    BC|
         RST     08|     HEX  0A0  C,
-        POP     HL|
+        POP     HL|     \ Program Pointer to be kept in BC
         POP     IX|
         PUSH    DE|
         PUSH    BC|
@@ -1420,6 +1470,7 @@ CODE f_read ( a b u -- n f )
         EX(SP)IX
         PUSH    DE|
         RST     08|   HEX  9D  C,
+HERE        
         POP     BC|
         POP     IX|
         PUSH    DE|
@@ -1441,29 +1492,13 @@ CODE f_write ( a b u -- n f )
         EX(SP)IX
         PUSH    DE|
         RST     08|     HEX  9E  C,
-        POP     BC|
-        POP     IX|
-        PUSH    DE|
-        SBCHL   HL|
-        PUSH    HL|
-        Next
-        C;        
-    
-    
-.( F_CLOSE )
-\ Close file-handle u.
-\ Return 0 on success, True flag on error
-CODE f_close ( u -- f )
-        POP     HL|
-        LD      A'|   L|
-        PUSH    IX|
-        PUSH    BC|
-        RST     08|   HEX  9B  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        PUSH    HL|
-        Next
+        JR      BACK,
+\       POP     BC|
+\       POP     IX|
+\       PUSH    DE|
+\       SBCHL   HL|
+\       PUSH    HL|
+\       Next
         C;        
     
     
@@ -1482,7 +1517,7 @@ CODE f_close ( u -- f )
 \   esx_mode_creat_noexist $04 create new file, error if exists
 \   esx_mode_creat_trunc   $0c create new file, delete existing
 \ Return file-handle u and 0 on success, True flag on error
-CODE f_open ( a1 a2 b -- u f )
+CODE f_open ( a1 a2 b -- fh f )
         LD      H'|     B|
         LD      L'|     C|
         POP     BC|         \ mode
@@ -1492,6 +1527,7 @@ CODE f_open ( a1 a2 b -- u f )
         PUSH    HL|         \ this pushes original bc
         LDN     A'|     CHAR  *  N,
         RST     08|     HEX  9A  C,
+HERE DUP        
         POP     BC|
         POP     IX|
         SBCHL   HL|
@@ -1507,21 +1543,32 @@ CODE f_open ( a1 a2 b -- u f )
     \ F_CLOSE
 
 
-.( F_SYNC )
+.( F_OPENDIR )
 \ Sync file-handle u changes to disk.
 \ Return 0 on success, True flag on error
-CODE f_sync ( u -- f )
-        POP     HL|
-        LD      A'|   L|
-        PUSH    IX|
+CODE f_opendir ( a -- fh f )
+        EX(SP)IX            \ filespec nul-terminated
         PUSH    BC|
-        RST     08|   HEX  9C  C,
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
-        PUSH    HL|
-        Next
-        C;        
+        LDN     B'|   20   N,
+        LDN     A'|   CHAR C   N,
+        RST     08|   HEX  A3  C,
+        JR      BACK,
+        C;
+        
+
+.( F_READDIR )
+\ Sync file-handle u changes to disk.
+\ Return 0 on success, True flag on error
+CODE f_readdir ( a1 a2 fh -- n f )
+        POP     HL|
+        LD      A'|     L|
+        POP     DE|
+        EX(SP)IX            \ wildcard spec nul-terminated
+        PUSH    BC|
+        RST     08|   HEX  A4  C,
+        JR      BACK,
+        C;
+        
 
 \ ______________________________________________________________________ 
 \ 
@@ -2655,7 +2702,7 @@ CODE cells ( n2 -- n2 )
         LDRP,HL              \ macro 30h +Origin
         
         INCX    DE|          \ this depends on how inner interpreter works
-        LD      C'|    E|
+        LD      C'|    E|    \ Indirect-Thread version
         LD      B'|    D|
         Next
         C;
@@ -3398,7 +3445,7 @@ CODE -dup ( n -- 0 | n n )
             dup i =     ( a a=i )
             1 and
             dup         ( a a=i a=i )
-            r> 2 - + >r  \ decrement i by 1 or 2.
+            r> 2- + >r  \ decrement i by 1 or 2.
             If
                 [ decimal 7 ] Literal  ( a 7 )
             Else
@@ -4392,10 +4439,11 @@ CODE basic ( n -- )
 
 
 \ 75EAh
+\ Symmetric division
 \ divides a double into n giving quotient q and remainder r 
-\ the remainder has the sign of d.
-.( M/MOD )
-: m/mod  ( d n -- r q ) 
+\ the remainder has the sign of dividend d.
+.( SM/REM )
+: sm/rem  ( d n -- r q ) 
     over >r >r              \ d     R: h n
     dabs r@ abs um/mod      \ r q
     r>                      \ r q n
@@ -4404,6 +4452,37 @@ CODE basic ( n -- )
     ;
 
 
+.( FM/MOD )
+\ Floored division
+\ divides a double into n giving quotient q and remainder r 
+\ the remainder has the sign of the divisor n.
+: fm/mod  ( d n -- r q ) 
+    dup >r                    \ d n      R: n
+    sm/rem                    \ r q
+    over dup                  \ r q r r
+    0= 0= swap 0<             \ r q  r!=0  r<0
+    r@ 0< xor and             \ r q  (r!=0 & r<0^n<0)
+    If 
+        1- swap r> + swap     \ r+n q-1  
+    Else 
+        r> drop               \ r q
+    Endif
+    ;
+
+
+.( M/MOD )
+\ Mixed operation. It leaves the remainder n2 and the quotient n3 of the 
+\ integer division of a double integer d by the divisor n1. 
+: m/mod 
+    sm/rem
+    \ if you want floored division use fm/mod instead of sm/rem
+    \ if you want simmetric division use sm/rem instead of fm/mod
+    ;
+
+
+.( M/ )
+\ Mixed operation. It leaves the quotient n2 of the integer division 
+\ of a double integer d by the divisor n1.
 : m/ ( d n -- n )
     m/mod nip 
     ;
@@ -4917,7 +4996,7 @@ decimal #SEC constant #sec
             If  
                 drop 
                 r@ buffer dup 
-                r@ 1  r/w  2 - 
+                r@ 1  r/w  2- 
             Endif
             dup @ r@ - dup +  0= 
         Until
@@ -4953,18 +5032,29 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ Buffer must be m bytes long to accomodate a trailing 0x00 at m-th byte.
 decimal
 : f_getline ( a m fh -- n )
-    >r tuck r@ f_fgetpos [ 44 ] Literal ?error  \ m a m d
-    2swap over 1+ swap                          \ m d a a+1 m 
-    r@ f_read [ 46 ] Literal ?error             \ m d a f
-    If \ at least 1 chr was read
-        [ 10 ] Literal enclose drop nip swap    \ m d a
-        [ 13 ] Literal enclose drop nip rot min \ m d b a
-        dup >r 2swap r>    0 d+                 \ m a n d+n
+    >r tuck                                     \ m a m         R: fh
+    r@ f_fgetpos [ 44 ] Literal ?error          \ m a m  d
+    2swap                                       \ m  d  a m
+    over 1+                                     \ m  d  a m a+1
+    swap                                        \ m  d  a a+1 m 
+    r@ f_read [ 46 ] Literal ?error             \ m  d  a k 
+    If \ at least 1 chr was read                \ m  d  a k
+        [ 10 ] Literal enclose                  \ m  d  a n1 b n3
+        drop nip swap                           \ m  d  b a 
+        [ 13 ] Literal enclose                  \ m  d  b a n1 c n3  
+        drop nip rot                            \ m  d  a c b
+        min                                     \ m  d  a n
+        dup span !                              \ m  d  a
+        dup >r                                  \ m  d  a n       R: fh n
+        2swap r>                                \ m a n  d   n    R: fh
+        0 d+                                    \ m a n d+n
         r> f_seek [ 45 ] Literal ?error         \ m a n
-    Else
-        r> 2swap 2drop drop 0                   \ m a 0
+    Else                                        \ m  d  a
+        r> 2swap                                \ m a fh  d 
+        2drop drop                              \ m a 
+        0                                       \ m a 0
     Endif
-    >r                                          \ m a
+    >r                                          \ m a             R: n|0
     dup dup 1+ swap                             \ m a a+1 a
     r@ cmove                                    \ m a
     2dup +                                      \ m a m+a
@@ -4972,7 +5062,7 @@ decimal
     r@ + 1-                                     \ m a+n-1
     swap r@ -                                   \ a+n-1 m-n
     blanks 
-    r>
+    r>                                          \ n|0
 ;
 
 
@@ -4990,6 +5080,8 @@ decimal
     r@ 
     If 
         r@ f_fgetpos [ 44 ] Literal ?error 
+        \ must rewind to the beginning of the current line
+        >in @ 2-  span @  -  s>d d+
     Else 
         0 0         \ 0 0 fake handle-position
     Endif 
@@ -5418,8 +5510,8 @@ decimal
 : splash
     cls
     [compile] (.")
-    [ decimal 69 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," build 20211026" -1 allot ]
+    [ decimal 87 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
+    [ decimal 13 here ," Indirect Thread - build 20211119" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5656,7 +5748,7 @@ decimal
 : repeat    ( a1 1 a2 4 -- ) \ compile-time
     2swap
     [compile] again
-    2 - 
+    2- 
     [compile] endif
     ; 
     immediate
@@ -5918,6 +6010,8 @@ RENAME   /mod           /MOD
 RENAME   *              *
 RENAME   m/             M/ 
 RENAME   m/mod          M/MOD 
+RENAME   fm/mod         FM/MOD
+RENAME   sm/rem         SM/REM 
 RENAME   m*             M*
 RENAME   dabs           DABS
 RENAME   abs            ABS
@@ -6153,12 +6247,14 @@ RENAME   um*            UM*
 RENAME   cmove>         CMOVE>
 RENAME   cmove          CMOVE 
 RENAME   cr             CR    
-RENAME   f_sync         F_SYNC
+RENAME   f_readdir      F_READDIR
+RENAME   f_opendir      F_OPENDIR
 RENAME   f_open         F_OPEN
-RENAME   f_close        F_CLOSE
 RENAME   f_write        F_WRITE
 RENAME   f_read         F_READ
 RENAME   f_fgetpos      F_FGETPOS
+RENAME   f_sync         F_SYNC
+RENAME   f_close        F_CLOSE
 RENAME   f_seek         F_SEEK
 RENAME   ?terminal      ?TERMINAL
 RENAME   key            KEY    
@@ -6173,6 +6269,7 @@ RENAME   upper          UPPER
 RENAME   caseoff        CASEOFF
 RENAME   caseon         CASEON
 RENAME   digit          DIGIT  
+RENAME   i'             I'     
 RENAME   i              I      
 RENAME   (do)           (DO)   
 RENAME   (?do)          (?DO)  
@@ -6200,7 +6297,7 @@ CASEOFF
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' LIT 2 - ! final_rp_patch 0 +ORIGIN ( SOURCE-ID @ F_CLOSE DROP ) BASIC
+0 ' LIT 2- ! final_rp_patch 0 +ORIGIN ( SOURCE-ID @ F_CLOSE DROP ) BASIC
 \
 \ Origin area.
 \

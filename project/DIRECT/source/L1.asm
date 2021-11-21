@@ -792,7 +792,7 @@ Accept_Loop:
                 dw              ONE, AND_OP     //          1 and
                 dw              DUP             //          dup         ( a  a==i  a==i )
                 dw              R_TO            //          r> 2 - + r>
-                dw              TWO, SUBTRACT, PLUS //      ( decrement index by 1 or 2 )
+                dw              TWO_MINUS, PLUS //      ( decrement index by 1 or 2 )
                 dw              TO_R            //      
                                                 //          if
                 dw              ZBRANCH

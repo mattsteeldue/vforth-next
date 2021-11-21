@@ -9,7 +9,7 @@
 \
 .( SPEED! )
 \
-HEX
+
 \
 : SPEED! ( n -- )
     3 AND   7 REG!

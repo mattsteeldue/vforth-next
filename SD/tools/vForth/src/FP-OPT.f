@@ -33,6 +33,8 @@ NEEDS [']
 
 MARKER FP-MARKER
 
+BASE @
+
 DECIMAL 
 
 \ the following three words are coded in assembler but without using ASSEMBLER
@@ -492,6 +494,8 @@ MARKER FORGET-ME
 ;
 
 FP-INIT
+
+BASE !
 
 CR
 .( Use FLOATING to enable FP numbers ) CR

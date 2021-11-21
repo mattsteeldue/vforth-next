@@ -3,6 +3,10 @@
 \
 \
 .( ms )
+
+BASE @ \ save base status
+
+
 ( ms delay )
 \ at 3.5MHz n ms delay
 CODE (ms) ( n -- )       \ 0 <= n <= 255
@@ -27,3 +31,4 @@ CODE (ms) ( n -- )       \ 0 <= n <= 255
     7 REG!
 ;
 
+BASE !
