@@ -82,8 +82,8 @@ ASSEMBLER TOOLS-ASM DEFINITIONS
   UM* \ U*
   OR ;
 \
-CHAR - CONSTANT &-
-CHAR ~ CONSTANT &~
+\ CHAR - CONSTANT &-
+\ CHAR ~ CONSTANT &~
 
 \ Screen# 102 
 
@@ -544,6 +544,11 @@ ASSEMBLER DEFINITIONS HEX
 : NEXT                     JPIX ;
 : PSH1           PUSH HL|  JPIX ;
 : PSH2 PUSH DE|  PUSH HL|  JPIX ;
+
+\ : LDSP,RP LDX() SP| 30 +ORIGIN AA, ;
+\ : LDRP,SP LD()X SP| 30 +ORIGIN AA, ;
+\ : LDHL,RP LDX() HL| 30 +ORIGIN AA, ;
+\ : LDRP,HL LD()X HL| 30 +ORIGIN AA, ;
 \
 : HOLDPLACE HERE 0 D, ;
 : DISP,     OVER -  1 - SWAP C! ;
@@ -563,11 +568,11 @@ ASSEMBLER DEFINITIONS HEX
 
 \ swaps hi-lo bytes
 \ : <, 100 /MOD C, C, ;
-: <, FLIP , ;
+: FLIP, FLIP , ;
 
 TOOLS-ASM
 
-0 1 0 4000 ' <, COMMAER     LH,
+0 1 0 4000 ' FLIP, COMMAER  LH,
 \
 00 0900 00 91 EDPI          NEXTREG
 \  NEXTREG reg P, n N,

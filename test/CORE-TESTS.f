@@ -138,8 +138,8 @@ INCLUDE  test/recurse.f
 \ Counted Loops
 
 INCLUDE  test/loop.f
-INCLUDE  test/+loop.f           \ still non-standard
-INCLUDE  test/j.f               \ fails because +LOOP is still non-standard
+INCLUDE  test/+loop.f 
+INCLUDE  test/j.f     
 INCLUDE  test/leave.f    
 INCLUDE  test/unloop.f        
 

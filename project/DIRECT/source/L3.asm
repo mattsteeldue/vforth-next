@@ -700,7 +700,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      86
                 db      "v-Forth 1.51 NextZXOS version", 13    // 29
-                db      "Direct Thread - build 20211119", 13  // 31
+                db      "Direct Thread - build 20211205", 13  // 31
                 db      "1990-2021 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
@@ -912,7 +912,7 @@ Load_Endif:
                 Colon_Def BEGIN, "BEGIN", is_immediate
                 dw      QCOMP
                 dw      HERE
-                dw      ONE
+                dw      TWO
                 dw      EXIT
 
 //  ______________________________________________________________________ 
@@ -920,7 +920,7 @@ Load_Endif:
 // again        ( a 1 -- ) \ compile-time
                 Colon_Def AGAIN, "AGAIN", is_immediate
                 dw      QCOMP
-                dw      ONE, QPAIRS
+                dw      TWO, QPAIRS
                 dw      COMPILE, BRANCH
                 dw      BACK
                 dw      EXIT
@@ -930,7 +930,7 @@ Load_Endif:
 // until        ( a 1 -- ) \ compile-time
                 Colon_Def UNTIL, "UNTIL", is_immediate
                 dw      QCOMP
-                dw      ONE, QPAIRS
+                dw      TWO, QPAIRS
                 dw      COMPILE, ZBRANCH
                 dw      BACK
                 dw      EXIT
@@ -947,16 +947,16 @@ Load_Endif:
 // while        ( a1 1 -- a1 1 a2 4 ) \ compile-time
                 Colon_Def WHILE, "WHILE", is_immediate
                 dw      IF
-                dw      TWO_PLUS // ( that is 4 )
+//              dw      TWO_PLUS // ( that is 4 )
+                dw      TWO_SWAP
                 dw      EXIT
 
 //  ______________________________________________________________________ 
 //
 // repeat       ( a1 1 a2 4 -- ) \ compile-time
                 Colon_Def REPEAT, "REPEAT", is_immediate
-                dw      TWO_SWAP
                 dw      AGAIN
-                dw      TWO_MINUS
+//              dw      TWO_MINUS
                 dw      ENDIF
                 dw      EXIT
 

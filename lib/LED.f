@@ -1,12 +1,11 @@
 \
 \ LED.f
 \
-\ LED - Large EDitor
+.( LED - Large EDitor )
 \
 \ Large file EDitor. This source creates a new word LED, an editor that
 \ uses all RAM available.
-\ Each line can be 85 characters long, so the maximum line number is 14.592.
-
+\ Each line can be 85 characters long, so the maximum line number is 17.664.
 \ Tipical usage:
 \
 \   LED      cccc       edit file cccc
@@ -21,7 +20,8 @@
 
 MARKER TASK \ this allows you to forget all this package.
 
-NEEDS SHOW-PROGRESS  NEEDS INVV  NEEDS TRUV
+NEEDS SHOW-PROGRESS  NEEDS INVV     NEEDS TRUV
+NEEDS CASE           NEEDS LINE
 
 DECIMAL
 
@@ -278,17 +278,17 @@ DECIMAL
     [CHAR] N OF NEXTP      ENDOF  \ next page
     [CHAR] B OF PREVP      ENDOF  \ prev page
     [CHAR] W OF LED-SAVE   ENDOF
-    [CHAR] Q OF ."  ok" CR C/L 3 * SPACES
+    [CHAR] Q OF ."  ok" CR COLS/ROW 3 * SPACES
                 0 21 AT-XY 30 EMITC 8 EMITC  QUIT ENDOF
     ENDCASE PUTPAGE EDIT-FRAME ;
 
 : DELC    ( -- )    \ back-space
     NCOL @  0 > IF -1 NCOL +! THEN
-    ADDRC DUP 1+ SWAP C/L NCOL @ - 1- CMOVE UPDATE
-    BL NROW @ LINE C/L + 1- C! ;
+    ADDRC DUP 1+ SWAP COLS/ROW NCOL @ - 1- CMOVE UPDATE
+    BL NROW @ LINE COLS/ROW + 1- C! ;
 
 : INSC    ( -- )    \ insert blank at cursor and shift the rest
-    ADDRC DUP 1+      C/L NCOL @ - 1- CMOVE>
+    ADDRC DUP 1+      COLS/ROW NCOL @ - 1- CMOVE>
     BL ADDRC  C!  UPDATE ;
 
 : CTRLC  ( c -- )   \ manage control keys

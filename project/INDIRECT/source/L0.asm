@@ -167,60 +167,62 @@ ZBranch_Ptr:
 
 //  ______________________________________________________________________ 
 //
-// (loop)       --
+// (+loop)       --
 // compiled by +LOOP. it uses the top two values of return-stack to
-// keep track of index and limit
-                New_Def C_LOOP, "(LOOP)", is_code, is_normal
-
-
-                ld      de, 1               // bc contains increment of 1
+// keep track of index and limit, they are accessed via I and I'
+                New_Def C_PLOOP, "(+LOOP)", is_code, is_normal
 
 Loop_Ptr:
+                exx
                 ldhlrp                      // ld hl,rp macro 30h +Origin
 
-                ld      a, (hl)             // hl points to loop-index, add increment de to it.
-                add     e
+                pop     bc                  // bc is increment
+
+                ld      e, (hl)             // hl points to loop-index, add increment to it.
+                ld      a, e                // de keeps index before increment.
+                add     c
                 ld      (hl), a
-                ld      e, a
                 inc     hl
-                ld      a, (hl)
-                adc     d
+                ld      d, (hl)
+                ld      a, d
+                adc     b
                 ld      (hl),a
                 inc     hl
-                bit     7, d                // keep increment-sign just before overwriting d
-                ld      d, a
 
-                jr      nz, Loop_NegativeIncrement
-                    ld      a, e                
-                    sub     (hl)
-                    ld      a, d
-                    inc     hl
-                    sbc     (hl)
-                jr      Loop_Endif              // else
+                ld      a, e
+                sub     (hl)
+                ld      e, a
+                inc     hl
+                ld      a, d
+                sbc     (hl)
+                ld      d, a                // DE is index - limit : limit is the "new zero"
 
+                ex      de, hl
+                add     hl, bc
+
+                bit     7, b                // keep increment-sign just before overwriting d
+                jr      z, Loop_NegativeIncrement
+                    ccf
 Loop_NegativeIncrement:
-                    ld      a, (hl)                
-                    sub     e
-                    inc     hl
-                    ld      a, (hl)
-                    sbc     d
-
+                jr      c, Loop_Endif
+                    exx
+                    jp      Branch_Ptr      // perform branch consuming following cell
 Loop_Endif:
-                jp      m, Branch_Ptr       // perform branch consuming following cell
+                ex      de, hl
                 inc     hl                  
                 ldrphl                      // ld rp,hl macro 30h +Origin
-                
+                exx
                 inc     bc                  // skip branch-style offset
                 inc     bc
                 next
 
 //  ______________________________________________________________________ 
 //
-// (+loop)       n --
-// same as (LOOP) but index is incremented by n (instead of just 1)
-// compiled by +LOOP. 
-                New_Def C_PLOOP, "(+LOOP)", is_code, is_normal
-                pop     de
+// (loop)       n --
+// same as (LOOP) but index is incremented by 1
+// compiled by LOOP. 
+                New_Def C_LOOP, "(LOOP)", is_code, is_normal
+                push    1                  
                 jp      Loop_Ptr
 
 //  ______________________________________________________________________ 
@@ -914,9 +916,9 @@ CmoveV_NoMove:
 // Instead, in 2VARIABLE a double number is stored as EDLH.
 // this definition could use "MUL" Z80N new op-code.
                 New_Def UM_MUL, "UM*", is_code, is_normal
+                exx
                 pop     de                    // de has u2 operand
                 pop     hl                    // hl has u1 operand
-                push    bc                    // Save Instruction Pointer
                 ld      b, l
                 ld      c, e
                 ld      e, l
@@ -942,9 +944,9 @@ CmoveV_NoMove:
                 mul
                 ex      de, hl
                 adc     hl, bc
-                pop     bc
                 push    de
                 push    hl
+                exx
                 next
 
 //  ______________________________________________________________________ 
@@ -956,14 +958,12 @@ CmoveV_NoMove:
 // HL keeps the remainder at each stage of division
 // each loop 'lowers' the next binary digit to form the current dividend
                 New_Def UMDIVMOD, "UM/MOD", is_code, is_normal
-                ld      h, b
-                ld      l, c                    // Save Instruction Pointer
-
+                exx
                 pop     bc                      // divisor
 
-                pop     de                      // < high part
-                ex      (sp), hl                // < low part and > save bc
-                ex      de, hl                  // 
+                pop     hl                      // < high part
+                pop     de                      // < low part and 
+
                 ld      a, l                    // check without changing arguments
                 sub     c                       // if divisor is greater than high part
                 ld      a, h                    // so quotient will be in range
@@ -992,9 +992,9 @@ Um_DivMod_Endif:                                   // endif
                     jr      nz, Um_DivMod_Loop
                     ex      de, hl
 Um_DivMod_Bailout:
-                    pop     bc                  // restore Instruction Pointer
                     push    de                  // de := remanider
                     push    hl                  // hl := quotient
+                    exx
                     next
 
 Um_DivMod_OutOfRange:

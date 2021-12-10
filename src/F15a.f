@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.5 NextZXOS version ) CR
-.( build 20211119 ) CR
+.( build 20211205 ) CR
 \
 \ Indirect-Thread - NextZXOS version
 \ ______________________________________________________________________ 
@@ -163,6 +163,8 @@ DECIMAL
 \ macro of "RP" virtual register emulation
 : LDHL,RP  ASSEMBLER  LDHL() rp^      AA, ;
 : LDRP,HL  ASSEMBLER  LD()HL rp^      AA, ;
+: LDSP,RP  ASSEMBLER  LDX() SP|  rp^      AA, ;
+: LDRP,SP  ASSEMBLER  LD()X SP|  rp^      AA, ;
 
 \ at the end, we need to patch every reference to RP-address.
 \ we ALLOT some area to keep track of them whenever we need.
@@ -532,136 +534,76 @@ CODE 0branch ( f -- )
         ' 0branch TO 0branch~
 
 
-\ \ 6181h
-\ ." (+LOOP) "
-\ \ compiled by LOOP. it uses the top two values of return-stack to
-\ \ keep track of index and limit
-\ CODE (+loop) ( -- )
-\ 
-\     HERE TO loop^
-\         
-\         LDX     HL|    2 NN,    \ to consume increment
-\         ADDHL   SP|             \ save SP+2
-\         EXX
-\         POP     BC|             \ increment
-\ 
-\         HERE !rp^ 
-\         LDHL,RP              \ macro 30h +Origin
-\         
-\         LDSPHL               \ Use SP as temporary RP
-\         POP     HL|
-\         POP     DE|
-\         ANDA     A|
-\         SBCHL   DE|             \ index - limit
-\         ADDHL   BC|             \ index - limit + increment
-\         BIT      7|    B|       \ opposite of increment sign
-\         JRF     Z'|    HOLDPLACE \ if increment is negative then
-\             CCF
-\         HERE DISP, \ THEN,
-\         JRF    CY'|    HOLDPLACE
-\             \ stay in loop, increment index
-\             
-\             HERE !rp^ 
-\             LDHL,RP              \ macro 30h +Origin
-\             
-\             LDSPHL
-\             POP     HL|
-\             ADDHL   BC|             \ index + increment
-\             PUSH    HL|
-\             EXX
-\             LDSPHL
-\             JP         branch^  AA,
-\         HERE DISP, \ THEN,
-\         LDX     HL|    0 NN,   
-\         ADDHL   SP|            
-\ 
-\         HERE !rp^
-\         LDRP,HL              \ macro 30h +Origin
-\         
-\         EXX
-\         LDSPHL
-\         INCX    BC|
-\         INCX    BC|
-\         Next
-\         C;
-\ 
-\ 
-\ \ 61BAh
-\ ." (LOOP) "
-\ \ same as (LOOP) but index is incremented by n (instead of just 1)
-\ CODE (loop)    ( n -- )
-\ 
-\         LDX     HL|    1 NN,
-\         PUSH    HL|             \ increment
-\         JP      loop^  AA,
-\         C;
-\ 
-\         ' (loop) TO (loop)~
-\ 
-
-
-
 \ 6181h
-." (LOOP) "
-\ compiled by LOOP. it uses the top two values of return-stack to
-\ keep track of index and limit
-CODE (loop) ( -- )
-
-        LDX     DE|    1 NN,
+." (+LOOP) "
+\ compiled by +LOOP. it uses the top two values of return-stack to
+\ keep track of index and limit, they are accessed via I and I'
+CODE (+loop) ( n -- )
 
     HERE TO loop^
     
+        EXX
+
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
         
-        LD      A'| (HL)|    \ increment ind
-        ADDA     E|
+        POP     BC|         \ BC is increment
+        
+        LD      E'| (HL)|   \ DE keeps index before increment
+        LD      A'|    E|   \ index is incremented in memory.
+        ADDA     C|
         LD   (HL)'|    A|
+        INCX    HL|
+        LD      D'| (HL)|
+        LD      A'|    D|
+        ADCA     B|
+        LD   (HL)'|    A|
+        INCX    HL|
+
+        LD      A'|    E|
+        SUBA  (HL)|   
         LD      E'|    A|
         INCX    HL|
-        LD      A'| (HL)|
-        ADCA     D|
-        LD   (HL)'|    A|
-        INCX    HL|
-        BIT      7|    D|     
-        LD      D'|    A|
-        JRF    NZ'|    HOLDPLACE \ if increment is positive then
-            LD      A'|    E|
-            SUBA  (HL)|
-            LD      A'|    D|
-            INCX    HL|
-            SBCA  (HL)|
-        JR        HOLDPLACE  SWAP HERE DISP, \ ELSE,
-            LD      A'| (HL)|
-            SUBA     E|
-            INCX    HL|
-            LD      A'| (HL)|
-            SBCA     D|
+        LD      A'|    D|
+        SBCA  (HL)|   
+        LD      D'|    A|   \ DE is index - limit : limit is the "new zero"
+
+        EXDEHL  
+        ADDHL   BC|         \ HL is index - limit + increment
+        BIT      7|    B|    \ doesn't affect carry flag
+        JRF     Z'|    HOLDPLACE \ if increment is negative then
+            CCF                  \ complement carry flag
         HERE DISP, \ THEN,
-        JPF      M|  branch^  AA,
-\     !!JRF    CY'|  branch^  HERE 1 + - D,
+        JRF    CY'|    HOLDPLACE
+            \ stay in loop, increment index
+            EXX
+            JP         branch^  AA,
+        HERE DISP, \ THEN,
+
+        EXDEHL  
         INCX    HL|
 
         HERE !rp^
         LDRP,HL              \ macro 30h +Origin
-        
+
+        EXX
         INCX    BC|
         INCX    BC|
         Next
         C;
 
-        ' (loop) TO (loop)~
-
 
 \ 61BAh
-." (+LOOP) "
-\ same as (LOOP) but index is incremented by n (instead of just 1)
-CODE (+loop)    ( n -- )
+." (LOOP) "
+\ same as (+LOOP) but index is incremented by 1 
+CODE (loop)    ( -- )
          
-        POP     DE|
+        PUSHN   1  LH,
         JP      loop^  AA,
 \     \ JR      loop^  HERE 1 + - D,
         C;
+
+        ' (loop) TO (loop)~
 
 
 \ new
@@ -1544,12 +1486,12 @@ HERE DUP
 
 
 .( F_OPENDIR )
-\ Sync file-handle u changes to disk.
+\ given a z-string address, open a file-handle to the directory
 \ Return 0 on success, True flag on error
 CODE f_opendir ( a -- fh f )
         EX(SP)IX            \ filespec nul-terminated
         PUSH    BC|
-        LDN     B'|   20   N,
+        LDN     B'|   HEX 10   N,
         LDN     A'|   CHAR C   N,
         RST     08|   HEX  A3  C,
         JR      BACK,
@@ -1557,8 +1499,10 @@ CODE f_opendir ( a -- fh f )
         
 
 .( F_READDIR )
-\ Sync file-handle u changes to disk.
-\ Return 0 on success, True flag on error
+\ Given a pad address a1, a filter z-string a2 and a file-handle fh
+\ fetch the next available entry of the directory.
+\ Return 1 as ok or 0 to signal end of data then 
+\ return 0 on success, True flag on error
 CODE f_readdir ( a1 a2 fh -- n f )
         POP     HL|
         LD      A'|     L|
@@ -1632,7 +1576,7 @@ CODE cmove> ( a1 a2 nc -- )
 
 
 \ 63DAh
-.( UM* ) ( ++BC++ possible improvement )
+.( UM* ) 
 \ this once was named U*
 \ A double-integer is kept in CPU registers as HLDE then pushed on stack.
 \ On the stack a double number is treated as two single numbers
@@ -1640,44 +1584,55 @@ CODE cmove> ( a1 a2 nc -- )
 \ so in the stack memory it appears as LHED.
 \ Instead, in 2VARIABLE a double number is stored as EDLH.
 \ this definition could use "MUL" Z80N new op-code.
+\ This is the concept:
+\    HL 
+\    DE
+\  ----  
+\    Yy      Yy := E*L   
+\   Ww      Ww := E*H      
+\   Xx      Xx := D*L   sTt := Ww+Xx   rq := t+Y = w+x+Y  
+\  Zz      Zz := D*H    uU:=Zz+sT+r
+\  ----
+\  Uuqy
 CODE um* ( u1 u2 -- ud )
-        POP     DE|
-        POP     HL|
-        PUSH    BC|
-        LD      B'|    L|
-        LD      C'|    E|
-        LD      E'|    L|
-        LD      L'|    D|
-        PUSH    HL|
-        LD      L'|    C|
-        MUL
-        EXDEHL
-        MUL
-        XORA     A|
-        ADDHL   DE|
-        ADCA     A|
-        LD      E'|    C|
-        LD      D'|    B|
-        MUL
-        LD      B'|    A|
-        LD      C'|    H|
-        LD      A'|    D|
-        ADDA     L|
-        LD      H'|    A|
-        LD      L'|    E|
-        POP     DE|
-        MUL
-        EXDEHL
-        ADCHL   BC|
-        POP     BC|
+                                \ cf  a  hl  de  bc    tos
+        EXX                     \ --  -  --  --  --    ---
+        POP     DE|             \            DE        
+        POP     HL|             \        HL  DE        
+        LD      B'|    L|       \        HL  DE  L     
+        LD      C'|    E|       \        HL  D.  LE     
+        LD      E'|    L|       \        H.  DL  LE    
+        LD      L'|    D|       \        HD  DL  LE    
+        PUSH    HL|             \        ..  DL  LE    HD
+        LD      L'|    C|       \        HE  DL  LE    HD
+        MUL                     \        HE  Xx  LE    HD
+        EXDEHL                  \        Xx  HE  LE    HD
+        MUL                     \        Xx  Ww  LE    HD
+        XORA     A|             \     0  Xx  Ww  LE    HD
+        ADDHL   DE|             \  s  0  Tt  ..  LE    HD
+        ADCA     A|             \  .  s  Tt      LE    HD
+        LD      E'|    C|       \     s  Tt   E  L.    HD
+        LD      D'|    B|       \     s  Tt  LE  .     HD
+        MUL                     \     s  Tt  Yy        HD
+        LD      B'|    A|       \     .  Tt  Yy  s     HD
+        LD      C'|    H|       \        .t  Yy  sT    HD
+        LD      A'|    D|       \     Y   t  .y  sT    HD
+        ADDA     L|             \  r  q   .   y  sT    HD
+        LD      H'|    A|       \  r  .  q.   y  sT    HD
+        LD      L'|    E|       \  r     qy   .  sT    HD
+        POP     DE|             \  r     qy  HD  sT    
+        MUL                     \  r     qy  Zz  sT    
+        EXDEHL                  \  r     Zz  qy  sT    
+        ADCHL   BC|             \  .     Uu  qy  ..    
         PUSH    DE|
         PUSH    HL|
+        EXX
         Next
         C;
 
 
 \ 640Dh
-.( UM/MOD ) ( ++BC++ possible improvement )
+.( UM/MOD ) 
 \ this was U/
 \ it divides ud into u1 giving quotient q and remainder r
 \ algorithm takes 16 bit at a time starting from msb
@@ -1686,15 +1641,13 @@ CODE um* ( u1 u2 -- ud )
 \ each loop 'lowers' the next binary digit to form the current dividend
 CODE um/mod ( ud u1 -- r q )
          
-        LD      H'|    B|  \ save BC via EX(SP)HL later
-        LD      L'|    C|
+        EXX
         POP     BC|        \ divisor
-        POP     DE|        \ high part
-        EX(SP)HL           \ low part and save BC
-        EXDEHL             \ restore the fact a double number is kept as HLDE
+        POP     HL|        \ high part
+        POP     DE|        \ low part
         LD      A'|    L|  \ check without changing arguments
         SUBA     C|        \ if divisor is greater than high part
-        LD      A'|    H|  \ so quotient will be in range
+        LD      A'|    H|  \ then quotient won't be in range
         SBCA     B|
 
         JRF    NC'| HOLDPLACE
@@ -1725,9 +1678,9 @@ CODE um/mod ( ud u1 -- r q )
             \ until zero
             EXDEHL
         HERE SWAP                    \ strange jump here
-            POP     BC|
             PUSH    DE|
             PUSH    HL|
+            EXX
             Next 
         HERE DISP, \ THEN,
         LDX     HL|    HEX FFFF NN,
@@ -2041,7 +1994,7 @@ CODE + ( n1 n2 -- n3 )
 \      h l h l
 \ SP   LHEDLHED
 \ SP  +01234567
-CODE d+ ( d1 d2 -- d3 ***TODO*** )
+CODE d+ ( d1 d2 -- d3 )
 
         EXX
         POP     BC|            \ BC  = hd2
@@ -2126,7 +2079,6 @@ CODE cell- ( n1 -- n2 )
 \ decrement by 2 top of stack 
 CODE 2- ( n1 -- n2 )
 
-         
         \ this way we will have a real duplicate of 2+
         ' cell-  >BODY  LATEST PFA CELL- ! 
         C;
@@ -2397,38 +2349,24 @@ CODE 2dup  ( d -- d d )
 \ \ SP  +0123|4567|89ab|
 \ CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
 \         
-\         LDX     HL|  HEX 000B NN,
-\         ADDHL   SP|
-\         LD      D'| (HL)|
-\         DECX    HL|
-\         LD      E'| (HL)|
-\         DECX    HL|
-\         PUSH    DE|
-\         LD      D'| (HL)|
-\         DECX    HL|
-\         LD      E'| (HL)|
-\         DECX    HL|
-\         PUSH    DE|
-\ 
-\ \      d1  |d3  |d2  |d1  |
-\ \      h l |h l |h l |h l |
-\ \ SP   LHED|LHED|LHED|LHED|
-\ \ SP       +0123|4567|89ab|
-\ 
-\         LD      D'|    H|
-\         LD      E'|    L|
-\         INCX    DE|
-\         INCX    DE|
-\         INCX    DE|
-\         INCX    DE|
-\         PUSH    BC|
-\         LDX     BC|  HEX 000C NN,
-\         LDDR        
-\         POP     BC|
-\         POP     DE|
-\         POP     DE|
-\         Next
-\         C;
+\      EXX
+\      POP     HL|      \ d3
+\      POP     DE|
+\      POP     BC|      \ d2
+\      POP     AF|
+\      EXX
+\      POP     HL|      \ d1
+\      POP     DE|
+\      EXX
+\      PUSH    AF|      
+\      PUSH    BC|      \ d2
+\      PUSH    DE|
+\      PUSH    HL|      \ d3
+\      EXX
+\      PUSH    DE|      
+\      PUSH    HL|      \ d1
+\      Next
+\      C;
 
 
 \ 6603h
@@ -2736,7 +2674,7 @@ CODE cells ( n2 -- n2 )
 : constant ( n ccc --   )
            (       -- n )
     CREATE , 
-    \ SMUDGE 
+    \ SMUDGE
     ;CODE
         INCX    DE|
         EXDEHL
@@ -3839,7 +3777,7 @@ CODE fill ( a n c -- )
 
 \ 7178h
 .( -FIND )
-\ used in the form -FIND "cccc" 
+\ used in the form -FIND "cccc"
 \ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
@@ -4719,7 +4657,7 @@ CODE reg! ( b n -- )
 : mmu7@ ( -- n )
     [ decimal 87 ] literal reg@
 ;
-    
+
 
 .( MMU7! )
 \ set MMU7 8K-RAM page to n given between 0 and 223
@@ -5511,7 +5449,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 87 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Thread - build 20211119" -1 allot ]
+    [ decimal 13 here ," Indirect Thread - build 20211205" -1 allot ]
     [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5708,7 +5646,7 @@ decimal
 : begin     ( -- a 1 ) \ compile-time  
     ?comp 
     here 
-    1 
+    2 
     ; 
     immediate
 
@@ -5716,7 +5654,7 @@ decimal
 .( AGAIN )
 : again     ( a 1 -- ) \ compile-time 
     ?comp
-    1 ?pairs 
+    2 ?pairs 
     compile branch
     back 
     ; 
@@ -5726,7 +5664,7 @@ decimal
 .( UNTIL )
 : until     ( a 1 -- ) \ compile-time 
     ?comp
-    1 ?pairs
+    2 ?pairs
     compile 0branch
     back 
     ; 
@@ -5734,21 +5672,22 @@ decimal
 
 
 .( END )
-: end [compile] until ; immediate
+: end       ( a 1 -- ) \ compile-time 
+    [compile] until ; immediate
 
 
 .( WHILE )
-: while     ( a1 1 -- a1 1 a2 4 ) \ compile-time 
-    [compile] if 2+
+: while     ( a1 1 -- a2 4 a1 1 ) \ compile-time
+    [compile] if \ 2+
+    2swap
     ; 
     immediate
 
 
 .( REPEAT )
-: repeat    ( a1 1 a2 4 -- ) \ compile-time
-    2swap
+: repeat    ( a2 4 a 2 -- ) \ compile-time
     [compile] again
-    2- 
+    \ 2- 
     [compile] endif
     ; 
     immediate

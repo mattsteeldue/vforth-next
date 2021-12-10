@@ -289,3 +289,6 @@ Bug-fix of INCLUDE and NEEDS eventually. There was a bug in that when a NEEDS wa
 \ build 20211119
 Introducing LED, a "Large file EDitor", that uses all RAM available to edit very large text files, 85 characters per line. It comes along with a new CAT definitions to inspect directory content.
 
+\ build 20211205
+Better standard behavior for DO-LOOP and BEGIN-WHILE-REPEAT. 
+Some minor improvement.
