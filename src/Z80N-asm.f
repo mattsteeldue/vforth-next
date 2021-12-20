@@ -54,10 +54,11 @@
 \    REG,       used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
-NEEDS RENAME        \ this is just a patch to be removed in the future
-NEEDS CODE          \ this is just a patch to be removed in the future 
 NEEDS INVERT        \   : INVERT -1 XOR ;
 NEEDS FLIP
+NEEDS CHECKSUM
+\ NEEDS RENAME        \ this is just a patch to be removed in the future
+\ NEEDS CODE          \ this is just a patch to be removed in the future 
 
 FORTH DEFINITIONS 
 
@@ -535,7 +536,7 @@ TOOLS-ASM
 
 
 \ Screen# 140 
-.( Z80 near structure )   CR
+.( Z80 near structure ) 
 
 ASSEMBLER DEFINITIONS HEX
 
@@ -614,10 +615,11 @@ DP @ LP @ DP !  LP !
 \ Screen# 117 
 .( Assembler Z80 )
 
-FORTH DEFINITIONS RENAME CODE MCOD
+FORTH DEFINITIONS \ RENAME CODE MCOD
 
-: CODE ?EXEC 
-    MCOD   
+: CODE 
+    ?EXEC 
+    CODE   
     [COMPILE] ASSEMBLER   
     TOOLS-ASM
     !TALLY !CSP 
@@ -630,3 +632,10 @@ FORTH DEFINITIONS RENAME CODE MCOD
 ' ASSEMBLER ' ;CODE >BODY 4 CELLS + ! ( patch to ;CODE )
 
 FORTH DEFINITIONS DECIMAL
+
+\ Final checksum
+NEEDS CHECKSUM
+HEX E080 LP @ OVER - 
+1 MMU7! CHECKSUM . CR
+FORTH DEFINITIONS DECIMAL
+

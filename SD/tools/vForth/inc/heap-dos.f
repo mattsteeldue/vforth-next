@@ -16,13 +16,13 @@ BASE @
 
 HEX
 : HEAP-DOS ( n -- )
-    20 27               \ decimal 32-39 
+    28 20          \ decimal 32-39
     DO
-        DUP             \  n1 = hl register parameter value 
-        I              \  n2 = de register parameter value 
-        0              \  n3 = bc register parameter value 
-        0              \  n4 =  a register parameter value 
-        01BD           \   a = routine address in ROM 3    
+        DUP        \  n1 = hl register parameter value
+        I          \  n2 = de register parameter value
+        0          \  n3 = bc register parameter value
+        0          \  n4 =  a register parameter value
+        01BD       \   a = routine address in ROM 3
         M_P3DOS
         2C ?ERROR       \ error #44 NextZXOS DOS call error
         2DROP 2DROP
@@ -30,3 +30,4 @@ HEX
 ;
 
 BASE !
+
