@@ -3,7 +3,7 @@
 \
 .( CAT directory )
 
-0 VARIABLE FH
+0 VARIABLE FH DROP
 \
 \ emit a date given a MSDOS format date number
 HEX

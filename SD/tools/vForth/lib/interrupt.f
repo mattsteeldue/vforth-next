@@ -72,7 +72,7 @@ SMUDGE
 
 FORTH DEFINITIONS
 
-  VARIABLE  INT-W        \ word of interrupt handler
+  VARIABLE  INT-W     INT-W !      \ word of interrupt handler
 
 INTERRUPT DEFINITIONS
 

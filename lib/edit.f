@@ -16,8 +16,8 @@ EDITOR DEFINITIONS
 BASE @
     
 \
-DECIMAL   0 VARIABLE NROW               \ current row
-          0 VARIABLE NCOL               \ current columns
+DECIMAL   0 VARIABLE NROW  NROW !       \ current row
+          0 VARIABLE NCOL  NCOL !       \ current columns
 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
 
 : ADDRC   ( -- a )                      \ calc cursor addr

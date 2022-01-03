@@ -18,6 +18,8 @@
 \     r1 aL
 \ 
 
+NEEDS PICK
+
 : M*/  ( d  n1  n2 -- d2 )
   2dup xor 3 pick xor >R     \ keep track of final sign
   abs >R abs >R 

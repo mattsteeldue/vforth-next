@@ -292,3 +292,9 @@ Introducing LED, a "Large file EDitor", that uses all RAM available to edit very
 \ build 20211205
 Better standard behavior for DO-LOOP and BEGIN-WHILE-REPEAT. 
 Some minor improvement.
+
+\ build 20220102
+Release of 1.52 version. From this version vForth has a standard VARIABLE behavior.
+This should preserve any previous code written using the old behavior, but care must be taken to verify any old syntax.
+PDF documentation has reached 100 pages, this is quite an anchivement.
+Some minor improvement on  M_P3DOS  definition.

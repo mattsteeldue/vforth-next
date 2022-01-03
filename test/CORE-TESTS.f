@@ -5,6 +5,8 @@
 
 MARKER TESTING-TASK
 
+BASE @
+
 NEEDS TESTING
 NEEDS S"
 NEEDS FIND
@@ -144,3 +146,4 @@ INCLUDE  test/leave.f
 INCLUDE  test/unloop.f        
 
 
+BASE !

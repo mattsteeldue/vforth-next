@@ -6,6 +6,8 @@
 \ 
 .( RANDOM )
 \
+BASE @
+
 DECIMAL
 \
 : RANDOM ( -- u )
@@ -16,3 +18,5 @@ DECIMAL
     SWAP !          \ n         \ store back to SEED
 ;
 
+BASE !
+\

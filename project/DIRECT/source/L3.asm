@@ -699,9 +699,9 @@ Index_Leave:
                 dw      CLS
                 dw      C_DOT_QUOTE
                 db      86
-                db      "v-Forth 1.51 NextZXOS version", 13    // 29
-                db      "Direct Thread - build 20211205", 13  // 31
-                db      "1990-2021 Matteo Vitturi", 13        // 25
+                db      "v-Forth 1.52 NextZXOS version", 13    // 29
+                db      "Direct Thread - build 20220102", 13  // 31
+                db      "1990-2022 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
 //  ______________________________________________________________________ 

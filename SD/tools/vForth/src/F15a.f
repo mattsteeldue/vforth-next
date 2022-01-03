@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-.( v-Forth 1.5 NextZXOS version ) CR
-.( build 20211205 ) CR
+.( v-Forth 1.52 NextZXOS version ) CR
+.( build 20220102 ) CR
 \
 \ Indirect-Thread - NextZXOS version
 \ ______________________________________________________________________ 
@@ -11,7 +11,7 @@
 \ provided that the copyright notice is kept.  
 \ ______________________________________________________________________ 
 \
-\ by Matteo Vitturi, 1990-2021
+\ by Matteo Vitturi, 1990-2022
 \
 \ https://sites.google.com/view/vforth/vforth15-next
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -161,15 +161,15 @@ DECIMAL
 : Next     ASSEMBLER                        JPIX ;
 
 \ macro of "RP" virtual register emulation
-: LDHL,RP  ASSEMBLER  LDHL() rp^      AA, ;
-: LDRP,HL  ASSEMBLER  LD()HL rp^      AA, ;
+: LDHL,RP  ASSEMBLER  LDHL()     rp^      AA, ;
+: LDRP,HL  ASSEMBLER  LD()HL     rp^      AA, ;
 : LDSP,RP  ASSEMBLER  LDX() SP|  rp^      AA, ;
 : LDRP,SP  ASSEMBLER  LD()X SP|  rp^      AA, ;
 
 \ at the end, we need to patch every reference to RP-address.
 \ we ALLOT some area to keep track of them whenever we need.
-     0  VARIABLE rp# DECIMAL 42 ALLOT
-    rp# VARIABLE rp#^ 
+     0  VARIABLE rp# DECIMAL 42 ALLOT    0  rp# !
+    rp# VARIABLE rp#^                  rp# rp#^ !
     rp# DECIMAL 44 ERASE
 
 \ accumulate pointers to be patched at the end using final_rp_patch
@@ -332,7 +332,7 @@ DECIMAL
 \ KEY  DROP
 
 \ force origin to an even address.
-HERE 1 AND ALLOT
+\ HERE 1 AND ALLOT
 SET-DP-TO-ORG
 
 \
@@ -486,6 +486,7 @@ CODE execute ( xt -- )
         POP     HL|
 \     \ JP      exec^  AA,
         JR      exec^  HERE 1 + - D,
+
 \ in general, we use JR within the same definition, JP to go beyond.
 \ but it can be useful using JR in some closest words to save a few bytes
         C;
@@ -1903,13 +1904,17 @@ CODE r> ( -- n )
 CODE r@ ( -- n )         
          
         \ this way we will have a real duplicate of I
+
         ' i  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 CODE r  ( -- n )         
          
         \ this way we will have a real duplicate of I
+
         ' i  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 
@@ -1934,7 +1939,9 @@ CODE 0= ( n -- f )
 CODE not  ( n -- f )         
          
         \ this way we will have a real duplicate of 0=
+
         ' 0=  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 
@@ -2053,7 +2060,9 @@ CODE 2+ ( n1 -- n2 )
 CODE cell+ ( n1 -- n2 )
          
         \ this way we will have a real duplicate of 2+
+
         ' 2+  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 
@@ -2080,7 +2089,9 @@ CODE cell- ( n1 -- n2 )
 CODE 2- ( n1 -- n2 )
 
         \ this way we will have a real duplicate of 2+
+
         ' cell-  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 
@@ -2609,7 +2620,9 @@ CODE rshift ( n1 u -- n2 )
 .( CELLS )
 CODE cells ( n2 -- n2 )
         \ this way we will have a real duplicate of 2*
+
         ' 2*  >BODY  LATEST PFA CELL- ! 
+
         C;
 
 
@@ -2688,9 +2701,9 @@ CODE cells ( n2 -- n2 )
 
 \ 66EDh
 .( VARIABLE ) \ ___ late-patch ___ only for ;CODE
-: variable ( n ccc --   )
+: variable (   ccc --   )
            (       -- n )
-    constant
+    0 constant
     ;CODE
         INCX    DE|
         PUSH    DE|
@@ -3002,9 +3015,10 @@ CODE ?dup ( n -- 0 | n n )
 .( -DUP ) \ is as -DUP
 CODE -dup ( n -- 0 | n n )
         \ This way we will have a real duplicate of ?DUP.
-        C;
 
         ' ?dup >BODY   LATEST  PFA CELL- !
+
+        C;
 
 
 \ 62CFh <<< moved here because of OUT
@@ -3235,6 +3249,10 @@ CODE -dup ( n -- 0 | n n )
 : (;code)  ( -- )
     r>
     latest pfa cfa !
+
+
+
+
     ;
     DECIMAL
 
@@ -3880,6 +3898,7 @@ CODE fill ( a n c -- )
     latest ,
     current @ !
     here cell+ ,
+
 ;
 
 
@@ -3887,6 +3906,12 @@ CODE fill ( a n c -- )
 : create ( -- cccc )
          ( -- n )
     mcod smudge 
+
+
+
+
+
+
     ;code
         INCX    DE|
         PUSH    DE|
@@ -3930,7 +3955,8 @@ CODE fill ( a n c -- )
 
 \ Late-Patch for VARIABLE
     ' variable  
-        >body ' constant  over ! 
+        >body ' 0         over ! 
+        cell+ ' constant  over !
         cell+ ' (;code)   over !  
     drop
 
@@ -4559,7 +4585,7 @@ CODE basic ( n -- )
 \ \ 7824h
 .( DEVICE )
 \ used to save current device stream number (video or printer)
-2 variable device
+2 variable device        device !
 
 \ 
 \ ______________________________________________________________________ 
@@ -4725,7 +4751,7 @@ CODE mmu7! ( n -- )
 
 .( M_P3DOS )
 \ NextZXOS call wrapper.
-\  n1 = hl register parameter value
+\  n1 = hl or ix register parameter value
 \  n2 = de register parameter value 
 \  n3 = bc register parameter value
 \  n4 =  a register parameter value
@@ -4739,7 +4765,7 @@ CODE mmu7! ( n -- )
 \
 CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         POP     DE|         \ dos call entry address
-        POP     HL|         \ a register
+        POP     HL|         \ a register argument 
         LD      A'|    L|
 
         EXX
@@ -4751,18 +4777,20 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         PUSH    BC| 
         PUSH    IX| 
 
-        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
+\       LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+\       LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         LDN     C'|    7   N,              \ use 7 RAM bank
         
         RST     08|    HEX 094  C,
 
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-        PUSH    IX|
-        POP     HL|
-        LD()HL         HEX 02A org^ +  AA, \ saves away IX 
+\       LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+        
+\       PUSH    IX|
+\       POP     HL|
+\       LD()HL         HEX 02A org^ +  AA, \ saves away IX 
+        LD()IX         HEX 02A org^ +  AA, \ saves away IX 
 
-        POP     IX|
+        POP     IX|         \ retrieve ix
         EX(SP)HL            \ hl argument and retrieve BC
         PUSH    DE|         \ de argument
         PUSH    BC|         \ bc argument
@@ -4781,7 +4809,7 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         C;        
 
 \ file-handle to Block's file !Blocks-64.bin  
-BLK-FH @ variable blk-fh
+BLK-FH @ variable blk-fh         blk-fh !
 
 
 \ create blk-fname ," test.bin"  
@@ -5448,9 +5476,9 @@ decimal
 : splash
     cls
     [compile] (.")
-    [ decimal 87 here ," v-Forth 1.5 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Thread - build 20211205" -1 allot ]
-    [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
+    [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
+    [ decimal 13 here ," Indirect Thread - build 20220102" -1 allot ]
+    [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

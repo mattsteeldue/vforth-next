@@ -142,17 +142,18 @@
                 push    bc
                 push    ix
 
-                ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 5
+//              ld      (SP_Saved), sp
+//              ld      sp, Cold_origin - 5
                 ld      c, 7                // use 7 RAM Bank
 
                 rst     08
                 db      $94
 
-                ld      sp, (SP_Saved)
-                push    ix
-                pop     hl
-                ld      (IX_Echo), hl
+//              ld      sp, (SP_Saved)
+//              push    ix
+//              pop     hl
+//              ld      (IX_Echo), hl
+                ld      (IX_Echo), ix
 //              nop
                 pop     ix
                 ex      (sp), hl            // hl argument and retrieve bc

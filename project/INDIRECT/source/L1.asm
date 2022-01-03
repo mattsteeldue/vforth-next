@@ -81,6 +81,7 @@ Constant_Ptr:
 // Variable definition, n is the initial value. 
                 Colon_Def VARIABLE, "VARIABLE", is_normal   // has forward-ref 
 
+                dw      ZERO
                 dw      CONSTANT                // constant
                 dw      C_SEMICOLON_CODE        // ;code ( changes the 3-bytes CFA to call Variable_Ptr )
 Variable_Ptr:

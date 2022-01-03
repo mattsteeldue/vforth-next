@@ -27,17 +27,17 @@ DECIMAL
 
 CREATE LED-FN DECIMAL  80 ALLOT \ filename string
 
-0 variable LED-FH               \ filehandle of open file
+0 variable LED-FH      LED-FH !   \ filehandle of open file
 
  85 CONSTANT COLS/ROW            \ columns per row
   8 1024 *   COLS/ROW / CONSTANT ROWS/PAGE   \ rows per 8K
        512   COLS/ROW / CONSTANT LED-CHARSIZE
 
-1  VARIABLE LED-LN              \ line number
-1  VARIABLE LED-MAX             \ max line number
-0  VARIABLE LED-ROW
-0  VARIABLE LED-COL
-1  VARIABLE LED-HOME            \ first line to display
+1  VARIABLE LED-LN    LED-LN    !        \ line number
+1  VARIABLE LED-MAX   LED-MAX   !        \ max line number
+0  VARIABLE LED-ROW   LED-ROW   !
+0  VARIABLE LED-COL   LED-COL   !
+1  VARIABLE LED-HOME  LED-HOME  !        \ first line to display
 
 
 \ Since 8Kpages #32-39 are used by HEAP, we can use #40-223
@@ -185,8 +185,8 @@ DECIMAL
 : INS ( n -- )              \ insert line from pad
     dup S RE ;
 
-DECIMAL   0 VARIABLE NROW               \ current row
-          0 VARIABLE NCOL               \ current columns
+DECIMAL   0 VARIABLE NROW    NROW !     \ current row
+          0 VARIABLE NCOL    NCOL !     \ current columns
 
 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
 

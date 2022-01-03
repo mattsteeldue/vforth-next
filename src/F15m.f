@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-.( v-Forth 1.5 MDR/MGT version ) CR
-.( build 20211205 ) CR 
+.( v-Forth 1.52 MDR/MGT version ) CR
+.( build 20220102 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -11,7 +11,7 @@
 \ provided that the copyright notice is kept.  
 \ ______________________________________________________________________
 \
-\ by Matteo Vitturi, 1990-2021
+\ by Matteo Vitturi, 1990-2022
 \
 \ https://sites.google.com/view/vforth/vforth1413
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -162,13 +162,13 @@ DECIMAL
 : Next     ASSEMBLER                        JPIX ;
 
 \ macro of "RP" virtual register emulation
-: LDHL,RP  ASSEMBLER  LDHL() rp^      AA, ;
-: LDRP,HL  ASSEMBLER  LD()HL rp^      AA, ;
+: LDHL,RP  ASSEMBLER  LDHL()     rp^      AA, ;
+: LDRP,HL  ASSEMBLER  LD()HL     rp^      AA, ;
 
 \ at the end, we need to patch every reference to RP-address.
 \ we ALLOT some area to keep track of them whenever we need.
-     0  VARIABLE rp# DECIMAL 42 ALLOT
-    rp# VARIABLE rp#^ 
+     0  VARIABLE rp# DECIMAL 42 ALLOT    0  rp# !
+    rp# VARIABLE rp#^                  rp# rp#^ !
     rp# DECIMAL 44 ERASE
 
 \ accumulate pointers to be patched at the end using final_rp_patch
@@ -992,14 +992,14 @@ CODE (map) ( a2 a1 n c1 -- c2 )
 \ -1 : if string at a1 less than string at a2 
 \ strings can be 256 bytes in length at most.
 CODE (compare) ( a1 a2 n -- b )
-
+        EXX
         POP     HL| 
         LD      A'|    L|
         POP     HL|         \ string a2
         POP     DE|         \ string a1
-        PUSH    BC|
+        \ PUSH    BC|
         LD      B'|    A|
-        HERE
+        HERE                \ begin
 \           LDA(X)  DE| 
 \           CPA   (HL)|
             LD      A'|   (HL)|
@@ -1007,26 +1007,25 @@ CODE (compare) ( a1 a2 n -- b )
             LD      C'|      A|
             LDA(X)  DE|
             CALL    upper^ AA,  \ uppercase routine
-            CPA      C|
+            CPA      C|         \ compare both uppercased chars
             INCX    DE| 
             INCX    HL|
-            JRF Z'| HOLDPLACE
+            JRF Z'| HOLDPLACE   \ match
                 JRF CY'| HOLDPLACE
-                      LDX  HL|  1 NN,
+                      LDX   HL|     1   NN,
                 JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
-                      LDX  HL| -1 NN,
+                      LDX   HL|    -1   NN,
                 HERE DISP, \ THEN,
-
-                POP     BC| 
-                Psh1
+                PUSH    HL|
+                EXX  \ POP     BC| 
+                Next
 
             HERE DISP, \ THEN,
 
-        DJNZ BACK,
-        LDX HL| 0 NN,
-
-        POP     BC| 
+        DJNZ BACK,          \ until
+        LDX     HL|     0   NN,
         PUSH    HL|
+        EXX  \ POP     BC| 
         Next
         C; 
 
@@ -2460,9 +2459,9 @@ CODE cells ( n2 -- n2 )
 
 \ 66EDh
 .( VARIABLE ) \ ___ late-patch ___ only for ;CODE
-: variable ( n ccc --   )
+: variable (   ccc --   )
            (       -- n )
-    constant
+    0 constant
     ;CODE
         INCX    DE|
         PUSH    DE|
@@ -3701,7 +3700,8 @@ CODE fop
 
 \ Late-Patch for VARIABLE
     ' variable  
-        >body ' constant  over ! 
+        >body ' 0         over ! 
+        cell+ ' constant  over !
         cell+ ' (;code)   over !  
     drop
 
@@ -4328,7 +4328,7 @@ CODE basic ( n -- )
 \ \ 7824h
 .( DEVICE )
 \ used to save current device stream number (video or printer)
-2 variable device
+2 variable device       device !
 
 \ 
 \ ______________________________________________________________________ 
@@ -4339,11 +4339,11 @@ CODE basic ( n -- )
 
 \ 7727h
 .( STRM )
-       STRM @ variable strm
+       STRM @ variable strm     strm !
 
 \ 7703h
 .( DRV )
-       0 variable drv
+       0 variable drv           drv !
 
 
 \ 770Fh
@@ -4351,7 +4351,7 @@ CODE basic ( n -- )
 \ This variable is a pointer to the Microdrive Map, 
 \ i.e. a 32 bytes area = 256 bits each representing one sector
 \ If a bit is set the corrisponding sector is "used". 
-hex 5CF0 variable mmap
+hex 5CF0 variable mmap          mmap !
 
 
 \ 7734h >>>
@@ -4402,7 +4402,7 @@ CODE select ( n -- )
 
 \ 7719h
 \ CHNL 
-hex 5D2F variable chnl
+hex 5D2F variable chnl          chnl !
 
 
 \ 7734h INKEY  <<<
@@ -4541,7 +4541,7 @@ hex 5D2F variable chnl
 
 \ MGT DISCiPLE option
 
-0 variable mgt
+0 variable mgt          mgt !
 
 .( RSAD )
 \ call DISCiPLE 44h hook code (RDAD)
@@ -5008,9 +5008,9 @@ CODE cls
 : splash
     cls
     [compile] (.")
-    [ decimal 68 here ," v-Forth 1.5 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20211205" -1 allot ]
-    [ decimal 13 here ," 1990-2021 Matteo Vitturi" -1 allot ]
+    [ decimal 69 here ," v-Forth 1.52 MDR/MGT version" -1 allot ]
+    [ decimal 13 here ," build 20220102" -1 allot ]
+    [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

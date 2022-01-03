@@ -6,6 +6,6 @@
 \ 2variable ( d -- )  compile time (initial value)
 \           ( -- a )  run-time
 : 2VARIABLE 
-    VARIABLE ,
+    VARIABLE 0 ,
 ;
 \

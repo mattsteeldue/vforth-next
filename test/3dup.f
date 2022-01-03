@@ -1,0 +1,11 @@
+\
+\ 3DUP.f
+\
+
+NEEDS TESTING
+
+NEEDS PICK
+
+
+T{ 1 2 3 3DUP -> 1 2 3 1 2 3 }T
+T{ 1 2 3 4 3DUP -> 1 2 3 4 2 3 4 }T
