@@ -314,9 +314,9 @@ DECIMAL
                 F/      ( b 0   d/b )
             ELSE
                 F*      ( b 0   d*b )
-            ENDIF
+            THEN
             2SWAP       ( d     b 0 ) 
-        ENDIF
+        THEN
         
         2DUP            ( d     b 0   b 0 )
         F*              ( d     b^2 0 ) 
@@ -344,21 +344,21 @@ DECIMAL
         IF
             0 DPL ! 
             (FRAC)
-        ENDIF
+        THEN
         DUP C@ UPPER
         [CHAR] E =
         IF
             1 DPL +! 
             (EXP)
-        ENDIF
+        THEN
         C@ BL - 0 ?ERROR
         R> IF 
             FNEGATE
-        ENDIF
+        THEN
 \       DPL @ 1+ IF 1 0 F/  THEN
     ELSE
         NUMBER   \ Previous version
-    ENDIF
+    THEN
     ;
 
 
@@ -369,7 +369,7 @@ DECIMAL
     DUP 0< >R DABS 0 SWAP 0
     0 [ HEX 4880 DECIMAL ] LITERAL \ 65536. 
     F* F+ 
-    R> IF FNEGATE ENDIF 1 0 F/
+    R> IF FNEGATE THEN 1 0 F/
 ;
 
 
@@ -377,7 +377,7 @@ DECIMAL
     DUP 0< >R FABS 
     0 [ HEX 4880 DECIMAL ] LITERAL \ 65536. 
     F/MOD FINT SWAP 2SWAP FINT D+ 
-    R> IF DNEGATE ENDIF 
+    R> IF DNEGATE THEN 
 ;
 
 
@@ -405,7 +405,7 @@ DECIMAL
     2DUP FABS 2DUP OR            \ non zero
     IF
         FLN 10 0 FLN F/ F>D         \ magnitude
-    ENDIF
+    THEN
     TUCK 2DUP >R >R                 \ save sign and
     DABS
     <# #S SIGN 2DROP [CHAR] E HOLD  \ exponential part
@@ -415,7 +415,7 @@ DECIMAL
         F* 
     ELSE
         F/ 
-    ENDIF 
+    THEN 
     TUCK
     FABS 10 0  PLACE @ 0 F** F*
     1/2 F+    \ rounding
@@ -424,7 +424,7 @@ DECIMAL
     IF 
         0 DO # LOOP 
         [CHAR] . HOLD
-    ENDIF
+    THEN
     #S SIGN #> 
     R> BASE !
 ;

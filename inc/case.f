@@ -25,7 +25,7 @@
     OVER = DUP 
     IF 
         SWAP DROP 
-    ENDIF 
+    THEN 
 ;
 
 \

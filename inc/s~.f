@@ -19,7 +19,7 @@ NEEDS H"
         COMPILE (S") H" ,
     ELSE
         H" FAR COUNT
-    ENDIF
+    THEN
 ; IMMEDIATE
 \
 \

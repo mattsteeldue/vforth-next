@@ -45,7 +45,7 @@ CREATE LED-FN DECIMAL  80 ALLOT \ filename string
 : >>FAR ( row -- n a )
     \ given a row-number ret page+offset
     rows/page /mod  [ DECIMAL ] 40 +
-    dup 223 >  if 40 error endif  \ out-of-memory
+    dup 223 >  if 40 error then  \ out-of-memory
     swap cols/row  * [ HEX ] E000 OR swap ;
 \
 \ Row-ADdress, prepare MMU7 and return address of row
@@ -148,7 +148,7 @@ DECIMAL
             COLS/ROW 1 do [char] # emit loop
         ELSE
             I led-line COLS/ROW TYPE
-        ENDIF
+        THEN
         CR
     LOOP
 ;

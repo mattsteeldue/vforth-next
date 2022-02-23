@@ -31,7 +31,7 @@ NEEDS SEARCH.SCR
             BLK @ B/SCR / 
             LIST 
             QUIT 
-        ENDIF
+        THEN
             
         ?TERMINAL \ ?ESCAPE
         IF 

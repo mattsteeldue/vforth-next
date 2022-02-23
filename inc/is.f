@@ -6,16 +6,25 @@
 \ Tipical usage is
 \   DEFER print
 \   :NONAME . ;   IS print 
+\ or
+\   : prn3 . . . ;
+\   ' prn3 IS print
+\ or 
+\   : config 
+\     ['] prn3 IS print ;
 \
 NEEDS [']
 NEEDS DEFER!
 \
-: IS ( -- cccc )
+: IS ( xt -- cccc )
+    '
     STATE @ IF
-        [COMPILE] ['] [COMPILE] DEFER!
+        COMPILE LIT
+        ,
+        COMPILE DEFER!
     ELSE
-        ' DEFER!
-    ENDIF    
+        DEFER!
+    THEN    
 ; IMMEDIATE
 
 \ : IS ( -- cccc )
@@ -27,4 +36,3 @@ NEEDS DEFER!
 \     THEN
 \ ; IMMEDIATE
 
-    

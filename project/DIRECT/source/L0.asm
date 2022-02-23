@@ -849,6 +849,44 @@ QTerminal_NoBreak:
 
 //  ______________________________________________________________________ 
 //
+// inkey        -- c | 0
+// call ROM inkey$ routine, returns c or "zero".
+
+                New_Def INKEY, "INKEY", is_code, is_normal
+
+                push    bc
+                ld      (SP_Saved), sp
+                ld      sp, Cold_origin - 5
+                push    ix
+                call    $15E6                   // instead of 15E9
+                pop     ix
+                ld      sp, (SP_Saved)
+                ld      l, a
+                ld      h, 0
+                pop     bc
+                psh1
+
+//  ______________________________________________________________________ 
+//
+// select      n --
+// selects the given channel number
+
+                New_Def SELECT, "SELECT", is_code, is_normal
+                pop     hl
+                push    bc
+                ld      a, l
+                ld      (SP_Saved), sp
+                ld      sp, Cold_origin - 5
+                push    ix
+                call    $1601         
+                pop     ix
+                ld      sp, (SP_Saved)
+                pop     bc
+
+                next
+
+//  ______________________________________________________________________ 
+//
 // ZX Spectrum Next - Low Level disk primitives.
 // this include is "here" for backward compatibility
 

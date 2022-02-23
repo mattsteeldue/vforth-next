@@ -5,11 +5,22 @@
 \
 \ Tipical usage is
 \   DEFER print
+\ then
 \   :NONAME . ;   IS print 
+\ or similarly
+\   : prn3 . . . ;
+\   ' prn3 IS print
+\ or compiling for later use
+\   : config ['] prn3 IS print ;
 \ 
+
+NEEDS [']
+
+
 : DEFER ( -- cccc )
     [COMPILE] :
-    ['] ABORT ,
+    ['] NOOP  ,
+    [COMPILE] ;
 ; 
 
 

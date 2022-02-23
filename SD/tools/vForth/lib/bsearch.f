@@ -27,7 +27,7 @@ NEEDS SEARCH.SCR
         0= IF 
             \ if found, display result in a human readable way
             SEARCH.SHOW 
-        ENDIF
+        THEN
         HERE 1+ C@ 0=
     UNTIL
     R> >IN ! 
@@ -50,6 +50,6 @@ NEEDS SEARCH.SCR
         ?TERMINAL 
         IF 
             ." Stop at " I B/SCR / . LEAVE 
-        ENDIF
+        THEN
     LOOP
 ;

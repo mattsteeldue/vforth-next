@@ -283,18 +283,33 @@ Release of 1.51 version. From this version vForth is a "direct-thread" instead o
 Any Low-Level definition saves two bytes, but any non Low-Level definitions needs one additional byte because CFA does not contain an address anymore, instead CFA contains the real machine-code to be executed. For non Low-level definitions CFA is a three byte instruction "CALL aaaa" to the ;CODE part routine that handles that kind of definition.
 Some definitions have been speed-improved and space-improved using alternate registers: REG! REG@ FILL +ORIGIN P! P@ 2! DNEGATE D+ CMOVE> CMOVE (COMPARE)
 
+
 \ build 20211104
 Bug-fix of INCLUDE and NEEDS eventually. There was a bug in that when a NEEDS was encountered the interpreter skipped the rest of the line.
+
 
 \ build 20211119
 Introducing LED, a "Large file EDitor", that uses all RAM available to edit very large text files, 85 characters per line. It comes along with a new CAT definitions to inspect directory content.
 
+
 \ build 20211205
 Better standard behavior for DO-LOOP and BEGIN-WHILE-REPEAT. 
 Some minor improvement.
+
 
 \ build 20220102
 Release of 1.52 version. From this version vForth has a standard VARIABLE behavior.
 This should preserve any previous code written using the old behavior, but care must be taken to verify any old syntax.
 PDF documentation has reached 100 pages, this is quite an anchivement.
 Some minor improvement on  M_P3DOS  definition.
+
+
+\ build 20220214
+There is almost no change in the core.
+This version introduces a GRAPHICS.f library that can be loaded via NEEDS GRAPHICS
+and makes available PLOT, DRAW-LINE and CIRCLE for *every* Graphic-Mode available
+using LAYERx words.
+This GRAPHICS libary is a valuable piece of code that is a good example of
+vector-call via  DEFER and IS along with the use of DOES> to create very compact
+and fast code.
+ 

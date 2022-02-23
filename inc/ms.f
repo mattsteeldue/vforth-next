@@ -31,4 +31,12 @@ CODE (ms) ( n -- )       \ 0 <= n <= 255
     7 REG!
 ;
 
+\ : ms
+\     1 7 REG@ 3 AND LSHIFT
+\     0 DO
+\         DUP (ms)
+\     LOOP
+\     DROP
+\ ;
+
 BASE !

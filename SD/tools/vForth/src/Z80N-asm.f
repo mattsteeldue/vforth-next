@@ -447,7 +447,7 @@ HEX
     -1 ALLOT SWAP C, C,
   ELSE
     -2 ALLOT SWAP C, CB C, C,
-  ENDIF 
+  THEN 
 ;
 TOOLS-ASM
 
@@ -471,7 +471,7 @@ HEX
   HERE 2 - C@
   CB = IF 
     SWAP 
-  ENDIF
+  THEN
   HERE 1 - C! C, 
 ;
 \
@@ -479,7 +479,7 @@ HEX
   DUP HERE 2 - 
   C@ - IF
     HERE 1- C@ -1 ALLOT SWAP C, C,
-  ENDIF 
+  THEN 
 ;
 TOOLS-ASM
 

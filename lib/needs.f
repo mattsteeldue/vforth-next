@@ -21,7 +21,7 @@ create   needs-lib   ," lib/"
   PAD 1 F_OPEN
   IF 43 MESSAGE
   ELSE F_INCLUDE
-  ENDIF
+  THEN
 ;
 
 \ include  "path/cccc.f" if cccc is not defined
@@ -35,7 +35,7 @@ create   needs-lib   ," lib/"
     [ HEX 662E DECIMAL ] LITERAL  \ a a1+n ".F"
     SWAP !                        \ a
     NEEDS/
-  ENDIF ;
+  THEN ;
 
 \ check for cccc exists in vocabulary
 \ if it doesn't then  INCLUDE  inc/cccc.F

@@ -21,7 +21,7 @@
         COMPILE,    \ compiles xt ! or +!
     ELSE
         SWAP EXECUTE 
-    ENDIF
+    THEN
 ;
 
 

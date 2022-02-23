@@ -4,7 +4,7 @@
 .( ['] )
 \
 : ['] ( -- cccc )
-    COMPILE LIT
-    ' , 
+    '
+    [COMPILE] LITERAL
 ; IMMEDIATE    
 

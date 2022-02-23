@@ -12,5 +12,5 @@ NEEDS DEPTH
         DEPTH 1+ 1 DO
             S0 @ I CELLS - @ U.
         LOOP
-    ENDIF 
+    THEN 
 ;

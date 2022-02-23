@@ -700,7 +700,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      88
                 db      "v-Forth 1.52 NextZXOS version", 13
-                db      "Indirect Thread - build 20220102", 13
+                db      "Indirect Thread - build 20220219", 13
                 db      "1990-2022 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -874,9 +874,9 @@ Load_Endif:
 
 //  ______________________________________________________________________ 
 //
-// endif        ( a 2 -- ) \ compile-time
+// then        ( a 2 -- ) \ compile-time
 //
-                Colon_Def ENDIF, "ENDIF", is_immediate
+                Colon_Def THEN, "THEN", is_immediate
                 dw      QCOMP
                 dw      TWO, QPAIRS
                 dw      HERE, OVER, SUBTRACT, SWAP, STORE
@@ -884,10 +884,10 @@ Load_Endif:
 
 //  ______________________________________________________________________ 
 //
-// then        ( a 2 -- ) \ compile-time
+// endif       ( a 2 -- ) \ compile-time
 //
-                Colon_Def THEN, "THEN", is_immediate
-                dw      ENDIF
+                Colon_Def ENDIF, "ENDIF", is_immediate
+                dw      THEN
                 dw      EXIT
 
 //  ______________________________________________________________________ 

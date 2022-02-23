@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 MDR/MGT version ) CR
-.( build 20220102 ) CR 
+.( build 20220219 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -80,7 +80,7 @@ HEX
         \ 6A00 \ 27136 \ = room for 3 buffers below ORIGIN
         \ 8000 \ 32768 \ = final
         DP !
-    ENDIF
+    THEN
     ;
 
 
@@ -194,7 +194,7 @@ DECIMAL
     IF
         \ COMPILE LIT ,
         lit~ , ,
-    ENDIF
+    THEN
     ; 
     IMMEDIATE
 
@@ -204,12 +204,12 @@ DECIMAL
         SWAP
         [COMPILE] Literal
         [COMPILE] Literal
-    ENDIF
+    THEN
     ; 
     IMMEDIATE
     
 .( IF ... THEN )
-.( IF ... ELSE ... ENDIF )
+.( IF ... ELSE ... THEN )
 \ 
 : If    (   -- a 2 ) \ compile-time
         ( f --     ) \ run-time   
@@ -220,7 +220,7 @@ DECIMAL
     ; 
     IMMEDIATE
     
-: Endif ( a 2 -- ) \ compile-time
+: Then ( a 2 -- ) \ compile-time
         (     -- ) \ run-time    
     ?COMP
     2 ?PAIRS  
@@ -228,9 +228,9 @@ DECIMAL
     ; 
     IMMEDIATE
     
-\ : Then ( a 2 -- ) \ compile-time 
-\        (     -- ) \ run-time
-\     [COMPILE] Endif 
+\ : Endif ( a 2 -- ) \ compile-time 
+\        (     -- )  \ run-time
+\     [COMPILE] Then 
 \     ; 
 \     IMMEDIATE
 
@@ -240,7 +240,7 @@ DECIMAL
     2 ?PAIRS  
     branch~ ,  \ COMPILE BRANCH
     HERE 0 , 
-    SWAP 2 [COMPILE] Endif \ Then
+    SWAP 2 [COMPILE] Then \ Then
     2 
     ; 
     IMMEDIATE
@@ -287,7 +287,7 @@ DECIMAL
     2SWAP
     [COMPILE] Again
     2 - 
-    [COMPILE] Endif \ Then
+    [COMPILE] Then \ Then
     ; 
     IMMEDIATE
 
@@ -331,7 +331,7 @@ DECIMAL
 \ KEY  DROP
 
 \ force origin to an even address.
-HERE 1 AND ALLOT
+\ HERE 1 AND ALLOT    
 SET-DP-TO-ORG
 
 \
@@ -1306,6 +1306,48 @@ CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
         HERE DISP, \ THEN,
         PUSH    HL|
         Next
+        C;
+
+
+\ 7734h >>>
+.( INKEY )
+\ calls ROM inkey$ routine, returns c or "zero".
+CODE inkey ( -- c )
+         
+        PUSH    BC|
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
+        PUSH    IX|
+        CALL    HEX  15E6  AA,  ( instead of 15E9 )
+        POP     IX|
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+        LD      L'|    A|
+        LDN     H'|    0 N,
+        POP     BC|
+        PUSH    HL|
+        Next
+        C;
+
+
+\ 7749h >>>
+.( SELECT )
+\ selects the given channel number
+\ #2 is keyboard or video
+\ #3 is printer or rs-232 i/o port (it depends on OPEN#3 from BASIC)
+\ #4 is depends on OPEN#4 from BASIC
+CODE select ( n -- )
+         
+        POP     HL|
+        PUSH    BC|
+        LD      A'|    L|
+        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
+        PUSH    IX|
+        CALL    HEX  1601 AA,
+        POP     IX|
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+        POP     BC|
+        Next 
         C;
 
 
@@ -2734,7 +2776,7 @@ CODE <  ( n1 n2 -- f )
     2dup 
     > If 
         swap
-    Endif \ Then
+    Then \ Then
     drop
     ;
 
@@ -2744,7 +2786,7 @@ CODE <  ( n1 n2 -- f )
     2dup
     < If 
         swap
-    Endif \ Then
+    Then \ Then
     drop
     ;
 
@@ -2772,9 +2814,10 @@ CODE ?dup ( n -- 0 | n n )
 .( -DUP ) \ is as -DUP
 CODE -dup ( n -- 0 | n n )
         \ This way we will have a real duplicate of ?DUP.
-        C;
 
         ' ?dup >BODY   LATEST  PFA CELL- !
+
+        C;
 
 
 \ 62CFh <<< moved here because of OUT
@@ -2784,7 +2827,7 @@ CODE -dup ( n -- 0 | n n )
     ?dup If 
         emitc
         1 out +!
-    Endif
+    Then
     ;
 
 
@@ -2885,7 +2928,7 @@ CODE -dup ( n -- 0 | n n )
         ERROR   \ forward 
     Else
         drop
-    Endif \ Then
+    Then \ Then
     ;
 
 
@@ -3128,9 +3171,21 @@ CODE -dup ( n -- 0 | n n )
             leave
         Else
             1-
-        Endif \ Then
+        Then \ Then
     Loop 
 ;
+
+
+\ .( KEY )
+\ \ reads one character from current stream and leaves it on stack
+\ : key
+\     source-id @  blk @  or
+\     If
+\         inkey
+\     Else
+\         kbd
+\     Then
+\ ;
 
 
 \ 6CC3h new
@@ -3158,7 +3213,7 @@ CODE -dup ( n -- 0 | n n )
                 [ decimal 7 ] Literal  ( a 7 )
             Else
                 [ decimal 8 ] Literal  ( a 8 )
-            Endif
+            Then
 
         Else
 
@@ -3171,21 +3226,21 @@ CODE -dup ( n -- 0 | n n )
                 \ lastl
             Else 
                 dup     ( a  c  c )
-            Endif
+            Then
 
             i c!        ( a  c )
             dup bl <    ( a  c  c<BL )  \ patch ghost word
             If
                 r> 1- >r  
-            Endif
+            Then
 
-        Endif
+        Then
 
         emit
         
         0 i 1+ ! \ zero pad
         i 
-        i c@ 0= If leave Endif
+        i c@ 0= If leave Then
     Loop 
     swap - 1+ 
     dup span ! 
@@ -3293,7 +3348,7 @@ CODE fill ( a n c -- )
         BLOCK
     Else
         tib @
-    Endif \ Then
+    Then \ Then
     >in @ + 
     swap enclose
     here [ decimal 34 ] Literal blanks
@@ -3351,7 +3406,7 @@ CODE fill ( a n c -- )
     Else
 \       word here count type
         word      count type
-    Endif \ Then
+    Then \ Then
     ; 
     immediate
 
@@ -3482,9 +3537,9 @@ CODE fop
         If
             1+
             1 dpl +!
-        Endif
+        Then
         0
-    Endif
+    Then
     ;
 
 
@@ -3516,7 +3571,7 @@ CODE fop
         dpl @ 1+    ( d m )
         If
             1 dpl +!
-        Endif
+        Then
         r>          ( d a )
     Repeat
     r>              ( d a )
@@ -3537,11 +3592,11 @@ CODE fop
     If
         0 dpl !
         (number)
-    Endif
+    Then
     c@ bl - 0 ?error
     r> If
         dnegate
-    Endif
+    Then
     ;
 
 
@@ -3562,14 +3617,14 @@ CODE fop
         here        \ addr
         latest      \ addr voc
         (find)      \ cfa b 1   |  0 
-    Endif   
+    Then   
     ;
 
 \   dup 0=
 \   If
 \       drop  \ drops 0
 \       here latest (find) \ cfa b f 
-\   Endif
+\   Then
 \   ;
 
 
@@ -3594,7 +3649,7 @@ CODE fop
     warning @ 0<
     If
         (abort)
-    Endif
+    Then
 
     here count type 
     .( ? )
@@ -3603,7 +3658,7 @@ CODE fop
     blk @ ?dup
     If 
         >in @ swap
-    Endif \ Then
+    Then \ Then
 
     [ HERE TO quit^ ]
 
@@ -3641,7 +3696,7 @@ CODE fop
         [ 4 ] Literal 
         [ HERE TO msg2^ ] MESSAGE \ ___ forward ___
         space
-    Endif
+    Then
     
     here 
     dup c@ width @ min 1+ allot
@@ -3739,7 +3794,7 @@ CODE fop
     state @
     If
         compile lit ,
-    Endif
+    Then
     ;
     immediate
 
@@ -3752,7 +3807,7 @@ CODE fop
         swap 
         [compile] literal 
         [compile] literal
-    Endif
+    Then
     ;
     immediate
 
@@ -3779,10 +3834,10 @@ CODE fop
         If 
             ?exec 
             r> drop 
-        Endif
+        Then
     Else
         r> drop
-    Endif \ Then
+    Then \ Then
     ; 
     immediate
     
@@ -3804,7 +3859,7 @@ CODE fop
         sp@
         here [ decimal 128 ] Literal + u< 
              [ decimal   7 ] Literal ?error
-    Endif
+    Then
     ;
 
 
@@ -3831,7 +3886,7 @@ CODE fop
                 \ already cfa aka xt 
                 execute 
                 noop            \ need this to avoid LIT to crash the system
-            Endif
+            Then
         Else
             here number 
             dpl @ 1+ 
@@ -3841,15 +3896,15 @@ CODE fop
 \                   1 0
 \                   2drop       \ Integer option
 \                   \ f/        \ Floating point option
-\               Endif \ Then 
+\               Then \ Then 
                 [compile] dliteral 
             Else
                 drop
                 [compile] literal 
-            Endif 
-        Endif 
+            Then 
+        Then 
         ?stack 
-        ?terminal If (abort) Endif
+        ?terminal If (abort) Then
     Again
     ;
 
@@ -3939,7 +3994,7 @@ immediate
         state @ 0=
         If
             .( ok)
-        Endif
+        Then
     Again
     ;        
     
@@ -4101,7 +4156,7 @@ CODE basic ( n -- )
     0<
     If
         negate
-    Endif
+    Then
     ;
 
 
@@ -4112,7 +4167,7 @@ CODE basic ( n -- )
     0<
     If
         dnegate
-    Endif
+    Then
     ;
 
 
@@ -4173,7 +4228,7 @@ CODE basic ( n -- )
         1- swap r> + swap     \ r+n q-1  
     Else 
         r> drop               \ r q
-    Endif
+    Then
     ;
 
 
@@ -4308,14 +4363,14 @@ CODE basic ( n -- )
             b/scr / -
             .line
             space
-        \ Endif
+        \ Then
     Else
         .( msg#)
         
         [ here TO .^ ]
         
         .             \ ___ forward ___
-    Endif
+    Then
     ;
     
     ' message msg1^  !   \ patch error
@@ -4352,48 +4407,6 @@ CODE basic ( n -- )
 \ i.e. a 32 bytes area = 256 bits each representing one sector
 \ If a bit is set the corrisponding sector is "used". 
 hex 5CF0 variable mmap          mmap !
-
-
-\ 7734h >>>
-.( INKEY )
-\ calls ROM inkey$ routine, returns c or "zero".
-CODE inkey ( -- c )
-         
-        PUSH    BC|
-        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
-        PUSH    IX|
-        CALL    HEX  15E6  AA,  ( instead of 15E9 )
-        POP     IX|
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-        LD      L'|    A|
-        LDN     H'|    0 N,
-        POP     BC|
-        PUSH    HL|
-        Next
-        C;
-
-
-\ 7749h >>>
-.( SELECT )
-\ selects the given channel number
-\ #2 is keyboard or video
-\ #3 is printer or rs-232 i/o port (it depends on OPEN#3 from BASIC)
-\ #4 is depends on OPEN#4 from BASIC
-CODE select ( n -- )
-         
-        POP     HL|
-        PUSH    BC|
-        LD      A'|    L|
-        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
-        PUSH    IX|
-        CALL    HEX  1601 AA,
-        POP     IX|
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-        POP     BC|
-        Next 
-        C;
 
 
 \ ______________________________________________________________________ 
@@ -4583,7 +4596,7 @@ CODE wsad ( a n -- )
     [ decimal 80 ] Literal      < 0= 
     If 
         [ decimal 48 ] Literal  +
-    Endif
+    Then
     [ decimal 256 ] Literal     * + 1+ 
     ;
 
@@ -4623,15 +4636,15 @@ decimal #SEC constant #sec
             mgtrd
         Else
             mdrrd
-        Endif
+        Then
     Else
         mgt @
         If
             mgtwr
         Else
             mdrwr
-        Endif
-    Endif
+        Then
+    Then
     ;
 
 
@@ -4643,7 +4656,7 @@ decimal #SEC constant #sec
     dup limit @ =
     If
         drop first @ 
-    Endif
+    Then
     dup prev @ -
     ;
 
@@ -4682,7 +4695,7 @@ decimal #SEC constant #sec
         r@ cell+  
         r@ @ [ hex 7FFF ] Literal and  
         0 r/w  
-    Endif
+    Then
     r@ !  
     r@ prev !  
     r>  cell+ 
@@ -4707,11 +4720,11 @@ decimal #SEC constant #sec
                 drop 
                 r@ buffer dup 
                 r@ 1  r/w  2 - 
-            Endif
+            Then
             dup @ r@ - dup +  0= 
         Until
         dup prev ! 
-    Endif
+    Then
     r> drop cell+
     ;  
     
@@ -4834,7 +4847,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     rot 0<
     If
         [ decimal 45 ] Literal hold
-    Endif
+    Then
     ;
 
 
@@ -4852,7 +4865,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
     rot  
     [ 9 ] Literal over <
-    If [ 7 ] Literal + Endif    
+    If [ 7 ] Literal + Then    
     [ decimal 48 ] Literal 
     + hold
     ;
@@ -4933,7 +4946,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
         If 
             cr 
             0 out ! 
-        Endif
+        Then
         dup id.
         pfa lfa @ 
         dup 0= 
@@ -4958,7 +4971,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
         i scr @ .line
         ?terminal If 
             leave 
-        Endif
+        Then
     Loop
     cr
     ;
@@ -4975,7 +4988,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
         0 i .line 
         ?terminal If
             leave 
-        Endif
+        Then
     Loop
     cr
     ;
@@ -5009,7 +5022,7 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.52 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20220102" -1 allot ]
+    [ decimal 13 here ," build 20220219" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5061,15 +5074,15 @@ CODE cls
 
         inkey 
 
-        dup 0= If video quit Endif
-        dup [ decimal 13 ] literal = If drop 0 Endif \ Then
-        dup [ decimal 10 ] literal = If drop 0 Endif \ Then
+        dup 0= If video quit Then
+        dup [ decimal 13 ] literal = If drop 0 Then \ Then
+        dup [ decimal 10 ] literal = If drop 0 Then \ Then
         \ dup  0=  If 
         \     lastl
-        \ Endif \ Then
+        \ Then \ Then
         i c! ( n2 )
         1+ ( increment n2 )
-        i c@ 0= If leave Endif
+        i c@ 0= If leave Then
     Loop  ( n2 )
     ;
 
@@ -5108,7 +5121,7 @@ CODE cls
         load-
     Else
         load+
-    Endif
+    Then
     ;
 
 
@@ -5119,7 +5132,7 @@ CODE cls
     [ decimal 10 0 +origin 32768 u< 1 and + ] Literal  \ this give 10 or 11 
     [ ' noop         ] Literal  
     [ autoexec^      ] Literal  !  \ patch autoexec-off
-    load
+    load 
     quit
     ;
     ' autoexec autoexec^ ! \ patch autoexec-on in ABORT
@@ -5163,7 +5176,7 @@ CODE cls
 
 
 .( IF ... THEN )
-.( IF ... ELSE ... ENDIF )
+.( IF ... ELSE ... THEN )
 : if    ( -- a 2 ) \ compile-time 
     compile 0branch
     here 0 , 
@@ -5172,8 +5185,8 @@ CODE cls
     immediate
 
 
-.( ENDIF )
-: endif ( a 2 -- ) \ compile-time 
+.( THEN )
+: then ( a 2 -- ) \ compile-time 
     ?comp
     2 ?pairs  
     here over - swap ! 
@@ -5181,9 +5194,9 @@ CODE cls
     immediate
     
 
-.( THEN )
-: then ( a 2 -- ) \ compile-time 
-    [compile] endif 
+.( ENDIF )
+: endif ( a 2 -- ) \ compile-time 
+    [compile] then 
     ; 
     immediate
 
@@ -5194,7 +5207,7 @@ CODE cls
     2 ?pairs  
     compile branch
     here 0 , 
-    swap 2 [compile] endif
+    swap 2 [compile] then
     2 
     ; 
     immediate
@@ -5232,11 +5245,12 @@ CODE cls
 
 
 .( END )
-: end [compile] until ; immediate
+: end       ( a 1 -- ) \ compile-time 
+    [compile] until ; immediate
 
 
 .( WHILE )
-: while     ( a1 1 -- a1 1 a2 4 ) \ compile-time 
+: while     ( a1 1 -- a2 4 a1 1 ) \ compile-time
     [compile] if \ 2+
     2swap
     ; 
@@ -5244,10 +5258,10 @@ CODE cls
 
 
 .( REPEAT )
-: repeat    ( a1 1 a2 4 -- ) \ compile-time
+: repeat    ( a2 4 a 2 -- ) \ compile-time
     [compile] again
     \ 2 - 
-    [compile] endif
+    [compile] then
     ; 
     immediate
 
@@ -5260,7 +5274,7 @@ CODE cls
         sp@ csp @ -
         \ dup 0= 
     While
-        2+ [compile] endif 
+        2+ [compile] then 
     Repeat 
     ?csp csp !      
     ;
@@ -5315,7 +5329,7 @@ CODE cls
         >in @ c/l mod c/l swap - >in +!
     Else
         [ decimal 80 ] Literal  >in !
-    Endif
+    Then
     ;
     immediate
 
@@ -5359,7 +5373,7 @@ CODE cls
         compile !
     Else
         ! 
-    Endif
+    Then
     ;
     immediate
 
@@ -5489,8 +5503,8 @@ RENAME   mgtsts         MGTSTS
 RENAME   wsad           WSAD
 RENAME   rsad           RSAD
 RENAME   mgt            MGT
-RENAME   select         SELECT
-RENAME   inkey          INKEY 
+\ RENAME   select         SELECT
+\ RENAME   inkey          INKEY 
 \
 RENAME   mdrwr          MDRWR
 RENAME   mdrrd          MDRRD
@@ -5578,7 +5592,8 @@ RENAME   erase          ERASE
 RENAME   fill           FILL  
 RENAME   query          QUERY 
 \ RENAME   expect         EXPECT
-RENAME   accept         ACCEPT
+RENAME   accept         ACCEPT 
+RENAME   key            KEY
 RENAME   -trailing      -TRAILING
 RENAME   leave          LEAVE
 RENAME   type           TYPE  
@@ -5752,8 +5767,10 @@ RENAME   um*            UM*
 RENAME   cmove>         CMOVE>
 RENAME   cmove          CMOVE 
 RENAME   cr             CR    
+RENAME   select         SELECT
+RENAME   inkey          INKEY 
 RENAME   ?terminal      ?TERMINAL
-RENAME   key            KEY    
+RENAME   KEY            KEY    
 \ RENAME   bleep          BLEEP  
 RENAME   (?emit)        (?EMIT)
 RENAME   emitc          EMITC  

@@ -225,7 +225,7 @@ decimal
   i c@ upper [char] A [char] U
   between if
    i c@ upper UDG+ i c!
-  endif
+  then
  loop ;
 \
 
@@ -567,7 +567,7 @@ cherry-init
   xy-pos@      1+      maze@
   dup [char] \ = if
    1 sprite@ y-pos c!
-  endif
+  then
   ?pac-trail if
    [char] R UDG+
    sprite@ face  c!
@@ -575,7 +575,7 @@ cherry-init
 \ else 2 choose if key-up
 \  else key-down then
 \  sprite@ dir c!
-  endif ;
+  then ;
 
 
 
@@ -585,7 +585,7 @@ cherry-init
   xy-pos@      1-      maze@
   dup [char] / = if
    21 sprite@ y-pos c!
-  endif
+  then
   ?pac-trail if
    [char] P UDG+
     sprite@ face  c!
@@ -593,7 +593,7 @@ cherry-init
 \ else 2 choose if key-up
 \  else key-down then
 \  sprite@ dir c!
-  endif ;
+  then ;
 
 
 
@@ -608,7 +608,7 @@ cherry-init
 \ else 2 choose if
 \  key-right else key-left then
 \  sprite@ dir c!
-  endif ;
+  then ;
 
 
 
@@ -623,7 +623,7 @@ cherry-init
 \ else 2 choose if
 \  key-left else key-right then
 \  sprite@ dir c!
-  endif ;
+  then ;
 
 
 ( Chomp.f - trail )
@@ -654,7 +654,7 @@ cherry-init
    [ 50 39 bip ] 2lit bleep
    0 counting !
    ghost-white
-  endif ;
+  then ;
 \
 
 
@@ -669,8 +669,8 @@ cherry-init
    0= if
 \   [ 12 -14 bip ] 2lit
 \   bleep
-   endif
-  endif
+   then
+  then
 ;
 
 
@@ -681,7 +681,7 @@ cherry-init
    10 total d+!
    [ 50 29 bip ] 2lit bleep
    [ 50 36 bip ] 2lit bleep
-  endif ; 
+  then ; 
 
 
 ( Chomp.f - ghost )
@@ -694,9 +694,9 @@ cherry-init
     key-down
    else
     key-up
-   endif
+   then
    sprite@ dir c!
-  endif
+  then
 ;
 
 
@@ -710,9 +710,9 @@ cherry-init
     key-up
    else
     key-down
-   endif
+   then
    sprite@ dir c!
-  endif
+  then
 ;
 
 
@@ -726,9 +726,9 @@ cherry-init
     key-right
    else
     key-left
-   endif
+   then
    sprite@ dir c!
-  endif
+  then
 ;
 
 
@@ -742,9 +742,9 @@ cherry-init
     key-left
    else
     key-right
-   endif
+   then
    sprite@ dir c!
-  endif
+  then
 ;
 
 
@@ -773,7 +773,7 @@ cherry-init
    2 of key-up    endof
    3 of key-right endof
    endcase
-  endif
+  then
   sprite@ dir c!
 ;
 
@@ -785,7 +785,7 @@ cherry-init
    1  score d+!
 \  [ 12 -12 bip ] 2lit
 \  bleep
-  endif ;
+  then ;
 
 
 
@@ -886,10 +886,10 @@ cherry-init
    high-score 2@ score 2@
    dnegate d+ 0< if
      score 2@ high-score 2!
-   endif
+   then
    0. score 2!
    180. total 2!
-  endif
+  then
   init-all
   interlude
   init-display ;
@@ -904,26 +904,26 @@ cherry-init
     i sprite# xy-pos@
     pacman    xy-pos@ d= if
      i ghost-eaten
-    endif
+    then
    loop
-  endif ;
+  then ;
 
 
 ( Chomp.f )
 : count-down
   hunt @ -1 = if 1 counting +!
    56 counting @ < if
-    ghost-color endif
+    ghost-color then
    57 counting @ < if
-    ghost-white endif
+    ghost-white then
    58 counting @ < if
-    ghost-color endif
+    ghost-color then
    59 counting @ < if
-    ghost-white endif
+    ghost-white then
    60 counting @ < if
     ghost-color
-    1 hunt ! endif
-  endif
+    1 hunt ! then
+  then
 ; 
 
 
@@ -932,7 +932,7 @@ cherry-init
   100 choose 0= if
    cherry sprite-put
    [udg] U xy-pos@ maze!
-  endif ;
+  then ;
 \
 
 : key-decode ( c1 -- c2 )
@@ -1034,7 +1034,7 @@ needs .s
    interlude
    init-display
    key-right LASTK c!
-  endif ;
+  then ;
 
 
 ( Chomp.f )

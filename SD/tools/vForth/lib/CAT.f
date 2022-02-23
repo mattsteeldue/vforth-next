@@ -12,7 +12,7 @@ HEX
     <#  dup 1F and  0 # # 2D hold  2drop 5 rshift
         dup 0F and  0 # # 2D hold  2drop 4 rshift
         7BC + 0 # # # #  #> type
-  else  0A spaces       endif ;
+  else  0A spaces       then ;
 \
 \ emit a time given a MSDOS format time number
 : .FAT-TIME ( n -- )
@@ -20,7 +20,7 @@ HEX
     <#  dup 1F 2* and  0 # # 3A hold  2drop 5 rshift
         dup 3F    and  0 # # 3A hold  2drop 6 rshift
         0 # #  #> type
-  else   8 spaces     endif ;
+  else   8 spaces     then ;
 \
 DECIMAL
 \
@@ -40,7 +40,7 @@ DECIMAL
         dup pad - 30 >
         if
           13 emit                    \ emit cr if name is too long
-        endif
+        then
         6 emit                     \ emit tab
         1+        DUP @ >R         \ keep time
         cell+     DUP @            \ keep date
@@ -50,7 +50,7 @@ DECIMAL
           [char] d emit
         else
         cell+ 2@ swap              \ keep size
-        9 d.r endif CR
+        9 d.r then CR
     repeat
     DROP  \ working  PAD addres
     FH @  F_CLOSE DROP

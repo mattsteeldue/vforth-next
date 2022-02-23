@@ -84,7 +84,7 @@ NEEDS .S
         DECIMAL DELOAD  DROP BASE !
     ELSE
         SWAP BASE ! DEB-P
-    ENDIF 
+    THEN 
 ;
 \
 : SEE  ( -- )
