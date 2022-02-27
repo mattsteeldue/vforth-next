@@ -8,6 +8,9 @@ NEEDS TESTING
 
 ( Test Suite - Return Stack Operators )
 
+\ F.6.1.2060 - R>
+\ F.6.1.2070 - R@
+
 TESTING F.6.1.0580 - >R - R@ R>
 
 T{ : GR1 >R R> ; -> }T

@@ -10,6 +10,10 @@ NEEDS CHAR+
 
 ( Test Suite - Memory  )
 
+\ F.6.1.0850  -  C!
+\ F.6.1.0870  -  C@
+\ F.6.1.0897  -  CHAR+
+
 TESTING F.6.1.0860 - C,
 
 HERE 1 C,

@@ -1,5 +1,5 @@
 \
-\ exec%.f
+\ exec_.f
 \
 \ Vectorized fast case structure 
 \

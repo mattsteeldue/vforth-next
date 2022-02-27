@@ -7,6 +7,8 @@ NEEDS TESTING
 
 ( Test Suite - Memory  )
 
+\ F.6.1.1650  -  HERE
+
 TESTING F.6.1.0710 - ALLOT
 
 HERE 1 ALLOT

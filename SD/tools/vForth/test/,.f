@@ -7,6 +7,12 @@ NEEDS TESTING
 
 ( Test Suite - Memory  )
 
+\ F.6.1.0010  -  !
+\ F.6.1.0650  -  @
+\ F.6.1.0310  -  2!
+\ F.6.1.0350  -  2@
+\ F.6.1.0880  -  CELL+
+
 TESTING F.6.1.0150 - ,
 
 HERE 1 ,

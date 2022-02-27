@@ -313,3 +313,8 @@ This GRAPHICS libary is a valuable piece of code that is a good example of
 vector-call via  DEFER and IS along with the use of DOES> to create very compact
 and fast code.
  
+\ build 20220214
+Slight modification in illegal filename character map.
+Improvement in GRAPHICS libary that now can handle every Graphics-Mode.
+
+ 

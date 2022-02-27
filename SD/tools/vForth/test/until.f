@@ -7,6 +7,8 @@ NEEDS TESTING
 
 ( Test Suite - Dictionary  )
 
+\ F.6.1.0760  -  BEGIN 
+
 TESTING F.6.1.2390 - UNTIL
 
 T{ : GI4 BEGIN DUP 1+ DUP 5 > UNTIL ; -> }T

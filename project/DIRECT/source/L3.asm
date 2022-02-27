@@ -349,11 +349,13 @@ Needs_2:
                 dw      EXIT                    // ;
 
 
-                New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
-                db $25, $5E, $25, $26, $24, $5F, $7B, $7D, $7E
-
                 New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
-                db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
+//              db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
+                db ':?/*|\<>"'
+
+                New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
+//              db $5F, $5E, $25, $26, $24, $5F, $7B, $7D, $7E
+                db '_^%&$_{}~' 
 
 
 // Replace illegal character in filename using the map here above
@@ -700,7 +702,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      86
                 db      "v-Forth 1.52 NextZXOS version", 13    // 29
-                db      "Direct Thread - build 20220219", 13  // 31
+                db      "Direct Thread - build 20220227", 13  // 31
                 db      "1990-2022 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
@@ -899,7 +901,7 @@ Load_Endif:
                 dw      TWO, QPAIRS
                 dw      COMPILE, BRANCH
                 dw      HERE, ZERO, COMMA
-                dw      SWAP, TWO, ENDIF
+                dw      SWAP, TWO, THEN
                 dw      TWO
                 dw      EXIT
 
@@ -957,7 +959,7 @@ Load_Endif:
                 Colon_Def REPEAT, "REPEAT", is_immediate
                 dw      AGAIN
 //              dw      TWO_MINUS
-                dw      ENDIF
+                dw      THEN
                 dw      EXIT
 
 //  ______________________________________________________________________ 
@@ -970,7 +972,7 @@ CDoBack_Begin:
                 dw      SPFETCH, CSP, FETCH, SUBTRACT
                 dw      ZBRANCH
                 dw      CDoBack_While - $
-                dw          TWO_PLUS, ENDIF
+                dw          TWO_PLUS, THEN
                 dw      BRANCH
                 dw      CDoBack_Begin - $
 CDoBack_While:  

@@ -17,7 +17,7 @@ illegal, namely:
 For this reason, before trying to load ``name``.f source file, NEEDS acts a 
 simple character mapping of ``name``.
 
-    :           ->      %
+    :           ->      _
     ?           ->      ^
     /           ->      %
     *           ->      &

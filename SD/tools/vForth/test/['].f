@@ -9,6 +9,8 @@ NEEDS [']
 
 ( Test Suite - Dictionary  )
 
+\ F.6.1.1370  -  EXECUTE
+
 TESTING F.6.1.2510 - [']
 
 HEX

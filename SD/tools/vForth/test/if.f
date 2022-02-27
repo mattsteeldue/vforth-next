@@ -7,6 +7,9 @@ NEEDS TESTING
 
 ( Test Suite - Dictionary  )
 
+\ F.6.1.1310  -  ELSE 
+\ F.6.1.2270  -  THEN
+
 TESTING F.6.1.1700 - IF
 
 T{ : GI1 IF 123 THEN ; -> }T

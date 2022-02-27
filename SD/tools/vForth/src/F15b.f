@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220219 ) CR
+.( build 20220227 ) CR
 \
 \ Direct Thread - NextZXOS version
 \ ______________________________________________________________________ 
@@ -5171,12 +5171,19 @@ decimal
 
 ( map-into )
 (   \ : ? / * | \ < > "    )
-(   \ % ^ % & $ _ { } ~  ` )
+(   \ _ ^ % & $ _ { } ~    )
 
-create ncdm hex    (   \ % ^ % & $ _ { } ~   )
-    25 C,  5E C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
-create ndom hex    (   \ : ? / * | \ < > "   )
-    3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
+\ create ndom hex    (   \ : ? / * | \ < > "   )
+\     3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
+create ndom hex    (   : ? / * | \ < > "   )
+    char : c,  char ? c,  char / c,  char * c, 
+    char | c,  char \ c,  char < c,  char > c,  char " c,
+
+\ create ncdm hex    (   \ _ ^ % & $ _ { } ~   )
+\     5F C,  5E C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
+create ncdm hex    (   _ ^ % & $ _ { } ~   )
+    char _ c,  char ^ c,  char % c,  char & c,  
+    char $ c,  char _ c,  char { c,  char } c,  char ~ c,
 
 
 \ Replace illegal character in filename 
@@ -5499,7 +5506,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 86 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Direct Thread - build 20220219" -1 allot ]
+    [ decimal 13 here ," Direct Thread - build 20220227" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -6288,7 +6295,7 @@ CASEOFF
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-0 ' LIT 2- ! final_rp_patch 0 +ORIGIN ( SOURCE-ID @ F_CLOSE DROP ) BASIC
+0 ' LIT 2- ! final_rp_patch 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
 \
 \ Origin area.
 \

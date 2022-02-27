@@ -7,7 +7,9 @@ NEEDS TESTING
 NEEDS J
 NEEDS UNLOOP 
 
-( Test Suite - Dictionary  )
+( Test Suite - Counted Loops  )
+
+\ F.6.1.1380  -  EXIT
 
 TESTING F.6.1.2380 - UNLOOP
 

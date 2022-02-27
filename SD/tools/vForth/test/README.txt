@@ -13,7 +13,7 @@ illegal, namely:
    
 For this reason, many source files had to be renamed using the following map:
 
-    :           ->      %
+    :           ->      _
     ?           ->      ^
     /           ->      %
     *           ->      &
@@ -26,7 +26,7 @@ For this reason, many source files had to be renamed using the following map:
 Here is an example list of words which source filename went through this 
 mapping:
 
-    :           ->      %.f
+    :           ->      _.f
     /MOD        ->      %mod.f
     ?DUP        ->      ^dup.f    
     >R          ->      }r.f

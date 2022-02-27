@@ -7,6 +7,8 @@ NEEDS TESTING
 
 ( Test Suite - Dictionary  )
 
+\ F.6.1.1240  -  DO
+
 TESTING F.6.1.1800 - LOOP
 
 T{ : GD1 DO I LOOP ; -> }T

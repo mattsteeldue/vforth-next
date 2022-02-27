@@ -5,7 +5,10 @@
 
 NEEDS TESTING
 
-( Test Suite - Dictionary  )
+( Test Suite - Flow Control  )
+
+\ F.6.1.0760  -  BEGIN 
+\ F.6.1.2140  -  REPEAT
 
 TESTING F.6.1.2430 - WHILE
 
