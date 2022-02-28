@@ -9,8 +9,8 @@
 \
 : EVALUATE ( a u -- )
 
-    1 block b/buf erase
-    1 block swap b/buf min 
+    3 block b/buf erase
+    3 block swap b/buf min 
     cmove
 
     blk        @  >r  
@@ -18,7 +18,7 @@
     source-id  @  >r 
     
     -1 source-id !
-    1  blk       ! 
+    3  blk       ! 
     0  >in       !     
 
     interpret    
