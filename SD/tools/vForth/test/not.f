@@ -7,7 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Comparison        )
 
-TESTING F.6.1.0270 - 0= equivalent
+TESTING F.6.1.0270 - NOT  0= equivalent
 
 T{         0 NOT -> <TRUE>   }T
 T{         1 NOT -> <FALSE>  }T

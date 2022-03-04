@@ -5,7 +5,7 @@
 
 NEEDS TESTING
 
-( Test Suite - Dictionary  )
+( Test Suite - Flow Control  )
 
 \ F.6.1.1310  -  ELSE 
 \ F.6.1.2270  -  THEN

@@ -8,7 +8,7 @@ NEEDS TESTING
 
 ( Test Suite - Stack Operators      )
 
-TESTING F.6.1.0630 - ?DUP equivalent
+TESTING F.6.1.0630 - -DUP   ?DUP equivalent
 
 NEEDS -DUP
 

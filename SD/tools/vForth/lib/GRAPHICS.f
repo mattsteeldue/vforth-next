@@ -5,25 +5,24 @@
 \
 \
 
+\ in this library, x-coord is vertical and y-coord is horizontal
+
 NEEDS VALUE  
 NEEDS TO  
 NEEDS +TO 
 
 NEEDS 2OVER 
 NEEDS FLIP 
-NEEDS SPLIT
 
 NEEDS IDE_MODE!
-NEEDS IDE_MODE@
 
 NEEDS DEFER 
 NEEDS IS
-NEEDS CHAR+
 
 BASE @
 
 \ for easy development
-MARKER GRAPHICS
+MARKER NO-GRAPHICS
 
 \ current "color" used in subsequent operations
 \
@@ -69,6 +68,23 @@ HEX
 
 \ ____________________________________________________________________
 \
+.( COORD-CHECK ) \ check for pixel in range 
+\ ____________________________________________________________________
+\
+\
+256 CONSTANT H-RANGE \ this is y-coord
+192 CONSTANT V-RANGE \ this is x-coord
+
+DECIMAL
+\ depenging on current Graphic-Mode, determine if pixel is valid
+: COORD-CHECK  ( x y -- x y f )
+    2DUP H-RANGE U<    
+    SWAP V-RANGE U<    
+    AND                
+;
+
+\ ____________________________________________________________________
+\
 \ Deferred graphic-primitive definitions. 
 \ These definitions are vectored depending on Graphic-Mode.
 \ In some modes, they also fit on MMU7 the correct 8k page.
@@ -79,9 +95,6 @@ DEFER PIXELADD      ( x y -- a )
 
 \ depenging on current Graphic-Mode, set attribute byte
 DEFER PIXELATT      ( b a -- )
-
-\ depenging on current Graphic-Mode, determine if pixel is valid
-DEFER PIXELCHECK    ( x y -- x y f )
 
 \ depenging on current Graphic-Mode, plot a pixel using current ATTRIB
 DEFER PLOT          ( x y -- )
@@ -95,40 +108,6 @@ DEFER POINT         ( x y -- c )
 
 \ to adjust Layer 1,2 circle drawings
 DEFER XY-RATIO
-
-\ ____________________________________________________________________
-\
-.( PIXELCHECK ) \ check for pixel in range 
-\ ____________________________________________________________________
-\
-\ Layer 0
-\ This is valid for Layer 1,1  Layer 1,3 and Layer 2 modes too
-DECIMAL
-: L0-CHECK  ( x y -- x y f )
-    2DUP 256 U<                 \ x  y<256
-    SWAP 192 U<                 \ y<256   x<192
-    AND                         \ y<256 & x<192 
-;
-
-\ ____________________________________________________________________
-\
-\ Layer 1,0
-DECIMAL
-: L10-CHECK  ( x y -- x y f )
-    2DUP 128 U<                 \ x y<128
-    SWAP  96 U<                 \ y<128   x<96
-    AND                         \ y<128 & x<96
-;
-
-\ ____________________________________________________________________
-\
-\ Layer 1,2 - check for pixel in range 
-DECIMAL
-: L12-CHECK  ( x y -- x y f )
-    2DUP 512 U<                 \ x  y<512
-    SWAP 192 U<                 \ y<512   x<192
-    AND                         \ y<512 & x<192 
-;
 
 
 \ ____________________________________________________________________
@@ -255,10 +234,10 @@ HEX
 \ ____________________________________________________________________
 \
 \ This is valid for Layer 0  Layer 1,1  Layer 1,2 and Layer 1,3 modes
-\ PIXELCHECK, PIXELADD and PIXELATT are vectorized via DEFER..IS
+\ COORD-CHECK, PIXELADD and PIXELATT are vectorized via DEFER..IS
 HEX             
 : L0-PLOT       ( x y -- )
-    PIXELCHECK                  \ x y f
+    COORD-CHECK                 \ x y f
     IF                          \ x y
         TUCK                    \ y x y
         PIXELADD >R             \ y
@@ -276,10 +255,10 @@ HEX
 \
 \ Layer 2 PLOT
 \ This is valid for Layer 1,0 mode.
-\ PIXELCHECK and PIXELADD are vectorized via DEFER..IS
+\ COORD-CHECK and PIXELADD are vectorized via DEFER..IS
 DECIMAL
 : L2-PLOT  ( x y -- )
-    PIXELCHECK               
+    COORD-CHECK               
     IF
         PIXELADD 
         ATTRIB SWAP C!
@@ -296,7 +275,7 @@ DECIMAL
 \ This is valid for Layer 0  Layer 1,1  Layer 1,2 and Layer 1,3 mode
 HEX             
 : L0-UNPLOT       ( x y -- )
-    PIXELCHECK                  \ x y f
+    COORD-CHECK                 \ x y f
     IF
         TUCK                    \ y x y
         PIXELADD >R             \ y
@@ -323,7 +302,8 @@ HEX
         ,           \ PLOT      
         ,           \ POINT     
         ,           \ PIXELADD  
-        ,           \ PIXELCHECK
+        ,           \ V-RANGE
+        ,           \ H-RANGE
         C,          \ Layer number mode
         C,          \ char-size
     DOES>
@@ -333,8 +313,9 @@ HEX
         DUP  @  IS  PLOT        CELL+
         DUP  @  IS  POINT       CELL+
         DUP  @  IS  PIXELADD    CELL+
-        DUP  @  IS  PIXELCHECK  CELL+
-        DUP C@  LAYER!          CHAR+
+        DUP  @  TO  H-RANGE     CELL+
+        DUP  @  TO  V-RANGE     CELL+
+        DUP C@  LAYER!          1+
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
 ;        
 
@@ -343,7 +324,7 @@ HEX
 HEX
 .( LAYER0 )
     00  00          \ 00 char-size means no effect.
-    ' L0-CHECK      \ PIXELCHECK
+    0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT       
     ' L0-PLOT       \ PLOT        
@@ -356,7 +337,7 @@ HEX
 
 .( LAYER10 )
     04  10          \ 04 char-size to allow 64 chars per row
-    ' L10-CHECK     \ PIXELCHECK
+    60  80          \ V-RANGE and H-RANGE
     ' L10-PIXELADD  \ PIXELADD  
     ' L2-POINT      \ POINT     
     ' L2-PLOT       \ PLOT      
@@ -371,7 +352,7 @@ HEX
 
 .( LAYER11 )
     04  11          \ 04 char-size to allow 64 chars per row
-    ' L0-CHECK      \ PIXELCHECK  
+    0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT       
     ' L0-PLOT       \ PLOT        
@@ -385,7 +366,7 @@ HEX
 
 .( LAYER12 )
     08  12          \ 08 char-size is normal 64 chars per row
-    ' L12-CHECK     \ PIXELCHECK
+    0C0 200         \ V-RANGE and H-RANGE
     ' L12-PIXELADD  \ PIXELADD  
     ' L0-POINT      \ POINT     
     ' L0-PLOT       \ PLOT      
@@ -398,7 +379,7 @@ HEX
 
 .( LAYER13 )
     04  13          \ 04 char-size to allow 64 chars per row
-    ' L0-CHECK      \ PIXELCHECK
+    0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD  
     ' L0-POINT      \ POINT     
     ' L0-PLOT       \ PLOT      
@@ -411,7 +392,7 @@ HEX
 
 .( LAYER2 )
     04  20          \ 04 char-size to allow 64 chars per row
-    ' L0-CHECK      \ PIXELCHECK
+    0C0 100         \ V-RANGE and H-RANGE
     ' L2-PIXELADD   \ PIXELADD  
     ' L2-POINT      \ POINT     
     ' L2-PLOT       \ PLOT      
@@ -533,10 +514,12 @@ HEX
     UNTIL
     R> DROP 2DROP
 ;
+
 : PAINT-HIT2 ( x y -- )
-    DUP 1 PAINT-HIT 
-       -1 PAINT-HIT
+    2DUP 1 PAINT-HIT 
+        -1 PAINT-HIT
 ;
+
 : PAINT-HITX ( x y d -- )
     >R
     BEGIN
@@ -553,6 +536,10 @@ HEX
     2DUP 1 PAINT-HITX
         -1 PAINT-HITX
 ;
+
+
+: GRAPHICS ;
+
     
 BASE !
 

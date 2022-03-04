@@ -7,6 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Number Patterns )
 
+\ F.6.1.1660  -  HEX
 \ F.6.1.1170  -  DECIMAL
 
 TESTING F.6.1.0750  -  BASE

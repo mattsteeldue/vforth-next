@@ -9,6 +9,8 @@ NEEDS TESTING
 
 TESTING F.6.1.0140 - +LOOP
 
+DECIMAL
+
 T{ : GD2 DO I -1 +LOOP ; -> }T
 T{        1          4 GD2 -> 4 3 2  1 }T
 T{       -1          2 GD2 -> 2 1 0 -1 }T
@@ -63,3 +65,4 @@ T{  0 0 MAX-UINT -ustep gd8 -> 256 }T
 T{  0 MAX-INT MIN-INT step gd8 -> 256 }T
 T{  0 MIN-INT MAX-INT -step gd8 -> 256 }T
 
+HEX

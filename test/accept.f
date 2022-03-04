@@ -5,6 +5,8 @@
 
 NEEDS TESTING
 
+NEEDS CHARS
+
 ( Test Suite - Input  )
 
 TESTING F.6.1.0695    -   ACCEPT

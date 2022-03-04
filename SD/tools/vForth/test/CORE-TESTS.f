@@ -4,25 +4,23 @@
 
 MARKER TESTING-TASK
 
-WARNING @ 0 WARNING !
+WARNING @ 
+0 WARNING ! \ reduce messaging #4
 
     NEEDS TESTING
+
+WARNING !
     
+    NEEDS :NONAME
     NEEDS 2OVER
     NEEDS 2ROT
     NEEDS 2SWAP
-    NEEDS :NONAME
-    NEEDS :NONAME
     NEEDS ALIGN
     NEEDS ALIGNED
-    NEEDS CASE  
-    NEEDS CHAR+
-    NEEDS CHAR+
+    NEEDS CASE
     NEEDS CHAR+ 
     NEEDS CHARS
-    NEEDS CHARS
     NEEDS DEPTH
-    NEEDS FIND
     NEEDS FIND
     NEEDS FM/MOD 
     NEEDS INVERT
@@ -33,11 +31,9 @@ WARNING @ 0 WARNING !
     NEEDS RECURSE
     NEEDS S"
     NEEDS SM/REM
-    NEEDS TESTING
     NEEDS UNLOOP
     NEEDS ['] 
     
-WARNING !
 
 \ Save base value
 BASE    @ HEX \ all test needs base 16.
@@ -81,7 +77,7 @@ TESTING \ F.3.5 Comparison
     INCLUDE  test/max.f
 
     INCLUDE  test/not.f     \ NOT 
-    INCLUDE  test/{}.f      \ NOT 
+    INCLUDE  test/{}.f      \ <>
 
 TESTING \ F.3.6 Stack Operators
 
@@ -126,6 +122,7 @@ TESTING \ F.3.9 Multiplication
     INCLUDE  test/&.f       \ *
     INCLUDE  test/m&.f      \ M*
     INCLUDE  test/um&.f     \ UM*
+    
 
 TESTING \ F.3.10 Division
 
@@ -138,6 +135,7 @@ TESTING \ F.3.10 Division
     INCLUDE  test/%.f       \ /
     INCLUDE  test/mod.f     \ MOD
     INCLUDE  test/&%.f      \ */
+    INCLUDE  test/m&%.f     \ M*/
 
 TESTING \ F.3.11 Memory
 
@@ -156,7 +154,6 @@ TESTING \ F.3.12 Characters
     INCLUDE  test/[char].f
     INCLUDE  test/[.f
     INCLUDE  test/s~.f      \ S" 
-\ using heap corrupts ram paging ?
 
 TESTING \ F.3.13 Dictionary
 
@@ -182,40 +179,44 @@ TESTING \ F.3.15 Counted Loops
     INCLUDE  test/j.f     
     INCLUDE  test/leave.f    
     INCLUDE  test/unloop.f 
+    
+    INCLUDE  test/^do.f     \ ?DO
 
 
 TESTING \ F.3.16 Defining Words
 
     INCLUDE  test/constant.f
     INCLUDE  test/variable.f
+    INCLUDE  test/}body.f       
     INCLUDE  test/does}.f
-    INCLUDE  test/}body.f
-
-    INCLUDE  test/_noname.f
 
 TESTING \ F.3.17 Evaluate
 
-    INCLUDE  test/evaluate.f
+    INCLUDE  test/evaluate.f        \ has a bug
+    
+( end of test session )
+BASE !
+EXIT
 
 TESTING \ F.3.18 Parser Input Source Control
 
     INCLUDE  test/source.f
-    INCLUDE  test/}in.f
-    INCLUDE  test/word.f
+\   INCLUDE  test/}in.f             \ has bug
+        INCLUDE  test/word.f        \ has bug
 
 TESTING \ F.3.19 Number Patterns
 
-    INCLUDE  test/hold.f
-    INCLUDE  test/sign.f
+    INCLUDE  test/hold.f            \ has bug
+    INCLUDE  test/sign.f            \ has bug
     INCLUDE  test/#.f
-    INCLUDE  test/#s.f
+    INCLUDE  test/#s.f              \ has bug
     INCLUDE  test/}number.f
     INCLUDE  test/base.f
 
 TESTING \ F.3.20 Memory movement
 
-    INCLUDE  test/fill.f
-    INCLUDE  test/move.f
+    INCLUDE  test/fill.f            \ has bug
+    INCLUDE  test/move.f            \ has bug
 
 TESTING \ F.3.21 Output
 
@@ -227,11 +228,39 @@ TESTING \ F.3.22 Input
 
 TESTING \ F.3.23 Dictionary Search Rules 
 
-    INCLUDE  test/_.f
-
-TESTING \ other
-
-    INCLUDE  test/(.f
+    INCLUDE  test/_.f               \ has bug
 
 ( end of test session )
 BASE !
+EXIT
+
+TESTING \ other
+
+    NEEDS BUFFER:
+    NEEDS C"
+    NEEDS COMPILE,
+    NEEDS ACTION-OF
+    NEEDS DEFER
+    NEEDS DEFER!
+    NEEDS DEFER@
+    NEEDS IS
+    NEEDS CASE
+    NEEDS FALSE
+
+    INCLUDE  test/(.f           ( filler )
+    INCLUDE  test/_noname.f
+    INCLUDE  test/buffer_.f
+    INCLUDE  test/c~.f
+    INCLUDE  test/case.f
+    INCLUDE  test/compile,.f
+    INCLUDE  test/action-of.f
+    INCLUDE  test/defer.f
+    INCLUDE  test/defer!.f
+    INCLUDE  test/defer@.f
+    INCLUDE  test/is.f
+    INCLUDE  test/false.f   
+    INCLUDE  test/holds.f
+    INCLUDE  test/parse-name.f
+    INCLUDE  test/save-input.f
+    
+

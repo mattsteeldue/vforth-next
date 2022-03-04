@@ -28,8 +28,9 @@ T{ CR1   -> 3 }T
 
 T{ WEIRD: W1 -> }T
 
-\ T{ ' W1 >BODY -> HERE    }T
-  T{ ' W1 >BODY -> HERE 2+ }T
+\ T{ ' W1 >BODY -> HERE     }T
+  T{ ' W1 >BODY -> HERE 2 - }T   \ vForth allocates a cell more
 
-\ T{ W1 -> HERE 1 + }T
-  T{ W1 -> HERE 2 + }T
+\ T{ W1 -> HERE 1 + }T           \ This produces incorrect result.
+\ T{ W1 -> HERE 2 + }T           \ This produces incorrect result.
+

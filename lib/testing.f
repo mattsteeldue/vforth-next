@@ -29,6 +29,11 @@ NEEDS INVERT
 NEEDS SOURCE
 NEEDS .S
 NEEDS <>
+NEEDS COMPARE
+
+: S= \ ( addr1 c1 addr2 c2 -- t/f )  \ Compare two strings.
+    COMPARE 0=
+;
 
 \
 

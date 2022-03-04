@@ -1,0 +1,13 @@
+\
+\ test/false.f
+\
+
+
+NEEDS TESTING
+
+NEEDS FALSE
+
+TESTING F.6.2.1485 - FALSE
+
+T{ FALSE -> 0 }T
+T{ FALSE -> <FALSE> }T
