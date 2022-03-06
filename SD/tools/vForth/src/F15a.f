@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220227 ) CR
+.( build 20220306 ) CR
 \
 \ Indirect-Thread - NextZXOS version
 \ ______________________________________________________________________ 
@@ -5484,7 +5484,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Thread - build 20220227" -1 allot ]
+    [ decimal 13 here ," Indirect Thread - build 20220306" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
