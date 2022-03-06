@@ -320,3 +320,6 @@ Slight modification in illegal filename character map.
 Improvement in GRAPHICS libary that now can handle every Graphics-Mode.
 
  
+\ build 20220306
+Improving GRAPHICS
+
