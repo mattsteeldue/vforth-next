@@ -109,6 +109,8 @@ DEFER POINT         ( x y -- c )
 \ to adjust Layer 1,2 circle drawings
 DEFER XY-RATIO
 
+\ 
+DEFER EDGE
 
 \ ____________________________________________________________________
 \
@@ -229,6 +231,22 @@ HEX
 
 \ ____________________________________________________________________
 \
+.( EDGE ) \ edge decision
+\ ____________________________________________________________________
+\
+\ This is valid for Layer 1,0 and Layer 2 mode
+: L2-EDGE  ( b -- f )
+    ATTRIB =
+;
+ 
+\ This is valid for Layer 0  Layer 1,1  Layer 1,2 and Layer 1,3 modes
+HEX
+: L0-EDGE  ( b -- f )
+    0= NOT
+;
+
+\ ____________________________________________________________________
+\
 .( PLOT ) \ set pixel x,y to color/status kept by ATTRIB
 
 \ ____________________________________________________________________
@@ -296,6 +314,7 @@ HEX
 HEX
 : IS-LAYER
     <BUILDS
+        ,           \ EDGE
         ,           \ XY-RATIO
         ,           \ PIXELATT  
         ,           \ UNPLOT    
@@ -307,6 +326,7 @@ HEX
         C,          \ Layer number mode
         C,          \ char-size
     DOES>
+        DUP  @  IS  EDGE        CELL+
         DUP  @  IS  XY-RATIO    CELL+
         DUP  @  IS  PIXELATT    CELL+
         DUP  @  IS  UNPLOT      CELL+
@@ -331,6 +351,7 @@ HEX
     ' L0-UNPLOT     \ UNPLOT      
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
+    ' NOOP          \ EDGE 
         IS-LAYER LAYER0  
 
 \ ____________________________________________________________________
@@ -344,6 +365,7 @@ HEX
     ' NOOP          \ UNPLOT    
     ' 2DROP         \ PIXELATT (has no meaning for Layer 1,0)
     ' NOOP          \ XY-RATIO  
+    ' L2-EDGE       \ EDGE 
         IS-LAYER LAYER10 
 
 
@@ -359,6 +381,7 @@ HEX
     ' L0-UNPLOT     \ UNPLOT      
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
+    ' NOOP          \ EDGE 
         IS-LAYER LAYER11 
 
 
@@ -373,6 +396,7 @@ HEX
     ' L0-UNPLOT     \ UNPLOT    
     ' 2DROP         \ PIXELATT  
     ' 2/            \ XY-RATIO  
+    ' NOOP          \ EDGE 
         IS-LAYER LAYER12 
 
 \ ____________________________________________________________________
@@ -386,6 +410,7 @@ HEX
     ' L0-UNPLOT     \ UNPLOT    
     ' L13-PIXELATT  \ PIXELATT  
     ' NOOP          \ XY-RATIO  
+    ' NOOP          \ EDGE 
         IS-LAYER LAYER13 
 
 \ ____________________________________________________________________
@@ -399,6 +424,7 @@ HEX
     ' NOOP          \ UNPLOT    
     ' 2DROP         \ PIXELATT (has no meaning for Layer 2)
     ' NOOP          \ XY-RATIO  
+    ' L2-EDGE       \ EDGE 
         IS-LAYER LAYER2  
 
 \ ____________________________________________________________________
@@ -502,6 +528,7 @@ DECIMAL
 \ ____________________________________________________________________
 \
 .( PAINT )
+
 \
 HEX
 : PAINT-HIT ( x y d -- )
@@ -510,7 +537,7 @@ HEX
         ?TERMINAL IF QUIT THEN
         2DUP PLOT
         R@ + 1FF AND
-        2DUP POINT
+        2DUP POINT EDGE
     UNTIL
     R> DROP 2DROP
 ;
@@ -524,7 +551,7 @@ HEX
     >R
     BEGIN
         SWAP R@ + 0FF AND SWAP
-        2DUP POINT 0=
+        2DUP POINT EDGE NOT
     WHILE
         2DUP PAINT-HIT2
     REPEAT
