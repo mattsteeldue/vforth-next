@@ -327,4 +327,6 @@ Improving GRAPHICS
 Introducing REMOUNT definition: now to copy a file to SD Card you don't need to switch to Basic anymore.
 You can even change the BLOCKs file used by changing the content of BLK-FNAME that is a zero-padded counted-string.
 Clarified the color definitions (INK/PAPER...)  
+Now there are two distinct Basic Loader to better handle the two flavors Direct vs Indirect Threaded.
+In the documentation, introduction of a simple word categorization to help the navigation across the vocabulary
     
