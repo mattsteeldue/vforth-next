@@ -279,13 +279,9 @@ ULess_Skip:
                 ld      a, d
                 xor     $80
                 ld      d, a
-                and     a
+//              and     a
                 sbc     hl, de
-                ld      hl, -1
-                jr      c, Less_Skip
-                    inc     hl
-Less_Skip:
-
+                sbc     hl, hl
                 psh1
 
 //  ______________________________________________________________________ 

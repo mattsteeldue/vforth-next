@@ -22,6 +22,8 @@ CODE  CALL#  ( n1 -- n2 )
     DD C, E1 C, C1 C,       \ pop ix    pop bc
     E5 C,                   \ push hl
     DD C, E9 C,             \ jp ix
+
+    FORTH
     SMUDGE
 \
 BASE !

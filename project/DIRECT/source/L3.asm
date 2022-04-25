@@ -700,9 +700,9 @@ Index_Leave:
                 Colon_Def SPLASH, "SPLASH", is_normal
                 dw      CLS
                 dw      C_DOT_QUOTE
-                db      86
+                db      88
                 db      "v-Forth 1.52 NextZXOS version", 13    // 29
-                db      "Direct Thread - build 20220227", 13  // 31
+                db      "Direct Threaded - build 20220425", 13  // 31
                 db      "1990-2022 Matteo Vitturi", 13        // 25
                 dw      EXIT
 

@@ -1,9 +1,9 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220306 ) CR
+.( build 20220425 ) CR
 \
-\ Direct Thread - NextZXOS version
+\ Direct Threaded - NextZXOS version
 \ ______________________________________________________________________ 
 \
 \ This work is available as-is with no whatsoever warranty.
@@ -123,6 +123,7 @@ DECIMAL
      0  VALUE     next^         \ ptr to NEXT in inner interpreter
      0  VALUE     exec^         \ ptr to exec xt
      0  VALUE     branch^       \ PFA of BRANCH
+     0  VALUE     branch^^      \ ptr to be patched with PFA of BRANCH
      0  VALUE     loop^         \ entry-point for compiled (+LOOP)
      0  VALUE     do^           \ entry-point for compiled (DO)
      0  VALUE     emitc^        \ entry-point for EMITC
@@ -237,7 +238,7 @@ DECIMAL
     ; 
     IMMEDIATE
     
-\ : Then ( a 2 -- ) \ compile-time 
+\ : Endif ( a 2 -- ) \ compile-time 
 \        (     -- )  \ run-time
 \     [COMPILE] Then 
 \     ; 
@@ -491,56 +492,13 @@ CODE lit ( -- n )
 \ execution token. usually xt is given by CFA
 CODE execute ( xt -- )
          
-        POP     HL|
+        RET
 \     \ JP      exec^  AA,
 \       JR      exec^  HERE 1 + - D,
-        JPHL
+
 \ in general, we use JR within the same definition, JP to go beyond.
 \ but it can be useful using JR in some closest words to save a few bytes
         C;
-
-
-\ 6153h
-.( BRANCH )
-\ unconditional branch in colon definition
-\ compiled by ELSE, AGAIN and some other immediate words
-CODE branch ( -- )
-\ 615E
-         
-    HERE TO branch^
-    
-        LD      H'|    B|
-        LD      L'|    C|
-        LD      E'| (HL)|
-        INCX    HL|
-        LD      D'| (HL)|
-        DECX    HL|
-        ADDHL   DE|
-        LD      C'|    L|
-        LD      B'|    H|
-        Next
-        C;
-        
-        ' branch TO branch~
-
-
-\ 616Ah
-.( 0BRANCH )
-\ conditional branch if the top-of-stack is zero.
-\ compiled by IF, UNTIL and some other immediate words
-CODE 0branch ( f -- )
-         
-        POP     HL|
-        LD      A'|    L|
-        ORA      H|
-        JPF      Z|    branch^  AA,
-\     \ JRF     Z'|    branch^  HERE 1 + - D,
-        INCX    BC|
-        INCX    BC|
-        Next
-        C;
-        
-        ' 0branch TO 0branch~
 
 
 \ 6181h
@@ -586,7 +544,8 @@ CODE (+loop) ( n -- )
         JRF    CY'|    HOLDPLACE
             \ stay in loop, increment index
             EXX
-            JP         branch^  AA,
+            JR      HERE  TO  branch^^    26  D,
+          \  JP         branch^  AA,
         HERE DISP, \ THEN,
 
         EXDEHL  
@@ -608,11 +567,73 @@ CODE (+loop) ( n -- )
 CODE (loop)    ( -- )
          
         PUSHN   1  LH,
-        JP      loop^  AA,
-\     \ JR      loop^  HERE 1 + - D,
+      \ JP      loop^  AA,
+        JR      loop^  HERE 1 + - D,
         C;
 
         ' (loop) TO (loop)~
+
+
+\ 6153h
+.( BRANCH )
+\ unconditional branch in colon definition
+\ compiled by ELSE, AGAIN and some other immediate words
+CODE branch ( -- )
+\ 615E
+         
+    HERE TO branch^
+    
+        LD      H'|    B|
+        LD      L'|    C|
+        LD      E'| (HL)|
+        INCX    HL|
+        LD      D'| (HL)|
+        DECX    HL|
+        ADDHL   DE|
+        LD      C'|    L|
+        LD      B'|    H|
+        Next
+        C;
+        
+        ' branch TO branch~
+
+        branch^  branch^^  1+ -  branch^^ C!
+
+
+\ 616Ah
+.( 0BRANCH )
+\ conditional branch if the top-of-stack is zero.
+\ compiled by IF, UNTIL and some other immediate words
+CODE 0branch ( f -- )
+         
+        POP     HL|
+        LD      A'|    L|
+        ORA      H|
+      \ JPF      Z|    branch^  AA,
+        JRF     Z'|    branch^  HERE 1 + - D,
+        INCX    BC|
+        INCX    BC|
+        Next
+        C;
+        
+        ' 0branch TO 0branch~
+
+
+CODE (leave) ( -- )
+
+        HERE !rp^ 
+        LDHL,RP              \ macro 30h +Origin
+        
+        LDX     DE|  4  NN,  \ UNLOOP index & limit from Return Stack      
+        ADDHL   DE|
+
+        HERE !rp^
+        LDRP,HL              \ macro 30h +Origin
+        
+      \ JP      branch^  AA, \ jump out of loop
+        JR      branch^  HERE 1 + - D,
+        Next
+        C;       
 
 
 \ new
@@ -632,8 +653,8 @@ CODE (?do)      ( lim ind -- )
         JRF    NZ'| HOLDPLACE \ if lim == ind
             POP     DE|
             POP     HL|
-            JP      branch^  AA,
-\         \ JR      branch^  HERE 1 + - D,
+          \ JP      branch^  AA,
+            JR      branch^  HERE 1 + - D,
         HERE DISP, \ THEN,
         
     HERE TO do^
@@ -679,8 +700,8 @@ CODE (do) ( lim ind -- )
          
         DECX    BC|     \ balance the two INC BC at end of (?DO)
         DECX    BC|
-        JP      do^  AA,
-\     \ JR      do^  HERE 1 +  - D, 
+      \ JP      do^  AA,
+        JR      do^  HERE 1 +  - D, 
         C;
 
         ' (do) TO (do)~
@@ -712,7 +733,7 @@ CODE i' ( -- lim )
         LDHL,RP              \ macro 30h +Origin
         INCX    HL|
         INCX    HL|
-        JR      BACK,
+        JR      BACK,        \ jump to "HERE" on I 
         C;
 
 
@@ -1061,6 +1082,17 @@ CODE emitc     ( c -- )
         LD()A   HEX 5C8C AA,    \ SCR-CT system variable
         Next
         C;
+
+
+\ 6396h
+.( CR )
+\ sends a CR via EMITC.
+CODE cr  ( -- )
+         
+        LDN     A'|     HEX 0D N,
+        JR      emitc^  HERE 1 +  - D, 
+        C;
+
 
 \ conversion table for (?EMIT)
 HERE TO EMIT-A^   
@@ -1568,16 +1600,6 @@ CODE f_readdir ( a1 a2 fh -- n f )
 \ ______________________________________________________________________ 
 \ 
 
-\ 6396h
-.( CR )
-\ sends a CR via EMITC.
-CODE cr  ( -- )
-         
-        LDN     A'|     HEX 0D N,
-        JP      emitc^  AA,
-        C;
-
-
 \ 63A2h
 .( CMOVE )
 \ If n > 0, moves memory content starting at address a1 for n bytes long
@@ -1887,23 +1909,6 @@ CODE exit ( -- )
 \         C;       
 
 
-CODE (leave) ( -- )
-
-        HERE !rp^ 
-        LDHL,RP              \ macro 30h +Origin
-        
-        LDX     DE|  4  NN,  \ UNLOOP index & limit from Return Stack      
-        ADDHL   DE|
-
-        HERE !rp^
-        LDRP,HL              \ macro 30h +Origin
-        
-        JP      branch^  AA, \ jump out of loop
-
-        Next
-        C;       
-
-
 \ 64FCh
 .( >R )
 \ pop from calculator-stack and push into return-stack
@@ -1959,13 +1964,13 @@ CODE r@ ( -- n )
         AA,
         C;
 
-CODE r  ( -- n )         
-         
-        \ this way we will have a real duplicate of I
-        JP
-        ' i  \ >BODY  LATEST PFA CELL- ! 
-        AA,
-        C;
+\ CODE r  ( -- n )         
+\          
+\         \ this way we will have a real duplicate of I
+\         JP
+\         ' i  \ >BODY  LATEST PFA CELL- ! 
+\         AA,
+\         C;
 
 
 \ 652Ch
@@ -3016,12 +3021,8 @@ CODE <  ( n1 n2 -- f )
         LD      A'|   D|
         XORN    HEX 80   N,  DECIMAL
         LD      D'|   A|
-        ANDA     A|
-        SBCHL   DE|
-        LDX     HL| -1 NN,          \ true
-        JRF    CY'| HOLDPLACE
-            INCX     HL|
-        HERE DISP, \ THEN,
+        SBCHL   DE|     \ set carry-flag if n1 < n2
+        SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
         PUSH    HL|
         Next
         C;
@@ -5017,7 +5018,7 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ Given an open filehandle read at most  m  characters to get next line
 \ terminated with $0D or $0A.
 \ n is the actual number of byte read, that is the length of line.
-\ Buffer must be m bytes long to accomodate a trailing 0x00 at m-th byte.
+\ Buffer must be m bytes long to accommodate a trailing 0x00 at m-th byte.
 decimal
 : f_getline ( a m fh -- n )
     >r tuck                                     \ m a m         R: fh
@@ -5505,8 +5506,8 @@ decimal
 : splash
     cls
     [compile] (.")
-    [ decimal 86 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Direct Thread - build 20220306" -1 allot ]
+    [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
+    [ decimal 13 here ," Direct Threaded - build 20220425" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -6224,11 +6225,10 @@ RENAME   0>             0>
 RENAME   0<             0< 
 RENAME   not            NOT
 RENAME   0=             0= 
-RENAME   r              R 
+\ RENAME   r              R 
 RENAME   r@             R@
 RENAME   r>             R> 
 RENAME   >r             >R 
-RENAME   (leave)        (LEAVE)
 \ RENAME   lastl          LASTL
 RENAME   exit           EXIT  
 RENAME   rp!            RP! 
@@ -6271,10 +6271,11 @@ RENAME   i'             I'
 RENAME   i              I      
 RENAME   (do)           (DO)   
 RENAME   (?do)          (?DO)  
-RENAME   (+loop)        (+LOOP)
-RENAME   (loop)         (LOOP) 
+RENAME   (leave)        (LEAVE)
 RENAME   0branch        0BRANCH
 RENAME   branch         BRANCH 
+RENAME   (+loop)        (+LOOP)
+RENAME   (loop)         (LOOP) 
 RENAME   execute        EXECUTE
 RENAME   lit            LIT
 

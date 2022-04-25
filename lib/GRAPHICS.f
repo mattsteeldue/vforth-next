@@ -10,6 +10,7 @@
 NEEDS VALUE  
 NEEDS TO  
 NEEDS +TO 
+NEEDS ENUM
 
 NEEDS 2OVER 
 NEEDS FLIP 
@@ -24,9 +25,47 @@ BASE @
 \ for easy development
 MARKER NO-GRAPHICS
 
+
+\ ____________________________________________________________________
+\
+\ Color basic definitions
+
+007 CONSTANT COLOR-MASK
+001 CONSTANT FLAG-MASK
+
+ENUM BASIC-COLOR
+     BASIC-COLOR  _BLACK
+     BASIC-COLOR  _BLUE
+     BASIC-COLOR  _RED
+     BASIC-COLOR  _MAGENTA
+     BASIC-COLOR  _GREEN
+     BASIC-COLOR  _CYAN
+     BASIC-COLOR  _YELLOW
+     BASIC-COLOR  _WHITE
+
+
 \ current "color" used in subsequent operations
 \
 0   VALUE  ATTRIB
+
+\ this definition needs 3 params
+\  b :  attribute value
+\  c :  character between 16 and 21
+\  n :  mask applied to b to avoid Basic's errors.
+: (COLOR)       ( b c n -- )
+  ROT AND 
+  DUP TO ATTRIB
+  SWAP EMITC EMITC
+;
+
+DECIMAL
+: .INK      16  COLOR-MASK (COLOR) ;
+: .PAPER    17  COLOR-MASK (COLOR) ;
+: .FLASH    18  FLAG-MASK  (COLOR) ;
+: .BRIGHT   19  FLAG-MASK  (COLOR) ;
+: .INVERSE  20  FLAG-MASK  (COLOR) ;
+: .OVER     21  FLAG-MASK  (COLOR) ;
+
 
 \ ____________________________________________________________________
 \
@@ -134,6 +173,7 @@ CODE L0-PIXELADD   ( x y -- a )
 \
 \ Layer 0 PIXELATT
 \ convert Display File address into Attribute address   
+HEX
 CODE L0-PIXELATT    ( b a -- )
     E1 C,           \ pop   hl  ; display file address
     7C C,           \ ld    a, h
@@ -323,6 +363,8 @@ HEX
         ,           \ PIXELADD  
         ,           \ V-RANGE
         ,           \ H-RANGE
+        C,          \ color mask 
+        C,          \ flag mask 
         C,          \ Layer number mode
         C,          \ char-size
     DOES>
@@ -335,6 +377,8 @@ HEX
         DUP  @  IS  PIXELADD    CELL+
         DUP  @  TO  H-RANGE     CELL+
         DUP  @  TO  V-RANGE     CELL+
+        DUP C@  TO  COLOR-MASK  1+
+        DUP C@  TO  FLAG-MASK   1+
         DUP C@  LAYER!          1+
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
 ;        
@@ -344,6 +388,7 @@ HEX
 HEX
 .( LAYER0 )
     00  00          \ 00 char-size means no effect.
+    1 7             \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT       
@@ -358,6 +403,7 @@ HEX
 
 .( LAYER10 )
     04  10          \ 04 char-size to allow 64 chars per row
+    1 0FF           \ Attribute masks
     60  80          \ V-RANGE and H-RANGE
     ' L10-PIXELADD  \ PIXELADD  
     ' L2-POINT      \ POINT     
@@ -374,6 +420,7 @@ HEX
 
 .( LAYER11 )
     04  11          \ 04 char-size to allow 64 chars per row
+    1 7             \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT       
@@ -389,6 +436,7 @@ HEX
 
 .( LAYER12 )
     08  12          \ 08 char-size is normal 64 chars per row
+    1 7             \ Attribute masks
     0C0 200         \ V-RANGE and H-RANGE
     ' L12-PIXELADD  \ PIXELADD  
     ' L0-POINT      \ POINT     
@@ -403,6 +451,7 @@ HEX
 
 .( LAYER13 )
     04  13          \ 04 char-size to allow 64 chars per row
+    1 7             \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD  
     ' L0-POINT      \ POINT     
@@ -417,6 +466,7 @@ HEX
 
 .( LAYER2 )
     04  20          \ 04 char-size to allow 64 chars per row
+    1 0FF           \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L2-PIXELADD   \ PIXELADD  
     ' L2-POINT      \ POINT     

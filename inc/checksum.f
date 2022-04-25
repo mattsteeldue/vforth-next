@@ -28,6 +28,7 @@ CODE CHECKSUM ( a n -- n2 )
         D9 C,       \   exx
         DD C, E9 C, \   jpix  
         
-        SMUDGE 
+    FORTH
+    SMUDGE
 
 BASE !

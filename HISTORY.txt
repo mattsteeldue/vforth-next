@@ -70,7 +70,7 @@ This shows how easily we can rebuild this system !
 
 
 \ build 20200721
-Fixed v-Forth name in spash screen.
+Fixed v-Forth name in splash screen.
 Restored flashing cursor. Improved SEE.
 Fixed CASEOFF and CASEON to accept lower-case input.
 
@@ -323,3 +323,8 @@ Improvement in GRAPHICS libary that now can handle every Graphics-Mode.
 \ build 20220306
 Improving GRAPHICS
 
+\ build 20220425
+Introducing REMOUNT definition: now to copy a file to SD Card you don't need to switch to Basic anymore.
+You can even change the BLOCKs file used by changing the content of BLK-FNAME that is a zero-padded counted-string.
+Clarified the color definitions (INK/PAPER...)  
+    

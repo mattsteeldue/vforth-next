@@ -38,7 +38,9 @@ CODE >FAR ( ha -- a n )
     D5 C,             \     push    de     
     E5 C,             \     push    hl     
     DD C, E9 C,       \     jp      (ix)   
-SMUDGE
+
+    FORTH
+    SMUDGE
 
 BASE !
 

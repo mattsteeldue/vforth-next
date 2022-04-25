@@ -22,6 +22,8 @@ CODE (ms) ( n -- )       \ 0 <= n <= 255
     20 C, F9 C, \   JRF  NZ'| BACK,    \ 12/7 T : 3500 T  ( -5 T on exit)
     42 C,       \   LD   B'|  D|       \    4 T
     DD C, E9 C, \   JP(IX)
+
+    FORTH
     SMUDGE
 
 : ms

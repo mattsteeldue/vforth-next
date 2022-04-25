@@ -16,6 +16,8 @@ CODE FLIP ( n1 -- n2 )
     67 C,       \   ld   h,a
     E5 C,       \   push hl
     DD C, E9 C, \   jp   (ix)
-SMUDGE 
+
+    FORTH
+    SMUDGE
         
 BASE !

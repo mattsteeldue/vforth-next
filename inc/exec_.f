@@ -31,6 +31,7 @@ CODE EXEC:  ( n -- )
     EB      C,      \   ex      de, hl
     E9      C,      \   jp      (hl)
 
-SMUDGE
+    FORTH
+    SMUDGE
 
 BASE !

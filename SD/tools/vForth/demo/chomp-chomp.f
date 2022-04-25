@@ -1,248 +1,225 @@
-\
+\ 
 \ chomp-chomp.f
 \
+\ This is a simple pac-man like game. 
+\ Arrorw keys or Cursor Joystick should work.
+\ 
+\ It uses old-fashion UDG's and standard ROM-BEEP
+
 
 .( Chomp-Chomp GAME ) 
 
-MARKER CHOMP-CHOMP
+MARKER CHOMP-CHOMP      \ Used to remove the program
 FORTH DEFINITIONS 
 
-BASE @
+BASE @                  \ save current base, restored at end
 
 CASEOFF                 \ ignore case for this source
 
-FLUSH EMPTY-BUFFERS     \ just stay clean
+FLUSH EMPTY-BUFFERS     \ ensure no i/o operation due to BLOCKs
 
-NEEDS VALUE  
-NEEDS TO  
-NEEDS CASE
-NEEDS LAYERS            \ Sinclair ZX Spectrum Next - Layer 1,1
+NEEDS GRAPHICS          \ this provides LAYERs and INK/PAPER/BRIGHT
+
+NEEDS .AT
+NEEDS .BORDER
+NEEDS .PERM
+
 NEEDS SPEED!            \ Sinclair ZX Spectrum Next - Run up to 28 MHz
-
 NEEDS CHOOSE            \ Brodie's random numbers
 
-\ decimal  50 load \ bleep
+NEEDS CASE              \ useful syntax CASE-OF
 
-.( BLEEP ) CR
+
+\ invokes standard ROM BEEP routine.
 \
-( n1 = {3.5M/Hz-241}/8 )
+( n1 = { 3.5M / Hz - 241 } / 8 )
 ( n2 = 1000 * ms / Hz )
 \
-CODE  BLEEP  HEX
-  E1 C,                 \ pop hl
-  D1 C,                 \ pop de
-  C5 C,                 \ push bc
-  DD C, E5 C,           \ push ix
-  CD C, 03B5 ,          \ call 03B5
-  DD C, E1 C,           \ pop ix
-  C1 C,                 \ pop bc
-  DD C, E9 C, ( NEXT )  \ jp (ix)
+CODE  BLEEP  ( n1 n2 -- )
+    HEX
+    E1 C,                 \ pop hl
+    D1 C,                 \ pop de
+    C5 C,                 \ push bc
+    DD C, E5 C,           \ push ix
+    CD C, 03B5 ,          \ call 03B5 ; standard ROM 
+    DD C, E1 C,           \ pop ix
+    C1 C,                 \ pop bc
+    DD C, E9 C, ( NEXT )  \ jp (ix)
 SMUDGE DECIMAL
 
 
 ( BLEEP )
-\ accept two integers
-\ ms  : sound duration in millisecond
-\ Hz  : sound frequency in hertz
-\ Give back then suitable numbers for BLEEP routine
+\ accept two integers:
+\  ms  : sound duration in millisecond
+\  Hz  : sound frequency in hertz
+\ Give back suitable numbers for previous BLEEP routine
 : BLEEP-CALC  ( ms Hz -- n1 n2 )
-  >R R@ 1000 */
-  3500.000 R> UM/MOD
-  241 - 8 /
-  SWAP DROP ;
+    >R R@ 1000 */
+    3500.000 R> UM/MOD
+    241 - 3 RSHIFT  \ same as 8 /
+    SWAP DROP ;
 
-: BEEP-PITCH  ( BEEP pitch -- freq )
-  69 SWAP -
-  12 /MOD 14080
-  SWAP 0 ?DO 2/ LOOP
-  SWAP 0 ?DO 269 286 */ LOOP
+
+\ Convert a tone pitch (n1) to freq (n2), as Standard Basic does.
+\  0  -->  central C 
+\  9  -->  440 Hz  A
+\ -3  -->  220 Hz  A  1 octave below
+\ 12  -->  C 1 octave above.
+: BEEP-PITCH  ( n -- n2 )
+    \ pitch is calculated 
+    69 SWAP - ABS       \  69-n 
+    12 /MOD             \  note  octave
+    \ 14.080 is an A on 5th octave, the maximum frequency possible
+    14080               \  note  octave 
+    \ find 
+    SWAP 0 ?DO          \  note  
+        2/ 
+    LOOP
+    SWAP 0 ?DO 
+        454 481 */ 
+    LOOP
 ;
 
 
-\ decimal  41 load \ attributes
-\
-.( Color and attributes  ) CR
 
-NEEDS CALL#         
-
-HEX
-
-: PERM  0 1CAD CALL# DROP ;         \ make "permanent" the previous attribute
-: BORDER. 2297 CALL# DROP ;         \ set border color
-
-DECIMAL
-
-: (COLOR)
-  ROT AND SWAP EMITC EMITC
-  PERM ;
-: INK.     16 7 (COLOR) ;
-: PAPER.   17 7 (COLOR) ;
-: FLASH.   18 1 (COLOR) ;
-: BRIGHT.  19 1 (COLOR) ;
-: INVERSE. 20 1 (COLOR) ;
-: OVER.    21 1 (COLOR) ;
-
-
-
-( AT TAB                   )
-
-: AT. ( row col -- )
-  22 EMITC        SWAP
-         EMITC EMITC ;
-
-: TAB.
-  23 EMITC EMITC 0 EMITC ;
-
-: LVIDEO
-  2 23659 C! 1 SELECT ;
-
-: ATTR  ( x y --- b )
-  SWAP 32 * + 22528 + C@ ;
-
-
-
-
-
-( Chomp.f )
+\ wait for next interrupt, to sync video frame
 CODE sync-vid HEX
- 76 C,              \ halt
- DD C, E9 C,        \ jp (ix)
- smudge
-\
+    76 C,              \ halt
+    DD C, E9 C,        \ jp (ix)
+    smudge
+    \
 
+\ add n to byte at address a
 : c+! ( n a )
-  tuck c@ + swap c! ;
-\
+    tuck c@ + swap c! ;
 
+
+\ add n to double at address a
 : d+! ( n a )
   tuck 2@      \ a n d
   rot s>d d+  \ a d+n
   rot 2! ;
+
 decimal
 
-
-
-
-( Chomp.f )
+\ utility: print in binary
 : b.     ( n -- )
   base @ swap 2 base !
   8 .r  base ! ;
+
 \ double equals
 : D= ( d1 d2 -- f )
   rot =      \ l1 l2 h2=h1
   swap rot   \ h1=h2 l2 l1
   = and ;
+
 \ true if n between a and b
 : between ( n a b -- f )
   rot tuck < 0= \ a n b>n
   swap rot < 0= \ b>n n>a
   and ;
 
-
-
-
-( Chomp.f )
-: six-emitc
+\ print six chacacters
+: six-emitc ( c1 c2 c3 c4 c5 c6 -- )
   emitc emitc emitc
   emitc emitc emitc ;
-\
-: sync-emit
+
+\ synchro-emit of 12 characters
+: sync-emit ( c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 -- )
   sync-vid
   emitc emitc emitc emitc
   emitc emitc emitc emitc
   emitc emitc emitc emitc ;
+
 \
+decimal 
+23560  constant  LASTK    \ system variable : last key pressed
+    0  variable  total 0 ,
+    0  variable  score 0 ,
+    0  variable  high-score 0 ,
+   30  variable  counting
+    3  variable  lives
+    1  variable  hunt
 
-( Chomp.f )
-
-decimal 23560 constant LASTK    \ system variable : last key pressed
- 0 variable total 0 ,
- 0 variable score 0 ,
- 0 variable high-score 0 ,
-30 variable counting
- 3 variable lives
- 1 variable hunt
-
-
-
-( Chomp.f )
-
+\ pacman eat a pill
 : pill-on
   -1 hunt !
   10  total d+!
   0 counting ! ;
 
-\
+\ sound a bip
 : bip ( n1 n2 -- n3 n4 )
   beep-pitch
   bleep-calc
   swap ;
-\
+
+\ double literal
 : 2lit ( n1 n2 -- )
   [compile] literal
   [compile] literal
 ; immediate 
 
 
-( Chomp.f )
-  char 8  value    key-right
-  char 5  value    key-left
-  char 7  value    key-up
-  char 6  value    key-down
-       9  value    key+right
-       8  value    key+left
-      11  value    key+up
-      10  value    key+down
+\ cursor keys
+char  8  value    key-right
+char  5  value    key-left
+char  7  value    key-up
+char  6  value    key-down
+
+\ cursor keys
+      9  value    key+right
+      8  value    key+left
+     11  value    key+up
+     10  value    key+down
 
 
 .( Chomp.f - UDG )
 
 decimal
 
+\ determine the UDG character code
 : UDG+ ( c1 -- c2 )
- upper 79 + ;
+   upper 79 + ;
+
 \ compile and UDG literal
-
 : [UDG] ( -- )
- char UDG+ [compile] literal ;
- IMMEDIATE
+   char UDG+ [compile] literal ;
+   IMMEDIATE
+
 \ given c return UDG address
-
 : UDG@ ( c -- a )
- upper 65 - 8 * 23675 @ + ;
-\ given c print binary repres.
+   upper 65 - 8 * 23675 @ + ;
+   \ given c print binary repres.
 
+\ udg utility
 : .UDG ( c -- )
- cr UDG@ dup 8 + swap do
-  i c@ b.     cr
- loop ; 
+    cr UDG@ dup 8 + swap do
+        i c@ b.     cr
+    loop ; 
 
-
-( Chomp.f - UDG )
-
+\ Chomp.f - UDG 
 : UDGize ( a -- )
- count over + swap do
-  i c@ upper [char] A [char] U
-  between if
-   i c@ upper UDG+ i c!
-  then
- loop ;
-\
+    count over + swap do
+        i c@ upper [char] A [char] U
+    between if
+            i c@ upper UDG+ i c!
+        then
+    loop ;
 
+\
 : Gtype ( a c -- )
- over + swap ?do
-  i c@ emitc loop ;
+    over + swap ?do
+    i c@ emitc loop ;
 
 : UDGs
-  [char] V [char] A do
-   i UDG+ emitc loop ;
+    [char] V [char] A do
+    i UDG+ emitc loop ;
 
 
 
 ( Chomp.f - UDG )
 
 \ UDG - User Defined Graphic characters
-
 create UDG_1
 hex
 FF00 , 0000 , 0000 , 0000 , \ A
@@ -256,8 +233,6 @@ FC00 , 0102 , 0201 , 00FC , \ G
 4040 , 4040 , 2040 , 001F , \ I
 0202 , 0202 , 0202 , 0202 , \ J
 
-
-( Chomp.f - UDG )
 hex
 1800 , 4224 , 4242 , 4242 , \ K
 4242 , 4242 , 2442 , 0018 , \ L
@@ -284,6 +259,7 @@ create maze-base
 
 
 ( Chomp.f - maze )
+\ maze definition
 ," EAAAAAAAAANAAAAAAAAAD "
 ," M.........N.........J "
 ," M.EAD.EAD.N.EAD.EAD.J "
@@ -297,7 +273,7 @@ create maze-base
 ," BBBBH.L.E---D.L.IBBBB "
 ," /.......M   J.......\ "
 ," AAAAD.K.I---H.K.EAAAA "
-,"     J.N.... ..N.N     "
+,"     J.N.... ..N.M     "
 ," BBBBH.L.FCACG.L.IBBBB "
 ," M.........N.........J "
 ," MOFCD.FCG.L.FCG.ECGOJ "
@@ -310,83 +286,103 @@ create maze-base
 
 ( Chomp.f - maze )
 decimal
+
+\ copy maze definition to run-time maze
 : maze-copy ( a1 a2 -- )
- maze-h 0 do
-  2dup 24 cmove
-  dup udgize
-  swap 24 + swap 24 +
- loop
- 2drop ;
+    maze-h 0 do
+        2dup 24 cmove
+        dup udgize
+        swap 24 + swap 24 +
+    loop
+    2drop ;
+
 \
 : set-maze-run
-  maze-base
-  maze-run
-  maze-copy ;
-set-maze-run
+    maze-base
+    maze-run
+    maze-copy ;
 
 
+set-maze-run  \ do it now
 
-( Chomp.f - maze )
+
+\ determine address of maze-cell x y
 : maze^ ( x y -- a )
- maze-run + swap 1-
- 24 * + ;
-\
+    maze-run + swap 1-
+    24 * + ;
+
+\ fetch character at maze-cell x y
 : maze@ ( x y -- c )
- maze^ c@ ;
-\
+    maze^ c@ ;
+
+\ store character at maze-cell x y
 : maze! ( c x y -- )
- maze^ c! ;
+    maze^ c! ;
 \
 
 
-
-( Chomp.f - maze )
-: maze.
- 0 0 at.
- 1 22 do
-  025 i 16 +
-  beep-pitch bleep-calc
- -1 +loop
- maze-run
- 22 1 do
-  cr space
-  dup count gtype 24 +
- >R bleep R>
- loop
- drop
+\ print maze
+: maze. ( -- )
+    0 0 at.
+    22 1 do
+        025 23 i - 16 +
+        beep-pitch bleep-calc
+    loop
+    maze-run
+    22 1 do
+        cr space sync-vid
+        dup count gtype 24 +
+        >R bleep R>
+    loop
+    drop
 ;
 
 
-
-.( Chomp.f - Sprite )
+\ Array is an area 6 x 8 bytes
 create Array   6 08 * allot
 
+\ current object pointer
 0 variable Sprite^
+
+\ current object number
 0 value    Sprite-no
 
+
+\ choose sprite number n setting
+\  n to sprite-no
+\  a to sprite^
 : sprite# ( n -- )
   dup 3 lshift array +
   sprite^ ! to sprite-no ;
 \
 
+\ fetch sprite address, i.e. sprite pointer
 : sprite@ ( -- a )
   sprite^ @ ;
 \
 
+\ set value v on attribute i for all ghosts
 : all-ghost  ( v i -- )
-  32 Array  + swap Array  +
-  do dup i c! 08 +loop
-  drop ;
+    32 Array  +     \ limit is 32 = 4 * 8 
+    swap Array  +   \ index starts with first attribute 
+    do 
+        dup i c!    \ store value
+    08 +loop
+    drop ;          \ drop value    
 
 
-
-( Chomp.f - Sprite )
 
 \ creates an index of Ghost
+\ this allows defining a "name" instead of an "attribute-index"
+\ used in the form
+\   n index-of cccc
 : index-of ( n -- )
   <builds c, does> c@ + ;
 
+
 \ creates a ghost pointer
+\ this allows defining a "name" instead of an "row-index"
+\   n index-of cccc
 : name-of  ( n -- creates )
   <builds c, does> c@ dup
   3 lshift Array + sprite^ !
@@ -394,77 +390,77 @@ create Array   6 08 * allot
 
 
 
-( Chomp.f - Sprite )
-
 \ array index by name
-0 name-of Inky
-1 name-of Pinky
-2 name-of Blinky
-3 name-of Ted
+0  name-of  Inky
+1  name-of  Pinky
+2  name-of  Blinky
+3  name-of  Ted
 \
 
-0 index-of face
-1 index-of color
-2 index-of x-pos
-3 index-of y-pos
-4 index-of dir
-5 index-of x-pre
-6 index-of y-pre
-7 index-of maze
+0  index-of  face
+1  index-of  color
+2  index-of  x-pos
+3  index-of  y-pos
+4  index-of  dir
+5  index-of  x-pre
+6  index-of  y-pre
+7  index-of  maze
 
 
 
-( chomp.f - Sprite )
-\ shorthand for x-pos,y-pos
+\ shorthand for  x-pos,y-pos & fetch
 : xy-pos@  ( -- x y )
-  sprite@
-  dup    x-pos c@
-  swap   y-pos c@ ;
+    sprite@
+    dup    x-pos c@
+    swap   y-pos c@ ;
 
+\ shorthand for  x-pre,y-pre & fetch
 : xy-pre@  ( -- x y )
-  sprite@
-  dup    x-pre c@
-  swap   y-pre c@ ;
+    sprite@
+    dup    x-pre c@
+    swap   y-pre c@ ;
 
+\ shorthand for  x-pre,y-pre & store
 : xy-pre! ( x y -- )
-  >R sprite@ x-pre c!
-  R> sprite@ y-pre c! ;
+    >R sprite@ x-pre c!
+    R> sprite@ y-pre c! ;
 \
 
 
-( Chomp.f - Sprite )
-
+\ setup standard ghost colors
 : Ghost-color ( -- )
-
  Inky   1 sprite@ color c!
  Pinky  3 sprite@ color c!
  Blinky 5 sprite@ color c!
  Ted    2 sprite@ color c!
 ;
 
+
+\ setup scared ghost colors
 : Ghost-white ( -- )
  7  0 color  all-ghost
 ;
 
-ghost-color
+
+ghost-color \ and doit now
 
 
 
 ( Chomp.f - Sprite )
 : Ghost-init  ( -- )
- 12 0 x-pos  all-ghost
- 11 0 y-pos  all-ghost
- 55 0 dir    all-ghost
- bl 0 maze   all-ghost
- Inky   10 sprite@ y-pos c!
- Inky   xy-pos@ xy-pre!
- Pinky  12 sprite@ y-pos c!
- Pinky  xy-pos@ xy-pre!
- Ted    11 sprite@ x-pos c!
- Ted    xy-pos@ xy-pre!
- Blinky xy-pos@ xy-pre!
- [char] T udg+
- 0 face all-ghost
+    12 0  x-pos  all-ghost
+    11 0  y-pos  all-ghost
+    55 0  dir    all-ghost
+    bl 0  maze   all-ghost
+    Inky   10 sprite@ y-pos c!
+    Inky   xy-pos@ xy-pre!
+    Pinky  12 sprite@ y-pos c!
+    Pinky  xy-pos@ xy-pre!
+    Ted    11 sprite@ x-pos c!
+    Ted    xy-pos@ xy-pre!
+    Blinky xy-pos@ xy-pre!
+    [char] T udg+
+    0 face all-ghost
 ; 
 
 
@@ -472,23 +468,25 @@ ghost-color
 
 4 name-of Pacman
 
+\ setup standard pacman
 : pacman-init
-  Pacman [char] R UDG+
-     sprite@ face  c!
-  14 sprite@ x-pos c!
-  12 sprite@ y-pos c!
-  14 sprite@ x-pre c!
-  12 sprite@ y-pre c!
-   6 sprite@ color c!
-  56 sprite@ dir   c!
-  bl sprite@ maze  c!
+    Pacman [char] R UDG+
+       sprite@ face  c!
+    14 sprite@ x-pos c!
+    12 sprite@ y-pos c!
+    14 sprite@ x-pre c!
+    12 sprite@ y-pre c!
+     6 sprite@ color c!
+    56 sprite@ dir   c!
+    bl sprite@ maze  c!
 ;
+
 ghost-init
 pacman-init
 
 
 
-( Chomp.f - Sprite )
+
 
 5 name-of Cherry
 
@@ -509,56 +507,56 @@ cherry-init
 
 
 
-( Chomp.f - Sprite )
+
 
 \ draw current sprite
-
-: sprite-put ( -- )
-  sprite@ face  c@
-  sprite@ color c@   16
-  xy-pos@ swap      22
-  sprite@ maze  c@
-  xy-pre@ swap      22
-  4 16
-  sync-emit
-;
-
 \ usage:
-\ Blinky  sprite-put
-
+\   Blinky  sprite-put
+: sprite-put ( -- )
+    sprite@ face  c@
+    sprite@ color c@  16  \ prepare .ink
+    xy-pos@ swap      22  \ prepare .at
+    sprite@ maze  c@
+    xy-pre@ swap      22  \ prepare .at  
+    4 16
+    sync-emit             \ send all 12 chr  
+;
 
 ( Chomp.f )
 : init-all
-  ghost-init
-  pacman-init
-  cherry-init
-  00 counting !
-  key-right LASTK c!
+    ghost-init
+    pacman-init
+    cherry-init
+    00 counting !
+    key-right LASTK c!
 ;
 
-.( Chomp.f - trail )
+
+\ given a character c that is ahead of pacman
+\ verify if is a good trail
 : ?pac-trail  ( c -- )
- case
-  bl       of 1 endof
-  [char] . of 1 endof
-  [udg]  U of 1 endof
-  [udg]  O of 1 endof
-  [char] / of 1 endof
-  [char] \ of 1 endof
-  0 swap
- endcase ;
+    case
+        bl       of 1 endof
+        [char] . of 1 endof
+        [udg]  U of 1 endof
+        [udg]  O of 1 endof
+        [char] / of 1 endof
+        [char] \ of 1 endof
+        0 swap
+    endcase ;
 
 
-( Chomp.f - trail )
+\ given a character c that is ahead of ghost
+\ verify if is a good trail
 : ?ghost-trail  ( c -- )
- case
-  bl       of 1 endof
-  [char] . of 1 endof
-  [udg]  U of 1 endof
-  [udg]  O of 1 endof
-  [char] - of 1 endof
-  0 swap
- endcase ;
+    case
+        bl       of 1 endof
+        [char] . of 1 endof
+        [udg]  U of 1 endof
+        [udg]  O of 1 endof
+        [char] - of 1 endof
+        0 swap
+    endcase ;
 
 
 ( Chomp.f - trail )
@@ -629,10 +627,10 @@ cherry-init
 ( Chomp.f - trail )
 : pacman-move ( c -- )
  case
- key-right of go-right endof
- key-left  of go-left  endof
- key-up    of go-up    endof
- key-down  of go-down  endof
+ key-right of go-right endof key+right of go-right endof
+ key-left  of go-left  endof key+left  of go-left  endof
+ key-up    of go-up    endof key+up    of go-up    endof
+ key-down  of go-down  endof key+down  of go-down  endof
  endcase
  \ Kempston joystick interface 
  31 p@ case
@@ -791,7 +789,8 @@ cherry-init
 
 ( Chomp.f )
 : init-display
- 0 paper. 0 border. 4 ink.
+ LAYER11 30 emitc 8 emitc
+ 0 .paper 0 .border 4 .ink
  cls maze.
  0 20 at. ." high "
  high-score 2@
@@ -966,7 +965,7 @@ cherry-init
 : move-four-ghosts
   4 0 do
     i sprite# xy-pos@ xy-pre!
-    23672 @ 1 and hunt @ - 1- if
+    23672 @ -1 and hunt @ - 1- if
   \   ghost-decision
       sprite@ dir c@
       ghost-move then
@@ -1051,10 +1050,10 @@ needs .s
 
 ( Ghost.f )
 : game
-  LAYER11 1 SPEED! 30 emitc 8 emitc
+  LAYER11 3 SPEED! 30 emitc 8 emitc
   3 lives !
-  0 paper. 0 border. 4 ink.
-  1 bright. perm
+  0 .paper 0 .border 4 .ink
+  1 .bright .perm
   interlude
   180. total 2!
   0.   score 2!
@@ -1069,9 +1068,17 @@ needs .s
 BASE !
 
 ( Ghost.f )
-CR CR
-.( Use GAME to start game. ) CR
-.( Arrorw keys to move. ) CR
-.( Cursor Joystick should work. ) CR
-.( BREAK stops: give LAYER12 to pass to 64 columns. ) CR
+CR CR CR
+needs TRUV needs INVV
+TRUV  .( Use: )
+INVV  .(  GAME )  CR
+TRUV  .( Arrorw keys to move. ) CR
+      .( Cursor Joystick should work. ) CR
+INVV  .(  BREAK )
+TRUV  .( stops. ) CR .( Give. ) CR
+INVV  .(  LAYER12 )
+TRUV  .( to go at 64 columns and ) CR
+INVV  .(  3 SPEED! )
+TRUV  .( to go at 28 MHz. ) CR
+
 

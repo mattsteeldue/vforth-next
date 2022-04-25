@@ -131,42 +131,6 @@ Exec_Ptr:
 
 //  ______________________________________________________________________ 
 //
-// branch       -- 
-// unconditional branch in colon definition using the following cell as an offset from current IP value
-// compiled by ELSE, AGAIN and some other immediate words
-
-                New_Def BRANCH, "BRANCH", is_code, is_normal
-Branch_Ptr:                
-                ld      h, b
-                ld      l, c
-                ld      e, (hl)
-                inc     hl
-                ld      d, (hl)
-                dec     hl                  // offset is calculated from current IP
-                add     hl, de
-                ld      c, l
-                ld      b, h
-                next
-
-
-//  ______________________________________________________________________ 
-//
-// 0branch      f -- 
-// conditional branch if the top-of-stack is ZERO or FALSE.
-// compiled by IF, UNTIL and some other immediate words
-
-                New_Def ZBRANCH, "0BRANCH", is_code, is_normal
-ZBranch_Ptr:                
-                pop     hl
-                ld      a, l
-                or      h
-                jp      z, Branch_Ptr      
-                inc     bc                  // if not branch, skip offset cell.
-                inc     bc
-                next
-
-//  ______________________________________________________________________ 
-//
 // (+loop)       --
 // compiled by +LOOP. it uses the top two values of return-stack to
 // keep track of index and limit, they are accessed via I and I'
@@ -206,7 +170,7 @@ Loop_Ptr:
 Loop_NegativeIncrement:
                 jr      c, Loop_Endif
                     exx
-                    jp      Branch_Ptr      // perform branch consuming following cell
+                    jr      Branch_Ptr      // perform branch consuming following cell
 Loop_Endif:
                 ex      de, hl
                 inc     hl                  
@@ -223,7 +187,58 @@ Loop_Endif:
 // compiled by LOOP. 
                 New_Def C_LOOP, "(LOOP)", is_code, is_normal
                 push    1                  
-                jp      Loop_Ptr
+                jr      Loop_Ptr
+
+//  ______________________________________________________________________ 
+//
+// branch       -- 
+// unconditional branch in colon definition using the following cell as an offset from current IP value
+// compiled by ELSE, AGAIN and some other immediate words
+
+                New_Def BRANCH, "BRANCH", is_code, is_normal
+Branch_Ptr:                
+                ld      h, b
+                ld      l, c
+                ld      e, (hl)
+                inc     hl
+                ld      d, (hl)
+                dec     hl                  // offset is calculated from current IP
+                add     hl, de
+                ld      c, l
+                ld      b, h
+                next
+
+
+//  ______________________________________________________________________ 
+//
+// 0branch      f -- 
+// conditional branch if the top-of-stack is ZERO or FALSE.
+// compiled by IF, UNTIL and some other immediate words
+
+                New_Def ZBRANCH, "0BRANCH", is_code, is_normal
+ZBranch_Ptr:                
+                pop     hl
+                ld      a, l
+                or      h
+                jr      z, Branch_Ptr      
+                inc     bc                  // if not branch, skip offset cell.
+                inc     bc
+                next
+
+//  ______________________________________________________________________ 
+//
+// (leave)        -- 
+// compiled by LEAVE
+// this forces to exit from loop and jump past
+                New_Def C_LEAVE, "(LEAVE)", is_code, is_normal
+
+                ldhlrp
+                ld      de, 4
+                add     hl, de
+                ldrphl
+
+                jr      Branch_Ptr       // perform branch consuming following cell
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -242,7 +257,7 @@ Loop_Endif:
                     pop     de                 
                     pop     hl
 
-                    jp      Branch_Ptr          // perform branch consuming following cell 
+                    jr      Branch_Ptr          // perform branch consuming following cell 
 Do_Ptr: 
                 ldhlrp                      // prepare RP
                 dec     hl
@@ -276,7 +291,7 @@ Do_Ptr:
                 New_Def C_DO, "(DO)", is_code, is_normal
                 dec     bc                  // prepare IP beforehand 
                 dec     bc                  // to balance the two final inc bc in (?do)
-                jp      Do_Ptr
+                jr      Do_Ptr
 
 //  ______________________________________________________________________ 
 //
@@ -641,6 +656,15 @@ Emitc_Ptr:
 
                 next
 
+//  ______________________________________________________________________ 
+//
+// cr           --
+// send a CR via EMITC
+                New_Def CR, "CR", is_code, is_normal
+
+                ld      a, CR_CHAR
+                jr      Emitc_Ptr
+
 Emitc_Vec:    
                 dw      C_Emit_Printable  // comma
                 dw      C_Emit_Bel        // bel
@@ -890,15 +914,6 @@ QTerminal_NoBreak:
 
                 include "next-opt0.asm"
 
-
-//  ______________________________________________________________________ 
-//
-// cr           --
-// send a CR via EMITC
-                New_Def CR, "CR", is_code, is_normal
-
-                ld      a, CR_CHAR
-                jp      Emitc_Ptr
 
 //  ______________________________________________________________________ 
 //
@@ -1162,21 +1177,6 @@ Um_DivMod_OutOfRange:
 
 //  ______________________________________________________________________ 
 //
-// (leave)        -- 
-// compiled by LEAVE
-// this forces to exit from loop and jump past
-                New_Def C_LEAVE, "(LEAVE)", is_code, is_normal
-
-                ldhlrp
-                ld      de, 4
-                add     hl, de
-                ldrphl
-
-                jp      Branch_Ptr       // perform branch consuming following cell
-                next
-
-//  ______________________________________________________________________ 
-//
 // >r      n --
 // pop from calculator-stack and push into return-stack
                 New_Def TO_R, ">R", is_code, is_normal
@@ -1207,7 +1207,7 @@ Um_DivMod_OutOfRange:
 
 //  ______________________________________________________________________ 
 //
-// r            -- n
+// r@            -- n
 // return on top of stack the value of top of return-stack
 // Since this is the same as I, we alter R's CFA to jump there
                 New_Def R_OP, "R@", I_Ptr, is_normal
@@ -1217,7 +1217,7 @@ Um_DivMod_OutOfRange:
 // r            -- n
 // return on top of stack the value of top of return-stack
 // Since this is the same as I, we alter R's CFA to jump there
-                New_Def R_OLD, "R", I_Ptr, is_normal
+//              New_Def R_OLD, "R", I_Ptr, is_normal
 
 //  ______________________________________________________________________ 
 //

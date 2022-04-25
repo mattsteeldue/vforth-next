@@ -238,7 +238,7 @@ DECIMAL
 
 \ 6FD9
 \ (INTG)
-\ convert the text in address a+1 int a floating-point number d.
+\ convert the text in address a+1 into a floating-point number d.
 : (INTG)  ( d a -- d1 a1 )
     BEGIN
         1+          ( d a ) 

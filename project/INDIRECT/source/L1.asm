@@ -279,13 +279,9 @@ ULess_Skip:
                 ld      a, d
                 xor     $80
                 ld      d, a
-                and     a
+//              and     a
                 sbc     hl, de
-                ld      hl, -1
-                jr      c, Less_Skip
-                    inc     hl
-Less_Skip:
-
+                sbc     hl, hl
                 psh1
 
 //  ______________________________________________________________________ 
@@ -1228,7 +1224,7 @@ Code_Endif:                                     // endif
                 dw      LIT
                 dw      SMUDGE_BIT | END_BIT    // 160
                 dw      TOGGLE                  // toggle
-                dw      HERE, ONE_SUBTRACT     // here 1- ( last character )
+                dw      HERE, ONE_SUBTRACT      // here 1- ( last character )
                 dw      LIT, END_BIT, TOGGLE    // 128 toggle
                                                 // ( ---- here is LFA ---- )
                 dw      LATEST, COMMA           // latest ,

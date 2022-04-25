@@ -699,9 +699,9 @@ Index_Leave:
                 Colon_Def SPLASH, "SPLASH", is_normal
                 dw      CLS
                 dw      C_DOT_QUOTE
-                db      88
+                db      90  // length of the following string CR included.
                 db      "v-Forth 1.52 NextZXOS version", 13
-                db      "Indirect Thread - build 20220227", 13
+                db      "Indirect Threaded - build 20220425", 13
                 db      "1990-2022 Matteo Vitturi", 13
                 dw      EXIT
 

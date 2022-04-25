@@ -2,7 +2,7 @@ Copying, modifying and distributing this software is allowed
 provided this copyright notice is kept.  
 This work is available as-is with no whatsoever warranty.
 
-The author – me – is not a native English speaking and, for certain, you will find grammatical errors. 
+The author - me - is not a native English speaking and, for certain, you will find grammatical errors. 
 In case, it would be very appreciated if you could drop me a line with any suggestion and/or correction. 
 I am not able to write a longer disclaimer than the above.
 
