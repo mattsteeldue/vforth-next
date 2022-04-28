@@ -2905,7 +2905,7 @@
 1207+ 69E3
 1208+ 69E3              //  ______________________________________________________________________
 1209+ 69E3              //
-1210+ 69E3              // r            -- n
+1210+ 69E3              // r@            -- n
 1211+ 69E3              // return on top of stack the value of top of return-stack
 1212+ 69E3              // Since this is the same as I, we alter R's CFA to jump there
 1213+ 69E3                              New_Def R_OP, "R@", I_Ptr, is_normal
@@ -8664,7 +8664,7 @@
 1224+ 76B6 A9 63                        dw      LIT
 1225+ 76B8 A0 00                        dw      SMUDGE_BIT | END_BIT    // 160
 1226+ 76BA 98 6B                        dw      TOGGLE                  // toggle
-1227+ 76BC EC 6E 5F 6A                  dw      HERE, ONE_SUBTRACT     // here 1- ( last character )
+1227+ 76BC EC 6E 5F 6A                  dw      HERE, ONE_SUBTRACT      // here 1- ( last character )
 1228+ 76C0 A9 63 80 00                  dw      LIT, END_BIT, TOGGLE    // 128 toggle
 1228+ 76C4 98 6B
 1229+ 76C6                                                              // ( ---- here is LFA ---- )
