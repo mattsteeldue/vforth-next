@@ -6,7 +6,7 @@
 //  v-Forth 1.5 NextZXOS version 
 //  build 20220425
 // 
-//  Inirect-Thread version.
+//  Indirect-Thread version.
 // 
 //  NextZXOS version
 //  ______________________________________________________________________
