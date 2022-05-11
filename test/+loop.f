@@ -5,11 +5,14 @@
 
 NEEDS TESTING
 
-( Test Suite - Dictionary  )
+( Test Suite - Counted Loops  )
 
 TESTING F.6.1.0140 - +LOOP
 
 DECIMAL
+
+\ this tests (+LOOP) primitive compiled by +LOOP
+\ I and (DO) the primitive compiled by DO
 
 T{ : GD2 DO I -1 +LOOP ; -> }T
 T{        1          4 GD2 -> 4 3 2  1 }T

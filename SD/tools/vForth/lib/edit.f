@@ -1,7 +1,7 @@
 \
 \ edit.f
 \
-.( EDIT Full Screen Editor ) 
+.( EDIT Full Screen Editor )
 \
 
 NEEDS INVV
@@ -14,7 +14,7 @@ NEEDS EDITOR
 EDITOR DEFINITIONS
 
 BASE @
-    
+
 \
 DECIMAL   0 VARIABLE NROW  NROW !       \ current row
           0 VARIABLE NCOL  NCOL !       \ current columns
@@ -37,7 +37,7 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
     ADDRC  C! UPDATE ;
 
 : CURC@ ( -- c )    \ fetch chr from current screen position
-    ADDRC  C@ ; 
+    ADDRC  C@ ;
 \
 : RULER 6 0 DO ." +----.----" LOOP ." +--" ;
 
@@ -72,8 +72,8 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
     15 19 AT-XY  NCOL @  3 .R  05 19 AT-XY  NROW @      3 .R ;
 \
 : BYTE ( -- b ) \ accept two hex digit as a byte
-    KEY DUP EMIT 10 DIGIT DROP 4 LSHIFT
-    KEY DUP EMIT 10 DIGIT DROP + ;
+    KEY DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
+    KEY DUP EMIT         10 DIGIT DROP + ; DECIMAL
 
 : UNDO  ( -- ) \ discard changes on current Screen
   B/SCR 0 DO
@@ -89,7 +89,7 @@ HEX
 
 : INITC   CURC@ BL MAX 26 +ORIGIN C!    \ change cursor face
                     8F 28 +ORIGIN C! ;
-DECIMAL 
+DECIMAL
 \
 : CMD    ( c -- )   \ handle EDIT key options
     6 21 AT-XY DONEC KEY UPPER BL MAX DUP EMIT
@@ -105,7 +105,7 @@ DECIMAL
     [CHAR] U OF UNDO BUZZ  ENDOF
     [CHAR] Q OF ."  ok" CR C/L 2 * SPACES
                 0 21 AT-XY QUIT ENDOF
-    ENDCASE 0 0 AT-XY PUTPAGE EDIT-FRAME ; 
+    ENDCASE 0 0 AT-XY PUTPAGE EDIT-FRAME ;
 \
 : DELC    ( -- )    \ back-space
     NCOL @  0 > IF -1 NCOL +! THEN
@@ -125,7 +125,7 @@ DECIMAL
     ENDCASE ;
 \
 
-FORTH DEFINITIONS 
+FORTH DEFINITIONS
 
 : EDIT     ( -- )
 

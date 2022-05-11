@@ -1031,11 +1031,9 @@ CmoveV_NoMove:
                 jr      nc, Um_DivMod_OutOfRange
                     ld      a, 16
 Um_DivMod_Loop: 
-                        and     a
-                        rl      e
+                        sla     e
                         rl      d
-                        rl      l
-                        rl      h
+                        adc     hl, hl
                         jr      nc, Um_DivMod_Carry
                             and     a
                             sbc     hl, bc

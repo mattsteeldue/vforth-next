@@ -4,8 +4,7 @@
 
 .( BLEEP ) 
 
-BASE @ \ save base status
-
+\ BASE @ \ save base status
 
 NEEDS SPEED@
 NEEDS SPEED!
@@ -95,36 +94,36 @@ CREATE FREQ-TABLE
     29834 ,     \ A#     7,458.62 Hz  \ 29834
 
 
-\ creator for note-frequency of current OCTAVE
-\ see the following definitions
-: IS-NOTE   ( n -- cccc )
-    <BUILDS 
-        FREQ-TABLE + @
-    DOES> 
-        C@ 
-        FREQ-TABLE + @ 
-        8 OCTAVE @ - RSHIFT
-;
+\ \ creator for note-frequency of current OCTAVE
+\ \ see the following definitions
+\ : IS-NOTE   ( n -- cccc )
+\     <BUILDS 
+\         FREQ-TABLE + @
+\     DOES> 
+\         C@ 
+\         FREQ-TABLE + @ 
+\         8 OCTAVE @ - RSHIFT
+\ ;
 
 
-DECIMAL         
-    0   IS-NOTE   A        ( -- freq )    
-    2   IS-NOTE   Ab       ( -- freq )
-    2   IS-NOTE   G#       ( -- freq )
-    4   IS-NOTE   G        ( -- freq )
-    6   IS-NOTE   Gb       ( -- freq )
-    6   IS-NOTE   F#       ( -- freq )
-    8   IS-NOTE   F        ( -- freq )
-   10   IS-NOTE   E        ( -- freq )
-   12   IS-NOTE   Eb       ( -- freq )
-   14   IS-NOTE   D#       ( -- freq )
-   14   IS-NOTE   D        ( -- freq )
-   16   IS-NOTE   Db       ( -- freq )
-   16   IS-NOTE   C#       ( -- freq )
-   18   IS-NOTE   C        ( -- freq )
-   20   IS-NOTE   B        ( -- freq )
-   22   IS-NOTE   Bb       ( -- freq )
-   22   IS-NOTE   A#       ( -- freq )
+\ DECIMAL         
+\     0   IS-NOTE   _A        ( -- freq )    
+\     2   IS-NOTE   _Ab       ( -- freq )
+\     2   IS-NOTE   _G#       ( -- freq )
+\     4   IS-NOTE   _G        ( -- freq )
+\     6   IS-NOTE   _Gb       ( -- freq )
+\     6   IS-NOTE   _F#       ( -- freq )
+\     8   IS-NOTE   _F        ( -- freq )
+\    10   IS-NOTE   _E        ( -- freq )
+\    12   IS-NOTE   _Eb       ( -- freq )
+\    14   IS-NOTE   _D#       ( -- freq )
+\    14   IS-NOTE   _D        ( -- freq )
+\    16   IS-NOTE   _Db       ( -- freq )
+\    16   IS-NOTE   _C#       ( -- freq )
+\    18   IS-NOTE   _C        ( -- freq )
+\    20   IS-NOTE   _B        ( -- freq )
+\    22   IS-NOTE   _Bb       ( -- freq )
+\    22   IS-NOTE   _A#       ( -- freq )
 
 
 \ BEEP-PITCH
@@ -155,4 +154,6 @@ DECIMAL
     R> SPEED!
 ; 
 
-BASE !
+DECIMAL
+
+\ BASE !

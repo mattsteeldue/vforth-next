@@ -13,6 +13,8 @@ NEEDS UNLOOP
 
 TESTING F.6.1.2380 - UNLOOP
 
+\ This tests also EXIT definition
+
 T{ : GD6 ( PAT: {0 0},{0 0}{1 0}{1 1},{0 0}{1 0}{1 1}{2 0}{2 1}{2 2} ) 
       0 SWAP 0 DO 
          I 1+ 0 DO 

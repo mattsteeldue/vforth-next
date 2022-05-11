@@ -1,0 +1,14 @@
+\
+\ test/upper.f
+\
+
+NEEDS TESTING
+
+( Test Suite - Characters  )
+
+TESTING Custom - UPPER
+
+T{ CHAR A 20 XOR UPPER -> CHAR A UPPER }T
+T{ CHAR Z 20 XOR UPPER -> CHAR Z UPPER }T
+T{ CHAR A UPPER 20 XOR CHAR A UPPER - -> 20 }T
+T{ CHAR Z UPPER 20 XOR CHAR Z UPPER - -> 20 }T

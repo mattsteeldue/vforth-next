@@ -12,6 +12,9 @@ NEEDS TESTING
 
 TESTING F.6.1.1700 - IF
 
+\ this also tests 0BRANCH the primitive compiled by IF
+\ and BRANCH the primitive compiled by ELSE
+
 T{ : GI1 IF 123 THEN ; -> }T
 T{ : GI2 IF 123 ELSE 234 THEN ; -> }T
 T{  0 GI1 ->     }T

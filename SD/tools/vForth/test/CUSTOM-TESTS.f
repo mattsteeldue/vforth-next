@@ -12,11 +12,14 @@ WARNING @
 
 WARNING !
     
-    NEEDS PICK
+    NEEDS 3DUP
     NEEDS CHECKSUM
     NEEDS RANDOMIZE
-    NEEDS RANDOM
-    NEEDS CHOOSE
+    NEEDS CHOOSE    
+    NEEDS SPEED!    NEEDS SPEED@
+    NEEDS DEFER!    NEEDS DEFER@    NEEDS DEFER
+    NEEDS IS        NEEDS [']
+    NEEDS 
 
  \ Save base value
 BASE    @ HEX \ all test needs base 16.
@@ -29,6 +32,16 @@ TESTING \ Custom
     INCLUDE  test/checksum.f
     INCLUDE  test/defer.f
     INCLUDE  test/random.f  
+    
+    INCLUDE  test/upper.f
+    INCLUDE  test/D+.f
+    INCLUDE  test/2+.f
+    INCLUDE  test/cell+.f
+    INCLUDE  test/2-.f
+    INCLUDE  test/cell-.f
+    INCLUDE  test/dnegate.f
+    INCLUDE  test/traverse.f
+    
 
 TESTING \ ZX Spectrum Next
 

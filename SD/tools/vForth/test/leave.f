@@ -9,6 +9,8 @@ NEEDS TESTING
 
 TESTING F.6.1.1760 - LEAVE
 
+\ this also tests (LEAVE) the primitive compiled by LEAVE
+
 T{ : GD5 123 SWAP 0 DO 
      I 4 > IF DROP 234 LEAVE THEN 
    LOOP ; -> }T

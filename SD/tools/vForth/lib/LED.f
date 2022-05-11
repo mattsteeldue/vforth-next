@@ -18,7 +18,7 @@
 \   LED-FILE cccc       set LED-FN to cccc, useful to rename file on save.
 \
 
-MARKER TASK \ this allows you to forget all this package.
+MARKER FORGET-LED \ this allows you to forget all this package.
 
 NEEDS SHOW-PROGRESS  NEEDS INVV     NEEDS TRUV
 NEEDS CASE           NEEDS LINE

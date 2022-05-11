@@ -49,9 +49,8 @@ Enter_Ptr:
 //  ______________________________________________________________________ 
 //
 // noop         --
-
-                Colon_Def NOOP, "NOOP", is_normal
-                dw      EXIT
+                New_Def NOOP, "NOOP", is_code, is_normal
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -677,20 +676,27 @@ Does_Ptr:
 //
 // count        a -- a2 n
 // expects a counted string at address a, returns string address and counter
-                Colon_Def COUNT, "COUNT", is_normal
-                dw      DUP                     // dup
-                dw      ONE_PLUS                // 1+
-                dw      SWAP, CFETCH             // swap @
-                dw      EXIT                    // ;
+                New_Def COUNT, "COUNT", is_code, is_normal
+                pop     hl
+                ld      e, (hl)
+                ld      d, 0
+                inc     hl
+Count_Ptr:
+                push    hl
+                push    de
+                next                
+
 
 //  ______________________________________________________________________ 
 //
 // bounds       a n -- a+n n
 // given an address and a length ( a n ) calculate the bound addresses
 // suitable for DO-LOOP
-                Colon_Def BOUNDS, "BOUNDS", is_normal
-                dw      OVER, PLUS, SWAP        // over + swap
-                dw      EXIT                    // ;
+                New_Def BOUNDS, "BOUNDS", is_code, is_normal
+                pop     hl
+                pop     de
+                add     hl, de
+                jr      Count_Ptr
 
 //  ______________________________________________________________________ 
 //

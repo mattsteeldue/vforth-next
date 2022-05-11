@@ -14,7 +14,7 @@
 
 : (FOUND) ( a xt b -- xt n)
     ROT DROP
-    192 < IF
+    [ DECIMAL ] 192 < IF
         -1      \ non-Immediate
     ELSE
         +1      \ Immediate

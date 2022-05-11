@@ -1,9 +1,8 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220425 ) CR
-\
-\ Indirect-Threaded - NextZXOS version
+.( build 20220508 ) CR
+.( Indirect-Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
 \ This work is available as-is with no whatsoever warranty.
@@ -1719,11 +1718,9 @@ CODE um/mod ( ud u1 -- r q )
             LDN     A'| DECIMAL 16 N,
             
             HERE \ BEGIN, 
-                ANDA     A|
-                RL       E|
+                SLA      E|
                 RL       D|
-                RL       L|
-                RL       H|
+                ADCHL   HL|
 
                 JRF    NC'| HOLDPLACE
                     ANDA     A|
@@ -2725,8 +2722,9 @@ CODE cells ( n2 -- n2 )
 
 \ 66C4h
 .( NOOP )
-: noop ( -- )
-    ;
+CODE noop ( -- )
+        Next
+        C;
 
 
 \ 66CFh
@@ -3364,17 +3362,28 @@ CODE -dup ( n -- 0 | n n )
 
 \ 6C06h         
 .( COUNT )
-: count  ( a1 -- a2 n )
-    dup 
-    1+ swap c@ 
-    ;
+CODE count ( a1 -- a2 n )   
+
+        POP     HL|
+        LD      E'| (HL)|
+        LDN     D'|     0   N,
+        INCX    HL|
+HERE        
+        PUSH    HL|
+        PUSH    DE|
+        Next
+        C;
 
 
-: bounds  ( a n -- a+n a )
+.( BOUNDS )
+CODE bounds  ( a n -- a+n a )
 \ given an address and a length ( a n ) calculate the bound addresses
 \ suitable for DO-LOOP
-    over + swap
-    ;
+        POP     HL|          \ hl := n
+        POP     DE|          \ de := a
+        ADDHL   DE|          \ hl := a+n
+        JR      BACK,        \ jump to "HERE" on COUNT 
+        C;
 
 
 \ 6C1Ah
@@ -5485,7 +5494,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 90 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Threaded - build 20220425" -1 allot ]
+    [ decimal 13 here ," Indirect Threaded - build 20220508" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

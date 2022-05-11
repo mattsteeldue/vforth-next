@@ -4,8 +4,9 @@
 
 NEEDS TESTING
 
-NEEDS PICK
+NEEDS 3DUP
 
+TESTING Custom - 3DUP
 
 T{ 1 2 3 3DUP -> 1 2 3 1 2 3 }T
 T{ 1 2 3 4 3DUP -> 1 2 3 4 2 3 4 }T

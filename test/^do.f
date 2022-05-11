@@ -11,6 +11,9 @@ NEEDS TESTING
 
 TESTING F.6.2.0620 - ?DO
 
+\ this also tests (?DO) the primitive compiled by ?DO
+\ and I the index value
+
 DECIMAL
 : qd ?DO I LOOP ;
 T{   789   789 qd -> }T

@@ -9,10 +9,10 @@
 
 .( Chomp-Chomp GAME ) 
 
-MARKER CHOMP-CHOMP      \ Used to remove the program
+MARKER FORGET-CHOMP-CHOMP      \ Used to remove the program
 FORTH DEFINITIONS 
 
-BASE @                  \ save current base, restored at end
+\ BASE @                  \ save current base, restored at end
 
 CASEOFF                 \ ignore case for this source
 
@@ -29,57 +29,7 @@ NEEDS CHOOSE            \ Brodie's random numbers
 
 NEEDS CASE              \ useful syntax CASE-OF
 
-
-\ invokes standard ROM BEEP routine.
-\
-( n1 = { 3.5M / Hz - 241 } / 8 )
-( n2 = 1000 * ms / Hz )
-\
-CODE  BLEEP  ( n1 n2 -- )
-    HEX
-    E1 C,                 \ pop hl
-    D1 C,                 \ pop de
-    C5 C,                 \ push bc
-    DD C, E5 C,           \ push ix
-    CD C, 03B5 ,          \ call 03B5 ; standard ROM 
-    DD C, E1 C,           \ pop ix
-    C1 C,                 \ pop bc
-    DD C, E9 C, ( NEXT )  \ jp (ix)
-SMUDGE DECIMAL
-
-
-( BLEEP )
-\ accept two integers:
-\  ms  : sound duration in millisecond
-\  Hz  : sound frequency in hertz
-\ Give back suitable numbers for previous BLEEP routine
-: BLEEP-CALC  ( ms Hz -- n1 n2 )
-    >R R@ 1000 */
-    3500.000 R> UM/MOD
-    241 - 3 RSHIFT  \ same as 8 /
-    SWAP DROP ;
-
-
-\ Convert a tone pitch (n1) to freq (n2), as Standard Basic does.
-\  0  -->  central C 
-\  9  -->  440 Hz  A
-\ -3  -->  220 Hz  A  1 octave below
-\ 12  -->  C 1 octave above.
-: BEEP-PITCH  ( n -- n2 )
-    \ pitch is calculated 
-    69 SWAP - ABS       \  69-n 
-    12 /MOD             \  note  octave
-    \ 14.080 is an A on 5th octave, the maximum frequency possible
-    14080               \  note  octave 
-    \ find 
-    SWAP 0 ?DO          \  note  
-        2/ 
-    LOOP
-    SWAP 0 ?DO 
-        454 481 */ 
-    LOOP
-;
-
+NEEDS BLEEP
 
 
 \ wait for next interrupt, to sync video frame
@@ -134,12 +84,12 @@ decimal
 \
 decimal 
 23560  constant  LASTK    \ system variable : last key pressed
-    0  variable  total 0 ,
-    0  variable  score 0 ,
-    0  variable  high-score 0 ,
-   30  variable  counting
-    3  variable  lives
-    1  variable  hunt
+       variable  total 0 ,
+       variable  score 0 ,
+       variable  high-score 0 ,
+       variable  counting
+       variable  lives
+       variable  hunt 
 
 \ pacman eat a pill
 : pill-on
@@ -191,13 +141,14 @@ decimal
    upper 65 - 8 * 23675 @ + ;
    \ given c print binary repres.
 
-\ udg utility
+\ udg utility: display binary representation
 : .UDG ( c -- )
     cr UDG@ dup 8 + swap do
         i c@ b.     cr
     loop ; 
 
-\ Chomp.f - UDG 
+\ convert a counted-string at address a in UDG
+\ by converting each character between A and U in their UDG correspondants
 : UDGize ( a -- )
     count over + swap do
         i c@ upper [char] A [char] U
@@ -206,18 +157,17 @@ decimal
         then
     loop ;
 
-\
+\ Like type but for UDG
 : Gtype ( a c -- )
     over + swap ?do
     i c@ emitc loop ;
 
+\ Utility: display all UDGs
 : UDGs
     [char] V [char] A do
     i UDG+ emitc loop ;
 
 
-
-( Chomp.f - UDG )
 
 \ UDG - User Defined Graphic characters
 create UDG_1
@@ -296,14 +246,14 @@ decimal
     loop
     2drop ;
 
-\
+\ prepare running image of maze
 : set-maze-run
     maze-base
     maze-run
     maze-copy ;
 
 
-set-maze-run  \ do it now
+set-maze-run  \ ...and do it now
 
 
 \ determine address of maze-cell x y
@@ -323,7 +273,7 @@ set-maze-run  \ do it now
 
 \ print maze
 : maze. ( -- )
-    0 0 at.
+    0 0 .at
     22 1 do
         025 23 i - 16 +
         beep-pitch bleep-calc
@@ -342,7 +292,7 @@ set-maze-run  \ do it now
 create Array   6 08 * allot
 
 \ current object pointer
-0 variable Sprite^
+0 variable Sprite^            Sprite^   !
 
 \ current object number
 0 value    Sprite-no
@@ -429,10 +379,10 @@ create Array   6 08 * allot
 
 \ setup standard ghost colors
 : Ghost-color ( -- )
- Inky   1 sprite@ color c!
- Pinky  3 sprite@ color c!
- Blinky 5 sprite@ color c!
- Ted    2 sprite@ color c!
+ Inky   1 sprite@ color c!  \ Blue
+ Pinky  3 sprite@ color c!  \ Magenta
+ Blinky 5 sprite@ color c!  \ Cyan
+ Ted    2 sprite@ color c!  \ Red
 ;
 
 
@@ -446,7 +396,7 @@ ghost-color \ and doit now
 
 
 
-( Chomp.f - Sprite )
+\ Initialize all ghosts appearance
 : Ghost-init  ( -- )
     12 0  x-pos  all-ghost
     11 0  y-pos  all-ghost
@@ -464,7 +414,7 @@ ghost-color \ and doit now
 ; 
 
 
-( Chomp.f - Sprite )
+\ Setup pacman appearance
 
 4 name-of Pacman
 
@@ -506,10 +456,7 @@ cherry-init
 
 
 
-
-
-
-\ draw current sprite
+\ draw current sprite, well they aren't ZX Spectrum Next's Sprite, just UDG
 \ usage:
 \   Blinky  sprite-put
 : sprite-put ( -- )
@@ -522,12 +469,13 @@ cherry-init
     sync-emit             \ send all 12 chr  
 ;
 
-( Chomp.f )
+\ draw every mob at their start position
 : init-all
     ghost-init
     pacman-init
     cherry-init
-    00 counting !
+    99 counting !
+    ghost-color 1 hunt !
     key-right LASTK c!
 ;
 
@@ -559,7 +507,6 @@ cherry-init
     endcase ;
 
 
-( Chomp.f - trail )
 : go-right
   Pacman
   xy-pos@      1+      maze@
@@ -577,7 +524,6 @@ cherry-init
 
 
 
-( Chomp.f - trail )
 : go-left
   Pacman
   xy-pos@      1-      maze@
@@ -595,7 +541,6 @@ cherry-init
 
 
 
-( Chomp.f - trail )
 : go-up
   Pacman
   xy-pos@ swap 1- swap maze@
@@ -610,7 +555,6 @@ cherry-init
 
 
 
-( Chomp.f - trail )
 : go-down
   Pacman
   xy-pos@ swap 1+ swap maze@
@@ -624,7 +568,7 @@ cherry-init
   then ;
 
 
-( Chomp.f - trail )
+
 : pacman-move ( c -- )
  case
  key-right of go-right endof key+right of go-right endof
@@ -642,7 +586,7 @@ cherry-init
 ;
 
 
-( Chomp.f - trail )
+
 : pacman-eat-pill ( c -- )
   [udg] O = if
    -1 hunt !
@@ -656,7 +600,7 @@ cherry-init
 \
 
 
-( Chomp.f - trail )
+
 : pacman-walk ( c -- )
   >r r@ [udg]  O =
      r@ [char] . = or
@@ -672,7 +616,7 @@ cherry-init
 ;
 
 
-( Chomp.f - trail )
+
 : pacman-eat-cherry ( c -- )
   [udg] U = if
    10 score d+!
@@ -682,7 +626,7 @@ cherry-init
   then ; 
 
 
-( Chomp.f - ghost )
+
 : ghost-right ( c -- )
   xy-pos@ 1+ maze@
   ?ghost-trail if
@@ -698,7 +642,7 @@ cherry-init
 ;
 
 
-( Chomp.f - ghost )
+
 : ghost-left  ( c -- )
   xy-pos@ 1- maze@
   ?ghost-trail if
@@ -714,7 +658,7 @@ cherry-init
 ;
 
 
-( Chomp.f - ghost )
+
 : ghost-down  ( c -- )
   xy-pos@ swap 1+ swap maze@
   ?ghost-trail if
@@ -730,7 +674,7 @@ cherry-init
 ;
 
 
-( Chomp.f - ghost )
+
 : ghost-up    ( c -- )
   xy-pos@ swap 1- swap maze@
   ?ghost-trail if
@@ -746,7 +690,7 @@ cherry-init
 ;
 
 
-( Chomp.f - ghost )
+
 : ghost-move ( c -- )
  case
   key-right of
@@ -761,7 +705,7 @@ cherry-init
 \
 
 
-( Chomp.f - ghost )
+
 : ghost-decision ( -- )
   xy-pos@ xy-pre@ d= if
    4 choose
@@ -776,7 +720,7 @@ cherry-init
 ;
 
 
-( Chomp.f - trail )
+
 \
 : pacman-eat-dot ( c -- )
   [char] . = if
@@ -787,12 +731,12 @@ cherry-init
 
 
 
-( Chomp.f )
+
 : init-display
  LAYER11 30 emitc 8 emitc
  0 .paper 0 .border 4 .ink
  cls maze.
- 0 20 at. ." high "
+ 0 20 .at ." high "
  high-score 2@
  <# # # # # # # #> type
  5 0 do
@@ -802,10 +746,11 @@ cherry-init
 ;
 
 
-( Chomp.f )
+.( Chomp.f - Interlude course )
+
 : inter-hunt
   0 27 do
-   10 i at. sync-vid
+   10 i .at sync-vid
    7 16 bl emit emitc emitc
    [udg] T emitc sync-vid
    bl bl emitc emitc
@@ -817,10 +762,9 @@ cherry-init
   -1 +loop ;
 
 
-( Chomp.f )
 : inter-flee
   28 1 do
-   10 i at. sync-vid
+   10 i .at sync-vid
    3 16 bl emit emitc emitc
    [udg] T emitc sync-vid
    bl bl emitc emitc
@@ -832,7 +776,7 @@ cherry-init
   1 +loop ;
 
 
-( Chomp.f - Interlude )
+
 : inter-sound
   27 0 do
    012 i bip swap
@@ -840,18 +784,19 @@ cherry-init
   1 28 do
    012 i bip swap
   -1 +loop ;
-\
+
 
 : interlude
   inter-sound cls
-  10 30 at.
+  7 .ink
+  10 30 .at
   [udg]  O  emitc
   inter-flee
   inter-hunt ;
 
 
 
-( Chomp.f )
+
 : catch? ( -- f )
   pacman xy-pos@
   inky   xy-pos@ d=
@@ -864,7 +809,7 @@ cherry-init
   or or or ;
 
 
-( Chomp.f )
+
 : ghost-eaten ( n -- )
   sprite#
   12 sprite@ x-pos c!
@@ -878,7 +823,7 @@ cherry-init
 ;
 
 
-( Chomp.f )
+
 : ghost-catch
   -1 lives +!
   lives @ 0= if
@@ -894,7 +839,7 @@ cherry-init
   init-display ;
 
 
-( Chomp.f )
+
 : catch!
   hunt @ 1 = if
    ghost-catch
@@ -908,25 +853,20 @@ cherry-init
   then ;
 
 
-( Chomp.f )
+
 : count-down
-  hunt @ -1 = if 1 counting +!
-   56 counting @ < if
-    ghost-color then
-   57 counting @ < if
-    ghost-white then
-   58 counting @ < if
-    ghost-color then
-   59 counting @ < if
-    ghost-white then
-   60 counting @ < if
-    ghost-color
-    1 hunt ! then
+  hunt @ -1 = if 
+   1  counting +!
+   56 counting @ < if ghost-color then
+   57 counting @ < if ghost-white then
+   58 counting @ < if ghost-color then
+   59 counting @ < if ghost-white then
+   60 counting @ < if ghost-color 1 hunt ! then
   then
 ; 
 
 
-( Chomp.f )
+
 : put-cherry
   100 choose 0= if
    cherry sprite-put
@@ -945,7 +885,7 @@ cherry-init
 
 
 
-( Chomp.f )
+
 : move-pacman
   pacman xy-pos@ xy-pre!
   LASTK key-decode c@
@@ -961,7 +901,7 @@ cherry-init
 ;
 
 
-( Chomp.f )
+
 : move-four-ghosts
   4 0 do
     i sprite# xy-pos@ xy-pre!
@@ -977,38 +917,38 @@ cherry-init
 ; 
 
 
-( Chomp.f )
+
 : dashboard
-  0  1 at.
+  0  1 .at
   6 16 emitc emitc \ yellow
   [udg] P emitc
   7 16 emitc emitc \ white
   bl emitc lives ?
-  0  6 at. ." score "
+  0  6 .at ." score "
   score 2@
   <# # # # # # # #> type
 ;
 
 
-( Chomp.f )
+
 needs .s
 : debug
-  2 24 at. 6 16 emitc emitc
+  2 24 .at 6 16 emitc emitc
   pacman xy-pos@ swap . .
-  3 24 at. LASTK c@ .
-\ 22 1 at. hex sprite 8 +
+  3 24 .at LASTK c@ .
+\ 22 1 .at hex sprite 8 +
 \ sprite@ (dmp) decimal
-  5 24 at. total 2@ D.
-  7 24 at. counting @ .
-  9 24 at.
+  5 24 .at total 2@ D.
+  7 24 .at counting @ .
+  9 24 .at
   sprite@ maze c@ emitc
-  0 0 at. .s
-  11 24 at. hunt @ .
-\ 22 22 at. ." KEY" key drop
+  0 0 .at .s
+  11 24 .at hunt @ .
+\ 22 22 .at ." KEY" key drop
 ; 
 
 
-( Chomp.f )
+
 : heart-beat
   move-pacman
   move-four-ghosts
@@ -1024,10 +964,11 @@ needs .s
 : M init-display ;
 
 
-( Chomp.f )
+
 : phase-complete
   score 2@ total 2@ d= if
    180  total D+!
+   ghost-color 1 hunt !
    init-all
    set-maze-run
    interlude
@@ -1036,7 +977,7 @@ needs .s
   then ;
 
 
-( Chomp.f )
+
 : run-game
   begin
    lives @
@@ -1048,7 +989,7 @@ needs .s
 ;
 
 
-( Ghost.f )
+
 : game
   LAYER11 3 SPEED! 30 emitc 8 emitc
   3 lives !
@@ -1061,13 +1002,13 @@ needs .s
   set-maze-run
   init-display
   run-game
-  22 0 at.
+  22 0 .at
   LAYER12 3 SPEED!
 ; 
 
-BASE !
+\ BASE !
 
-( Ghost.f )
+
 CR CR CR
 needs TRUV needs INVV
 TRUV  .( Use: )
