@@ -333,4 +333,6 @@ In the documentation, introduction of a simple word categorization to help the n
 
 
 \ build 20220508
+In this build I managed to speed-improve a couple of definitions and at the same time
+to reduce the lenght of the total compiled code, saving 16 bytes.
 
