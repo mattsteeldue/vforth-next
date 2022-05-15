@@ -252,8 +252,8 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 : RIGHTC NCOL @ 80 < IF  1  ELSE  DOWNC -80 THEN NCOL +! ;
 
 : BYTE ( -- b ) \ accept two hex digit as a byte
-    KEY DUP EMIT 10 DIGIT DROP 4 LSHIFT
-    KEY DUP EMIT 10 DIGIT DROP + ;
+    KEY DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
+    KEY DUP EMIT         10 DIGIT DROP + ; DECIMAL
 HEX
 
 : DONEC             8F 26 +ORIGIN C!    \ reset cursor face
