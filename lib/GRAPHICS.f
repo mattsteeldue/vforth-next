@@ -238,15 +238,34 @@ CONSTANT  L2-RAM-PAGE           \ keeps Layer 2 Active RAM Page
 
 \ given x y coordinates (x: vertical, y: horizontal)
 \ fit the correct 8K page at MMU7 and return offset a within it.
-HEX
-: L2-PIXELADD ( x y -- a )
-    OVER FF AND                 \ take x mod 256
-    5 RSHIFT                    \ divide by 32
-    L2-RAM-PAGE + MMU7!         \ fit correct page at MMU7
-    SWAP 1F AND                 \ take x mod 32
-    FLIP                        \ fast shift 8 bits
-    + E000 OR                   \ turn into offset from E000h
-;
+\ HEX
+\ : L2-PIXELADD ( x y -- a )
+\     OVER FF AND                 \ take x mod 256
+\     5 RSHIFT                    \ divide by 32
+\     L2-RAM-PAGE + MMU7!         \ fit correct page at MMU7
+\     SWAP 1F AND                 \ take x mod 32
+\     FLIP                        \ fast shift 8 bits
+\     + E000 OR                   \ turn into offset from E000h
+\ ;
+
+CODE L2-PIXELADD ( x y -- a ) \ and setup MMU7! accordingly
+    HEX
+    E1 C,             \ pop  hl|    \ horizontal coord, only L is significant
+    D1 C,             \ pop  de|    \ vertical coord, only E is significant
+    63 C,             \ ld   h'| e| \ hl : x-y-coords
+    7B C,             \ ld   a'| e| \ calc which 8K page must be fitted in MMU7
+    07 C,             \ rlca
+    07 C,             \ rlca
+    07 C,             \ rlca  
+    E6 C, 07 C,       \ andn 7  n,
+    C6 C, 12 C,       \ addn L2-RAM-PAGE n,    \ usually 18 
+    ED C, 92 C, 57 C, \ nextrega decimal 87 p, 
+    3E C, E0 C,       \ ldn  a'| E0   n,  
+    B3 C,             \ ora  e|
+    67 C,             \ ld   h'| a|
+    E5 C,             \ push hl|
+    DD C, E9 C,       \ next
+    SMUDGE            \ c; 
    
 \ ____________________________________________________________________
 \

@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220508 ) CR
+.( build 20220528 ) CR
 .( Direct Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -1340,16 +1340,18 @@ CODE key ( -- c )
 .( ?TERMINAL )
 \ Tests the terminal-break. Leaves tf if [SHIFT-SPACE/BREAK] is pressed, or ff.
 CODE ?terminal ( -- 0 | -1 ) ( true if BREAK pressed )
-         
-        LDX     HL| 0 NN,
-        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
-        CALL    HEX 1F54 AA,
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-        JRF    CY'| HOLDPLACE
-            DECX     HL|
-        HERE DISP, \ THEN,
+
+        EXX
+        LDX     BC|     HEX 7FFE NN,
+        IN(C)   D'|
+        LD      B'|     C|  \ FEFE
+        IN(C)   A'|
+        ORA      D|
+        RRA
+        CCF 
+        SBCHL   HL|
         PUSH    HL|
+        EXX
         Next
         C;
 
@@ -5516,7 +5518,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Direct Threaded - build 20220508" -1 allot ]
+    [ decimal 13 here ," Direct Threaded - build 20220528" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

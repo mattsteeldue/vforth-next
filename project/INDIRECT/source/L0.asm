@@ -856,17 +856,18 @@ Key_NoCapsLock: ld      l, a
 // ?terminal    -- FALSE | TRUE
 // test for BREAK keypress
                 New_Def QTERMINAL, "?TERMINAL", is_code, is_normal
-                ld      hl, 0
-                ld      (SP_Saved), sp
-                ld      sp, Cold_origin - 5
-                call    $1F54
-                ld      sp, (SP_Saved)
-
-                jr      c, QTerminal_NoBreak
-                    dec     hl                  // quick TRUE_FLAG
-QTerminal_NoBreak:  
-
-                psh1     
+                exx
+                ld      bc, $7ffe
+                in      d, (c)
+                ld      b, c
+                in      a, (c)
+                or       d 
+                rra
+                ccf 
+                sbc     hl, hl
+                push    hl 
+                exx
+                next
 
 
 //  ______________________________________________________________________ 

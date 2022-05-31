@@ -336,3 +336,8 @@ In the documentation, introduction of a simple word categorization to help the n
 In this build I managed to speed-improve a couple of definitions and at the same time
 to reduce the lenght of the total compiled code, saving 16 bytes.
 
+
+\ build 20220528
+Just a little improvement on ?TERMINAL definition.
+Introducing example to create "dot" commands using Forth ASSEMBLER dictionary.
+

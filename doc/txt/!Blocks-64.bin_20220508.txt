@@ -18189,7 +18189,7 @@ Scr# 899
 
 Scr# 900 
   0 ( UART Raspberry PI Zero )
-  1 hex 300 6633 ! \ 7 emit pitch
+  1 \ hex 300 6633 ! \ 7 emit pitch
   2 \
   3 NEEDS LAYERS                   NEEDS BCOPY
   4 NEEDS TRUV    NEEDS INVV

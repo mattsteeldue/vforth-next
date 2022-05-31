@@ -1,4 +1,5 @@
-: DUMMY
-  ." this is a dummy word"
-  CR
-;
+\
+\ recompile.f
+\
+
+include src/f15a.f

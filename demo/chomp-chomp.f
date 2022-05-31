@@ -991,13 +991,16 @@ needs .s
 
 
 : game
-  LAYER11 3 SPEED! 30 emitc 8 emitc
-  3 lives !
+  LAYER11 
+  [ 1 ] LITERAL SPEED! 
+  30 emitc 8 emitc
+  [ 3 ] LITERAL lives !
   0 .paper 0 .border 4 .ink
   1 .bright .perm
   interlude
   180. total 2!
   0.   score 2!
+  decimal
   init-all
   set-maze-run
   init-display
