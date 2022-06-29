@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220528 ) CR
+.( build 20220626 ) CR
 .( Direct Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -20,7 +20,7 @@
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
-\     - CSpect emulator V.2.12.36
+\     - CSpect emulator V.2.16.5.0
 \
 \ There are a few modifications to keep in mind since previous v. 1.2
 \  '      (tick) returns CFA, instead of PFA as previously was
@@ -156,6 +156,9 @@ DECIMAL
      0  VALUE     splash^       \ patch of SPLASH in WARM
      0  VALUE     autoexec^     \ patch of NOOP in ABORT
      0  VALUE     .^            \ patch of .    in MESSAGE
+     0  VALUE     f_seek_exit^  
+     0  VALUE     f_read_exit^  
+     0  VALUE     f_open_exit^  
 
 .( Psh2 Psh1 Next )
 
@@ -1417,7 +1420,7 @@ CODE f_seek ( d u -- f )
         PUSH    HL|
         LDX     IX|     0 NN,
         RST     08|     HEX  9F  C,
-HERE DUP       
+HERE TO f_seek_exit^       
         POP     BC|
         POP     IX|
         SBCHL   HL|
@@ -1435,7 +1438,7 @@ CODE f_close ( u -- f )
         PUSH    IX|
         PUSH    BC|
         RST     08|   HEX  9B  C,
-        JR      BACK,
+        JR      f_seek_exit^ BACK,
 \       POP     BC|
 \       POP     IX|
 \       SBCHL   HL|
@@ -1453,7 +1456,7 @@ CODE f_sync ( u -- f )
         PUSH    IX|
         PUSH    BC|
         RST     08|   HEX  9C  C,
-        JR      BACK,
+        JR      f_seek_exit^ BACK,
 \       POP     BC|
 \       POP     IX|
 \       SBCHL   HL|
@@ -1496,7 +1499,7 @@ CODE f_read ( a b u -- n f )
         EX(SP)IX
         PUSH    DE|
         RST     08|   HEX  9D  C,
-HERE        
+HERE TO f_read_exit^
         POP     BC|
         POP     IX|
         PUSH    DE|
@@ -1518,7 +1521,7 @@ CODE f_write ( a b u -- n f )
         EX(SP)IX
         PUSH    DE|
         RST     08|     HEX  9E  C,
-        JR      BACK,
+        JR      f_read_exit^ BACK,
 \       POP     BC|
 \       POP     IX|
 \       PUSH    DE|
@@ -1553,16 +1556,18 @@ CODE f_open ( a1 a2 b -- fh f )
         PUSH    HL|         \ this pushes original bc
         LDN     A'|     CHAR  *  N,
         RST     08|     HEX  9A  C,
-HERE DUP        
-        POP     BC|
-        POP     IX|
-        SBCHL   HL|
+HERE TO f_open_exit^        
         LD      E'|     A|
         LDN     D'|     0  N,
-        PUSH    DE|
-        PUSH    HL|
-        Next
+        JR      f_read_exit^ BACK,
         C;
+\       POP     BC|
+\       POP     IX|
+\       SBCHL   HL|
+\       PUSH    DE|
+\       PUSH    HL|
+\       Next
+\       C;
     \ CREATE FILENAME ," test.txt"   \ new Counted String zero-padded
     \ FILENAME 1+ PAD 1 F_OPEN
     \ DROP
@@ -1578,7 +1583,7 @@ CODE f_opendir ( a -- fh f )
         LDN     B'|   HEX 10   N,
         LDN     A'|   CHAR C   N,
         RST     08|   HEX  A3  C,
-        JR      BACK,
+        JR      f_open_exit^ BACK,
         C;
         
 
@@ -1594,7 +1599,7 @@ CODE f_readdir ( a1 a2 fh -- n f )
         EX(SP)IX            \ wildcard spec nul-terminated
         PUSH    BC|
         RST     08|   HEX  A4  C,
-        JR      BACK,
+        JR      f_open_exit^ BACK,
         C;
         
 
@@ -5518,7 +5523,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Direct Threaded - build 20220528" -1 allot ]
+    [ decimal 13 here ," Direct Threaded - build 20220626" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

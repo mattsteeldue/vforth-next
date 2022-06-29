@@ -701,7 +701,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      90  // length of the following string CR included.
                 db      "v-Forth 1.52 NextZXOS version", 13
-                db      "Indirect Threaded - build 20220528", 13
+                db      "Indirect Threaded - build 20220626", 13
                 db      "1990-2022 Matteo Vitturi", 13
                 dw      EXIT
 

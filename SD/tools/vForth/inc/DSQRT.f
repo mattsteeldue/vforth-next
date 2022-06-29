@@ -9,7 +9,7 @@ DECIMAL
 NEEDS INVERT
 \
 : DSQRT ( d -- n )
-    [ 0 INVERT 1 RSHIFT INVERT ] LITERAL 
+    [ 0 INVERT 1 RSHIFT INVERT ] LITERAL
     15 0 DO
         >R                 \ d         R: n
         2DUP R@            \ d d n

@@ -168,14 +168,9 @@ F_Read_Exit:
                 rst     $08     
                 db      $9A
 F_Open_Exit:                
-                pop     bc
-                pop     ix
-                sbc     hl, hl
                 ld      e, a
                 ld      d, 0
-
-
-                psh2
+                jr      F_Read_Exit
 
 //   \ CREATE FILENAME ," test.txt"   \ new Counted String
 //   \ FILENAME 1+ PAD 1 F_OPEN
