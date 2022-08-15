@@ -345,3 +345,9 @@ Introducing example to create "dot" commands using Forth ASSEMBLER dictionary.
 \ build 20220626
 Improved  ms  a word that waits a given number of milliseconds.
 
+
+\ build 20220730
+Introducing RND that works as old-standard Spectrum (but faster).
+Now KEY doesn't show a flashing cursor anymore, then introducing CURS to do that.
+
+

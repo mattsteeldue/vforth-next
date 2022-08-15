@@ -23,6 +23,7 @@
   ELSE
     ." Remove/insert SD and press Y "
     BEGIN
+        CURS
         KEY UPPER               \ wait for Y
         [CHAR] Y =
     UNTIL

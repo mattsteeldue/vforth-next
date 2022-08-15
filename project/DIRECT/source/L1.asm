@@ -702,22 +702,6 @@ Count_Ptr:
 
 //  ______________________________________________________________________ 
 //
-// type         a n --
-// Sends to current output channel n characters starting at address a.
-                Colon_Def TYPE, "TYPE", is_normal
-                dw      BOUNDS                  // bounds
-                dw      C_Q_DO                  // ?do
-                dw      Type_Skip - $
-Type_Loop:                
-                dw          I, CFETCH           //      i c@
-                dw          EMIT                //      emit
-                dw      C_LOOP                  // loop 
-                dw      Type_Loop - $
-Type_Skip:                
-                dw      EXIT                    // ;
-
-//  ______________________________________________________________________ 
-//
 // leave        --
 // Compile (leave) to leave current LOOP and jump just after it
                 Colon_Def LEAVE, "LEAVE", is_immediate
@@ -734,6 +718,22 @@ Type_Skip:
                 dw      R_TO, OVER, STORE
                 dw      CELL_MINUS, ZERO
                 dw      SWAP, STORE
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// type         a n --
+// Sends to current output channel n characters starting at address a.
+                Colon_Def TYPE, "TYPE", is_normal
+                dw      BOUNDS                  // bounds
+                dw      C_Q_DO                  // ?do
+                dw      Type_Skip - $
+Type_Loop:                
+                dw          I, CFETCH           //      i c@
+                dw          EMIT                //      emit
+                dw      C_LOOP                  // loop 
+                dw      Type_Loop - $
+Type_Skip:                
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -781,6 +781,7 @@ LTrailing_Leave:
                 dw      C_Q_DO
                 dw      Accept_Leave - $
 Accept_Loop:                                                            
+                dw          CUR
                 dw          DROP, KEY           //      drop key        ( a  c )
                 dw          DUP                 //      dup             ( a  c  c )
                 dw          LIT, $0E            //      0E

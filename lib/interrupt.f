@@ -4,9 +4,9 @@
 .( INTERRUPT Handler ) 
 \
 
-VOCABULARY INTERRUPT IMMEDIATE
+VOCABULARY INTERRUPTS IMMEDIATE
 
-INTERRUPT DEFINITIONS
+INTERRUPTS DEFINITIONS
 
 \ To use this ISR utility you have to define a suitable word 
 \ that can be executed in background in a Interrupt-Driven way
@@ -15,32 +15,32 @@ BASE @
 
 HEX
 
-CODE  INT-EI
+CODE  INT-EI  ( -- )
     FB C,                       \ ei
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
-CODE  INT-DI
+CODE  INT-DI  ( -- )
     F3 C,                       \ di
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
-CODE  INT-IM1
+CODE  INT-IM1  ( -- )
     56ED ,                      \ im 1
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
-CODE  INT-IM2
+CODE  INT-IM2  ( -- )
     5EED ,                      \ im 2
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
-CODE INT-SYNC
+CODE INT-SYNC  ( -- )
     76 C,                       \ halt
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
-CODE  SETIREG
+CODE  SETIREG  ( n -- )
     E1 C,                       \ pop hl
     7D C,                       \ ld a,l
     47ED ,                      \ ld i,a
@@ -54,7 +54,7 @@ CODE  SETIREG
 \ return-from-interrupt low-level definition.
 \ this word restores SP, RP, IX and all registers and alternate registers.
 \ IY is not considered since, normally we do not alter it.
-CODE  INT-RET
+CODE  INT-RET  ( -- )
     ED C, 7B C, INT-SAVE ,      \ ld sp,(INT-SAVE)
     E1 C,                       \ pop hl
     22 C, 30 +ORIGIN ,          \ ld (RP), hl
@@ -74,12 +74,12 @@ FORTH DEFINITIONS
 
   VARIABLE  INT-W     INT-W !      \ word of interrupt handler
 
-INTERRUPT DEFINITIONS
+INTERRUPTS DEFINITIONS
 
 ' INT-RET ,              \ followed by INT-RET
 
 
-CODE  INT-SUB
+CODE  INT-SUB  ( -- )
     FF C,                       \ rst 38h
     F3 C,                       \ di
     DD C, E5 C,                 \ push ix
@@ -109,10 +109,10 @@ SMUDGE
 
 FORTH DEFINITIONS
 
-: INT-ON
+: INT-ON  ( -- )
     63 6200 C! 6200 6201 100 CMOVE   \ setup vector table
     C3 6363 C!   \ jp to INT-SUB address
-    INTERRUPT
+    INTERRUPTS
     
     \ The start-address code of INT-SUB depends on which version
     \ we have between Direct vs Indirect threaded core.
@@ -130,8 +130,8 @@ FORTH DEFINITIONS
 ;
 
 
-: INT-OFF
-    INTERRUPT
+: INT-OFF  ( -- )
+    INTERRUPTS
     INT-DI
     0038 6364 !
     3F SETIREG INT-IM1
@@ -139,6 +139,19 @@ FORTH DEFINITIONS
 ;
 
 FORTH
+
+\ used in the form
+\
+\   INTERRUPT 
+\
+\ set up an interrupt vector to the code at address a. 
+\
+: INTERRUPT  ( a -- )
+    INT-OFF
+    INT-W !
+    INT-ON
+;
+
 
 BASE !
 

@@ -15,9 +15,19 @@ EDITOR DEFINITIONS
 
 BASE @
 
+: KEYB ( -- c )     \ show cursor and wait a keypress
+    CURS KEY ;
+
+: KEYBEMIT  ( -- c )    \ and emit it
+    KEYB DUP EMIT ;
+
+: KEYBEMITD  ( -- b )       \ and treat it as a hex digit
+    KEYBEMIT 10 DIGIT DROP ;
+
 \
 DECIMAL   0 VARIABLE NROW  NROW !       \ current row
           0 VARIABLE NCOL  NCOL !       \ current columns
+
 : HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
 
 : ADDRC   ( -- a )                      \ calc cursor addr
@@ -66,14 +76,15 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
     CR ." Q-uit    N-ext    S-hift   R-eplace  P-ut hex byte"
     56 0 AT-XY  INVV ."   edit  " TRUV ;
 \
-: EDIT-STAT CURC@
+: EDIT-STAT 
+    CURC@
     25 19 AT-XY  HEX DUP 3 .R  36 19 AT-XY  DECIMAL DUP 3 .R
     47 19 AT-XY  32 MAX EMIT
     15 19 AT-XY  NCOL @  3 .R  05 19 AT-XY  NROW @      3 .R ;
 \
 : BYTE ( -- b ) \ accept two hex digit as a byte
-    KEY DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
-    KEY DUP EMIT         10 DIGIT DROP + ; DECIMAL
+    KEYBEMITD  4 LSHIFT
+    KEYBEMITD  + ; DECIMAL
 
 : UNDO  ( -- ) \ discard changes on current Screen
   B/SCR 0 DO
@@ -92,7 +103,7 @@ HEX
 DECIMAL
 \
 : CMD    ( c -- )   \ handle EDIT key options
-    6 21 AT-XY DONEC KEY UPPER BL MAX DUP EMIT
+    6 21 AT-XY DONEC KEYBEMIT UPPER BL MAX 
     CASE
     [CHAR] P OF BYTE CURC! ENDOF  \ put a byte at cursor
     [CHAR] H OF NROW @ H   ENDOF  \ copy to PAD
@@ -135,7 +146,7 @@ FORTH DEFINITIONS
     BEGIN
         EDIT-STAT  INITC
         CURC@ NROW @ NCOL @ TO-SCR  2DUP AT-XY
-        KEY  ?TERMINAL IF DROP 0 INSC   REFRESH THEN
+        KEYB  ?TERMINAL IF DROP 0 INSC   REFRESH THEN
         DUP BL < IF
             >R AT-XY EMIT R>  CTRLC
         ELSE

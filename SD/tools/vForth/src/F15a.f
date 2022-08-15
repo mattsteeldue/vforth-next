@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220626 ) CR
+.( build 20220730 ) CR
 .( Indirect-Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -1236,10 +1236,10 @@ HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
 
 
 \ new
-.( KEY )
+.( CURS )
 \ display a flashing cursor then
 \ reads one character from keyboard stream and leaves it on stack
-CODE key ( -- c )
+CODE curs ( -- )
          
         PUSH    BC|
         PUSH    IX|
@@ -1285,6 +1285,21 @@ CODE key ( -- c )
         LDN     A'| HEX 08 N,   \ backspace
         RST     10|
         
+        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+
+        POP     IX|
+        POP     BC|
+        Next
+        C;
+
+
+CODE key ( -- )
+        PUSH    BC|
+
+        HERE  \ BEGIN, 
+            BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
+        JRF     Z'| HOLDPLACE SWAP DISP,  \ UNTIL, 
+
         LDA()  HEX 5C08 AA,    \ LAST-K to get typed character
 
         \ Decode characters from above table
@@ -1310,25 +1325,45 @@ CODE key ( -- c )
         LD      L'|    A|
         LDN     H'|    0 N,
 
-        LDA()  HEX 5C48 AA,    \ BORDCR system variable
-        RRA
-        RRA
-        RRA
-        ORN     18 N,           \ quick'n'dirty click 
-        OUTA    HEX FE P,
-        LDN     B'|    0 N,
-        HERE \ BEGIN,
-        DJNZ    HOLDPLACE SWAP DISP, \ Wait loop
-        XORN    18 N,           \ click ?
-        OUTA    HEX FE P,
+        RES      5| (IY+ 1 )|
 
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-
-        POP     IX|
         POP     BC|
         PUSH    HL|
+
         Next
         C;
+
+
+\ CODE click ( -- )
+\ 
+\         PUSH    BC|
+\         LDA()  HEX 5C48 AA,    \ BORDCR system variable
+\         RRA
+\         RRA
+\         RRA
+\         ORN     18 N,           \ quick'n'dirty click 
+\         OUTA    HEX FE P,
+\         LDN     B'|    0 N,
+\         HERE \ BEGIN,
+\         DJNZ    HOLDPLACE SWAP DISP, \ Wait loop
+\         XORN    18 N,           \ click ?
+\         OUTA    HEX FE P,
+\         PUSH    BC|
+\ 
+\         Next
+\         C;
+
+
+\ CODE key? ( -- f )
+\         LDX     HL|  HEX 0000  NN,
+\         BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
+\         JRF     Z'|  HOLDPLACE  \ -IF,
+\             DECX    HL|
+\         HERE DISP, \ THEN,         
+\         PUSH    HL|
+\         Next
+\         C;
+
 
 
 \ 637Bh
@@ -3392,17 +3427,6 @@ CODE bounds  ( a n -- a+n a )
         C;
 
 
-\ 6C1Ah
-.( TYPE )
-\ Sends to current output channel n characters starting at address a.
-: type   ( a n -- )
-    bounds
-    ?Do
-        i c@ emit
-    Loop
-    ;
-
-
 .( LEAVE )
 : leave ( -- )
     compile (leave)         \ unloop and branch
@@ -3418,6 +3442,18 @@ CODE bounds  ( a n -- a+n a )
     r> over !               ( csp H x h 0 h 3 h 2 )
     cell- 0 swap !          ( csp H 0 h 0 h 3 h 2 )
 ; immediate    
+
+
+\ 6C1Ah
+.( TYPE )
+\ Sends to current output channel n characters starting at address a.
+: type   ( a n -- )
+    bounds
+    ?Do
+        i c@ emit
+        \ ?terminal If leave Then
+    Loop
+    ;
 
 
 \ 6C43h
@@ -3448,6 +3484,7 @@ CODE bounds  ( a n -- a+n a )
     over + over   ( a  n1+a a       ) 
     0 -rot        ( a  0    a+n1  a ) 
     ?Do           ( a  0 ) 
+        curs
         drop key  ( a  c ) 
         dup       ( a  c  c )
         [ hex 0E ] Literal +origin 
@@ -5165,27 +5202,29 @@ decimal
 
 ( map-into )
 (   \ : ? / * | \ < > "    )
-(   \ _ ^ % & $ _ { } ~    )
+(   \ _ ^ % & $ _ { } ~   `)
 
 \ create ndom hex    (   \ : ? / * | \ < > "   )
 \     3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
 create ndom hex    (   : ? / * | \ < > "   )
     char : c,  char ? c,  char / c,  char * c, 
     char | c,  char \ c,  char < c,  char > c,  char " c,
+    00     c,
 
 \ create ncdm hex    (   \ _ ^ % & $ _ { } ~   )
 \     5F C,  5E C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
 create ncdm hex    (   _ ^ % & $ _ { } ~   )
     char _ c,  char ^ c,  char % c,  char & c,  
     char $ c,  char _ c,  char { c,  char } c,  char ~ c,
+    hex 00     c,
 
 
 \ Replace illegal character in filename 
 decimal
-: needs-ch ( a -- )
+: map-fn ( a -- )
     count bounds
     Do
-        ncdm ndom [ 9 ] Literal i c@ (map) i c!
+        ncdm ndom [ 10 ] Literal i c@ (map) i c!
     Loop
 ;
 
@@ -5201,7 +5240,7 @@ decimal
         erase                           \ a
         here c@ 1+ here over            \ a n here n
         needs-w    swap cmove           \ a n
-        needs-w    needs-ch
+        needs-w    map-fn
         needs-w    +                    \ a a1+n
         [ hex 662E decimal ] literal    \ a a1+n ".F"
         swap !                          \ a
@@ -5500,7 +5539,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 90 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Threaded - build 20220626" -1 allot ]
+    [ decimal 13 here ," Indirect Threaded - build 20220730" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5552,7 +5591,7 @@ decimal
         mmu7@ ( n2 page )
         inkey ( n2 page c )
         swap mmu7! ( n2 c )
-        dup 0= If video quit Then
+        dup 0= If leave Then
         dup [ decimal 13 ] literal = If drop 0 Then \ Then
         dup [ decimal 10 ] literal = If drop 0 Then \ Then
         \ dup  0=  If 
@@ -5948,7 +5987,7 @@ RENAME   -->            -->
 RENAME   load+          LOAD+
 RENAME   needs          NEEDS 
 RENAME   needs-f        NEEDS-F
-RENAME   needs-ch       NEEDS-CH
+RENAME   map-fn         MAP-FN
 RENAME   ndom           NDOM
 RENAME   ncdm           NCDM
 RENAME   needs/         NEEDS/
@@ -6248,7 +6287,10 @@ RENAME   f_seek         F_SEEK
 RENAME   select         SELECT
 RENAME   inkey          INKEY 
 RENAME   ?terminal      ?TERMINAL
-RENAME   key            KEY    
+\ RENAME   key?           KEY?   
+\ RENAME   click          CLICK  
+RENAME   key            KEY     
+RENAME   curs           CURS 
 \ RENAME   bleep          BLEEP  
 RENAME   (?emit)        (?EMIT)
 RENAME   emitc          EMITC  

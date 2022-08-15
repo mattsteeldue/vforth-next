@@ -20,6 +20,8 @@
 
 MARKER FORGET-LED \ this allows you to forget all this package.
 
+: KEY CURS KEY ;
+
 NEEDS SHOW-PROGRESS  NEEDS INVV     NEEDS TRUV
 NEEDS CASE           NEEDS LINE
 

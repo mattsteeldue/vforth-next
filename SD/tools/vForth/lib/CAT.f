@@ -36,7 +36,7 @@ DECIMAL
       ?TERMINAL NOT AND
       while
         PAD DUP C@       >R        \ keep attribute byte
-        1+ begin  DUP C@ ?DUP while emit 1+ repeat \ emit filename
+        1+ begin  DUP C@ ?DUP while emitc 1+ repeat \ emit filename
         dup pad - 30 >
         if
           13 emit                    \ emit cr if name is too long

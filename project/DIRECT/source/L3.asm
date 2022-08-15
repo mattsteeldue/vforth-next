@@ -352,19 +352,20 @@ Needs_2:
                 New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
 //              db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
                 db ':?/*|\<>"'
+                db 0
 
                 New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
 //              db $5F, $5E, $25, $26, $24, $5F, $7B, $7D, $7E
                 db '_^%&$_{}~' 
-
+                db 0
 
 // Replace illegal character in filename using the map here above
 // at the moment we need only  "
-                Colon_Def NEEDS_CHECK, "NEEDS-CH", is_normal
+                Colon_Def NEEDS_CHECK, "MAP-FN", is_normal
                 dw      COUNT, BOUNDS
                 dw      C_DO
 Needs_3:
-                dw          NCDM, NDOM, LIT, 9 
+                dw          NCDM, NDOM, LIT, 10
                 dw          I, CFETCH
                 dw          C_MAP
                 dw          I, CSTORE
@@ -702,7 +703,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      88
                 db      "v-Forth 1.52 NextZXOS version", 13    // 29
-                db      "Direct Threaded - build 20220626", 13  // 31
+                db      "Direct Threaded - build 20220730", 13  // 31
                 db      "1990-2022 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
@@ -733,7 +734,10 @@ AcceptN_Loop:
                 dw          DUP, ZEQUAL
                 dw          ZBRANCH
                 dw          AcceptN_Endif_1 - $
-                dw              VIDEO, QUIT
+//              dw              VIDEO, QUIT
+                dw              C_LEAVE
+                dw              AcceptN_Leave - $
+
 AcceptN_Endif_1:   
                 dw          DUP, LIT, 13, EQUALS 
                 dw          ZBRANCH

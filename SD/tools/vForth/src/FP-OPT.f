@@ -69,7 +69,7 @@ CODE >W
     CB C, 15 C,     \ RL       L|         \ To keep sign as the msb of H,   
     CB C, 14 C,     \ RL       H|         \ so you can check for sign in the
     CB C, 1D C,     \ RR       L|         \ integer-way. Sorry.
-    06 C, FC C,     \ LDN     B'|    HEX 0FC N,  
+    06 C, 00 C,     \ LDN     B'|    HEX 00 N,  
     4B C,           \ LD      C'|    E|    
     5D C,           \ LD      E'|    L|    
     7C C,           \ LD      A'|    H|    

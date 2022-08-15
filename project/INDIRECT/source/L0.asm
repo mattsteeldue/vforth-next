@@ -771,11 +771,11 @@ Key_MapTo:
 
 //  ______________________________________________________________________ 
 //
-// key          -- c
+// curs         -- c
 // wait for a keypress
 // This definition need Standard ROM Interrupt to be served
 
-                New_Def KEY, "KEY", is_code, is_normal
+                New_Def CUR, "CURS", is_code, is_normal
 
                 push    bc                  // save Instruction Pointer
                 push    ix  
@@ -784,7 +784,7 @@ Key_MapTo:
                 ld      sp, Cold_origin - 5 // maybe $4000 in the future...
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
-Key_Wait:       
+Cur_Wait:       
                     halt
                     ld      a, 2                // selec channel #2 (Upper Video)
                     call    $1601               // SELECT Standard-ROM Routine
@@ -794,18 +794,18 @@ Key_Wait:
                     and     (iy + $3E)          // FRAMES (5C3A+3E)
     
                     ld      a, (Block_Face)     // see origin.asm
-                    jr      nz, Key_Cursor
+                    jr      nz, Cur_Cursor
                         ld      a, (Half_Face)      // see origin.asm
                         bit     3, (iy + $30)       // FLAGS2 (5C3A+$30) that is CAPS-LOCK
-                        jr      z, Key_Cursor
+                        jr      z, Cur_Cursor
                             ld      a, (Underscore_Face) // see origin
-Key_Cursor:     
+Cur_Cursor:     
                     rst     $10
                     ld      a, BACKSPACE_CHAR    // backspace            
                     rst     $10
 
                     bit     5, (iy + 1)         // FLAGS (5C3A+1)
-                jr      z, Key_Wait
+                jr      z, Cur_Wait
     
                 halt    // this is to sync flashing cursor.
 
@@ -813,6 +813,28 @@ Key_Cursor:
                 rst     $10
                 ld      a, BACKSPACE_CHAR   // backspace
                 rst     $10
+
+                ld      sp, (SP_Saved)
+
+                pop     ix  
+                pop     bc                  // Restore Instruction Pointer
+
+                next
+
+
+//  ______________________________________________________________________ 
+//
+// key          -- c
+// This definition need Standard ROM Interrupt to be served
+
+                New_Def KEY, "KEY", is_code, is_normal
+
+                push    bc
+
+Key_Wait:                
+                    bit     5, (iy + 1)         // FLAGS (5C3A+1)
+                jr      z, Key_Wait
+
                 ld      a, (LASTK)          // get typed character (5C08)
                 
                 // decode character from above table
@@ -833,23 +855,49 @@ Key_DontMap:    cp      $06                 // CAPS-LOCK management
 Key_NoCapsLock: ld      l, a
                 ld      h, 0                // Prepare TOS 
 
-                ld      a, ($5C48)          // BORDCR system variable
-                rra
-                rra
-                rra
-                or      $18                 // quick'n'dirty click
-                out     ($fe), a
-                ld      b, 0
-                djnz    $                   // wait loop
-                xor     $18
-                out     ($fe), a
-                
-                ld      sp, (SP_Saved)
+                res     5, (iy + 1)         // FLAGS (5C3A+1)
 
-                pop     ix  
                 pop     bc                  // Restore Instruction Pointer
 
                 psh1
+
+
+//  ______________________________________________________________________ 
+//
+// click        -- 
+// This definition need Standard ROM Interrupt to be served
+//
+//              New_Def CLICK, "CLICK", is_code, is_normal
+//
+//                push    bc
+//              ld      a, ($5C48)          // BORDCR system variable
+//              rra
+//              rra
+//              rra
+//              or      $18                 // quick'n'dirty click
+//              out     ($fe), a
+//              ld      b, 0
+//              djnz    $                   // wait loop
+//              xor     $18
+//              out     ($fe), a
+//                pop     bc
+
+//              next
+
+//  ______________________________________________________________________ 
+//
+// key?         -- f
+// key available
+//
+//              New_Def KEY_Q, "KEY?", is_code, is_normal
+//
+//              ld      hl, 0000
+//              bit     5, (iy + 1)         // FLAGS (5C3A+1)
+//              jr      z, Key_Q
+//                  dec     hl
+// Key_Q:
+//                psh1
+//              next
 
 //  ______________________________________________________________________ 
 //

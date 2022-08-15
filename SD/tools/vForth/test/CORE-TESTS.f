@@ -33,6 +33,7 @@ WARNING !
     NEEDS SM/REM
     NEEDS UNLOOP
     NEEDS ['] 
+    NEEDS EVALUATE
     
 
 \ Save base value
@@ -196,7 +197,7 @@ TESTING \ F.3.17 Evaluate
     
 ( end of test session )
 BASE !
-EXIT
+QUIT
 
 TESTING \ F.3.18 Parser Input Source Control
 

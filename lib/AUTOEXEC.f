@@ -5,6 +5,8 @@
 \ This is executed a  first COLD start by AUTOEXEC
 \ Display System Info
 
+needs .s
+
 CR 7 REG@  3 AND  35   SWAP LSHIFT 0
 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
 SP@ PAD  - U. ." bytes free in Dictionary." CR
@@ -14,13 +16,15 @@ CR
 MARKER FORGET-TASK
 : ASK-Y/N ( -- )
 \ ask Y/n to continue loading 
-  ." Autoexec says: "
-  ." Do you wish to load 11 ? (Y/n) "
+  ." Autoexec asks: "
+  ." Do you wish to load scr# 11 ? (Y/n) "
+  CURS
   KEY DUP EMIT
   UPPER
   [ CHAR N ] LITERAL
-  = IF ." ok "
-   FORGET-TASK  QUIT
+  = IF 
+   ." ok " DROP 
+   FORGET-TASK QUIT
   ELSE
    FORGET-TASK
  THEN ;
