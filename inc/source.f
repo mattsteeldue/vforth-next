@@ -7,12 +7,19 @@
 
 : SOURCE ( -- a u )
 
-  BLK @ IF
-    >IN @ BLK @ B/SCR /MOD -ROT          \ scr  in  r
-    B/BUF * + C/L / SWAP                 \ row  scr
-    (LINE)                               \ a n
-  ELSE
-    TIB @ 24                             \ whatever...
-  THEN
+    SOURCE-ID @ 
+    IF    
+        \ during INCLUDE/NEEDS or EVALUATE
+        1 BLOCK 85
+    ELSE
+        BLK @ IF
+            >IN @ BLK @ B/SCR /MOD -ROT          \ scr  in  r
+            B/BUF * + C/L / SWAP                 \ row  scr
+            (LINE)                               \ a n
+        ELSE
+            TIB @ C/L                            \ whatever...
+        THEN
+    THEN
+    
 ;
 

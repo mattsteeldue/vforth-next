@@ -3350,9 +3350,9 @@ CODE fill ( a n c -- )
 
 
 \ 6D88h
-.( BLANKS )
+.( BLANK )
 \ If n > 0, fills n locations starting from address a with SPACE characters.
-: blanks ( a n -- )
+: blank ( a n -- )
     bl fill
     ;
 
@@ -3402,7 +3402,7 @@ CODE fill ( a n c -- )
     Then \ Then
     >in @ + 
     swap enclose
-    here [ decimal 34 ] Literal blanks
+    here [ decimal 34 ] Literal blank 
     >in +!
     over - >r
     r@ here c!
@@ -5156,7 +5156,7 @@ CODE cls
     Begin
         tib @                        ( a )
         dup [ decimal 80 ] literal   ( a a n )
-        2dup blanks                  ( a a n )
+        2dup blank                   ( a a n )
         source-id @ abs dup device ! select  \ was printer
         accept-                      ( a n2 )
         video 
@@ -5647,7 +5647,7 @@ RENAME   (.")           (.")
 RENAME   word           WORD  
 RENAME   pad            PAD   
 RENAME   hold           HOLD
-RENAME   blanks         BLANKS
+RENAME   blank          BLANK 
 RENAME   erase          ERASE 
 RENAME   fill           FILL  
 RENAME   query          QUERY 

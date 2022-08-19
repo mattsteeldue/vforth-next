@@ -908,9 +908,9 @@ Fill_While_End:
 
 //  ______________________________________________________________________ 
 //
-// blanks       a n --
+// blank        a n --
 // If n > 0, fills n locations starting from address a with 'nul' characters.
-                Colon_Def BLANKS, "BLANKS", is_normal
+                Colon_Def BLANK, "BLANK", is_normal
                 dw      BL, FILL                // bl fill
                 dw      EXIT                    // ;
 
@@ -960,7 +960,7 @@ Word_Else:
 Word_Endif:                                     // endif
                 dw      TO_IN, FETCH, PLUS      // >in @ +
                 dw      SWAP, ENCLOSE           // swap enclose
-                dw      HERE, LIT, 34, BLANKS   // here 34 blanks
+                dw      HERE, LIT, 34, BLANK    // here 34 blank 
                 dw      TO_IN, PLUSSTORE        // >in @ +    
                 dw      OVER, SUBTRACT, TO_R    // over - >r    
                 dw      R_OP, HERE, CSTORE      // r here c!

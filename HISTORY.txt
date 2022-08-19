@@ -349,5 +349,6 @@ Improved  ms  a word that waits a given number of milliseconds.
 \ build 20220730
 Introducing RND that works as old-standard Spectrum (but faster).
 Now KEY doesn't show a flashing cursor anymore, then introducing CURS to do that.
-
+BLANKS is renamed in the standard BLANK
+First working implementation of EVALUATE (not yet recursive)
 

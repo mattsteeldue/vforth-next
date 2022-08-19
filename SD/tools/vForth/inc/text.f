@@ -7,7 +7,7 @@
 \
 \ TEXT
 : TEXT ( c -- )     
-    HERE C/L 1+ BLANKS 
+    HERE C/L 1+ BLANK 
     WORD PAD C/L 1+ CMOVE 
 ;
 \

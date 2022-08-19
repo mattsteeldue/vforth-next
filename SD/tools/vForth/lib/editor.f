@@ -29,7 +29,7 @@ EDITOR DEFINITIONS
 ;
 
 : E ( n -- )        \ blank line n of current screen
-    LINE C/L BLANKS 
+    LINE C/L BLANK 
     UPDATE 
 ;
 

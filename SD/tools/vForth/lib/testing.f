@@ -30,6 +30,7 @@ NEEDS SOURCE
 NEEDS .S
 NEEDS <>
 NEEDS COMPARE
+NEEDS POSTPONE
 
 : S= \ ( addr1 c1 addr2 c2 -- t/f )  \ Compare two strings.
     COMPARE 0=
@@ -122,20 +123,19 @@ CREATE ACTUAL-RESULTS 30 CELLS ALLOT
   CR
 ;
 
-
 ' ERROR1 ERROR-XT !      \ this activates new error handler
+
 
 TESTING Test Suite
 
-
-( Test Suite - Basic Assumptions )
+.( Test Suite - Basic Assumptions ) CR
 
  0   CONSTANT 0S
 -1   CONSTANT 1S
 1S 1 RSHIFT INVERT CONSTANT  MSB
 
 
-( Test Suite - Comparison        )
+.( Test Suite - Comparison        ) CR
 
 0 INVERT                    CONSTANT MAX-UINT
 0 INVERT 1 RSHIFT           CONSTANT MAX-INT
@@ -143,10 +143,13 @@ TESTING Test Suite
 0 INVERT 1 RSHIFT           CONSTANT MID-UINT
 0 INVERT 1 RSHIFT INVERT    CONSTANT MID-UINT+1
 
-0S CONSTANT <FALSE>
+.( Test Suite - True and False ) CR
+
+0S  CONSTANT <FALSE>
 1S  CONSTANT <TRUE>
 
-NEEDS POSTPONE
+.( Test Suite - Postpone ) CR
+
 : IFFLOORED [ -3 2 / -2 = INVERT ] LITERAL IF POSTPONE \ THEN ;
 : IFSYM     [ -3 2 / -1 = INVERT ] LITERAL IF POSTPONE \ THEN ;
 

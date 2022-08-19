@@ -212,7 +212,7 @@ FGetline_Endif:                                 // endif
                 dw      CELL_MINUS,  STORE      // cell-  !             ( m a )
                 dw      R_OP, PLUS, ONE_SUBTRACT// r + 1-               ( m a+n1 )
                 dw      SWAP, R_OP, SUBTRACT    // swap r -             ( a+n+1 m-n )           
-                dw      BLANKS                  // blanks
+                dw      BLANK                   // blank 
                 dw      R_TO                    // r>                   ( n )
                 dw      EXIT                    // ;
 
@@ -246,7 +246,7 @@ FInclude_Endif_1:
                 dw      SOURCE_ID, STORE        // source-id !
 FInclude_Begin:                                 // begin
                 dw          ONE, BLOCK, BBUF    //      1 block b/buf
-                dw          TWO_DUP, BLANKS     //      2dup blanks
+                dw          TWO_DUP, BLANK      //      2dup blank 
                 dw          SWAP, ONE_PLUS      //      swap 1+
                 dw          SWAP, CELL_MINUS    //      swap cell-
                 dw          SOURCE_ID, FETCH    //      source-id @
@@ -774,7 +774,7 @@ AcceptN_Leave:
 Load_N_Begin:                
                 dw          TIB, FETCH
                 dw          DUP, LIT, 80
-                dw          TWO_DUP, BLANKS
+                dw          TWO_DUP, BLANK 
                 dw          SOURCE_ID, FETCH
                 dw          ABS_OP, DUP, DEVICE, STORE
                 dw          SELECT

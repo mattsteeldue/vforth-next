@@ -68,7 +68,7 @@ decimal
 : LED-RD1  ( np -- b )
     1 block   \ use block 1 as special buffer  \ np a a
     dup b/buf 2- led-fh @ f_getline >R         \ np a     \ b
-    swap led-rad COLS/ROW 2dup blanks          \ a a1 n1
+    swap led-rad COLS/ROW 2dup blank           \ a a1 n1
     cmove R>                                   \ b
 ;
 
@@ -162,7 +162,7 @@ DECIMAL
     led-line pad 1+ cols/row dup pad c! cmove ;
 
 : E ( n -- )               \ erase line
-    led-line cols/row blanks ;
+    led-line cols/row blank  ;
 
 
 : RE ( n -- )              \ restore line from pad

@@ -4,8 +4,8 @@
 
 NEEDS TESTING
 
-NEEDS EVALUATE
 NEEDS S"
+NEEDS EVALUATE
 
 TESTING F.6.1.1360 - EVALUATE
 
@@ -22,11 +22,11 @@ T{ GE4          -> 345 }T
 
 ( TEST EVALUATE IN COMPILE STATE )
 \
-\ it's complicated but EVALUATE doesn't work in compilation at the moment.
-\ T{ : GE6 GE1 GE5 ; -> }T 
-\ T{ GE6 -> 123 }T
+T{ : GE6 GE1 GE5 ; -> }T 
+T{ GE6 -> 123 }T
 
-\ T{ : GE7 GE2 GE5 ; -> }T
-\ T{ GE7 -> 124 }T
+T{ : GE7 GE2 GE5 ; -> }T
+T{ GE7 -> 124 }T
 
 \ See F.9.3.6 for additional test.
+

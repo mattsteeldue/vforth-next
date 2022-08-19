@@ -19,7 +19,7 @@ T{ 1 GI6 -> 0 1 }T
 T{ 2 GI6 -> 0 1 2 }T
 T{ 3 GI6 -> 0 1 2 3 }T
 T{ 4 GI6 -> 0 1 2 3 4 }T
-DECIMAL
+
 T{ :NONAME ( n -- 0, 1, .., n ) 
      DUP IF DUP >R 1- RECURSE R> THEN 
    ; 
@@ -42,4 +42,3 @@ T{  2 rn2 EXECUTE -> 11 0 }T
 T{  4 rn2 EXECUTE -> 33 22 11 0 }T
 T{ 25 rn2 EXECUTE -> 33 22 11 0 }T
 
-HEX

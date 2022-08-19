@@ -5,7 +5,8 @@
 \ This is executed a  first COLD start by AUTOEXEC
 \ Display System Info
 
-needs .s
+\ NEEDS BLANK
+\ NEEDS BLANKS
 
 CR 7 REG@  3 AND  35   SWAP LSHIFT 0
 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
