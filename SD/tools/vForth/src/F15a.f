@@ -986,7 +986,7 @@ HEX
 
 
 ." (MAP) "
-\ translate character c1 using mapping string a2 and a2
+\ translate character c1 using mapping strings a2 and a2
 \ if c1 is not present within string a1 then 
 \ c2 = c2 if it is not translated. n is the length of both a1 and a2.
 CODE (map) ( a2 a1 n c1 -- c2 )

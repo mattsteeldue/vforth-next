@@ -1,8 +1,13 @@
 \
 \ heap.f
 \
-\ this is part of the HEAP memory management libary. See also:
+\ This is part of the "HEAP memory management libary". 
+\ It allows using 8K-page between 32 and 39 (20h-27h) as a memory zone
+\ used for multi-purpose short memory chunks.
+\ 
+\ See also:
 \ FAR HP@ POINTER H" S" +C +" HEAP-INIT HEAP-DONE
+\
 \ See "Heap memory facility" in PDF documentation for details
 \
 \

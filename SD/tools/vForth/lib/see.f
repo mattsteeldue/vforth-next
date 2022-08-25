@@ -3,7 +3,8 @@
 \
 .( SEE Inspector ) 
 \
-BASE @ DECIMAL
+BASE @ 
+DECIMAL
 \
 NEEDS DUMP
 NEEDS INVV
@@ -40,10 +41,11 @@ NEEDS .S
 ' CONSTANT CONSTANT <C>
 ' VARIABLE CONSTANT <V>
 ' WARM     CONSTANT <!>
+' (;CODE)  CONSTANT <;C>
 \
 : ?FWD ( pfa -- pfa ) DUP DUP @ U< IF INVV THEN ;
 \
-: (DELOAD) ( pfa a  -- )      
+: (DELOAD) ( pfa -- pfa )      
     DUP @
     CASE
         <D>   OF DEB-BRN ENDOF
@@ -61,7 +63,7 @@ NEEDS .S
 : DELOAD ( pfa -- pfa ) 
     CR
     BEGIN
-        ?FWD    ( pfa -- )
+        ?FWD    
         (DELOAD)
         CELL+
         TRUV ?TERMINAL      \ exit for BREAK keypress
@@ -69,21 +71,27 @@ NEEDS .S
         OVER @ <Q>  = OR    \ or QUIT
         OVER @ <;S> = OR    \ or EXIT
         OVER @ <!>  = OR    \ or WARM
+        OVER @ <;C> = OR    \ or (;CODE)
     UNTIL 
     (DELOAD)
+    
 ;
 \
 : (SEE)  ( xt -- )
-    BASE @ SWAP HEX 
-    >BODY
-    DUP DEB-N  
-    DUP DEB-L
-    DUP DEB-C  
-    DUP CFA @ <:> =
-    IF
-        DECIMAL DELOAD  DROP BASE !
-    ELSE
-        SWAP BASE ! DEB-P
+    BASE @                  \ xt b
+    SWAP HEX                \ b  xt
+    >BODY                   \ b  a
+    DUP DEB-N               \ b  a    
+    DUP DEB-L               \ b  a
+    DUP DEB-C               \ b  a
+    DUP CFA @ <:> =         \ b  a  f
+    IF                      \ b  a
+        SWAP BASE !         \ a
+        DELOAD              \ a
+        DROP         
+    ELSE                    \ b  a
+        HEX DEB-P           \ b
+        BASE ! 
     THEN 
 ;
 \
