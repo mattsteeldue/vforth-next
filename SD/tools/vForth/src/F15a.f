@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20220730 ) CR
+.( build 20220827 ) CR
 .( Indirect-Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -2665,18 +2665,14 @@ CODE 2/ ( n1 -- n2 )
 .( LSHIFT )
 \ bit left shift of u bits
 CODE lshift ( n1 u -- n2 )
-         
-        POP     DE|
-        POP     HL|
-        LD      A'|    E|
-        ORA      A|
-        JRF     Z'| HOLDPLACE
-            HERE
-                ADDHL   HL|
-                DEC     A'|
-            JRF    NZ'| HOLDPLACE SWAP DISP,
-        HERE DISP, \ THEN,
-        PUSH    HL|
+
+        EXX             
+        POP     BC|     
+        LD      B'|    C| 
+        POP     DE|     
+        BSLADE,B        
+        PUSH    DE|     
+        EXX             
         Next
         C;
 
@@ -2686,18 +2682,13 @@ CODE lshift ( n1 u -- n2 )
 \ bit right shift of u bits
 CODE rshift ( n1 u -- n2 )
          
-        POP     DE|
-        POP     HL|
-        LD      A'|    E|
-        ORA      A|
-        JRF     Z'| HOLDPLACE
-            HERE
-                SRL      H|
-                RR       L|
-                DEC     A'|
-            JRF    NZ'| HOLDPLACE SWAP DISP,
-        HERE DISP, \ THEN,
-        PUSH    HL|
+        EXX              
+        POP     BC|      
+        LD      B'|    C| 
+        POP     DE|      
+        BSRLDE,B         
+        PUSH    DE|      
+        EXX              
         Next
         C;
 
@@ -5539,7 +5530,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 90 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Threaded - build 20220730" -1 allot ]
+    [ decimal 13 here ," Indirect Threaded - build 20220827" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

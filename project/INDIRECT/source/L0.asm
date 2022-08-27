@@ -1888,41 +1888,28 @@ Two_Mul_Ptr:
 // lshift       n1 u -- n2
 // bit left shift of u bits
                 New_Def LSHIFT, "LSHIFT", is_code, is_normal
+                exx
+                pop     bc
+                ld      b, c
                 pop     de
-
-                pop     hl
-                ld      a, e
-                or      a
-                jr      z, Lshift_Zero
-Lshift_Loop:    
-                        add     hl, hl
-                        dec     a
-                    jr      nz, Lshift_Loop
-Lshift_Zero:    
-
-
-                psh1
+                bsla    de, b
+                push    de
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
 // rshift       n1 u -- n2
 // bit right shift of u bits 
                 New_Def RSHIFT, "RSHIFT", is_code, is_normal
+                exx
+                pop     bc
+                ld      b, c
                 pop     de
-
-                pop     hl
-                ld      a, e
-                or      a
-                jr      z, Rshift_Zero
-Rshift_Loop:    
-                        srl     h
-                        rr      l
-                        dec     a
-                    jr      nz, Rshift_Loop
-Rshift_Zero:
-
-
-                psh1
+                bsrl    de, b
+                push    de
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
