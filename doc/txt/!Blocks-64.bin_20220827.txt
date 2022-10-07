@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Sat Aug 27 14:15:37 2022
+Created: Fri Oct  7 22:30:07 2022
 
 Index:
 
@@ -998,8 +998,8 @@ Restarting Supervisor
   990 ( AY  Sound )
   991 ( AY  Sound )
   992 ( AY  Sound )
-  993 
-  994 
+  993 ( AY  Sound )
+  994 ( AY  Sound )
   995 
   996 ( ?break )
   997 ( Sound )
@@ -2175,7 +2175,7 @@ Scr# 10
   1 \
   2 \ this screen is loaded to re-compile the whole thing
   3 \
-  4 NEEDS BLANK NEEDS BLANKS
+  4 \ NEEDS BLANKS
   5 \
   6   2 f_close drop
   7 \ key
@@ -19823,14 +19823,14 @@ Scr# 990
   0 ( AY  Sound )
   1 NEEDS BINARY  NEEDS SPLIT  NEEDS ms
   2 \
-  3 \ ayreg must be between 1 and 13
+  3 \ ayreg must be between 0 and 13
   4 : AY!     ( b ayreg -- )
-  5   [ HEX ] FFFD P! BFFD P!
-  6 ;
+  5   [ HEX ] FFFD P! BFFD P! ;
+  6 \
   7 \ ayreg is 0, 2 or 4 for channel A, B or C
   8 : AY!!     ( n ayreg -- )
-  9   SWAP SPLIT >R SWAP TUCK AY!  R> SWAP 1+ AY!
- 10 ;
+  9   >R SPLIT R@ AY! R> 1+ AY! ;
+ 10 \
  11 DECIMAL -->
  12 
  13 
@@ -19840,15 +19840,15 @@ Scr# 990
 Scr# 991 
   0 ( AY  Sound )
   1 : AYSETUP
-  2   \ enable left-right audio, select AY1
-  3   [ BINARY ] 10011111  [ HEX ] 0FFFD P!
-  4   \ setup mapping of chip channels to stereo channels
-  5   [ HEX    ] 8 REG@
-  6   [ BINARY ] 00000010 OR  \ enable NextSound
-  7   [ HEX    ] 8 REG!
-  8   [ HEX    ] 9 REG@
-  9   [ BINARY ] 00011111 AND \ disable Mono for A,B and C
- 10   [ HEX    ] 9 REG!
+  2   \ setup mapping of chip channels to stereo channels
+  3   [ HEX    ] 8 REG@
+  4   [ BINARY ] 00000010 OR  \ enable NextSound
+  5   [ HEX    ] 8 REG!
+  6   [ HEX    ] 9 REG@
+  7   [ BINARY ] 11100000 OR  \ enable Mono for A,B and C
+  8   [ HEX    ] 9 REG!
+  9   \ enable left-right audio, select AY2
+ 10   [ BINARY ] 11111101  [ HEX ] 0FFFD P!
  11 ;
  12 -->
  13 
@@ -19857,32 +19857,32 @@ Scr# 991
 
 Scr# 992 
   0 ( AY  Sound )
-  1 : DT 120 MS ;
-  2 : AYFRAME ( a -- )
-  3   [ BINARY ] 00111110 [ HEX ] 7 AY!
-  4    03f 0 AY!!    00 6 AY!    0F 8 AY!  DT
-  5    097 0 AY!!    00 6 AY!    0A 8 AY!  DT
-  6    100 0 AY!!    00 6 AY!    06 8 AY!  DT
-  7    000 0 AY!!    1f 6 AY!    04 8 AY!  DT
-  8    000 0 AY!!    11 6 AY!    04 8 AY!  DT
-  9    04C 0 AY!!    00 6 AY!    0A 8 AY!  DT
- 10    07E 0 AY!!    00 6 AY!    07 8 AY!  DT
- 11    0C9 0 AY!!    1f 6 AY!    04 8 AY!  DT
- 12    100 0 AY!!    11 6 AY!    04 8 AY!  DT
- 13    000 0 AY!!    00 6 AY!    02 8 AY!  DT
- 14 FF 7 AY! ; DECIMAL
+  1 : SHH     [ HEX ] FF 7 AY!
+  2   0 8 ay! 0 9 ay! 0 A ay! ;
+  3 : PLAY
+  4    1F 8 AY!  \ A full volume
+  5   1ff 0 AY!! \ A freq
+  6    0f 9 ay!  \ B
+  7   1ff 2 ay!! \ B
+  8    0F A AY!  \ C
+  9   1ff 4 AY!! \ C
+ 10    ff 7 - 7 AY!
+ 11 ;
+ 12 decimal
+ 13 -->
+ 14 
  15 
 
 Scr# 993 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
+  0 ( AY  Sound )
+  1 : gunshot
+  2    [ hex ]  0fa0  0B  AY!!    \ quite long envelope period
+  3    11  06  AY!                \ noise period
+  4    [ binary ] 00101111 [ hex ] 7 AY!  \ B noise
+  5    00  0D  AY!      \ shape |\__
+  6    1F  09  AY!      \ chanel B volume
+  7 ;
+  8 decimal
   9 
  10 
  11 
@@ -19892,21 +19892,21 @@ Scr# 993
  15 
 
 Scr# 994 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  0 ( AY  Sound )
+  1 : DT 20 MS ;
+  2 : AYFRAME ( a -- )
+  3   [ BINARY ] 00000000 [ HEX ] 7 AY!
+  4    03f 2 AY!!    00 6 AY!    0F 9 AY!  DT
+  5    097 2 AY!!    00 6 AY!    0A 9 AY!  DT
+  6    100 2 AY!!    00 6 AY!    06 9 AY!  DT
+  7    000 2 AY!!    1f 6 AY!    04 9 AY!  DT
+  8    000 2 AY!!    11 6 AY!    04 9 AY!  DT
+  9    04C 2 AY!!    00 6 AY!    0A 9 AY!  DT
+ 10    07E 2 AY!!    00 6 AY!    07 9 AY!  DT
+ 11    0C9 2 AY!!    1f 6 AY!    04 9 AY!  DT
+ 12    100 2 AY!!    11 6 AY!    04 9 AY!  DT
+ 13    000 2 AY!!    00 6 AY!    02 9 AY!  DT
+ 14 FF 7 AY! ; DECIMAL
  15 
 
 Scr# 995 

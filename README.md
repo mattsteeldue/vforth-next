@@ -1,6 +1,6 @@
 Forth on Sinclair ZX Spectrum Next
 
-vForth1.5
+vForth1.52
 
 On April 27th 2020, I received my  ZX Spectrum Next  (Accelerated)  and immediately tried to port my Forth to the Next environment. 
 The purpose was to make Screens / BLOCKs system available using ZxNextOS APIs. 
@@ -17,8 +17,9 @@ All 1.792K user RAM is made available through MMU7 on which any 8K-page can be f
 For String storage purpose, an HEAP facility grants access to 64K of space via FAR and POINTER definitions.
 
 A new  MOUSE  library has been introduced to provide a "interrupt-driven" mouse arrow-pointer to interact with your Forth application.
+Then a new  AY  library is working-in-progress to be used along.
 
-I implemented an ASSEMBLER vocabulary with notation, gracefully adapted for FORTH systems, as explained in Wiki pages <https://github.com/mattsteeldue/forth-next/wiki>.  
-This ASSEMBLER provides the newest Z80N extension op-codes.
+I implemented an  ASSEMBLER  vocabulary with a peculiar notation, gracefully adapted for FORTH systems, as explained in Wiki pages 
+<https://github.com/mattsteeldue/forth-next/wiki>. This ASSEMBLER provides the newest Z80N extension op-codes.
 
 The Documentation, the Wiki in this repository are getting shape, I suggesto to pay a visit.
