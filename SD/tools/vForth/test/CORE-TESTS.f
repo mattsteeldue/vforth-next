@@ -298,9 +298,6 @@ TESTING \ F.3.16 Defining Words
 \ which also tests ;, F.6.1.0950 CONSTANT, F.6.1.2410 VARIABLE, F.6.1.1250 DOES>
 \ which includes tests CREATE, and F.6.1.0550 >BODY which also tests CREATE.
 
-    \ patch to avoid error 18 (Can't be compiled)
-    hex 81 ' : <name c!
-
     INCLUDE  test/_.f 
     INCLUDE  test/constant.f
     INCLUDE  test/variable.f
