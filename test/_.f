@@ -19,7 +19,7 @@ T{ NOP2 -> }T
 
 \ The following tests the dictionary search order:
 
-T{ : GDX   123 ;    : GDX   GDX 234 ; -> }T
+T{ : GDX   123 ;    : GDX   GDX 234 ; -> CR }T
 T{ GDX -> 123 234 }T
 
 CR

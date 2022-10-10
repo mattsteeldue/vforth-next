@@ -27,6 +27,7 @@ MARKER TESTING-TASK
     NEEDS UNLOOP
     NEEDS ['] 
     NEEDS EVALUATE
+    NEEDS BINARY
     
 WARNING @ 
 0 WARNING ! \ reduce messaging #4
