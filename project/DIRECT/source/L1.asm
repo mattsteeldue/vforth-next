@@ -10,7 +10,7 @@
 // :            -- cccc     ( compile time )
 //              i*x -- j*x  ( run time )
 // Colon Definition
-                Colon_Def COLON, ":", is_immediate      // has forward-ref 
+                Colon_Def COLON, ":", is_normal      // has forward-ref 
 
                 dw      QEXEC                   // ?exec      
                 dw      STORE_CSP               // !csp

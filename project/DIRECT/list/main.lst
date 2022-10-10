@@ -4611,8 +4611,8 @@
   10+ 6BB4              // :            -- cccc     ( compile time )
   11+ 6BB4              //              i*x -- j*x  ( run time )
   12+ 6BB4              // Colon Definition
-  13+ 6BB4                              Colon_Def COLON, ":", is_immediate      // has forward-ref
-  13+ 6BB4             >                New_Def  COLON, ":", Enter_Ptr, is_immediate ; ok
+  13+ 6BB4                              Colon_Def COLON, ":", is_normal      // has forward-ref
+  13+ 6BB4             >                New_Def  COLON, ":", Enter_Ptr, is_normal ; ok
   13+ 6BB4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   13+ 6BB4             >
   13+ 6BB4             >                // dummy db directives used to calculate length of namec
@@ -4620,7 +4620,7 @@
   13+ 6BB5             >len_NFA         defl    $ - temp_NFA
   13+ 6BB5             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
   13+ 6BB4             >
-  13+ 6BB4 C1          >                db      len_NFA | END_BIT | is_immediate  // The start of NFA must have msb set to signal the beginning of the sounted string
+  13+ 6BB4 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
   13+ 6BB5 3A          >                db      ":"               // name string in 7-bit ascii, but
   13+ 6BB6             >                org     $-1                 // alter last byte of Name just above to set
   13+ 6BB5 BA          >                db      {b $} | END_BIT     // msb as name end
@@ -9229,7 +9229,7 @@
  111+ 780B F8 77                        dw      Vocabulary_Does
  112+ 780D 81 A0                        db      $81, $A0
  113+ 780F              Forth_Latest_Ptr:
- 114+ 780F 82 87                        dw      Here_Dictionary // Fence_Word // Latest_Definition
+ 114+ 780F 3B 87                        dw      Latest_Definition // Fence_Word // Latest_Definition // Here_Dictionary
  115+ 7811              Voclink_Ptr:
  116+ 7811 00 00                        dw      0
  117+ 7813              // Any new vocabulary is structured as follow:

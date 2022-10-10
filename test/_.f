@@ -1,12 +1,12 @@
 \
-\ test/colon.f  
+\ test/_.f  
 \ 
-\ since filename :.f is illegal.
+\ since filename  :.f  is illegal.
 
 
 NEEDS TESTING
 
-( Test Suite - Dictionary Search Rules  )
+( Test Suite - Defining Words )
 
 \ F.6.1.0460     - ;
 
@@ -22,4 +22,5 @@ T{ NOP2 -> }T
 T{ : GDX   123 ;    : GDX   GDX 234 ; -> }T
 T{ GDX -> 123 234 }T
 
+CR
 

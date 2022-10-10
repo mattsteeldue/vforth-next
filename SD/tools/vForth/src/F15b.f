@@ -2756,7 +2756,7 @@ CODE cells ( n2 -- n2 )
 
         Next
         C;
-    IMMEDIATE
+    \ IMMEDIATE
     
     \ we defined this peculiar word using "old" colon definition 
     \ behaviour. Now we want to use the ;CODE just coded.

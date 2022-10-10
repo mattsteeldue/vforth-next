@@ -13,10 +13,10 @@
 \ Revision history and possibly newer versions can be found at
 \ http://www.forth200x/tests/ttester.fs
 
-\ Aug 2021 - Matteo Vitturi
-\ Adaptation for SINCLAIR ZX Spectrum Next
+\ Aug 2021-2022 - Matteo Vitturi
+\ Adaptation for Sinclair ZX Spectrum Next
 \
-\ No Floating-Point support yet.
+\ Limited Floating-Point support.
 \
 
 .( TESTING Suite ) 

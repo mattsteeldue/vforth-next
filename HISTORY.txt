@@ -360,5 +360,6 @@ There are a couple of tester that I want to turn into demo.
 I've published a 30" YouTube video that show how it appears  https://youtu.be/WCDoWvQhipE 
 and another 20" video that show interaction between mouse and AY https://youtu.be/4S8Dqyr9P8o
 LSHFIT and RSHIFT now use the Z80N's new BSLADE,B and BSRLDE,B op-codes.
+At last, I realized  :  do not needs to be immediate. Here is the correct version.
 More documentation improvement.
 

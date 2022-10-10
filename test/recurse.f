@@ -12,8 +12,19 @@ NEEDS CASE
 
 TESTING F.6.1.2120 - RECURSE
 
-T{ : GI6 ( N -- 0,1,..N ) 
-     DUP IF DUP >R 1- RECURSE R> THEN ; -> }T
+\ T{ : GI6 ( N -- 0,1,..N ) 
+\      DUP IF DUP >R 1- RECURSE R> THEN ; -> }T
+
+T{ : GI6 ( n -- 0,1,..n ) 
+     DUP 
+     IF 
+         DUP >R 
+         1- RECURSE 
+         R> 
+     THEN ; 
+  -> }T
+
+
 T{ 0 GI6 -> 0 }T
 T{ 1 GI6 -> 0 1 }T
 T{ 2 GI6 -> 0 1 2 }T
