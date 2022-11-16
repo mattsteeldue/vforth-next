@@ -17,9 +17,6 @@ TESTING F.6.1.2216  -  SOURCE
 \ the string itself must be copied into a non-volatile area before INTERPRET
 \ begins interpretation.
 
-: GS0 S" SOURCE" 2DUP EVALUATE ;
-T{ GS0 ROT MIN TUCK COMPARE -> 0 }T
-
 : GS1 S" SOURCE" 2DUP EVALUATE >R SWAP >R = R> R> = ;
 T{ GS1 -> <TRUE> <TRUE> }T
 : GS4 SOURCE >IN ! DROP ;

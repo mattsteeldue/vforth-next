@@ -2,10 +2,12 @@
 \ evaluate.f
 \
 \ Interpret a text-string
-\ In this implementation EVAULATE cannot be nested, for now.
-\ Maximum string length is 512.
+\ Maximum string length is 512
 \
 .( EVALUATE )
+
+NEEDS SOURCE
+
 \
 BASE @
 
@@ -13,47 +15,82 @@ DECIMAL
 
 : EVALUATE ( a u -- )
 
-    source-id  @ -1 = 34 ?error \ error if nesting EVALUATE.
+    \ .s 2dup type cr
 
-    blk        @  >r  
-    >in        @  >r  
-    source-id  @  >r 
+    \ save current source status
+    BLK         @  >R               \ a u   -  R: blk
+    >IN         @  >R               \ a u   -  R: blk >in
+    SOURCE-P    @  >R               \ a u   -  R: blk >in ptr 
+    SOURCE-ID   @  >R               \ a u   -  R: blk >in ptr src
     
-    \ if SOURCE-ID was non zero (i.e. we were during a F_INCLUDE)
-    \ try to save its position and close the file-handle.
-    r@ 
-    If 
-        r@ f_fgetpos [ 44 ] Literal ?error 
-        \ must rewind to the beginning of the current line
-        >in @ 2-  span @  -  s>d d+
-    Else 
-        0 0         \ 0 0 fake handle-position
-    Then 
-    >r >r           \ save previous (double) handle-position if any...
+    R@ 1+      \ so that -1 become 0
+    IF 
+        R@
+        IF
+            \ SOURCE-ID is >0 during an F_INCLUDE then
+            \ save current position and close the file-handle for later
+            ." source-id is greater than zero " CR
+            R@ F_FGETPOS            \ a u pos
+            [ 44 ] LITERAL ?ERROR 
+            
+            \ but must rewind to the beginning of the current line
+            >IN @ 2-  SPAN @  -  S>D D+
+        ELSE
+            \ SOURCE-ID was zero, dummy handle-position
+            \ ." source-id is zero " CR
+            0 0                     \ a u   0
+        THEN
+    ELSE 
+        \ SOURCE-ID is -1 during EVALUATE
+        ." source-id is negative " CR
+        2DUP                        \ a u  a u   -  R: blk >in ptr src
+    THEN 
     
-    -1 source-id !
-    1  blk       ! 
-    0  >in       !     
+    \ cr .s ." >>> " 
+    
+    \ actual save 
+    >R >R                           \ a u        -  R: blk >in ptr src pos
 
+    \ pointer to memory zone that has length u and address a.
+    RP@ SOURCE-P ! 
 
-    1 block b/buf BLANK 
-    1 block swap b/buf min   \ maximum string
-    cmove
-    interpret    
+    \ emulate EVALUATE via LOAD from BLOCK #1 which belongs to no BLOCK at all.
+    1    BLK        !  
+    0    >IN        !     
+    -1   SOURCE-ID  !
+    1    BLOCK                      \ a u a1 
 
-    \ restore previous Handle-position
-    r> r> 
-    \ restore SOURCE-ID
-    r>   
-    dup source-id !
-    If 
-        source-id @ f_seek [ 43 ] Literal ?error 
-    Else 
-        2drop       \ ignore 0 0 fake handle-position.
-    Then
-    \ restore >IN, BLK
-    r> >in !  
-    r> blk !
+    DUP  B/BUF BLANK                 
+    SWAP B/BUF MIN                  \ a a1 u 
+    CMOVE                           \ 
+
+    INTERPRET           
+    
+    \ .s ." <<< " cr
+
+    \ receive previous Handle-position if any
+    R> R>                           \ pos    -  R: blk >in ptr src 
+    
+    \ restore SOURCE-ID, SOURCE-ID-P, >IN, BLK
+    R> DUP SOURCE-ID !              \ pos src   -  R: blk >in ptr
+    R> SOURCE-P !                   \ pos src   -  R: blk >in
+    R> >IN !                        \ pos src   -  R: blk 
+    R> BLK !                        \ pos src   -  R: 
+    
+    1+      \ so that -1 become 0   \ pos src+1
+    IF 
+        SOURCE-ID @                 \ pos src
+        IF
+            SOURCE-ID @ F_SEEK      \ f
+            [ 43 ] LITERAL ?ERROR   \
+        ELSE
+            \ ignore fake handle-position or string-data
+            2DROP                   \
+        THEN    
+    ELSE 
+        \ ignore string-spec parameter
+        2DROP                       \ 
+    THEN
 ; 
 
 BASE !

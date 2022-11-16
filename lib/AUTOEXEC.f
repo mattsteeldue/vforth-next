@@ -14,7 +14,11 @@ SP@ PAD  - U. ." bytes free in Dictionary." CR
  -1 HP @ - U. ." bytes free in Heap." CR
 CR
 
+\ we do not have conditional iterpreting, but we can emulate small task
+\ wisely using MARKER called as the last-word of a definition
+
 MARKER FORGET-TASK
+
 : ASK-Y/N ( -- )
 \ ask Y/n to continue loading 
   ." Autoexec asks: "
@@ -29,24 +33,26 @@ MARKER FORGET-TASK
   ELSE
    FORGET-TASK
  THEN ;
+
 ASK-Y/N \ to continue loading 
+
 \
 \  NextZXOS version
 \
 
 CR \ ." Loading the following utilities:" CR
 
-\ NEEDS    S"         Heap Memory Management
-\ NEEDS    POINTER
-NEEDS    WHERE    \ Line Editor
-NEEDS    SEE      \ Decompiler / Inspector
-NEEDS    EDIT     \ Full Screen Editor
-NEEDS    GREP     \ Screen Search utility
-NEEDS    REMOUNT  \ Remount utility
+NEEDS    REMOUNT  \  Remount utility
+NEEDS    S"       \  Heap Memory Management
+NEEDS    WHERE    \  Line Editor
+NEEDS    EDIT     \  Full Screen Editor
+NEEDS    SEE      \  Decompiler / Inspector
+
+\ NEEDS    POINTER  \  Heap memory Pseudo-Pointer
+\ NEEDS    GREP     \  Screen Search utility
 \ NEEDS    ROOM   NEEDS .PAD   NEEDS SAVE
 \ NEEDS    LOCATE
 \ NEEDS    LED      NEEDS    CAT
 
 11 SCR !
 ." ok" CR
-

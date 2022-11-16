@@ -363,3 +363,9 @@ LSHFIT and RSHIFT now use the Z80N's new BSLADE,B and BSRLDE,B op-codes.
 At last, I realized  :  do not needs to be immediate. Here is the correct version.
 More documentation improvement.
 
+
+\ build 20221010
+Improved SEE definition: now it correctly handle HEAP data.
+
+
+

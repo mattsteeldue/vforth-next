@@ -6,94 +6,97 @@
 BASE @ 
 DECIMAL
 \
+
+NEEDS S"
+NEEDS FAR
+NEEDS [']
 NEEDS DUMP
 NEEDS INVV
 NEEDS TRUV
 NEEDS CASE
 NEEDS .WORD
-NEEDS .S
 \
 
-\
-: DEB-N   ( pfa -- ) ." Nfa: "   NFA DUP U. C@ . CR ;
-: DEB-L   ( pfa -- ) ." Lfa: "   LFA DUP U. @ ID. CR ;
-: DEB-C   ( pfa -- ) ." Cfa: "   CFA DUP U.  2 CFA NEGATE +  @ U. ;
-: DEB-P   ( pfa -- )             CFA 32 DUMP ;
-: DEB-LIT ( pfa -- ) CELL+ DUP @ . ;
-: DEB-BRN ( pfa -- ) DUP @ .WORD INVV
-  DEB-LIT TRUV ;
-: DEB-DOT ( pfa -- ) DUP @ .WORD CELL+
-  COUNT 2DUP INVV TYPE + CELL-
-  TRUV SPACE ;
-\
-' : @      CONSTANT <:>
-' ABORT    CONSTANT <AB>
-' EXIT     CONSTANT <;S>
-' (?DO)    CONSTANT <D>
-' (+LOOP)  CONSTANT <+L>
-' (LOOP)   CONSTANT <L>
-' BRANCH   CONSTANT <B>
-' (LEAVE)  CONSTANT <LE>
-' 0BRANCH  CONSTANT <0B>
-' LIT      CONSTANT <LIT>
-' (.")     CONSTANT <.">
-' QUIT     CONSTANT <Q>
-' CONSTANT CONSTANT <C>
-' VARIABLE CONSTANT <V>
-' WARM     CONSTANT <!>
-' (;CODE)  CONSTANT <;C>
-\
+\ display NFA, LFA, CFA report-rows
+: DEB-NFA ( pfa -- )  S" Nfa: " TYPE NFA DUP U. C@ . CR ;
+: DEB-LFA ( pfa -- )  S" Lfa: " TYPE LFA DUP U. @ ID. CR ;
+: DEB-CFA ( pfa -- )  S" Cfa: " TYPE CFA DUP U. 2 CFA NEGATE + @ U. ;
+
+\ display simple DUMP 
+: DEB-PFA ( pfa -- )             CFA 32 DUMP ;
+
+\ display current definition ID.
+: DEB-W   ( pfa -- pfa   )  DUP @ .WORD ;
+\ display current definition ID.
+: DEB-N   ( pfa -- pfa   )  DUP @ . ;
+\ display literal following LIT
+: DEB-L   ( pfa -- pfa   )  DEB-W CELL+ DEB-N ;
+\ display offset following any branching definition
+: DEB-B   ( pfa -- pfa   )  DEB-W CELL+ INVV DEB-N ;
+\ display string given adddress a
+: DEB-"   (   a -- u     )  COUNT DUP >R INVV TYPE TRUV SPACE R> ;
+\ display old-way compiled string
+: DEB."  ( pfa -- pfa    )  DEB-W CELL+ DUP       DEB-" + 1- ;
+\ display heap string
+: DEB.S  ( pfa -- pfa    )  DEB-W CELL+ DUP @ FAR DEB-" DROP ;
+\ a forward definition is reported in inverse-video
 : ?FWD ( pfa -- pfa ) DUP DUP @ U< IF INVV THEN ;
-\
+
+\ de-load a single word
 : (DELOAD) ( pfa -- pfa )      
     DUP @
     CASE
-        <D>   OF DEB-BRN ENDOF
-        <+L>  OF DEB-BRN ENDOF
-        <L>   OF DEB-BRN ENDOF
-        <B>   OF DEB-BRN ENDOF
-        <LE>  OF DEB-BRN ENDOF
-        <0B>  OF DEB-BRN ENDOF
-        <LIT> OF DEB-LIT ENDOF
-        <.">  OF DEB-DOT ENDOF
-        DUP .WORD
+        ['] (?DO)       OF  DEB-B  ENDOF
+        ['] (+LOOP)     OF  DEB-B  ENDOF
+        ['] (LOOP)      OF  DEB-B  ENDOF
+        ['] (LEAVE)     OF  DEB-B  ENDOF
+        ['] 0BRANCH     OF  DEB-B  ENDOF
+        ['] BRANCH      OF  DEB-B  ENDOF
+        ['] LIT         OF  DEB-L  ENDOF
+        ['] (.")        OF  DEB."  ENDOF
+        ['] (S")        OF  DEB.S  ENDOF
+        ['] COMPILE     OF  DEB-W CELL+ INVV DEB-W ENDOF
+            DUP .WORD
     ENDCASE
 ; 
-\
+
+\ iteratively de-load whole definition
 : DELOAD ( pfa -- pfa ) 
     CR
     BEGIN
-        ?FWD    
+        \ ?FWD    
         (DELOAD)
         CELL+
         TRUV ?TERMINAL      \ exit for BREAK keypress
-        OVER @ <AB> = OR    \ or ABORT
-        OVER @ <Q>  = OR    \ or QUIT
-        OVER @ <;S> = OR    \ or EXIT
-        OVER @ <!>  = OR    \ or WARM
-        OVER @ <;C> = OR    \ or (;CODE)
+        OVER @ ['] ABORT   = OR
+        OVER @ ['] QUIT    = OR
+        OVER @ ['] EXIT    = OR
+        OVER @ ['] WARM    = OR
+        OVER @ ['] (;CODE) = OR
     UNTIL 
     (DELOAD)
     
 ;
-\
+
+\ display header and deload
 : (SEE)  ( xt -- )
     BASE @                  \ xt b
     SWAP HEX                \ b  xt
     >BODY                   \ b  a
-    DUP DEB-N               \ b  a    
-    DUP DEB-L               \ b  a
-    DUP DEB-C               \ b  a
-    DUP CFA @ <:> =         \ b  a  f
+    DUP DEB-NFA             \ b  a    
+    DUP DEB-LFA             \ b  a
+    DUP DEB-CFA             \ b  a
+    DUP CFA @ ['] : @ =     \ b  a  f
     IF                      \ b  a
         SWAP BASE !         \ a
         DELOAD              \ a
         DROP         
     ELSE                    \ b  a
-        HEX DEB-P           \ b
+        HEX DEB-PFA           \ b
         BASE ! 
     THEN 
 ;
+
 \
 : SEE  ( -- )
   -FIND 0= 0 ?ERROR  
