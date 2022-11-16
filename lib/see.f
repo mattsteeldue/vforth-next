@@ -15,6 +15,7 @@ NEEDS INVV
 NEEDS TRUV
 NEEDS CASE
 NEEDS .WORD
+NEEDS .S
 \
 
 \ display NFA, LFA, CFA report-rows

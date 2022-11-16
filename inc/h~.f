@@ -18,7 +18,8 @@ NEEDS HEAP
   HP@ CELL+          \ ha               new heap address as HEAP does
   [CHAR] "  WORD     \ ha  a1           accept string from input stream
   DUP C@ 1+ TUCK     \ ha  u  a1  u     find total length
-  HEAP >FAR DROP     \ ha  u  a1  a2    allocate
+  HEAP               \ ha  u  a1  ha2
+  >FAR DROP          \ ha  u  a1  a2    allocate
   ROT                \ ha  a1  a2  u
   CMOVE              \ ha
 ;

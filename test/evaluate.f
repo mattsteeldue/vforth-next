@@ -28,5 +28,8 @@ T{ GE6 -> 123 }T
 T{ : GE7 GE2 GE5 ; -> }T
 T{ GE7 -> 124 }T
 
-\ See F.9.3.6 for additional test.
 
+\ The following case still doesn't work
+\ : GE8  S" : GE9 678 ; " EVALUATE ; 
+\ GE8 
+\ T{ GE9 -> 678 }T

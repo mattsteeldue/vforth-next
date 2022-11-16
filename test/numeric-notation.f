@@ -35,7 +35,7 @@ T{  HEX      12aBcDeF.  ->  DECIMAL  313249263. }T
 T{  HEX     -12eF       ->  DECIMAL      -4847  }T
 T{  HEX     -12aBcDeF.  ->  DECIMAL -313249263. }T
 
-NEEDS BINARY CR
+NEEDS BINARY 
 
 T{  BINARY   10010110   ->  DECIMAL  150        }T
 T{  BINARY   10010110.  ->  DECIMAL  150.       }T

@@ -408,7 +408,7 @@ Case_Upper:
 
 //  ______________________________________________________________________ 
 //
-// (find)       addr voc -- addr 0 | cfa b 1 
+// (find)       addr voc -- ff | cfa b tf
 // vocabulary search, 
 // - voc is starting word's NFA
 // - addr is the string to be searched for
@@ -463,7 +463,7 @@ Find_ThisWord:  // begin loop
                         ld      d, 0
 
 
-                        ld      hl, 1
+                        ld      hl, -1
                         psh2
 
 Find_DidntMatch: // didn't match (*)

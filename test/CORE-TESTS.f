@@ -28,6 +28,7 @@ MARKER TESTING-TASK
     NEEDS ['] 
     NEEDS EVALUATE
     NEEDS BINARY
+    CHARS
     
 WARNING @ 
 0 WARNING ! \ reduce messaging #4
@@ -86,7 +87,9 @@ TESTING \ F.3.3 Shifts
 
 TESTING \ F.3.4 Numeric Notation
 
-\ The numeric representation can be tested with the following test cases:
+\ implementation of NUMBER in v-Forth is very simple and it cannot handle 
+\ prefix such as those used in the following tests.
+\ The numeric representation can be tested with the following test cases
 
     INCLUDE  test/numeric-notation.f
 
@@ -257,6 +260,9 @@ TESTING \ F.3.13 Dictionary
     INCLUDE  test/postpone.f
     INCLUDE  test/state.f
 
+    INCLUDE  test/[compile].f  
+\   INCLUDE  test/compile.f    *** TO TO ***
+
 
 TESTING \ F.3.14 Flow Control
 
@@ -288,7 +294,7 @@ TESTING \ F.3.15 Counted Loops
 
     \ custom    
     INCLUDE  test/^do.f     \ ?DO
-    INCLUDE  test/i'.f      \ I'
+    INCLUDE  test/i'.f   
 
 
 TESTING \ F.3.16 Defining Words
@@ -298,11 +304,13 @@ TESTING \ F.3.16 Defining Words
 \ which also tests ;, F.6.1.0950 CONSTANT, F.6.1.2410 VARIABLE, F.6.1.1250 DOES>
 \ which includes tests CREATE, and F.6.1.0550 >BODY which also tests CREATE.
 
+WARNING @ 0 WARNING ! \ reduce messaging #4
     INCLUDE  test/_.f 
+WARNING !
     INCLUDE  test/constant.f
     INCLUDE  test/variable.f
-    INCLUDE  test/}body.f       
-    INCLUDE  test/does}.f
+    INCLUDE  test/}body.f   \ >BODY       
+    INCLUDE  test/does}.f   \ DOES>
 
 
 TESTING \ F.3.17 Evaluate
@@ -310,7 +318,7 @@ TESTING \ F.3.17 Evaluate
 \ As with the defining words, F.6.1.1360 EVALUATE has already been used, but it
 \ must still be tested fully.
 
-    INCLUDE  test/evaluate.f        \ has a bug
+    INCLUDE  test/evaluate.f        \ *** nested EVALUATE still has bug ***
     
 
 TESTING \ F.3.18 Parser Input Source Control
@@ -319,9 +327,9 @@ TESTING \ F.3.18 Parser Input Source Control
 \ The tests require line breaks within the test: F.6.1.2216 SOURCE, 
 \ F.6.1.0560 >IN, and F.6.1.2450 WORD.
 
-\   INCLUDE  test/source.f          \ has bug
-\   INCLUDE  test/}in.f             \ has bug
-\   INCLUDE  test/word.f            \ has bug
+   INCLUDE  test/source.f          
+   INCLUDE  test/}in.f      \ >IN  \ *** still get error: AN?? not defined ***
+   INCLUDE  test/word.f            \ *** incorrect result on emtpy lines ***
 
 
 TESTING \ F.3.19 Number Patterns
@@ -353,67 +361,65 @@ TESTING \ F.3.19 Number Patterns
 \ The F.6.1.0570 >NUMBER test can now be performed. Finally, the F.6.1.0750 BASE
 \ test, which includes tests for HEX and DECIMAL, can be performed.
 
-    INCLUDE  test/hold.f            \ has bug
-    INCLUDE  test/sign.f            \ has bug
+    INCLUDE  test/hold.f            
+    INCLUDE  test/sign.f            
     INCLUDE  test/#.f
-    INCLUDE  test/#s.f              \ has bug
-    INCLUDE  test/}number.f
+    INCLUDE  test/#S.f              
+    INCLUDE  test/}number.f \ >NUMBER
     INCLUDE  test/base.f
-
-( end of test session )
-BASE !
-.S
-QUIT
 
 
 TESTING \ F.3.20 Memory movement
 
-    INCLUDE  test/fill.f            \ has bug
-    INCLUDE  test/move.f            \ has bug
+    INCLUDE  test/fill.f  
+    INCLUDE  test/move.f  
+
 
 TESTING \ F.3.21 Output
 
     INCLUDE  test/emit.f
 
+
 TESTING \ F.3.22 Input
 
     INCLUDE  test/accept.f
 
+
 TESTING \ F.3.23 Dictionary Search Rules 
 
-    INCLUDE  test/_.f               \ has bug
+    \ INCLUDE  test/_.f               \ already done
 
+
+\ TESTING \ other
+
+\   NEEDS BUFFER:
+\   NEEDS C"
+\   NEEDS COMPILE,
+\   NEEDS ACTION-OF
+\   NEEDS DEFER
+\   NEEDS DEFER!
+\   NEEDS DEFER@
+\   NEEDS IS
+\   NEEDS CASE
+\   NEEDS FALSE
+\
+\   INCLUDE  test/(.f           ( filler )
+\   INCLUDE  test/_noname.f
+\   INCLUDE  test/buffer_.f
+\   INCLUDE  test/c~.f
+\   INCLUDE  test/case.f
+\   INCLUDE  test/compile,.f
+\   INCLUDE  test/action-of.f
+\   INCLUDE  test/defer.f
+\   INCLUDE  test/defer!.f
+\   INCLUDE  test/defer@.f
+\   INCLUDE  test/is.f
+\   INCLUDE  test/false.f   
+\   INCLUDE  test/holds.f
+\   INCLUDE  test/parse-name.f
+\   INCLUDE  test/save-input.f
+    
 ( end of test session )
 BASE !
-EXIT
 
-TESTING \ other
-
-    NEEDS BUFFER:
-    NEEDS C"
-    NEEDS COMPILE,
-    NEEDS ACTION-OF
-    NEEDS DEFER
-    NEEDS DEFER!
-    NEEDS DEFER@
-    NEEDS IS
-    NEEDS CASE
-    NEEDS FALSE
-
-    INCLUDE  test/(.f           ( filler )
-    INCLUDE  test/_noname.f
-    INCLUDE  test/buffer_.f
-    INCLUDE  test/c~.f
-    INCLUDE  test/case.f
-    INCLUDE  test/compile,.f
-    INCLUDE  test/action-of.f
-    INCLUDE  test/defer.f
-    INCLUDE  test/defer!.f
-    INCLUDE  test/defer@.f
-    INCLUDE  test/is.f
-    INCLUDE  test/false.f   
-    INCLUDE  test/holds.f
-    INCLUDE  test/parse-name.f
-    INCLUDE  test/save-input.f
-    
 

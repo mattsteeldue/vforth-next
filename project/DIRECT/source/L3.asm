@@ -529,7 +529,7 @@ Spaces_Leave:
 //
 // sign         n d -- d
                 Colon_Def SIGN, "SIGN", is_normal
-                dw      ROT, ZLESS
+                dw      ZLESS
                 dw      ZBRANCH
                 dw      Sign_Endif - $
                 dw          LIT, 45, HOLD
@@ -575,7 +575,7 @@ Dashes_Begin:
                 Colon_Def D_DOT_R, "D.R", is_normal
                 dw      TO_R
                 dw      TUCK, DABS
-                dw      BEGIN_DASH, DASHES, SIGN, DASH_END
+                dw      BEGIN_DASH, DASHES, ROT, SIGN, DASH_END
                 dw      R_TO
                 dw      OVER, SUBTRACT, SPACES, TYPE
                 dw      EXIT
@@ -703,7 +703,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      88
                 db      "v-Forth 1.52 NextZXOS version", 13    // 29
-                db      "Direct Threaded - build 20221001", 13  // 31
+                db      "Direct Threaded - build 20221116", 13  // 31
                 db      "1990-2022 Matteo Vitturi", 13        // 25
                 dw      EXIT
 

@@ -18,10 +18,11 @@ DECIMAL
     \ .s 2dup type cr
 
     \ save current source status
-    BLK         @  >R               \ a u   -  R: blk
-    >IN         @  >R               \ a u   -  R: blk >in
-    SOURCE-P    @  >R               \ a u   -  R: blk >in ptr 
-    SOURCE-ID   @  >R               \ a u   -  R: blk >in ptr src
+    SOURCE-L    @  >R               \ a u   -  R: L
+    SOURCE-P    @  >R               \ a u   -  R: L P
+    BLK         @  >R               \ a u   -  R: L P blk
+    >IN         @  >R               \ a u   -  R: L P blk >in
+    SOURCE-ID   @  >R               \ a u   -  R: L P blk >in ptr src
     
     R@ 1+      \ so that -1 become 0
     IF 
@@ -29,7 +30,7 @@ DECIMAL
         IF
             \ SOURCE-ID is >0 during an F_INCLUDE then
             \ save current position and close the file-handle for later
-            ." source-id is greater than zero " CR
+            \ ." source-id is greater than zero " CR
             R@ F_FGETPOS            \ a u pos
             [ 44 ] LITERAL ?ERROR 
             
@@ -38,21 +39,20 @@ DECIMAL
         ELSE
             \ SOURCE-ID was zero, dummy handle-position
             \ ." source-id is zero " CR
-            0 0                     \ a u   0
+            2DUP                    \ a u  a u
         THEN
     ELSE 
         \ SOURCE-ID is -1 during EVALUATE
-        ." source-id is negative " CR
-        2DUP                        \ a u  a u   -  R: blk >in ptr src
+        \ ." source-id is negative " CR
+        2DUP                        \ a u  a u   
     THEN 
     
     \ cr .s ." >>> " 
     
     \ actual save 
-    >R >R                           \ a u        -  R: blk >in ptr src pos
+    >R >R                           \ a u   -  R: L P blk >in ptr src pos
 
-    \ pointer to memory zone that has length u and address a.
-    RP@ SOURCE-P ! 
+    2DUP SOURCE-L ! SOURCE-P !      \ a u   
 
     \ emulate EVALUATE via LOAD from BLOCK #1 which belongs to no BLOCK at all.
     1    BLK        !  
@@ -69,13 +69,14 @@ DECIMAL
     \ .s ." <<< " cr
 
     \ receive previous Handle-position if any
-    R> R>                           \ pos    -  R: blk >in ptr src 
+    R> R>                           \ pos   -  R: L P blk >in ptr src
     
     \ restore SOURCE-ID, SOURCE-ID-P, >IN, BLK
-    R> DUP SOURCE-ID !              \ pos src   -  R: blk >in ptr
-    R> SOURCE-P !                   \ pos src   -  R: blk >in
-    R> >IN !                        \ pos src   -  R: blk 
-    R> BLK !                        \ pos src   -  R: 
+    R> DUP SOURCE-ID !              \ pos src   -  R: L P  blk >in ptr
+    R> >IN !                        \ pos src   -  R: L P  blk 
+    R> BLK !                        \ pos src   -  R: L P  
+    R> SOURCE-P !                   \ pos src   -  R: L 
+    R> SOURCE-L !                   \ pos src   -  R:
     
     1+      \ so that -1 become 0   \ pos src+1
     IF 

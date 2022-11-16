@@ -18,14 +18,18 @@ T{   2 SCANS !
 345 RESCAN? 
 -> 345 345 }T
 
-: GS2 5 SCANS ! S" 123 RESCAN?" EVALUATE ;      \ evaluate has a bug...
-T{ GS2 -> 123 123 123 123 123 }T
+\ : GS2 5 SCANS ! S" 123 RESCAN?" EVALUATE ; 
+\ T{ GS2 -> 123 123 123 123 123 }T
+
+: GS2 5 SCANS ! S" 123 RESCAN?" ; 
+T{ GS2 EVALUATE -> 123 123 123 123 123 }T
+
 
 \ These tests must start on a new line
-\ DECIMAL
+DECIMAL
 \ T{ 123456 DEPTH OVER 9 < 35 AND + 3 + >IN !
 \ -> 123456 23456 3456 456 56 6 }T
 \ T{ 14145 8115 ?DUP 0= 34 AND >IN +! TUCK MOD 14 >IN ! GCD calculation
 \ -> 15 }T
-\ HEX
+HEX
 

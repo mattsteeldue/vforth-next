@@ -4,10 +4,13 @@
 
 
 NEEDS TESTING
+NEEDS CHAR+
 
 ( Test Suite - Number Patterns  )
 
 TESTING F6.1.0050 - #s
+
+HEX
 
 : GP4 <# 1 0 #S #> S" 1" S= ;
 T{ GP4 -> <TRUE> }T

@@ -29,10 +29,12 @@ NEEDS HEAP-INIT
     HP@ SWAP            \ ha n  
     CELL+               \ ha n+2        room for link to previous HP
     HP +!               \ ha            advance HP by n+2
-    HP@ SWAP            \ hp ha
+    HP@ 1+ SWAP         \ hp ha
     TUCK                \ ha hp ha
     FAR !               \ ha            store link to previous HP
     CELL+               \ ha            final HP address
+    0 HP@ FAR C!        \ ha            trailing 0x00
+    1 HP +!             \ ha
 ;
 \
 

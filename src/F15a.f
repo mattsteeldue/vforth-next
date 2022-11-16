@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20221001 ) CR
+.( build 20221116 ) CR
 .( Indirect-Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -826,7 +826,7 @@ CODE upper ( c1 -- c2 )
 \ On success, it returns the CFA of found word, the first NFA byte
 \ (which contains length and some flags) and a true flag.
 \ On fail, a false flag  (no more: leaves addr unchanged)
-CODE (find) ( addr voc -- addr 0 | cfa b 1  )
+CODE (find) ( addr voc -- ff | cfa b tf  )
          
         POP     DE|        \ dictionary
         HERE
@@ -877,7 +877,7 @@ CODE (find) ( addr voc -- addr 0 | cfa b 1  )
                     EXAFAF                \ retrieve NFA byte (!)
                     LD      E'|    A|
                     LDN     D'|    0 N,
-                    LDX     HL|    1 NN,
+                    LDX     HL|   -1 NN,
                     PUSH    DE|
                     PUSH    HL|
                     Next
@@ -2733,7 +2733,7 @@ CODE cells ( n2 -- n2 )
         LD      B'|    D|
         Next
         C;
-    \ IMMEDIATE
+    \ not IMMEDIATE
     
     \ we defined this peculiar word using "old" colon definition 
     \ behaviour. Now we want to use the ;CODE just coded.
@@ -5339,23 +5339,26 @@ decimal
 
 \ 7cb0h
 .( <# )
-: <#    ( -- ) 
+: <#    (   ud -- ud   ) 
+        ( n ud -- n ud )
     pad hld !
     ;
 
 
 \ 7cbf
 .( #> )
-: #>    
+: #>    ( d -- a u ) 
     2drop
-    hld @ pad over -
+    hld @       \ a
+    pad         \ a pad   
+    over -      \ a u
     ;
 
 
 \ 7cd4
 .( SIGN )
-: sign    ( n d -- d )
-    rot 0<
+: sign    ( n -- )
+    0<
     If
         [ decimal 45 ] Literal hold
     Then
@@ -5364,21 +5367,21 @@ decimal
 
 \ 7ced
 .( # )
-: #   ( d1 -- d2 )
-    base @ 
+: #   ( ud1 -- ud2 )
+    base @       \ ud  b
 
     \ #/mod 
-    >r           \ ud1
-    0 r@ um/mod  \ l rem1 h/r
-    r> swap >r   \ l rem1
-    um/mod       \ rem2 l/r
-    r>           \ rem2 l/r h/r
-
-    rot  
+    >r           \ ud               R: b
+    0 r@ um/mod  \ l  rh    h/b   
+    r> swap >r   \ l  rh    b       R: h/b
+    um/mod       \ r  l/b
+    r>           \ r  l/b   h/b
+                 \ r  ud/b
+    rot          \ ud  r 
     [ 9 ] Literal over <
     If [ 7 ] Literal + Then    
     [ decimal 48 ] Literal 
-    + hold
+    + hold       \ n  ud
     ;
 
 
@@ -5398,7 +5401,7 @@ decimal
 : d.r    ( d n -- )
     >r
     tuck dabs 
-    <# #s sign #> 
+    <# #s rot sign #> 
     r>
     over - spaces
     type
@@ -5530,7 +5533,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 90 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Threaded - build 20221001" -1 allot ]
+    [ decimal 13 here ," Indirect Threaded - build 20221116" -1 allot ]
     [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

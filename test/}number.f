@@ -8,7 +8,11 @@ NEEDS TESTING
 ( Test Suite - Number Patterns )
 
 \
-TESTING F..6.1.0570   -  >NUMBER
+NEEDS >NUMBER
+
+TESTING F.6.1.0570   -  >NUMBER
+
+HEX
 
 CREATE GN-BUF 0 C,
 : GN-STRING GN-BUF 1 ;

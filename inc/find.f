@@ -12,8 +12,7 @@
 \ For a given string, the values returned by FIND while compiling 
 \ may differ from those returned while not compiling.
 
-: (FOUND) ( a xt b -- xt n)
-    ROT DROP
+: (FOUND) ( xt b -- xt n)
     [ DECIMAL ] 192 < IF
         -1      \ non-Immediate
     ELSE
@@ -22,17 +21,17 @@
 ;
 
 : FIND (  a -- a 0  |  xt 1  |  xt -1  )
-    DUP CONTEXT @ @         \ a a a1
-    (FIND)                  \ a xt b tf  |  a ff
-    IF                      \ a xt b
-        (FOUND)             \ a xt n
+    DUP CONTEXT @ @         \ a   a  a1
+    (FIND)                  \ a   xt b  tf  |  ff
+    IF                      \ a   xt b
+        (FOUND)             \ a   xt n
     ELSE                    \ a
-        DUP LATEST          \ a a a1
-        (FIND)              \ a xt b tf  |  a ff
-        IF                  \ a xt b
-            (FOUND)         \ a xt n
+        DUP LATEST          \ a   a a1
+        (FIND)              \ a   xt b  tf  |  ff
+        IF                  \ a   xt b
+            (FOUND)         \ a   xt n
         ELSE                \ a
-            0               \ a 0
+            0               \ a   0
         THEN 
     THEN
 ;

@@ -368,4 +368,8 @@ More documentation improvement.
 Improved SEE definition: now it correctly handle HEAP data.
 
 
+\ build 20221116
+Better standard on number formatting words <# # SIGN #> and D.R
+Begin of POC to turn vForth into a "dot-command".
+
 

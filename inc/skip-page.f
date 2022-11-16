@@ -20,7 +20,7 @@ BASE @
     HP@  CELL+  1FFF  AND       \ take only offset part of HP heap-address
     +  1FFF  >                  \ check if it is greater than a page
     IF
-        HP@  1FFF OR 1+  HP !   \ HP goes to the next page
+        HP@  1FFF OR 1+ 2+ HP ! \ HP goes to the next page
     THEN
     HP@  0=  [ DECIMAL 12 ] LITERAL  ?ERROR  \ out of memory check
 ;

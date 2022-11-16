@@ -1,7 +1,9 @@
 \
 \ help.f
 \
-NEEDS INVV NEEDS TRUV
+NEEDS INVV 
+NEEDS TRUV
+NEEDS S"
 
 .( HELP )
 
@@ -51,9 +53,9 @@ decimal
 \ that is some help-manual-file of some cccc definition
 \ and send it to output
 : HELP  ( -- cccc )
-    0 C, HERE DUP HDIR COUNT         \ a a1 a2 n
-    >R SWAP R@ CMOVE R> ALLOT        \ a
-    BL WORD DUP C@ 1+ ALLOT >R       \ a a3
+    0 C, HERE DUP HDIR COUNT         \ a  a  a2 n
+    >R SWAP R@ CMOVE R> ALLOT        \ a  
+    BL WORD DUP C@ 1+ ALLOT >R       \ a  a3
     [ CHAR . CHAR t 8 LSHIFT + ] LITERAL ,
     [ CHAR x CHAR t 8 LSHIFT + ] LITERAL , 0 C,
     1- HERE OVER - OVER C!           \ a

@@ -408,7 +408,7 @@ DECIMAL
     THEN
     TUCK 2DUP >R >R                 \ save sign and
     DABS
-    <# #S SIGN 2DROP [CHAR] E HOLD  \ exponential part
+    <# #S ROT SIGN 2DROP [CHAR] E HOLD  \ exponential part
     10 0  R>  R@   DABS F**         \ magnitude
     R> 0< 
     IF 
@@ -425,7 +425,7 @@ DECIMAL
         0 DO # LOOP 
         [CHAR] . HOLD
     THEN
-    #S SIGN #> 
+    #S ROT SIGN #> 
     R> BASE !
 ;
 

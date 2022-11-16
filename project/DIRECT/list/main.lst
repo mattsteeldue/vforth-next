@@ -5,7 +5,7 @@
    4  0000              //  ______________________________________________________________________
    5  0000              //
    6  0000              //  v-Forth 1.6 NextZXOS version
-   7  0000              //  build 20221001
+   7  0000              //  build 20221116
    8  0000              //
    9  0000              //  Direct-Thread version.
   10  0000              //
@@ -12157,126 +12157,127 @@
  531+ 8285             >                // Use of "; ok" to suppress "warning[fwdref]"
  531+ 8285             >
  531+ 8285             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 532+ 8285 8D 6A 96 69                  dw      ROT, ZLESS
- 533+ 8289 1C 64                        dw      ZBRANCH
- 534+ 828B 08 00                        dw      Sign_Endif - $
- 535+ 828D A5 63 2D 00                  dw          LIT, 45, HOLD
- 535+ 8291 9C 73
- 536+ 8293              Sign_Endif:
- 537+ 8293 3F 69                        dw      EXIT
- 538+ 8295
- 539+ 8295              //  ______________________________________________________________________
- 540+ 8295              //
- 541+ 8295              // #           d1 -- d2
- 542+ 8295                              Colon_Def DASH, "#", is_normal
- 542+ 8295             >                New_Def  DASH, "#", Enter_Ptr, is_normal ; ok
- 542+ 8295             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 532+ 8285 96 69                        dw      ZLESS
+ 533+ 8287 1C 64                        dw      ZBRANCH
+ 534+ 8289 08 00                        dw      Sign_Endif - $
+ 535+ 828B A5 63 2D 00                  dw          LIT, 45, HOLD
+ 535+ 828F 9C 73
+ 536+ 8291              Sign_Endif:
+ 537+ 8291 3F 69                        dw      EXIT
+ 538+ 8293
+ 539+ 8293              //  ______________________________________________________________________
+ 540+ 8293              //
+ 541+ 8293              // #           d1 -- d2
+ 542+ 8293                              Colon_Def DASH, "#", is_normal
+ 542+ 8293             >                New_Def  DASH, "#", Enter_Ptr, is_normal ; ok
+ 542+ 8293             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 542+ 8293             >
+ 542+ 8293             >                // dummy db directives used to calculate length of namec
+ 542+ 8293 23          >                db      "#"
+ 542+ 8294             >len_NFA         defl    $ - temp_NFA
+ 542+ 8294             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 542+ 8293             >
+ 542+ 8293 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 542+ 8294 23          >                db      "#"               // name string in 7-bit ascii, but
+ 542+ 8295             >                org     $-1                 // alter last byte of Name just above to set
+ 542+ 8294 A3          >                db      {b $} | END_BIT     // msb as name end
  542+ 8295             >
- 542+ 8295             >                // dummy db directives used to calculate length of namec
- 542+ 8295 23          >                db      "#"
- 542+ 8296             >len_NFA         defl    $ - temp_NFA
- 542+ 8296             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 542+ 8295             >
- 542+ 8295 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 542+ 8296 23          >                db      "#"               // name string in 7-bit ascii, but
- 542+ 8297             >                org     $-1                 // alter last byte of Name just above to set
- 542+ 8296 A3          >                db      {b $} | END_BIT     // msb as name end
- 542+ 8297             >
- 542+ 8297 7B 82       >                dw      last_NFA            // Link to previous definition Name
- 542+ 8299             >DASH:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 542+ 8299 CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 542+ 829C             >
- 542+ 829C             >
- 542+ 829C             >                endif           ; ok        // for other definitions it "points" the correct handler
- 542+ 829C             >                // Use of "; ok" to suppress "warning[fwdref]"
- 542+ 829C             >
- 542+ 829C             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 543+ 829C BA 6D 03 6B                  dw      BASE, FETCH
- 544+ 82A0
- 545+ 82A0 50 69                        dw      TO_R                    // >r           ( ud1 )
- 546+ 82A2 48 6C 74 69                  dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )
- 546+ 82A6 A6 68
- 547+ 82A8 62 69 77 6A                  dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
- 547+ 82AC 50 69
- 548+ 82AE A6 68                        dw      UMDIVMOD                // um/mod       ( rem2 l/r )
- 549+ 82B0 62 69                        dw      R_TO                    // r>           ( rem2 l/r h/r )
- 550+ 82B2
- 551+ 82B2 8D 6A                        dw      ROT
- 552+ 82B4 A5 63 09 00                  dw      LIT, 9, OVER, LESS
- 552+ 82B8 47 6A D3 6E
- 553+ 82BC 1C 64                        dw      ZBRANCH
- 554+ 82BE 08 00                        dw      Dash_Endif - $
- 555+ 82C0 A5 63 07 00                  dw          LIT, 7, PLUS
- 555+ 82C4 BA 69
- 556+ 82C6              Dash_Endif:
- 557+ 82C6
- 558+ 82C6 A5 63 30 00                  dw      LIT, 48, PLUS, HOLD
- 558+ 82CA BA 69 9C 73
- 559+ 82CE 3F 69                        dw      EXIT
- 560+ 82D0
- 561+ 82D0              //  ______________________________________________________________________
- 562+ 82D0              //
- 563+ 82D0              // #s           d1 -- d2
- 564+ 82D0                              Colon_Def DASHES, "#S", is_normal
- 564+ 82D0             >                New_Def  DASHES, "#S", Enter_Ptr, is_normal ; ok
- 564+ 82D0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 564+ 82D0             >
- 564+ 82D0             >                // dummy db directives used to calculate length of namec
- 564+ 82D0 23 53       >                db      "#S"
- 564+ 82D2             >len_NFA         defl    $ - temp_NFA
- 564+ 82D2             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 564+ 82D0             >
- 564+ 82D0 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 564+ 82D1 23 53       >                db      "#S"               // name string in 7-bit ascii, but
- 564+ 82D3             >                org     $-1                 // alter last byte of Name just above to set
- 564+ 82D2 D3          >                db      {b $} | END_BIT     // msb as name end
- 564+ 82D3             >
- 564+ 82D3 95 82       >                dw      last_NFA            // Link to previous definition Name
- 564+ 82D5             >DASHES:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 564+ 82D5 CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 564+ 82D8             >
- 564+ 82D8             >
- 564+ 82D8             >                endif           ; ok        // for other definitions it "points" the correct handler
- 564+ 82D8             >                // Use of "; ok" to suppress "warning[fwdref]"
- 564+ 82D8             >
- 564+ 82D8             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 565+ 82D8              Dashes_Begin:
- 566+ 82D8 99 82 D7 6A                  dw      DASH, TWO_DUP
- 567+ 82DC ED 68 7C 69                  dw          OR_OP, ZEQUAL
- 568+ 82E0 1C 64                        dw      ZBRANCH
- 569+ 82E2 F6 FF                        dw      Dashes_Begin - $
- 570+ 82E4 3F 69                        dw      EXIT
- 571+ 82E6
- 572+ 82E6              //  ______________________________________________________________________
- 573+ 82E6              //
- 574+ 82E6              // d.r          d n --
- 575+ 82E6                              Colon_Def D_DOT_R, "D.R", is_normal
- 575+ 82E6             >                New_Def  D_DOT_R, "D.R", Enter_Ptr, is_normal ; ok
- 575+ 82E6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 575+ 82E6             >
- 575+ 82E6             >                // dummy db directives used to calculate length of namec
- 575+ 82E6 44 2E 52    >                db      "D.R"
- 575+ 82E9             >len_NFA         defl    $ - temp_NFA
- 575+ 82E9             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 575+ 82E6             >
- 575+ 82E6 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 575+ 82E7 44 2E 52    >                db      "D.R"               // name string in 7-bit ascii, but
- 575+ 82EA             >                org     $-1                 // alter last byte of Name just above to set
- 575+ 82E9 D2          >                db      {b $} | END_BIT     // msb as name end
- 575+ 82EA             >
- 575+ 82EA D0 82       >                dw      last_NFA            // Link to previous definition Name
- 575+ 82EC             >D_DOT_R:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 575+ 82EC CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 575+ 82EF             >
- 575+ 82EF             >
- 575+ 82EF             >                endif           ; ok        // for other definitions it "points" the correct handler
- 575+ 82EF             >                // Use of "; ok" to suppress "warning[fwdref]"
- 575+ 82EF             >
- 575+ 82EF             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 576+ 82EF 50 69                        dw      TO_R
- 577+ 82F1 69 6A 7A 79                  dw      TUCK, DABS
- 578+ 82F5 5A 82 D5 82                  dw      BEGIN_DASH, DASHES, SIGN, DASH_END
- 578+ 82F9 82 82 6A 82
+ 542+ 8295 7B 82       >                dw      last_NFA            // Link to previous definition Name
+ 542+ 8297             >DASH:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 542+ 8297 CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 542+ 829A             >
+ 542+ 829A             >
+ 542+ 829A             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 542+ 829A             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 542+ 829A             >
+ 542+ 829A             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 543+ 829A BA 6D 03 6B                  dw      BASE, FETCH
+ 544+ 829E
+ 545+ 829E 50 69                        dw      TO_R                    // >r           ( ud1 )
+ 546+ 82A0 48 6C 74 69                  dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )
+ 546+ 82A4 A6 68
+ 547+ 82A6 62 69 77 6A                  dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
+ 547+ 82AA 50 69
+ 548+ 82AC A6 68                        dw      UMDIVMOD                // um/mod       ( rem2 l/r )
+ 549+ 82AE 62 69                        dw      R_TO                    // r>           ( rem2 l/r h/r )
+ 550+ 82B0
+ 551+ 82B0 8D 6A                        dw      ROT
+ 552+ 82B2 A5 63 09 00                  dw      LIT, 9, OVER, LESS
+ 552+ 82B6 47 6A D3 6E
+ 553+ 82BA 1C 64                        dw      ZBRANCH
+ 554+ 82BC 08 00                        dw      Dash_Endif - $
+ 555+ 82BE A5 63 07 00                  dw          LIT, 7, PLUS
+ 555+ 82C2 BA 69
+ 556+ 82C4              Dash_Endif:
+ 557+ 82C4
+ 558+ 82C4 A5 63 30 00                  dw      LIT, 48, PLUS, HOLD
+ 558+ 82C8 BA 69 9C 73
+ 559+ 82CC 3F 69                        dw      EXIT
+ 560+ 82CE
+ 561+ 82CE              //  ______________________________________________________________________
+ 562+ 82CE              //
+ 563+ 82CE              // #s           d1 -- d2
+ 564+ 82CE                              Colon_Def DASHES, "#S", is_normal
+ 564+ 82CE             >                New_Def  DASHES, "#S", Enter_Ptr, is_normal ; ok
+ 564+ 82CE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 564+ 82CE             >
+ 564+ 82CE             >                // dummy db directives used to calculate length of namec
+ 564+ 82CE 23 53       >                db      "#S"
+ 564+ 82D0             >len_NFA         defl    $ - temp_NFA
+ 564+ 82D0             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 564+ 82CE             >
+ 564+ 82CE 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 564+ 82CF 23 53       >                db      "#S"               // name string in 7-bit ascii, but
+ 564+ 82D1             >                org     $-1                 // alter last byte of Name just above to set
+ 564+ 82D0 D3          >                db      {b $} | END_BIT     // msb as name end
+ 564+ 82D1             >
+ 564+ 82D1 93 82       >                dw      last_NFA            // Link to previous definition Name
+ 564+ 82D3             >DASHES:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 564+ 82D3 CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 564+ 82D6             >
+ 564+ 82D6             >
+ 564+ 82D6             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 564+ 82D6             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 564+ 82D6             >
+ 564+ 82D6             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 565+ 82D6              Dashes_Begin:
+ 566+ 82D6 97 82 D7 6A                  dw      DASH, TWO_DUP
+ 567+ 82DA ED 68 7C 69                  dw          OR_OP, ZEQUAL
+ 568+ 82DE 1C 64                        dw      ZBRANCH
+ 569+ 82E0 F6 FF                        dw      Dashes_Begin - $
+ 570+ 82E2 3F 69                        dw      EXIT
+ 571+ 82E4
+ 572+ 82E4              //  ______________________________________________________________________
+ 573+ 82E4              //
+ 574+ 82E4              // d.r          d n --
+ 575+ 82E4                              Colon_Def D_DOT_R, "D.R", is_normal
+ 575+ 82E4             >                New_Def  D_DOT_R, "D.R", Enter_Ptr, is_normal ; ok
+ 575+ 82E4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 575+ 82E4             >
+ 575+ 82E4             >                // dummy db directives used to calculate length of namec
+ 575+ 82E4 44 2E 52    >                db      "D.R"
+ 575+ 82E7             >len_NFA         defl    $ - temp_NFA
+ 575+ 82E7             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 575+ 82E4             >
+ 575+ 82E4 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 575+ 82E5 44 2E 52    >                db      "D.R"               // name string in 7-bit ascii, but
+ 575+ 82E8             >                org     $-1                 // alter last byte of Name just above to set
+ 575+ 82E7 D2          >                db      {b $} | END_BIT     // msb as name end
+ 575+ 82E8             >
+ 575+ 82E8 CE 82       >                dw      last_NFA            // Link to previous definition Name
+ 575+ 82EA             >D_DOT_R:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 575+ 82EA CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 575+ 82ED             >
+ 575+ 82ED             >
+ 575+ 82ED             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 575+ 82ED             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 575+ 82ED             >
+ 575+ 82ED             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 576+ 82ED 50 69                        dw      TO_R
+ 577+ 82EF 69 6A 7A 79                  dw      TUCK, DABS
+ 578+ 82F3 5A 82 D3 82                  dw      BEGIN_DASH, DASHES, ROT, SIGN, DASH_END
+ 578+ 82F7 8D 6A 82 82
+ 578+ 82FB 6A 82
  579+ 82FD 62 69                        dw      R_TO
  580+ 82FF 47 6A A7 6E                  dw      OVER, SUBTRACT, SPACES, TYPE
  580+ 8303 40 82 3F 72
@@ -12299,7 +12300,7 @@
  586+ 830C             >                org     $-1                 // alter last byte of Name just above to set
  586+ 830B D2          >                db      {b $} | END_BIT     // msb as name end
  586+ 830C             >
- 586+ 830C E6 82       >                dw      last_NFA            // Link to previous definition Name
+ 586+ 830C E4 82       >                dw      last_NFA            // Link to previous definition Name
  586+ 830E             >DOT_R:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
  586+ 830E CD CF 6B    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
  586+ 8311             >
@@ -12310,7 +12311,7 @@
  586+ 8311             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
  587+ 8311 50 69                        dw      TO_R
  588+ 8313 95 6E 62 69                  dw      S_TO_D, R_TO
- 589+ 8317 EC 82                        dw      D_DOT_R
+ 589+ 8317 EA 82                        dw      D_DOT_R
  590+ 8319 3F 69                        dw      EXIT
  591+ 831B
  592+ 831B              //  ______________________________________________________________________
@@ -12339,7 +12340,7 @@
  595+ 8323             >                // Use of "; ok" to suppress "warning[fwdref]"
  595+ 8323             >
  595+ 8323             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 596+ 8323 48 6C EC 82                  dw      ZERO, D_DOT_R, SPACE
+ 596+ 8323 48 6C EA 82                  dw      ZERO, D_DOT_R, SPACE
  596+ 8327 5D 6F
  597+ 8329 3F 69                        dw      EXIT
  598+ 832B
@@ -12655,14 +12656,14 @@
  705+ 8459 53 20 76 65
  705+ 845D 72 73 69 6F
  705+ 8461 6E 0D
- 706+ 8463 44 69 72 65                  db      "Direct Threaded - build 20221001", 13  // 31
+ 706+ 8463 44 69 72 65                  db      "Direct Threaded - build 20221116", 13  // 31
  706+ 8467 63 74 20 54
  706+ 846B 68 72 65 61
  706+ 846F 64 65 64 20
  706+ 8473 2D 20 62 75
  706+ 8477 69 6C 64 20
  706+ 847B 32 30 32 32
- 706+ 847F 31 30 30 31
+ 706+ 847F 31 31 31 36
  706+ 8483 0D
  707+ 8484 31 39 39 30                  db      "1990-2022 Matteo Vitturi", 13        // 25
  707+ 8488 2D 32 30 32
