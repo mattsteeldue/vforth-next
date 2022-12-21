@@ -25,6 +25,7 @@ CREATE COLOR-TAB
     10010110 C,
     10011010 C,
     10111010 C,
+    11111111 C,
     00000000 C,  \ BLACK again
 
 
@@ -47,17 +48,30 @@ VARIABLE IDX
 
 \ H-RANGE and V-RANGE are defined from GRAPHICS.f
 
-300 CONSTANT H-MULT
-225 CONSTANT V-MULT
+256 CONSTANT Scale
+
+
+4 Scale * CONSTANT Mag-Lim
+2 Scale * CONSTANT TWO
+                                    
+300 100 Scale */ CONSTANT H-MULT
+500 100 Scale */ CONSTANT V-MULT
 
 220 CONSTANT H-SHIFT
 100 CONSTANT V-SHIFT
 
-100     CONSTANT Scale
-4 Scale * CONSTANT Mag-Lim
-2 Scale * CONSTANT TWO
-                                    
 DECIMAL
+
+: RESCALE ( n -- )
+    4 Scale * TO Mag-Lim
+    2 Scale * TO TWO
+                                        
+    300 100 Scale */ TO H-MULT
+    225 100 Scale */ TO V-MULT
+;
+
+
+
 
 
 : BROT  ( -- )
@@ -67,7 +81,7 @@ V-RANGE 0 DO    \  (Imaginary part of z)
     I  H-MULT UM* H-RANGE UM/MOD NIP H-SHIFT - ReC ! 
     J  V-MULT UM* V-RANGE UM/MOD NIP V-SHIFT - ImC ! 
     0 ReZ   !  0 ImZ   !
-    14 0 DO 
+    15 0 DO 
       I IDX ! 
       ReZ  @ ABS DUP UM* Scale UM/MOD NIP  \ xx
       ImZ  @ ABS DUP UM* Scale UM/MOD NIP  \ xx yy

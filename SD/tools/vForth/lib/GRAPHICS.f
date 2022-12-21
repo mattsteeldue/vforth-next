@@ -34,9 +34,6 @@ BASE @
 \
 \ Old-Standard Color definitions
 
-007 CONSTANT COLOR-MASK
-001 CONSTANT FLAG-MASK
-
 ENUM BASIC-COLOR
      BASIC-COLOR  _BLACK
      BASIC-COLOR  _BLUE
@@ -50,26 +47,40 @@ ENUM BASIC-COLOR
 
 \ current "color" used in subsequent operations
 \
-0   VALUE  ATTRIB
+0 VALUE  ATTRIB
 
 \ (COLOR)
-\ this definition needs 3 params
-\  b :  attribute value
-\  c :  character between 16 and 21
-\  n :  mask applied to b to avoid Basic's errors.
-: (COLOR)       ( b c n -- )
-  ROT AND 
-  DUP TO ATTRIB
-  SWAP EMITC EMITC
+\ this definition needs 4 params
+\  b :  attribute value (in range 0-7)
+\  c :  ctrl character between 16 and 21
+\  m :  bitmask applied to b to avoid Basic's errors.
+\  s :  number of bit to be shifted
+: (COLOR)       ( b c m s -- )
+  >R                \ b c m             R: s
+  DUP R@            \ b c m m  s
+  LSHIFT NEGATE     \ b c m m1          \ m1 has 0 only on bits to work on
+  ATTRIB AND        \ b c m m1          \ zeroes working ATTRIB bits 
+  3 PICK            \ b c m m1 b 
+  R>                \ b c m m1 b s
+  LSHIFT            \ b c m m1 b1       \ shift attribute value bits
+  OR                \ b c m n           \ put them in place
+  TO ATTRIB         \ b c m 
+  ROT AND           \ c b&m             \ at end, change current attribs
+  SWAP EMITC EMITC  \ 
 ;
 
 DECIMAL
-: .INK      16  COLOR-MASK (COLOR) ;
-: .PAPER    17  COLOR-MASK (COLOR) ;
-: .FLASH    18  FLAG-MASK  (COLOR) ;
-: .BRIGHT   19  FLAG-MASK  (COLOR) ;
-: .INVERSE  20  FLAG-MASK  (COLOR) ;
-: .OVER     21  FLAG-MASK  (COLOR) ;
+
+007 CONSTANT COLOR-MASK
+001 CONSTANT FLAG-MASK
+
+\         ctrl  mask       shift     
+: .INK      16  COLOR-MASK   0   (COLOR) ;
+: .PAPER    17  COLOR-MASK   3   (COLOR) ;
+: .FLASH    18  FLAG-MASK    6   (COLOR) ;
+: .BRIGHT   19  FLAG-MASK    7   (COLOR) ;
+: .INVERSE  20  FLAG-MASK    8   (COLOR) ;
+: .OVER     21  FLAG-MASK    8   (COLOR) ;
 
 
 \ ____________________________________________________________________
