@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Fri Oct  7 22:30:07 2022
+Created: Wed Dec 21 11:01:32 2022
 
 Index:
 
@@ -69,8 +69,8 @@ Index:
    64 ( Convawys Game Of Life )
    65 ( Convawys Game Of Life )
    66 ( Convawys Game Of Life )
-   67 
-   68 
+   67 ( test SOURCE )
+   68 ( testing  test/source.f )
    69 ( SOURCE )
    70 .( Compare Utility (is already built-in )
    71 .( Search Utility (is already built-in )
@@ -3197,16 +3197,16 @@ Scr# 66
  15 
 
 Scr# 67 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
+  0 ( test SOURCE )
+  1 needs evaluate
+  2 needs s"
+  3 : GS0 S" SOURCE " NOOP ;
+  4 : GS1 S" 123 1+ 2+" ;
+  5 : GS2 S" GS0 EVALUATE" ;
+  6 : GS3 S" Nfa: " TYPE ;
+  7 \ GS1 EVALUATE GS0 .S
   8 
-  9 
+  9 GS2
  10 
  11 
  12 
@@ -3215,16 +3215,16 @@ Scr# 67
  15 
 
 Scr# 68 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 DECIMAL
-  9 \ -->
+  0 ( testing  test/source.f )
+  1 needs case
+  2 : test ( n -- )
+  3   case ource needs evaluate needs compare
+  4 : gs1 s" SOURCE" 2dup evaluate
+  5   >R swap >R =  R> R>
+  6 ;
+  7 t{ gs1 -> <true> <true> }T
+  8 
+  9 
  10 
  11 
  12 
