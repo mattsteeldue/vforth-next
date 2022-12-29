@@ -24,7 +24,7 @@ DECIMAL
         I 8 + I 4 + (DMP) SPACE
         I 8 + I DO 
             I C@
-            127 AND DUP 32 <
+            127 AND DUP BL <
             IF  
                 SPACE  DROP
             ELSE 

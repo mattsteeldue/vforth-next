@@ -35,7 +35,7 @@ start CSpect
 WINDOWS / MACOS / ..
 --------------------
 
-THere is a very nice quickstart guide by marco's retrobits
+THere is a very nice quickstart guide by Marco's retrobits
 https://retrobits.altervista.org/blog/dogday-cspect-quickstart/
 
 

@@ -372,4 +372,5 @@ Improved SEE definition: now it correctly handle HEAP data.
 Better standard on number formatting words <# # SIGN #> and D.R
 Begin of POC to turn vForth into a "dot-command".
 Introducing ASSEMBLER vocabulary in PDF documentation.
-
+Faster RND (converted in assembler exploiting MUL and ADDHL,A
+Minor fixing.

@@ -22,7 +22,7 @@ BASE @
     KEYB DUP EMIT ;
 
 : KEYBEMITD  ( -- b )       \ and treat it as a hex digit
-    KEYBEMIT 10 DIGIT DROP ;
+    KEYBEMIT [ HEx ] 10 [ DECIMAL ] DIGIT DROP ;
 
 \
 DECIMAL   0 VARIABLE NROW  NROW !       \ current row
