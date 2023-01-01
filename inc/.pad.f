@@ -5,6 +5,6 @@
 \
 \ .pad
 : .PAD ( -- ) \ show PAD content
-    PAD C/L -TRAILING TYPE 
+    PAD COUNT -TRAILING TYPE 
 ;
 \

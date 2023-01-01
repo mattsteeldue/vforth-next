@@ -1,16 +1,16 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20221116 ) CR
+.( build 20230101 ) CR 
 .( Indirect-Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
 \ This work is available as-is with no whatsoever warranty.
 \ Copying, modifying and distributing this software is allowed 
-\ provided that the copyright notice is kept.  
+\ provided that this copyright notice is kept.  
 \ ______________________________________________________________________ 
 \
-\ by Matteo Vitturi, 1990-2022
+\ by Matteo Vitturi, 1990-2023
 \
 \ https://sites.google.com/view/vforth/vforth15-next
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -1069,6 +1069,10 @@ CODE emitc     ( c -- )
     HERE TO emitc^    
         PUSH    BC|
         PUSH    IX|
+\       PUSH    IX|
+\       EXX
+\       POP     HL|
+\       EXX
         RST     10|             \ standard ROM current-channel print routine
         POP     IX|
         POP     BC|
@@ -1208,31 +1212,31 @@ EMIT-2^ EMIT-A^ 0E +  !
 \ KEY decode table
 HEX 
 HERE TO KEY-1^
-    E2   C,   \  0: STOP  --> SYMBOL+A : ~
-    C3   C,   \  1: NOT   --> SYMBOL+S : |
-    CD   C,   \  2: STEP  --> SYMBOl+D : \
-    CC   C,   \  3: TO    --> SYMBOL+F : {
-    CB   C,   \  4: THEN  --> SYMBOL+G : }
-    C6   C,   \  5: AND   --> SYMBOL+Y : [
-    C5   C,   \  6: OR    --> SYMBOL+U : ]
-    AC   C,   \  7: AT    --> SYMBOL+I : (C) copyright symbol
-    C7   C,   \  8: <=    --> SYMBOL+Q : same as SHIFT-1 [EDIT]
-    C8   C,   \  9: >=    --> SYMBOL+E : same as SHIFT-0 [BACKSPACE]
+    E2   C,   \  0: STOP  --> SYMBOL+A   ~
+    C3   C,   \  1: NOT   --> SYMBOL+S   |
+    CD   C,   \  2: STEP  --> SYMBOl+D   \
+    CC   C,   \  3: TO    --> SYMBOL+F   {
+    CB   C,   \  4: THEN  --> SYMBOL+G   }
+    C6   C,   \  5: AND   --> SYMBOL+Y   [
+    C5   C,   \  6: OR    --> SYMBOL+U   ]
+    AC   C,   \  7: AT    --> SYMBOL+I   (C) copyright symbol
+    C7   C,   \  8: <=    --> SYMBOL+Q   same as SHIFT-1 [EDIT]
+    C8   C,   \  9: >=    --> SYMBOL+E   same as SHIFT-0 [BACKSPACE]
     C9   C,   \ 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
     06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-    0C   C,   \  9: SYMBOL+E : same as SHIFT-0 [BACKSPACE]
-    07   C,   \  8: SYMBOL+Q : same as SHIFT-1 [EDIT]
-    7F   C,   \  7: SYMBOL+I : (C) copyright symbol
-    5D   C,   \  6: SYMBOL+U : ]
-    5B   C,   \  5: SYMBOL+Y : [
-    7D   C,   \  4: SYMBOL+G : }
-    7B   C,   \  3: SYMBOL+F : {
-    5C   C,   \  2: SYMBOl+D : \
-    7C   C,   \  1: SYMBOL+S : |
-    7E   C,   \  0: SYMBOL+A : ~
+    0C   C,   \  9: SYMBOL+E   same as SHIFT-0 [BACKSPACE]
+    07   C,   \  8: SYMBOL+Q   same as SHIFT-1 [EDIT]
+    7F   C,   \  7: SYMBOL+I   (C) copyright symbol
+    5D   C,   \  6: SYMBOL+U   ]
+    5B   C,   \  5: SYMBOL+Y   [
+    7D   C,   \  4: SYMBOL+G   }
+    7B   C,   \  3: SYMBOL+F   {
+    5C   C,   \  2: SYMBOl+D   \
+    7C   C,   \  1: SYMBOL+S   |
+    7E   C,   \  0: SYMBOL+A   ~
 
 
 \ new
@@ -1394,6 +1398,10 @@ CODE inkey ( -- c )
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
         LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         PUSH    IX|
+\       PUSH    IX|
+\       EXX
+\       POP     HL|
+\       EXX
         CALL    HEX  15E6  AA,  ( instead of 15E9 )
         POP     IX|
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
@@ -4190,7 +4198,7 @@ CODE fill ( a n c -- )
             Then 
         Then 
         ?stack 
-        ?terminal If (abort) Then
+\       ?terminal If (abort) Then
     Again
     ;
 
@@ -4924,7 +4932,7 @@ decimal #SEC constant #sec
 : r/w  ( a n f -- )
     >r
     1-  dup 0<           
-           over #sec  1-  > 
+            over #sec  1-  > 
         or [ decimal 6 ] Literal ?error
     r> 
     If
@@ -5533,8 +5541,8 @@ decimal
     cls
     [compile] (.")
     [ decimal 90 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Indirect Threaded - build 20221116" -1 allot ]
-    [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
+    [ decimal 13 here ," Indirect Threaded - build 20230101" -1 allot ]
+    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

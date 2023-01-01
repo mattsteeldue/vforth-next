@@ -373,4 +373,9 @@ Better standard on number formatting words <# # SIGN #> and D.R
 Begin of POC to turn vForth into a "dot-command".
 Introducing ASSEMBLER vocabulary in PDF documentation.
 Faster RND (converted in assembler exploiting MUL and ADDHL,A
-Minor fixing.
+
+
+\ build 20230101
+PDF Manual is now over 100 pages.
+Minor fixing here and there.
+Happy new year !

@@ -20,7 +20,7 @@
 
 MARKER FORGET-LED \ this allows you to forget all this package.
 
-: KEY CURS KEY ;
+: KEYB CURS KEY ;
 
 NEEDS SHOW-PROGRESS  NEEDS INVV     NEEDS TRUV
 NEEDS CASE           NEEDS LINE
@@ -159,14 +159,21 @@ DECIMAL
     led-line COLS/ROW cmove ;
 
 : H ( n -- )               \ hold line to pad
-    led-line pad 1+ cols/row dup pad c! cmove ;
+    led-line 
+    pad 1+ cols/row cmove 
+    cols/row pad c! 
+;
 
 : E ( n -- )               \ erase line
-    led-line cols/row blank  ;
+    led-line cols/row blank  
+;
 
 
 : RE ( n -- )              \ restore line from pad
-    pad 1+ swap led-move ;
+    pad 1+ 
+    swap 
+    led-move 
+;
 
 : D ( n -- )               \ delete line
     dup H led-max @ dup 1- rot     \  m m-1 n
@@ -176,11 +183,12 @@ DECIMAL
     Loop E  -1 led-max +! ;
 
 : S ( n -- )                \ insert blank line
-    dup 1- led-max @          \ n n m
+    dup 1- led-max @        \ n n-1 m
     ?do
         i       led-line led-pad cols/row cmove
         led-pad i 1+ led-move
-    -1 +Loop 1 led-max +!
+    -1 +Loop 
+    1 led-max +!
     E
 ;
 
@@ -254,8 +262,8 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 : RIGHTC NCOL @ 80 < IF  1  ELSE  DOWNC -80 THEN NCOL +! ;
 
 : BYTE ( -- b ) \ accept two hex digit as a byte
-    KEY DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
-    KEY DUP EMIT         10 DIGIT DROP + ; DECIMAL
+    KEYB DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
+    KEYB DUP EMIT         10 DIGIT DROP + ; DECIMAL
 HEX
 
 : DONEC             8F 26 +ORIGIN C!    \ reset cursor face
@@ -270,7 +278,7 @@ DECIMAL
     NROW @ 0 TO-SCR AT-XY NROW @ LED-line COLS/ROW type ;
 
 : CMD    ( c -- )   \ handle EDIT key options
-    6 21 AT-XY DONEC KEY UPPER BL MAX DUP EMIT CASE
+    6 21 AT-XY DONEC KEYB UPPER BL MAX DUP EMIT CASE
     [CHAR] P OF BYTE CURC! ENDOF  \ put a byte at cursor
     [CHAR] H OF NROW @ H   ENDOF  \ copy to PAD
     [CHAR] S OF NROW @ S   ENDOF  \ shift down one row
@@ -308,7 +316,7 @@ DECIMAL
     BEGIN
         EDIT-STAT  INITC
         CURC@ NROW @ NCOL @ TO-SCR  2DUP AT-XY
-        KEY  ?TERMINAL IF DROP 0 INSC   REFRESH THEN
+        KEYB  ?TERMINAL IF DROP 0 INSC   REFRESH THEN
         DUP BL < IF
             >R AT-XY EMIT R>  CTRLC
         ELSE

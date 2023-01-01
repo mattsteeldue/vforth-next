@@ -1,17 +1,17 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 MDR/MGT version ) CR
-.( build 20220730 ) CR 
+.( build 20230101 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
 \
 \ This work is available as-is with no whatsoever warranty.
 \ Copying, modifying and distributing this software is allowed 
-\ provided that the copyright notice is kept.  
+\ provided that this copyright notice is kept.  
 \ ______________________________________________________________________
 \
-\ by Matteo Vitturi, 1990-2022
+\ by Matteo Vitturi, 1990-2023
 \
 \ https://sites.google.com/view/vforth/vforth1413
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -978,7 +978,7 @@ HEX
 
 
 ." (MAP) "
-\ translate character c1 using mapping string a2 and a2
+\ translate character c1 using mapping strings a2 and a2
 \ if c1 is not present within string a1 then 
 \ c2 = c2 if it is not translated. n is the length of both a1 and a2.
 CODE (map) ( a2 a1 n c1 -- c2 )
@@ -1061,6 +1061,10 @@ CODE emitc     ( c -- )
     HERE TO emitc^    
         PUSH    BC|
         PUSH    IX|
+\       PUSH    IX|
+\       EXX
+\       POP     HL|
+\       EXX
         RST     10|             \ standard ROM current-channel print routine
         POP     IX|
         POP     BC|
@@ -1200,31 +1204,31 @@ EMIT-2^ EMIT-A^ 0E +  !
 \ KEY decode table
 HEX 
 HERE TO KEY-1^
-    E2   C,   \  0: STOP  --> SYMBOL+A : ~
-    C3   C,   \  1: NOT   --> SYMBOL+S : |
-    CD   C,   \  2: STEP  --> SYMBOl+D : \
-    CC   C,   \  3: TO    --> SYMBOL+F : {
-    CB   C,   \  4: THEN  --> SYMBOL+G : }
-    C6   C,   \  5: AND   --> SYMBOL+Y : [
-    C5   C,   \  6: OR    --> SYMBOL+U : ]
-    AC   C,   \  7: AT    --> SYMBOL+I : (C) copyright symbol
-    C7   C,   \  8: <=    --> SYMBOL+Q : same as SHIFT-1 [EDIT]
-    C8   C,   \  9: >=    --> SYMBOL+E : same as SHIFT-0 [BACKSPACE]
+    E2   C,   \  0: STOP  --> SYMBOL+A   ~
+    C3   C,   \  1: NOT   --> SYMBOL+S   |
+    CD   C,   \  2: STEP  --> SYMBOl+D   \
+    CC   C,   \  3: TO    --> SYMBOL+F   {
+    CB   C,   \  4: THEN  --> SYMBOL+G   }
+    C6   C,   \  5: AND   --> SYMBOL+Y   [
+    C5   C,   \  6: OR    --> SYMBOL+U   ]
+    AC   C,   \  7: AT    --> SYMBOL+I   (C) copyright symbol
+    C7   C,   \  8: <=    --> SYMBOL+Q   same as SHIFT-1 [EDIT]
+    C8   C,   \  9: >=    --> SYMBOL+E   same as SHIFT-0 [BACKSPACE]
     C9   C,   \ 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
     06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-    0C   C,   \  9: SYMBOL+E : same as SHIFT-0 [BACKSPACE]
-    07   C,   \  8: SYMBOL+Q : same as SHIFT-1 [EDIT]
-    7F   C,   \  7: SYMBOL+I : (C) copyright symbol
-    5D   C,   \  6: SYMBOL+U : ]
-    5B   C,   \  5: SYMBOL+Y : [
-    7D   C,   \  4: SYMBOL+G : }
-    7B   C,   \  3: SYMBOL+F : {
-    5C   C,   \  2: SYMBOl+D : \
-    7C   C,   \  1: SYMBOL+S : |
-    7E   C,   \  0: SYMBOL+A : ~
+    0C   C,   \  9: SYMBOL+E   same as SHIFT-0 [BACKSPACE]
+    07   C,   \  8: SYMBOL+Q   same as SHIFT-1 [EDIT]
+    7F   C,   \  7: SYMBOL+I   (C) copyright symbol
+    5D   C,   \  6: SYMBOL+U   ]
+    5B   C,   \  5: SYMBOL+Y   [
+    7D   C,   \  4: SYMBOL+G   }
+    7B   C,   \  3: SYMBOL+F   {
+    5C   C,   \  2: SYMBOl+D   \
+    7C   C,   \  1: SYMBOL+S   |
+    7E   C,   \  0: SYMBOL+A   ~
 
 
 \ new
@@ -1247,7 +1251,7 @@ CODE curs ( -- )
             LDN     A'| HEX 02 N,   \ select channel #2
             CALL    HEX 1601 AA,
 
-            \ software-flash: flips face every 320 ms
+            \ software-flash: flips face every 640 ms
             LDN     A'| HEX 20 N,             \ Timing
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
@@ -1385,6 +1389,10 @@ CODE inkey ( -- c )
         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
         LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         PUSH    IX|
+\       PUSH    IX|
+\       EXX
+\       POP     HL|
+\       EXX
         CALL    HEX  15E6  AA,  ( instead of 15E9 )
         POP     IX|
         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
@@ -3962,7 +3970,7 @@ CODE fop
             Then 
         Then 
         ?stack 
-        ?terminal If (abort) Then
+\       ?terminal If (abort) Then
     Again
     ;
 
@@ -4476,13 +4484,12 @@ hex 5CF0 variable mmap          mmap !
 \ 7719h
 \ CHNL 
 hex 5D2F variable chnl          chnl !
-
+       4 variable mgt           mgt  !
 
 \ 7734h INKEY  <<<
 \
 \ 7749h SELECT <<<
 \ 
-
 
 \ 775Eh
 \ OPEN - MDR
@@ -4570,7 +4577,7 @@ hex 5D2F variable chnl          chnl !
            [ decimal 254 ] Literal /mod   \ find drive# and sector#
     dup    [ decimal  48 ] Literal +
         r  [ decimal  53 ] Literal + c!   \ Last byte of HDNAME
-    2+                                    \ DR0 is drive #2
+    mgt @ 2/ +                            \ DR0 is drive #2
         r  [ decimal  25 ] Literal + c!   \ CHDRIV
     1-  r> [ decimal  13 ] Literal + c!   \ CHREC of channel
     mdrget
@@ -4603,7 +4610,7 @@ hex 5D2F variable chnl          chnl !
     [ decimal  11 ] Literal + !     \ CHBYTE of channel
     strm @ select
     r [ decimal 593 ] Literal + c@  \ latest byte of channel's data-area
-    emitc
+    emitc 
     device @ select
     \ it puts 255 to CHREC to clear everything.
     [ decimal 255 ] Literal r>  
@@ -4613,8 +4620,6 @@ hex 5D2F variable chnl          chnl !
 \ ______________________________________________________________________ 
 
 \ MGT DISCiPLE option
-
-0 variable mgt          mgt !
 
 .( RSAD )
 \ call DISCiPLE 44h hook code (RDAD)
@@ -4691,14 +4696,14 @@ decimal #SEC constant #sec
         or [ decimal 6 ] Literal ?error
     r> 
     If
-        mgt @
+        mgt @ 1 and
         If
             mgtrd
         Else
             mdrrd
         Then
     Else
-        mgt @
+        mgt @ 1 and
         If
             mgtwr
         Else
@@ -4888,22 +4893,25 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 
 \ 7cb0h
 .( <# )
-: <#    ( -- ) 
+: <#    (   ud -- ud   ) 
+        ( n ud -- n ud )
     pad hld !
     ;
 
 
 \ 7cbf
 .( #> )
-: #>    
+: #>    ( d -- a u ) 
     2drop
-    hld @ pad over -
+    hld @       \ a
+    pad         \ a pad   
+    over -      \ a u
     ;
 
 
 \ 7cd4
 .( SIGN )
-: sign    ( n d -- d )
+: sign    ( n -- )
     0<
     If
         [ decimal 45 ] Literal hold
@@ -5082,8 +5090,8 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.52 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20220730" -1 allot ]
-    [ decimal 13 here ," 1990-2022 Matteo Vitturi" -1 allot ]
+    [ decimal 13 here ," build 20230101" -1 allot ]
+    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

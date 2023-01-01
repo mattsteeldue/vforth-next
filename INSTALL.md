@@ -1,9 +1,9 @@
-2021-08-10
+2022-01-01
 
-ON REAL Sinclair ZX Spectrum Next
----------------------------------
+On real-hardware Sinclair ZX Spectrum Next
+------------------------------------------
 
-1. Intall, just copy SD/tools/vForth content into SD  at C:/tools/vForth
+1. Install, just copy SD/tools/vForth content into SD  at C:/tools/vForth
    or extract the very same content from the latest zipped file
    vforth-next/download/vForth_15f_yyyymmdd.zip (direct-threaded) or
    vforth-next/download/vForth_15e_yyyymmdd.zip (indirect-threaded)
@@ -12,14 +12,14 @@ ON REAL Sinclair ZX Spectrum Next
    C:/tools/vForth/Forth15_indirect.bas  
 
 
-ON EMULATOR #CSpect
-------------------
+On #CSpect emulator
+-------------------
 
 The operations of points 1. and 2. has to be performed within an SD image like   tbblue.mmc  
 
 
 
-DEBIAN / UBUNTU / LINUX-LITE
+Debian / Ubuntu / Linux-Lite
 ----------------------------
 
 Install the latest  "Mono"  cross platform open source .NET framework
@@ -32,8 +32,8 @@ start CSpect
 
 
 
-WINDOWS / MACOS / ..
---------------------
+Window / MacOS / ..
+-------------------
 
 THere is a very nice quickstart guide by Marco's retrobits
 https://retrobits.altervista.org/blog/dogday-cspect-quickstart/

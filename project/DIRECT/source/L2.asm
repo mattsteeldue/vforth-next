@@ -63,12 +63,12 @@ Interpret_Else_3:
 Interpret_Endif_3:                                      //          endif                
 Interpret_Endif_1:                                      //      endif    
                 dw          QSTACK                      //      ?stack
-                dw          QTERMINAL                   //      ?terminal
-                                                        //      if
-                dw          ZBRANCH
-                dw          Interpret_Endif_5 - $
-                dw              CABORT                  //          (abort)
-Interpret_Endif_5:                                      //      endif
+//              dw          QTERMINAL                   //      ?terminal
+//                                                      //      if
+//              dw          ZBRANCH
+//              dw          Interpret_Endif_5 - $
+//              dw              CABORT                  //          (abort)
+//Interpret_Endif_5:                                      //      endif
                 dw      BRANCH
                 dw      Interpret_Begin - $     
                 dw      EXIT                            // ;
