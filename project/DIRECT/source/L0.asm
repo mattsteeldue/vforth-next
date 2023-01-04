@@ -411,7 +411,7 @@ Case_Upper:
 
 //  ______________________________________________________________________ 
 //
-// (find)       addr voc -- addr 0 | cfa b 1 
+// (find)       addr voc -- 0 | cfa b 1 
 // vocabulary search, 
 // - voc is starting word's NFA
 // - addr is the string to be searched for
@@ -419,8 +419,8 @@ Case_Upper:
 // (which contains length and some flags) and a true flag.
 // On fail, a false flag  (no more: leaves addr unchanged)
                 New_Def C_FIND, "(FIND)", is_code, is_normal
-                                                // de has dictionary pointer
-                    pop     de
+                                                
+                pop     de                      // de has dictionary pointer
 Find_VocabularyLoop:
                     pop     hl                  // string pointer to search for
                     push    hl                  // keep it on stack too for the end.
@@ -429,10 +429,10 @@ Find_VocabularyLoop:
                     ld      a, (de)             // reload NFA length byte
                     xor     (hl)                // check if same length
                     and     $3F                 // by resetting 3 high bits (flags)
-                    // word an text haven't the same length, skip to next vocabulary entry
+                    // word and text haven't the same length, skip to next vocabulary entry
                     jr      nz, Find_DifferentLenght 
 
-Find_ThisWord:  // begin loop
+Find_ThisWord:      // begin loop
                         inc     hl
                         inc     de
                         ld      a, (de)
@@ -458,45 +458,45 @@ Find_ThisWord:  // begin loop
                     jr      nc, Find_ThisWord
 
                     // match found !
-                        ld      hl, 3               // 3 bytes for CFA offset to skip LFA
-                        add     hl, de
-                        ex      (sp), hl            // CFA on stack and drop addr
-                        ex      af, af'             // retrieve NFA byte (!)
-                        ld      e, a
-                        ld      d, 0
+                    ld      hl, 3               // 3 bytes for CFA offset to skip LFA
+                    add     hl, de
+                    ex      (sp), hl            // CFA on stack and drop addr
+                    ex      af, af'             // retrieve NFA byte (!)
+                    ld      e, a
+                    ld      d, 0
 
 
-                        ld      hl, 1
-                        psh2
+                    ld      hl, 1
+                    psh2
 
 Find_DidntMatch: // didn't match (*)
                     jr      c,  Find_WordEnd   // jump if not end of word (**)
 
 Find_DifferentLenght:
-                // consume chars until the end of the word
-                // that is last byte msb is found set 
-                    inc     de
-                    ld      a, (de)
-                    add     a, a
-                jr      nc, Find_DifferentLenght
+                    // consume chars until the end of the word
+                    // that is last byte msb is found set 
+                        inc     de
+                        ld      a, (de)
+                        add     a, a
+                    jr      nc, Find_DifferentLenght
 
 Find_WordEnd:   // word-end  found (**)
-                // take LFA and use it
-                inc     de
-                ex      de, hl
-                ld      e, (hl)
-                inc     hl
-                ld      d, (hl)
-                ld      a, d
-                or      e
+                    // take LFA and use it
+                    inc     de
+                    ex      de, hl
+                    ld      e, (hl)
+                    inc     hl
+                    ld      d, (hl)
+                    ld      a, d
+                    or      e
 
-            // loop until end of vocabulary 
-            jr      nz, Find_VocabularyLoop        
-
-            pop     hl              // with this, it leaves addr unchanged
-            ld      hl, FALSE_FLAG
-
-            psh1
+                // loop until end of vocabulary 
+                jr      nz, Find_VocabularyLoop        
+    
+                pop     hl              // without this, leaves addr unchanged
+                ld      hl, FALSE_FLAG
+    
+                psh1
 
 //  ______________________________________________________________________ 
 //

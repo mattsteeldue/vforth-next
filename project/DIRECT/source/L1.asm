@@ -71,6 +71,7 @@ Constant_Ptr:
                 ld      e, (hl)
                 inc     hl
                 ld      d, (hl)
+
                 push    de
                 next
 
@@ -135,10 +136,12 @@ User_Ptr:
 //              dw      PLUS                    // +
 //              dw      EXIT                    // ;
                 New_Def  PLUS_ORIGIN, "+ORIGIN", is_code, is_normal
+
                 pop     hl
                 ld      de, Cold_origin
                 add     hl, de
                 push    hl
+
                 next
 
 
