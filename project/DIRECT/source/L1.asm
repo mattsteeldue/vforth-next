@@ -107,13 +107,11 @@ Variable_Ptr:
 User_Ptr:
                 // via call coded in CFA
                 pop     hl
-
-                ld      e, (hl)
-                ld      d, 0
+                ld      a, (hl)
                 ld      hl, (USER_Pointer)
-                add     hl, de
-
-                psh1
+                add     hl, a
+                push    hl
+                next
                 
 //  ______________________________________________________________________ 
 //
@@ -222,14 +220,11 @@ User_Ptr:
 // s>d          n -- d
 // converts a single precision integer in a double precision
                 New_Def S_TO_D, "S>D", is_code, is_normal
-                pop     de
-                ld      hl, 0
-                ld      a, d
-                and     $80
-                jr      z, S_to_D_Skip
-                dec     hl                  // $FFFF
-S_to_D_Skip:                
-                push    de
+                pop     hl
+                ld      a, h
+                push    hl
+                rla
+                sbc     hl, hl
                 push    hl
                 next
 
@@ -262,12 +257,10 @@ S_to_D_Skip:
                 pop     hl
                 and     a
                 sbc     hl, de
-                ld      hl, -1
-                jr      c, ULess_Skip
-                    inc     hl
-ULess_Skip:                    
+                sbc     hl, hl
+                push    hl
+                next
 
-                psh1
 
 //  ______________________________________________________________________ 
 //

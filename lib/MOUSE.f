@@ -37,11 +37,13 @@ HEX  14 REG@ CONSTANT E3 \ Global Transparency Colour
 : M FF C, ;  \ White     
 : _ E3 C, ;  \ Transparency
 
+.( MOUSE-FACE ) 
+
 \ Semi-graphical mouse-face definition 10x8-pixels arrow
 CREATE MOUSE-FACE 
 \ 0 1 2 3 4 5 6 7  \      
 \ ---------------  \     
-  M ` ` ` _ _ _ _  \  0 
+  M _ ` ` _ _ _ _  \  0 
   M M ` ` ` _ _ _  \  1 
   M M M ` ` ` _ _  \  2 
   M M M M ` ` ` _  \  3 
@@ -190,6 +192,8 @@ DECIMAL
 \ return the current mouse position
 \ x : vertical distance from top-left corner
 \ y : horizontal distance from top-left corner
+.( MOUSE-XY ) 
+
 : MOUSE-XY ( -- x y )
     mouse-x @
     mouse-y @
@@ -207,6 +211,8 @@ DECIMAL
 \   : 2 right button click-up   event
 \   : 4 left  button click-down event
 \   : 8 left  button click-up   event
+.( MOUSE )
+
 : MOUSE
     mouse-s @
     dup if 

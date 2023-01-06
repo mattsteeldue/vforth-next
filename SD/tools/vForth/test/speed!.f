@@ -1,5 +1,5 @@
 \
-\ 3DUP.f
+\ SPEED!.f
 \
 
 NEEDS TESTING

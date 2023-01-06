@@ -1294,10 +1294,7 @@ ZEqual_Skip:
                 New_Def ZLESS, "0<", is_code, is_normal
                 pop     hl
                 add     hl, hl
-                ld      hl, 0
-                jr      nc, ZLess_Skip
-                    dec     hl
-ZLess_Skip:     
+                sbc     hl, hl
                 psh1
 
 //  ______________________________________________________________________ 

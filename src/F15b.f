@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20230101 ) CR
+.( build 20230106 ) CR
 .( Direct Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -2054,10 +2054,7 @@ CODE 0< ( n -- f )
          
         POP     HL|
         ADDHL   HL|
-        LDX     HL|    0 NN,
-        JRF    NC'|    HOLDPLACE
-            DECX      HL|           \ true
-        HERE DISP, \ THEN,
+        SBCHL   HL|
         PUSH    HL|
         Next
         C;
@@ -2461,7 +2458,7 @@ CODE 2dup  ( d -- d d )
 \ \ SP   LHED|LHED|LHED|
 \ \ SP  +0123|4567|89ab|
 \ CODE 2rot  ( d1 d2 d3 -- d2 d3 d1 )
-\         
+\         EXX
 \         LDX     HL|  HEX 000B NN,
 \         ADDHL   SP|
 \         LD      D'| (HL)|
@@ -2492,6 +2489,7 @@ CODE 2dup  ( d -- d d )
 \         POP     BC|
 \         POP     DE|
 \         POP     DE|
+\         EXX
 \         Next
 \         C;
 
@@ -2828,11 +2826,10 @@ CODE noop ( -- )
     ;CODE
 
         POP     HL|
-        LD      E'| (HL)|
-        LDN     D'|    0 N,
+        LD      A'| (HL)|
     \   LDX     HL| vars^ @ NN,
         LDHL()  vars^ AA,       \ this is more dynamic...
-        ADDHL   DE|
+        ADDHL,A
         PUSH    HL|
         Next
         C;
@@ -2997,14 +2994,11 @@ DECIMAL
 .( S>D )
 \ converts a single precision integer in a double precision
 CODE s>d   ( n -- d )
-        POP     DE|
-        LDX     HL|    0 NN,
-        LD      A'|    D|
-        ANDN    HEX    80  N, DECIMAL 
-        JRF     Z'|    HOLDPLACE \ IF,
-        DECX    HL|
-        HERE DISP, \ THEN, 
-        PUSH    DE|
+        POP     HL|
+        LD      A'|    H|
+        PUSH    HL|
+        RLA
+        SBCHL   HL|
         PUSH    HL|
         Next
         C;
@@ -3039,10 +3033,7 @@ CODE u< ( u1 u2 -- f )
         POP     HL|
         ANDA     A|
         SBCHL   DE|
-        LDX     HL| -1 NN,          \ true
-        JRF    CY'| HOLDPLACE
-            INCX     HL|
-        HERE DISP, \ THEN,
+        SBCHL   HL|
         PUSH    HL|
         Next
         C;
@@ -5564,7 +5555,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here   ," Direct Threaded - build 20230101" -1 allot ]
+    [ decimal 13 here   ," Direct Threaded - build 20230106" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

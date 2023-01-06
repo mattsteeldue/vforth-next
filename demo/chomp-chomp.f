@@ -5,18 +5,19 @@
 \ Arrorw keys or Cursor Joystick should work.
 \ 
 \ It uses old-fashion UDG's and standard ROM-BEEP
-
-
-.( Chomp-Chomp GAME ) 
-
-MARKER FORGET-CHOMP-CHOMP      \ Used to remove the program
-FORTH DEFINITIONS 
+\
+\
+\ .( Chomp-Chomp GAME ) 
+\
+\ MARKER FORGET-CHOMP-CHOMP      \ Used to remove the program
+\ 
+\ FORTH DEFINITIONS 
 
 \ BASE @                  \ save current base, restored at end
 
-CASEOFF                 \ ignore case for this source
+\ CASEOFF                 \ ignore case for this source
 
-FLUSH EMPTY-BUFFERS     \ ensure no i/o operation due to BLOCKs
+\ FLUSH EMPTY-BUFFERS     \ ensure no i/o operation due to BLOCKs
 
 NEEDS GRAPHICS          \ this provides LAYERs and INK/PAPER/BRIGHT
 

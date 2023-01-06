@@ -379,3 +379,9 @@ Faster RND (converted in assembler exploiting MUL and ADDHL,A
 PDF Manual is now over 100 pages.
 Minor fixing here and there.
 Happy new year !
+
+
+\ build 20230106
+Using new Z80N op-codes to improve definitions  0<  U<  S>D and  USER code part.
+This means that every USER variable access is slightly faster.
+

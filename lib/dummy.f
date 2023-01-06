@@ -1,5 +1,4 @@
-\
-\ recompile.f
-\
-
-include src/f15a.f
+: DUMMY
+  ." this is a dummy word"
+  CR
+;

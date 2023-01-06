@@ -3,8 +3,8 @@
 //  main.asm
 //  ______________________________________________________________________ 
 // 
-//  v-Forth 1.5 NextZXOS version 
-//  build 20230101
+//  v-Forth 1.52 NextZXOS version 
+//  build 20230106
 // 
 //  Inirect-Thread version.
 // 
@@ -16,7 +16,7 @@
 //  provided that the copyright notice is kept.  
 //  ______________________________________________________________________
 // 
-//  by Matteo Vitturi, 1990-2022
+//  by Matteo Vitturi, 1990-2023
 // 
 //  https://sites.google.com/view/vforth/vforth15-next
 //  https://www.oocities.org/matteo_vitturi/english/index.htm

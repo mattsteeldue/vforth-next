@@ -86,6 +86,8 @@ SMUDGE
 
 FORTH DEFINITIONS 
 
+.( ISR-XT ) 
+
 \ return-from-isr xt
 CREATE ISR-XT  INTERRUPTS  ' ISR-RET  DUP , ,
 
@@ -129,6 +131,8 @@ FORTH DEFINITIONS
 
 HEX 
 
+.( ISR-ON )
+
 : ISR-ON  ( -- )
     INTERRUPTS
     ISR-DI
@@ -150,6 +154,8 @@ HEX
 ;
 
 \ ____________________________________________________________________
+
+.( ISR-OFF )
 
 : ISR-OFF  ( -- )
     INTERRUPTS

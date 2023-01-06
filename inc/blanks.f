@@ -1,5 +1,5 @@
 \
-\ BLANKS.f
+\ BLANK.f
 \
 .( BLANKS )
 \

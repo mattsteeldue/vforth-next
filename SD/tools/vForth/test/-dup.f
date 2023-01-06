@@ -1,5 +1,5 @@
 \
-\ test/^dup.f
+\ test/-dup.f
 \
 \ since filename ?dup.f is illegal.
 
