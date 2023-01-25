@@ -6,6 +6,8 @@ On April 27th 2020, I received my  ZX Spectrum Next  (Accelerated)  and immediat
 
 The purpose was to make Screens / BLOCKs system available using ZxNextOS APIs and having done it in the past for ZX Microdrive and MGT Disciple floppy diskette  I really thought it was worth give a try on ZxNextOs. I'm putting here the version stable enough to be published, along with any evolution and improvement.
 
+There are a few demo, such as  "term10.f" a simple terminal to talk with Raspberry Pi Zero, if any; "chomp-chomp.f" a pac-man style game with four fast ghosts.
+
 Screens are stored in a single file inside the SD card called "!Blocks.txt", 16 MBytes long, that can hold 16.383 Screens 1 KB each. Previous MGT or Microdrive version had 512 Bytes Screens and just 1.560 or 254x7 = 1.778 Screens, respectively. In this latest implementation a Screen is 1024 Bytes, that is two 512 bytes BLOCKs, accessed using ZxNextOS APIs. 
 
 A "Full Screen Editor" facility - EDIT - let you view and edit a Screen at a time.
