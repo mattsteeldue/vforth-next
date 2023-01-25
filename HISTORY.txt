@@ -403,7 +403,6 @@ registers for working operations.
 I claim that this lead to a further +12% speed improvement to be added to the 
 previous +16% improvement already gained against the indirect threaded version.
 This means that from the indirect threaded version I boosted +30% !
-
 Screen 358 contains a small speed-test workbench that performs as much 
 some scaling operation in 5.12 sec.
 7.516 iterations with Indirect Threaded Version (v1.52)
