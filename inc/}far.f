@@ -23,19 +23,21 @@ BASE @ \ save base status
 \   FFFF >FAR  gives  27.FFFF
 CODE >FAR ( ha -- a n )
     HEX
-    D1 C,             \     pop     de  
-    7A C,             \     ld      a, d   
-    E6 C, E0 C,       \     and     $E0    
+    E1 C,             \     pop     hl 
+    7C C,             \     ld      a, h 
+    08 C,             \     ex      af, af'     ; save h
+    7C C,             \     ld      a, h 
+    F6 C, E0 C,       \     or      $E0         ; hl is between E000 and FFFF
+    67 C,             \     ld      h, a
+    E5 C,             \     push    hl     
+    08 C,             \     ex      af, af'     ; retrieve original h
     07 C,             \     rlca           
     07 C,             \     rlca           
     07 C,             \     rlca           
+    E6 C, 07 C,       \     and     $07    
     C6 C, 20 C,       \     add     $20    <-- 32
     6F C,             \     ld      l, a   
     26 C, 00 C,       \     ld      h, 0   
-    7A C,             \     ld      a, d   
-    F6 C, E0 C,       \     or      $E0    
-    57 C,             \     ld      d, a   
-    D5 C,             \     push    de     
     E5 C,             \     push    hl     
     DD C, E9 C,       \     jp      (ix)   
 

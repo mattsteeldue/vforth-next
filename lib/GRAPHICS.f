@@ -185,11 +185,13 @@ DEFER EDGE
 \ This is valid for Layer 0  Layer 1,1  and  Layer 1,3 
 HEX
 CODE L0-PIXELADD   ( x y -- a )
+    D9 C,           \ exx
     D1 C,           \ pop   de  ; y
     E1 C,           \ pop   hl  ; x
     55 C,           \ ld    d,l ; de is yx
     ED C, 94 C,     \ pixelad
     E5 C,           \ push  hl
+    D9 C,           \ exx
     DD C, E9 C,     \ jp   (ix)
     SMUDGE
 
@@ -200,6 +202,7 @@ CODE L0-PIXELADD   ( x y -- a )
 \ and put byte  b  to such an address.
 HEX
 CODE L0-PIXELATT    ( b a -- )
+    D9 C,           \ exx
     E1 C,           \ pop   hl  ; display file address
     7C C,           \ ld    a, h
     0F C,           \ rrca
@@ -210,6 +213,7 @@ CODE L0-PIXELATT    ( b a -- )
     67 C,           \ ld    h, a
     D1 C,           \ pop   de
     73 C,           \ ld   (hl), e
+    D9 C,           \ exx
     DD C, E9 C,     \ jp   (ix)
     SMUDGE
    
@@ -278,6 +282,7 @@ CONSTANT  L2-RAM-PAGE           \ keeps Layer 2 Active RAM Page
 \ and setup MMU7! accordingly
 CODE L2-PIXELADD ( x y -- a ) 
     HEX
+    D9 C,             \ exx
     E1 C,             \ pop  hl|    \ horizontal y-coord, only L is significant
     D1 C,             \ pop  de|    \ vertical x-coord, only E is significant
     7B C,             \ ld   a'| e| \ calc which 8K page must be fitted in MMU7
@@ -291,6 +296,7 @@ CODE L2-PIXELADD ( x y -- a )
     B3 C,             \ ora  e|
     67 C,             \ ld   h'| a|
     E5 C,             \ push hl|
+    D9 C,             \ exx
     DD C, E9 C,       \ next
     SMUDGE            \ c; 
    

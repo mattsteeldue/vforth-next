@@ -15,17 +15,19 @@ BASE @ \ save base status
 \ to bits 765 of H, lower bits of HL address offset from E000h
 CODE <FAR ( a n -- ha )
     HEX
-    D1 C,             \     pop     de   // page number in e  
-    E1 C,             \     pop     hl   // address in hl     
-    7B C,             \     ld      a, e                      
-    D6 C, 20 C,       \     sub     $20  // reduced to 0-7    
+    E1 C,             \     pop     hl   ; page number
+    7D C,             \     ld      a, l
+    E6 C, 07 C,       \     and     $07  ; questionable: it could be SUB $20
     0F C,             \     rrca                              
     0F C,             \     rrca                              
     0F C,             \     rrca                              
-    57 C,             \     ld      d, a // save to d bits 765
-    7C C,             \     ld      a, h // drops             
+    08 C,             \     ex      af, af'     ; save bits 765
+    E1 C,             \     pop     hl   ; address E000-FFFF
+    7C C,             \     ld      a, h 
     E6 C, 1F C,       \     and     $1F                       
-    B2 C,             \     or      d                         
+    67 C,             \     ld      h, a       
+    08 C,             \     ex      af, af'     ; retrieve bits 765
+    B4 C,             \     or      h
     67 C,             \     ld      h, a       
     E5 C,             \     push    hl     
     DD C, E9 C,       \     jp      (ix)   

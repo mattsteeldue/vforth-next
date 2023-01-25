@@ -385,3 +385,28 @@ Happy new year !
 Using new Z80N op-codes to improve definitions  0<  U<  S>D and  USER code part.
 This means that every USER variable access is slightly faster.
 
+
+\ build 20230108
+This is the last build for version 1.52.
+In preparation of version 1.6, I'm checking backward compatibility of
+some machine code definition available via NEEDS
+Suddenly discovered that stream OPEN#ed source don't work anymore.
+Removing -LOAD for now.
+
+
+\ VERSION 1.6
+\ build 20230116
+This version uses registers DE to hold the value of Return Stack Pointer.
+This means that registers DE are dedicated to the internal virtual machine 
+along with registers BC, SP and IX, leaving only A and HL and all alternate 
+registers for working operations.
+I claim that this lead to a further +12% speed improvement to be added to the 
+previous +16% improvement already gained against the indirect threaded version.
+This means that from the indirect threaded version I boosted +30% !
+
+Screen 358 contains a small speed-test workbench that performs as much 
+some scaling operation in 5.12 sec.
+7.516 iterations with Indirect Threaded Version (v1.52)
+8.744 iterations with Direct Threaded version (v1.52)
+9.773 iterations with latest version (v1.6)
+

@@ -13,14 +13,24 @@ BASE @ \ save base status
 \ Routine can return bc register which is pushed on TOS
 \
 HEX
-CODE  CALL#  ( n1 -- n2 )
-    E1 C, D1 C,             \ pop hl    pop de
-    C5 C, DD C, E5 C,       \ push bc   push ix
-    4B C, 42 C, 7B C,       \ ld a,e    ld bc,de
-    CD C,  HERE 09 + ,      \ call hl --> jp(hl)
-    69 C, 60 C,             \ ld hl,bc
-    DD C, E1 C, C1 C,       \ pop ix    pop bc
-    E5 C,                   \ push hl
+CODE  CALL#  ( n1 a -- n2 )
+    D9 C,                   \  exx
+    E1 C,                   \  pop hl    ; address
+    C1 C,                   \  pop bc    ; argument
+    79 C,                   \  ld  a, c
+    D9 C,                   \ exx
+    DD C, E5 C,             \ push ix
+    D5 C,                   \ push de 
+    C5 C,                   \ push bc 
+    D9 C,                   \  exx
+    CD C,  HERE 0B + ,      \  call hl --> jp(hl) ! not jp(ix) !
+    D9 C,                   \  exx
+    C1 C,                   \ pop bc    
+    D1 C,                   \ pop de
+    DD C, E1 C,             \ pop ix    
+    D9 C,                   \  exx
+    C5 C,                   \  push bc
+    D9 C,                   \ exx
     DD C, E9 C,             \ jp ix
 
     FORTH

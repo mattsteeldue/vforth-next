@@ -1,5 +1,5 @@
 \
-\ echo.asm.f
+\ echo.dot.f
 \
 
 \ needs assembler

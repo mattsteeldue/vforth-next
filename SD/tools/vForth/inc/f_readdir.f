@@ -13,20 +13,26 @@ BASE @
 CODE f_readdir ( a1 a2 fh -- n f )
 
     HEX 
-
-    E1 C,               \ POP     HL|
-    7D C,               \ LD      A'|     L|
-    D1 C,               \ POP     DE|
-    DD C, E3 C,         \ EX(SP)IX            \ wildcard spec nul-terminated
-    C5 C,               \ PUSH    BC|
-    CF C, A4 C,         \ RST     08|   HEX  A4  C,
-    5F C,               \ LD      E'|     A|
-    16 C, 00 C,         \ LDN     D'|     0  N,
-    C1 C,               \ POP     BC|
-    DD C, E1 C,         \ POP     IX|
+    D9 C,               \  EXX
+    E1 C,               \  POP     HL|
+    7D C,               \  LD      A'|     L|
+    D1 C,               \  POP     DE|
+    DD C, E3 C,         \  EX(SP)IX            \ wildcard spec nul-terminated
+    D9 C,               \ EXX
     D5 C,               \ PUSH    DE|
-    ED C, 62 C,         \ SBCHL   HL|
-    E5 C,               \ PUSH    HL|
+    C5 C,               \ PUSH    BC|
+    D9 C,               \  EXX
+    CF C, A4 C,         \  RST     08|   HEX  A4  C,
+    5F C,               \  LD      E'|     A|
+    16 C, 00 C,         \  LDN     D'|     0  N,
+    D9 C,               \ EXX
+    C1 C,               \ POP     BC|
+    C1 C,               \ POP     DE|
+    DD C, E1 C,         \ POP     IX|
+    D9 C,               \  EXX
+    D5 C,               \  PUSH    DE|
+    ED C, 62 C,         \  SBCHL   HL|
+    E5 C,               \  PUSH    HL|
     DD C, E9 C,         \ Next
 
     FORTH

@@ -24,11 +24,11 @@ CODE EXEC:  ( n -- )
     E1      C,      \   pop     hl
     29      C,      \   add     hl, hl
     09      C,      \   add     hl, bc
-    5E      C,      \   ld      e, (hl)
+    7E      C,      \   ld      a, (hl)
     23      C,      \   inc     hl
-    56      C,      \   ld      d, (hl)
+    66      C,      \   ld      h, (hl)
+    6F      C,      \   ld      l, a
     01      C, ,    \   ld      bc, [EXIT]
-    EB      C,      \   ex      de, hl
     E9      C,      \   jp      (hl)
 
     FORTH

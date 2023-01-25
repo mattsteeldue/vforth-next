@@ -9,7 +9,7 @@
 .( Floating point option )
 
 \ To remove this library and restore "everything" to integer you have to
-\ give FORGET-FP
+\ give NO-FLOATING
 
 \ ______________________________________________________________________
 
@@ -47,14 +47,22 @@ DECIMAL
 CODE FOP 
     HEX
     E1 C,           \ POP     HL|     
-    7D C,           \ LD      A'|    L|
-    32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   *FIX FOLLOWING BYTE*
+    3A C, HERE 0 ,  \ LDA()   HERE 0 AA,   
+    F5 C,           \ PUSH    AF|
     C5 C,           \ PUSH    BC|
+    D5 C,           \ PUSH    DE|
+    7D C,           \ LD      A'|    L|
+    32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   
     EF C,           \ RST     28|
     HERE SWAP !     \         HERE SWAP !  *THIS BYTE IS FIXED*
+    HERE SWAP !     \         HERE SWAP !  
+\   HERE
     38 C,           \         HEX 38 C, \ this location is patched each time
     38 C,           \         HEX 38 C, \ end of calculation
+    D1 C,           \ POP     DE|
     C1 C,           \ POP     BC|
+    F1 C,           \ POP     AF
+\   32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   
     DD C, E9 C,     \ NEXT
     SMUDGE          \ C;
 
@@ -64,9 +72,9 @@ CODE FOP
 \ pop number from calculator stack and push it to floating-pointer stack 
 CODE >W
     HEX
+    D9 C,           \ EXX
     E1 C,           \ POP     HL|     
     D1 C,           \ POP     DE|     
-    C5 C,           \ PUSH    BC|     
     CB C, 15 C,     \ RL       L|         \ To keep sign as the msb of H,   
     CB C, 14 C,     \ RL       H|         \ so you can check for sign in the
     CB C, 1D C,     \ RR       L|         \ integer-way. Sorry.
@@ -81,7 +89,7 @@ CODE >W
     4C C,           \     LD      C'|    H|
                     \ HERE DISP, \ THEN,       
     CD C, 2AB6 ,    \ CALL    HEX 2AB6 AA,
-    C1 C,           \ POP     BC|
+    D9 C,           \ EXX
     DD C, E9 C,     \ NEXT
     SMUDGE          \ C;
 
@@ -91,7 +99,7 @@ CODE >W
 \ pop a number from floating-pointer stack and push it to top of calculator stack 
 CODE W>
     HEX
-    C5 C,           \ PUSH    BC|     
+    D9 C,           \ EXX
     CD C, 2BF1 ,    \ CALL    HEX 2BF1 AA,
     A7 C,           \ ANDA     A|
     20 C, 03 C,     \ JRF    NZ'|   HOLDPLACE
@@ -105,9 +113,9 @@ CODE W>
     CB C, 15 C,     \ RL       L|         \ To keep sign as the msb of H,
     CB C, 1C C,     \ RR       H|         \ so you can check for sign in the 
     CB C, 1D C,     \ RR       L|         \ integer-way. Sorry.
-    C1 C,           \ POP     BC|
-    D5 C,           \ PSH2
-    E5 C,
+    D5 C,           \ PUSH DE
+    E5 C,           \ PUSH HL
+    D9 C,           \ EXX
     DD C, E9 C, 
     SMUDGE          \ C;
 
@@ -130,89 +138,113 @@ DECIMAL
 ;
 
 
-\ execute check-word stored during nFOPm creation
-: FCHECK ( a -- a )     >R R@  @  EXECUTE R> ;
+\ execute check-word stored during "nFOPm" creation
+: FCHECK ( a -- a )     
+    >R R@  @  EXECUTE R> 
+;
 
 
 \ execute FOP stored at a+2 and bring to TOS the result.
-: FOP1  ( a -- d )     CELL+ C@ FOP W> ;
+: FOP1  ( a -- d )     
+    CELL+ C@ FOP W> 
+;
 
 
 \ create a FP-word that takes one argument and returns one argument
 : 1FOP1 ( n -- cccc xxxx )
     ',C, DOES>
-    FCHECK              \ d a
+    FCHECK              \ d 
     >R >W R>            \ a
-    FOP1               \ d
+    FOP1                \ d
 ;
     
 
 \ create a FP-word that takes two arguments and returns one argument
 : 2FOP1 ( n -- cccc xxxx )
     ',C, DOES>
-    FCHECK              \ d a
+    FCHECK              \ d 
     >R 2SWAP >W >W R> 
-    FOP1               \ d
+    FOP1                \ d
 ;
 
 
 \ create a FP-word that takes two arguments and returns two arguments
 : 2FOP2 ( n -- cccc xxxx )
     ',C, DOES>
-    FCHECK              \ d a
+    FCHECK              \ d 
     >R 2SWAP >W >W R> 
-    FOP1               \ d
+    FOP1                \ d
     W> 2SWAP            \ d d
 ;
 
 
 \ check for zero-division
-: ?ZERO
-    2DUP OR 0= 13 ?ERROR ;  \ Division by zero.
+: ?ZERO ( d -- d )
+    2DUP OR 0= 13 ?ERROR    \ Division by zero.
+;
 
 
 \ check for negative argument
-: ?FNEG 
-    DUP 0< 11 ?ERROR ;      \ Invalid floating point.
+: ?FNEG ( d -- d ) 
+    DUP 0< 11 ?ERROR        \ Invalid floating point.
+;
+
+
+\ check for positive argument
+: ?FPOS ( d -- d )
+    ?FNEG ?ZERO        \ Invalid floating point.
+;
+
+
+\ check for positive argument
+: ?FPOW (   d1      d2   --   d1      d2   )
+        ( n3  n2  n1  n0 -- n3  n2  n1  n0 )
+    2 PICK 0<          \  n3  n2  n1  n0  f 
+    OVER 0< AND        \  n3  n2  n1  n0  f 
+    11 ?ERROR 
+;      
 
     
 \ Aritmethics
 \
-\ Op-Code   Name        Check       Stack figure    \ meaning
-\ -------   ---------   ---------   --------------   ---------
+\ Op-Code   Name        Check       Stack figure     \ meaning
+\ -------   ---------   ---------   ---------------  ---------
 \
-03  2FOP1   F-          NOOP        ( d d -- d   )  \ subtraction
-04  2FOP1   F*          NOOP        ( d d -- d   )  \ product
-05  2FOP1   F/          ?ZERO       ( d d -- d   )  \ division
-15  2FOP1   F+          NOOP        ( d d -- d   )  \ sum
-27  1FOP1   FNEGATE     NOOP        (   d -- d   )  \ negate
-41  1FOP1   FSGN        NOOP        (   d -- d   )  \ sign
-42  1FOP1   FABS        NOOP        (   d -- d   )  \ absolute value 
-50  2FOP2   F/MOD       ?ZERO       ( d d -- d d )  \ remainder and quotient
-06  2FOP1   F**         ?FNEG       ( d d -- d   )  \ power
+03  2FOP1   F-          NOOP      ( d1 d0 -- d2    ) \ subtraction
+04  2FOP1   F*          NOOP      ( d1 d0 -- d2    ) \ product
+05  2FOP1   F/          ?ZERO     ( d1 d0 -- d2    ) \ division
+15  2FOP1   F+          NOOP      ( d1 d0 -- d2    ) \ sum
+27  1FOP1   FNEGATE     NOOP      (    d0 -- d2    ) \ negate
+41  1FOP1   FSGN        NOOP      (    d0 -- d2    ) \ sign
+42  1FOP1   FABS        NOOP      (    d0 -- d2    ) \ absolute value 
+50  2FOP2   F/MOD       ?ZERO     ( d1 d0 -- d2 d3 ) \ remainder and quotient
+06  2FOP1   F**         ?FPOW     ( d1 d0 -- d2    ) \ power
 
 
-: FMOD  F/MOD 2DROP ;
+: FMOD  ( d1 -- d2 )
+    F/MOD       \ remainder and quotient
+    2DROP       \ remainder
+;
 
 
 : F*/   ( d1 d2 d3 -- d4 )
-    ?ZERO
-    >W >W >W
-    04 FOP 
+    ?ZERO   
+    >W >W >W    
+    04 FOP      
     05 FOP
     W>
 ;
     
 
 \ comparison
-: F0<   NIP   0<  ;
-: F0>   NIP   0>  ;
-: F<    F-   F0<  ;
-: F>    2SWAP F<  ;
+: F0<   NIP    0<  ;
+: F0>   NIP    0>  ;
+: F<    F-    F0<  ;
+: F>    2SWAP  F<  ;
 
 
 \ Exponential / Log
-37  1FOP1   FLN         NOOP        (   d -- d   )  \ natural log
+37  1FOP1   FLN         ?FPOS       (   d -- d   )  \ natural log
 38  1FOP1   FEXP        NOOP        (   d -- d   )  \ exponentation
 39  1FOP1   FINT        NOOP        (   d -- d   )  \ truncation
 40  1FOP1   FSQRT       ?FNEG       (   d -- d   )  \ square root
@@ -409,7 +441,7 @@ DECIMAL
     THEN
     TUCK 2DUP >R >R                 \ save sign and
     DABS
-    <# #S ROT SIGN 2DROP [CHAR] E HOLD  \ exponential part
+    <# #S ROT SIGN 2DROP [CHAR] e HOLD  \ exponential part lower case "e"
     10 0  R>  R@   DABS F**         \ magnitude
     R> 0< 
     IF 
@@ -464,7 +496,7 @@ DECIMAL
 ;
 
 
-: FORGET-FP
+: NO-FLOATING
     \ Verify 17th word inside INTERPRET is really FNUMBER
     [ ' INTERPRET >BODY DECIMAL 32 + ] LITERAL
     DUP @

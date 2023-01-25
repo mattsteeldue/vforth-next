@@ -21,6 +21,7 @@ CODE ms ( n -- )
     B4 C,         \   ora      h|        
     28 C, 1D C,   \   JRF     Z'| holdplace
 
+    \ determines current clock speed.
     01 C, 243B ,  \   ldx     bc|     hex 243B NN,
     3E C, 07 C,   \   ldn     a'|     hex 07 N,
     ED C, 79 C,   \   out(c)  a'|

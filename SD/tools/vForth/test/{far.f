@@ -1,0 +1,29 @@
+\
+\ {far.f
+\
+NEEDS TESTING
+
+NEEDS <FAR
+
+TESTING Zx Next - Custom - <FAR
+
+T{ 20.E000 <FAR  ->  0000 }T 
+T{ 20.EFFF <FAR  ->  0FFF }T
+T{ 20.F000 <FAR  ->  1000 }T
+T{ 20.FFFF <FAR  ->  1FFF }T
+T{ 21.E000 <FAR  ->  2000 }T
+T{ 21.F000 <FAR  ->  3000 }T
+T{ 22.E000 <FAR  ->  4000 }T
+T{ 22.F000 <FAR  ->  5000 }T
+T{ 23.E000 <FAR  ->  6000 }T
+T{ 23.F000 <FAR  ->  7000 }T
+T{ 24.E000 <FAR  ->  8000 }T
+T{ 24.F000 <FAR  ->  9000 }T
+T{ 25.E000 <FAR  ->  A000 }T
+T{ 25.F000 <FAR  ->  B000 }T
+T{ 26.E000 <FAR  ->  C000 }T
+T{ 26.F000 <FAR  ->  D000 }T
+T{ 27.E000 <FAR  ->  E000 }T
+T{ 27.F000 <FAR  ->  F000 }T
+T{ 27.FFFF <FAR  ->  FFFF }T
+

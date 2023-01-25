@@ -165,11 +165,11 @@ Loop_Ptr:
 
                 ex      de, hl
                 add     hl, bc
-
                 bit     7, b                // keep increment-sign just before overwriting d
                 jr      z, Loop_NegativeIncrement
                     ccf
 Loop_NegativeIncrement:
+
                 jr      c, Loop_Endif
                     exx
                     jr      Branch_Ptr      // perform branch consuming following cell
@@ -235,8 +235,8 @@ ZBranch_Ptr:
                 New_Def C_LEAVE, "(LEAVE)", is_code, is_normal
 
                 ldhlrp
-                ld      de, 4
-                add     hl, de
+                ld      a, 4
+                add     hl, a
                 ldrphl
 
                 jr      Branch_Ptr       // perform branch consuming following cell
@@ -419,7 +419,7 @@ Case_Upper:
 // (which contains length and some flags) and a true flag.
 // On fail, a false flag  (no more: leaves addr unchanged)
                 New_Def C_FIND, "(FIND)", is_code, is_normal
-                                                
+                exx                                 
                 pop     de                      // de has dictionary pointer
 Find_VocabularyLoop:
                     pop     hl                  // string pointer to search for
@@ -437,7 +437,7 @@ Find_ThisWord:      // begin loop
                         inc     de
                         ld      a, (de)
                         // case insensitive option - begin
-                        push    bc
+                        // push    bc
                         and     $80                 // split A in msb and the rest
                         ld      b, a
                         ld      a, (de)
@@ -448,7 +448,7 @@ Find_ThisWord:      // begin loop
                         call    Case_Sensitive      // uppercase routine
                         xor     c
                         xor     b
-                        pop     bc
+                        // pop     bc
                         // case insensitive option - end
                         add     a                   // ignore msb during compare
                         jr      nz, Find_DidntMatch  // jump if doesn't match (*)
@@ -467,7 +467,10 @@ Find_ThisWord:      // begin loop
 
 
                     ld      hl, -1
-                    psh2
+                    push    de
+                    push    hl
+                    exx
+                    next
 
 Find_DidntMatch: // didn't match (*)
                     jr      c,  Find_WordEnd   // jump if not end of word (**)
@@ -495,8 +498,9 @@ Find_WordEnd:   // word-end  found (**)
     
                 pop     hl              // without this, leaves addr unchanged
                 ld      hl, FALSE_FLAG
-    
-                psh1
+                push    hl
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -512,6 +516,7 @@ Find_WordEnd:   // word-end  found (**)
 //  ii:	c  c  x  x  x  'nul' -- 2  5  5
 // iii:	c  c  'nul'          -- 2  3  2
                 New_Def ENCLOSE, "ENCLOSE", is_code, is_normal
+                exx
                 pop     de                  //  e has the character
                 pop     hl                  // hl has the string address
                 push    hl
@@ -526,7 +531,7 @@ Enclose_NonDelimiter:
                 jr      z, Enclose_NonDelimiter
                 push    de
 
-                push    bc                  // save Instruction Pointer
+                // push    bc                  // save Instruction Pointer
 
                 ld      c, a                // save char
                 ld      a, (hl)
@@ -534,11 +539,12 @@ Enclose_NonDelimiter:
                 jr      nz, Enclose_NextChar
 
                 /// case iii. no more character in string
-                    pop     bc                  // restore Instruction Pointer
+                    // pop     bc                  // restore Instruction Pointer
                     inc     de 
                     push    de
                     dec     de
                     push    de
+                    exx
                     next
 Enclose_NextChar:
                     ld      a, c
@@ -548,10 +554,11 @@ Enclose_NextChar:
                     jr      nz, Enclose_NonSeparator
 
                         // case i. first non enclosed                
-                        pop     bc                  // restore Instruction Pointer
+                        // pop     bc                  // restore Instruction Pointer
                         push    de
                         inc     de
                         push    de
+                        exx
                         next
 Enclose_NonSeparator: 
                     ld      a, (hl)               
@@ -559,9 +566,10 @@ Enclose_NonSeparator:
                 jr      nz, Enclose_NextChar
                 
                 // case ii. separator & terminator
-                pop     bc                  // restore Instruction Pointer
+                // pop     bc                  // restore Instruction Pointer
                 push    de
                 push    de
+                exx
                 next
 
 //  ______________________________________________________________________ 
@@ -696,10 +704,11 @@ Emit_Selector_End:
 // search first the Emit_Selector table, if found jump to the corresponding routine in Emit_Vector
 // the routine should resolve anything and convert the character anyway.
                 New_Def C_EMIT, "(?EMIT)", is_code, is_normal
+                exx
                 pop     de
                 ld      a, e                //  de has c1
                 and     $7F                 // 7-bit ascii only
-                push    bc                  // save Instruction Pointer
+                // push    bc                  // save Instruction Pointer
                 ld      bc, Emit_Selector_End - Emit_Selector_Start + 1
                 ld      hl, Emit_Selector_End
                 cpdr                        // search for c1 in Emit_Selector table, backward
@@ -712,20 +721,22 @@ Emit_Selector_End:
                     inc     hl
                     ld      d, (hl)
                     ex      de, hl
-                    pop     bc                  // restore Instruction Pointer
+                    // pop     bc                  // restore Instruction Pointer
                     jp      (hl)                // one of the following labels
 C_Emit_Not_Found:
-                pop     bc                  // restore Instruction Pointer
+                // pop     bc                  // restore Instruction Pointer
                 cp      BLANK_CHAR          // cp $20 non-printable check
                 jr      nc, C_Emit_Printable
                     ld      a, NUL_CHAR         // NUL is never "printed"
 C_Emit_Printable:
                 ld      l, a
                 ld      h, 0
-                
-                psh1                
+                push    hl                
+                exx
+                next    
 
 C_Emit_Bel:   
+                exx
                 push    bc                  // save Instruction Pointer
                 ld      de, $0100
                 ld      hl, $0200
@@ -734,16 +745,18 @@ C_Emit_Bel:
                 pop     ix                  // restore Next Pointer
                 pop     bc                  // restore Instruction Pointer
                 ld      hl, NUL_CHAR
-                
-                psh1
+                push    hl                
+                next    
 
 C_Emit_Tab:     ld      hl, COMMA_CHAR
-
-                psh1
+                push    hl
+                exx
+                next    
 
 C_Emit_NL       ld      hl, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
-
-                psh1
+                push    hl
+                exx
+                next    
 
 //  ______________________________________________________________________ 
 
@@ -1461,10 +1474,10 @@ CellMinus:
 // over         n1 n2 -- n1 n2 n1
 // copy the second value of stack and put it on top.
                 New_Def OVER, "OVER", is_code, is_normal
-                pop     de                  //   n2  
+                pop     af                  //   n2  
                 pop     hl                  // < n1 
                 push    hl                  // > n1
-                push    de                  // > n2
+                push    af                  // > n2
                 push    hl                  // > n1
                 next
 
@@ -1492,9 +1505,9 @@ CellMinus:
 // copy the top element after the second.
                 New_Def TUCK, "TUCK", is_code, is_normal
                 pop     hl
-                pop     de                  // < n1
+                pop     af                  // < n1
                 push    hl                  // > n2  and TOS
-                push    de                  // > n1
+                push    af                  // > n1
                 push    hl
                 next
 
@@ -1661,10 +1674,10 @@ CellMinus:
 // duplicates the top double of stack
                 New_Def TWO_DUP, "2DUP", is_code, is_normal
                 pop     hl                  // < d-H    
-                pop     de                  // < d-L
-                push    de                  // < d-L
+                pop     af                  // < d-L
+                push    af                  // < d-L
                 push    hl                  // > d-H
-                push    de                  // > d-L
+                push    af                  // > d-L
                 push    hl                  // > d-H
                 next
 

@@ -184,6 +184,7 @@ F_Open_Exit:
 // open a file 
                 New_Def F_OPENDIR, "F_OPENDIR", is_code, is_normal
                 ex      (sp), ix            // filespec nul-terminated
+                push    de
                 push    bc                  // Save Instruction pointer
                 ld      b, $10              // file-mode
                 ld      a, "C"
@@ -197,12 +198,16 @@ F_Open_Exit:
 // f_readdir    a1 a2 b -- u f
 // open a file 
                 New_Def F_READDIR, "F_READDIR", is_code, is_normal
-                pop     hl
-                ld      a, l
-                pop     de
-                ex      (sp), ix            // filespec nul-terminated
+                 exx
+                 pop     hl
+                 ld      a, l
+                 pop     de
+                 ex      (sp), ix            // filespec nul-terminated
+                exx
+                push    de
                 push    bc                  // Save Instruction pointer
-                rst     $08     
-                db      $A4
-                jr      F_Open_Exit
+                 exx
+                 rst     $08     
+                 db      $A4
+                 jr      F_Open_Exit
 

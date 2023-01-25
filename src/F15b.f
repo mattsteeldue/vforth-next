@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 NextZXOS version ) CR
-.( build 20230106 ) CR
+.( build 20230108 ) CR
 .( Direct Threaded - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -626,8 +626,8 @@ CODE (leave) ( -- )
         HERE !rp^ 
         LDHL,RP              \ macro 30h +Origin
         
-        LDX     DE|  4  NN,  \ UNLOOP index & limit from Return Stack      
-        ADDHL   DE|
+        LDN     A'|  4  N,   \ UNLOOP index & limit from Return Stack      
+        ADDHL,A
 
         HERE !rp^
         LDRP,HL              \ macro 30h +Origin
@@ -835,7 +835,7 @@ CODE upper ( c1 -- c2 )
 \ (which contains length and some flags) and a true flag.
 \ On fail, a false flag  (no more: leaves addr unchanged)
 CODE (find) ( addr voc -- ff | cfa b tf  )
-         
+        EXX 
         POP     DE|        \ dictionary
         HERE
             POP     HL|    \ text to search
@@ -856,7 +856,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
 \                   XORA  (HL)|
 
 \ case insensitive option  
-                    PUSH    BC|
+                    \ PUSH    BC|
                     ANDN    HEX 80 N,   \ split A in msb and the rest.
                     LD      B'|      A| \ store msb in B and the rest in C
                     LDA(X)  DE|
@@ -867,7 +867,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
                     CALL    upper^ AA,  \ uppercase routine
                     XORA     C|         
                     XORA     B|         
-                    POP     BC|
+                    \ POP     BC|
 \ case option - end
 
                     ADDA     A|         \ ignore msb in compare
@@ -888,6 +888,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
                     LDX     HL|   -1 NN,
                     PUSH    DE|
                     PUSH    HL|
+                    EXX 
                     Next
 
                 HERE DISP, \ THEN,  \ didn't match (*)
@@ -921,6 +922,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
 
         LDX     HL| 0 NN,
         PUSH    HL|
+        EXX 
         Next
         C;
 
@@ -939,6 +941,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
 \ iii:	c  c  'nul'          -- 2  3  2
 CODE enclose    ( a c -- a  n1 n2 n3 )
 HEX         
+        EXX 
         POP     DE| ( char )        
         POP     HL| ( addr )
         PUSH    HL|
@@ -955,18 +958,19 @@ HEX
 
         PUSH    DE|
 
-        PUSH    BC|                \ save BC
+        \ PUSH    BC|                \ save BC
 
         LD      C'|      A|        \ save  a ( char )
 
         LD      A'|   (HL)|
         ANDA     A|             ( stops if null )
         JRF    NZ'| HOLDPLACE ( iii. no more character in string )
-            POP     BC|         \ retrieve BC
+            \ POP     BC|         \ retrieve BC
             INCX    DE|
             PUSH    DE|
             DECX    DE|
             PUSH    DE|
+            EXX 
             Next
         HERE DISP, \ THEN,
         HERE  \ BEGIN, 
@@ -976,19 +980,21 @@ HEX
             CPA   (HL)|
 
             JRF    NZ'| HOLDPLACE  ( separator )
-                POP     BC|         \ retrieve BC
+                \ POP     BC|         \ retrieve BC
                 PUSH    DE|         ( i. first non enclosed )
                 INCX    DE|
                 PUSH    DE|
+                EXX 
                 Next
             HERE DISP, \ THEN,
             LD      A'| (HL)|
             ANDA     A|
         JRF    NZ'| HOLDPLACE SWAP DISP,
                                    ( ii. separator & terminator )
-        POP     BC|         \ retrieve BC
+        \ POP     BC|         \ retrieve BC
         PUSH    DE|
         PUSH    DE|
+        EXX 
         Next
         C;
 
@@ -1120,11 +1126,11 @@ HEX 20 C, \ not used
 \ search first the EMIT-C^ table, if found jump to the routine in vector
 \ the routine should resolve anything and convert the character anyway.
 CODE (?emit) ( c1 -- c2 )
-         
+        EXX 
         POP     DE|
         LD      A'|    E|
         ANDN    HEX    7F N,  \ 7-bit ascii only
-        PUSH    BC|            \ saves program counter
+\       PUSH    BC|            \ saves program counter
         LDX     BC|  EMIT-N  NN,
         LDX     HL|  EMIT-C^ EMIT-N + 1- NN, \ EMIT-Z^
         CPDR    \ search for c1 in EMIT-C table, backward
@@ -1138,13 +1144,13 @@ CODE (?emit) ( c1 -- c2 )
             LD      D'| (HL)|
             EXDEHL
 
-            POP     BC| \ restore program-counter
+\           POP     BC| \ restore program-counter
             JPHL        \ jump to decoder-routine
                         \ routine must end with Psh1
                         \ that is the chraracter decoded
                         \ or zero to signal a false-flag
         HERE DISP, \ THEN,   
-        POP     BC|     \ restore program-counter
+\       POP     BC|     \ restore program-counter
 
         CPN     HEX 20 N,     
         JRF    NC'|     HOLDPLACE  \ non printable control character
@@ -1155,6 +1161,7 @@ CODE (?emit) ( c1 -- c2 )
         LD      L'|    A|
         LDN     H'| 0 N,
         PUSH    HL|
+        EXX 
         Next
         C;
 
@@ -1164,6 +1171,7 @@ EMIT-2^ EMIT-A^ 00 +  !
 \ 07 bel 
 HERE    EMIT-A^ 02 +  ! 
         ASSEMBLER 
+        EXX 
         PUSH    BC|
         LDX     DE| HEX 0100 NN,
         LDX     HL| HEX 0200 NN,
@@ -1184,6 +1192,7 @@ HERE    EMIT-A^ 06 +  !
         ASSEMBLER 
         LDX     HL| 6 NN,
         PUSH    HL|
+        EXX 
         Next
 \       C;
 
@@ -1195,6 +1204,7 @@ HERE    EMIT-A^ 0A +  !
         ASSEMBLER 
         LDX     HL| 0D NN,
         PUSH    HL|
+        EXX 
         Next
 \       C;
 
@@ -1622,6 +1632,7 @@ HERE TO f_open_exit^
 \ Return 0 on success, True flag on error
 CODE f_opendir ( a -- fh f )
         EX(SP)IX            \ filespec nul-terminated
+        PUSH    DE|
         PUSH    BC|
         LDN     B'|   HEX 10   N,
         LDN     A'|   CHAR C   N,
@@ -1636,13 +1647,17 @@ CODE f_opendir ( a -- fh f )
 \ Return 1 as ok or 0 to signal end of data then 
 \ return 0 on success, True flag on error
 CODE f_readdir ( a1 a2 fh -- n f )
-        POP     HL|
-        LD      A'|     L|
-        POP     DE|
-        EX(SP)IX            \ wildcard spec nul-terminated
+         EXX
+         POP     HL|
+         LD      A'|     L|
+         POP     DE|
+         EX(SP)IX            \ wildcard spec nul-terminated
+        EXX
+        PUSH    DE|
         PUSH    BC|
-        RST     08|   HEX  A4  C,
-        JR      f_open_exit^ BACK,
+         EXX
+         RST     08|   HEX  A4  C,
+         JR      f_open_exit^ BACK,
         C;
         
 
@@ -2238,11 +2253,11 @@ CODE dnegate ( d1 -- d2 )
 .( OVER )
 \ copy the second value of stack and put on top.
 CODE over ( n m -- n m n )
-         
-        POP     DE|   \  DE <-- m
+
+        POP     AF|   \  AF <-- m
         POP     HL|   \  HL <-- n
         PUSH    HL|
-        PUSH    DE|
+        PUSH    AF|
         PUSH    HL|
         Next
         C;
@@ -2273,9 +2288,9 @@ CODE nip  ( n1 n2 -- n2 )
 CODE tuck  ( n1 n2 -- n2 n1 n2 )
 
         POP     HL|     \ HL <-- n2
-        POP     DE|     \ DE <-- n1
+        POP     AF|     \ AF <-- n1
         PUSH    HL|
-        PUSH    DE|
+        PUSH    AF|
         PUSH    HL|
         Next
         C;
@@ -2440,12 +2455,12 @@ CODE 2swap  ( d1 d2 -- d2 d1 )
 \ 65F3h
 .( 2DUP )
 CODE 2dup  ( d -- d d )
-         
+
         POP     HL|
-        POP     DE|
-        PUSH    DE|
+        POP     AF|
+        PUSH    AF|
         PUSH    HL|
-        PUSH    DE|
+        PUSH    AF|
         PUSH    HL|
         Next
         C;
@@ -2517,7 +2532,7 @@ CODE +! ( n a -- )
 .( TOGGLE )
 \ Complements the byte at addrress a with the model n.
 CODE toggle ( a n -- )
-         
+
         POP     DE|
         POP     HL|
         LD      A'| (HL)|
@@ -3752,9 +3767,9 @@ CODE fill ( a n c -- )
 \ \ takes a double-number from stack and put to floating-pointer stack 
 \ \ When A is zero, then the float repressent a whole positive number 
 \ CODE >w
+\         exx
 \         POP     HL|     
 \         POP     DE|     
-\         PUSH    BC|     
 \         RL       L|         \ To keep sign as the msb of H,   
 \         RL       H|         \ so you can check for sign in the
 \         RR       L|         \ integer-way. Sorry.
@@ -3770,7 +3785,7 @@ CODE fill ( a n c -- )
 \             LD      C'|    H|
 \         HERE DISP, \ THEN,       
 \         CALL    hex 2AB6 AA,
-\         POP     BC|
+\         exx
 \         Next
 \         C;
 \ 
@@ -3779,7 +3794,7 @@ CODE fill ( a n c -- )
 \ \ W>    ( -- d )
 \ \ takes a double-number from stack and put to floating-pointer stack 
 \ CODE w>
-\         PUSH    BC|     
+\         EXX
 \         CALL    hex 2BF1 AA,
 \         ANDA     A|
 \         JRF    NZ'|   HOLDPLACE
@@ -3793,9 +3808,9 @@ CODE fill ( a n c -- )
 \         RL       L|         \ To keep sign as the msb of H,
 \         RR       H|         \ so you can check for sign in the 
 \         RR       L|         \ integer-way. Sorry.
-\         POP     BC|
 \         PUSH    DE|
 \         PUSH    HL|
+\         EXX
 \         Next
 \         C;
 \ 
@@ -3808,10 +3823,12 @@ CODE fill ( a n c -- )
 \         LD      A'|    L|
 \         LD()A   HERE 0 AA,
 \         PUSH    BC|
+\         PUSH    DE|
 \         RST     28|
 \                 HERE SWAP !
 \                 hex 04 C, \ this location is patched each time
 \                 hex 38 C, \ end of calculation
+\         POP     DE|
 \         POP     BC|
 \         Next
 \         C;
@@ -4775,6 +4792,7 @@ CODE mmu7! ( n -- )
 \ \   EFFF >FAR  gives  27.EFFF
 \ \   FFFF >FAR  gives  27.FFFF
 \ CODE >far ( ha -- a n )
+\         EXX
 \         POP     DE|
 \         LD      A'|      D|
 \         ANDN   HEX E0 N,
@@ -4789,6 +4807,7 @@ CODE mmu7! ( n -- )
 \         LD      D'|      A|
 \         PUSH    HL|
 \         PUSH    DE|
+\         EXX
 \         Next
 \         C;
 \         
@@ -4798,6 +4817,7 @@ CODE mmu7! ( n -- )
 \ \ reverse of >FAR: encodes a FAR address compressing
 \ \ to bits 765 of H, lower bits of HL address offset from E000h
 \ CODE <far ( a n -- ha )
+\         EXX
 \         POP     DE|         \ page number in E
 \         POP     HL|         \ address in HL
 \         LD      A'|      E|
@@ -4811,6 +4831,7 @@ CODE mmu7! ( n -- )
 \         ORA      D|
 \         LD      H'|      A|
 \         PUSH    HL|
+\         EXX
 \         Next
 \         C;        
         
@@ -4834,10 +4855,10 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
         POP     HL|         \ a register argument
         LD      A'|    L|
 
-        EXX
-        POP     BC|         \ bc argument
-        POP     DE|         \ de argument
-        POP     HL|         \ hl argument
+         EXX
+         POP     BC|         \ bc argument
+         POP     DE|         \ de argument
+         POP     HL|         \ hl argument
         EXX
 
         PUSH    BC| 
@@ -5129,6 +5150,7 @@ decimal
         swap cell-
         source-id @ 
         f_getline     \ a source text line can be up to 510 characters
+      \ ?terminal not and
       \ cr 1 block over type  \ during code-debugging phase
     While             \ stay in loop while there is text to be read
         1 blk ! 0 >in !  
@@ -5555,7 +5577,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.52 NextZXOS version" -1 allot ]
-    [ decimal 13 here   ," Direct Threaded - build 20230106" -1 allot ]
+    [ decimal 13 here   ," Direct Threaded - build 20230108" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5912,7 +5934,8 @@ forth definitions
 \ all these address were collected using !rp^ word
 \ once used, this word can be forgotten.
 CODE final_rp_patch
-        PUSH    BC|
+        EXX
+\       PUSH    BC|
         
         LDX     HL|    rp#^ @  NN,
         LDX     DE|    rp#     NN,
@@ -5936,7 +5959,8 @@ CODE final_rp_patch
             POP     HL|
         DJNZ    HOLDPLACE SWAP DISP, \ pops second HERE
         
-        POP     BC|
+\       POP     BC|
+        EXX
         Next
         C;
 

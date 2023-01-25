@@ -3,8 +3,8 @@
 \
 \ .( AY definitions )
 
-NEEDS BINARY
-NEEDS SPLIT
+NEEDS BINARY            \ base 2
+NEEDS SPLIT             \ split an integer into two bytes, low, high.
 
 BASE @
 

@@ -15,6 +15,7 @@ TESTING F.6.1.1360 - EVALUATE
 : GE5 EVALUATE ; IMMEDIATE
 
 ( TEST EVALUATE IN INTERP. STATE )
+\
 T{ GE1 EVALUATE -> 123 }T 
 T{ GE2 EVALUATE -> 124 }T
 T{ GE3 EVALUATE ->     }T
@@ -29,7 +30,10 @@ T{ : GE7 GE2 GE5 ; -> }T
 T{ GE7 -> 124 }T
 
 
-\ The following case still doesn't work
-\ : GE8  S" : GE9 678 ; " EVALUATE ; 
+
+: GE8  S" : GE9 678 ; " EVALUATE ; 
+
+\ The following row doesn't work --> bad definition end.
 \ GE8 
 \ T{ GE9 -> 678 }T
+

@@ -318,7 +318,7 @@ TESTING \ F.3.17 Evaluate
 \ As with the defining words, F.6.1.1360 EVALUATE has already been used, but it
 \ must still be tested fully.
 
-    INCLUDE  test/evaluate.f        \ *** nested EVALUATE still has bug ***
+    INCLUDE  test/evaluate.f       \ *** N.B. nested EVALUATE still has bug ***
     
 
 TESTING \ F.3.18 Parser Input Source Control
@@ -328,7 +328,7 @@ TESTING \ F.3.18 Parser Input Source Control
 \ F.6.1.0560 >IN, and F.6.1.2450 WORD.
 
    INCLUDE  test/source.f          
-   INCLUDE  test/}in.f      \ >IN  \ *** still get error: AN?? not defined ***
+   INCLUDE  test/}in.f      \ >IN  \ *** N.B. nested EVALUATE still has bug ***
    INCLUDE  test/word.f            \ *** incorrect result on emtpy lines ***
 
 
@@ -365,7 +365,7 @@ TESTING \ F.3.19 Number Patterns
     INCLUDE  test/sign.f            
     INCLUDE  test/#.f
     INCLUDE  test/#S.f              
-    INCLUDE  test/}number.f \ >NUMBER
+    INCLUDE  test/}number.f \ >NUMBER \ 
     INCLUDE  test/base.f
 
 

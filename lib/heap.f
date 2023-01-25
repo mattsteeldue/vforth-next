@@ -11,7 +11,7 @@
 \ See "Heap memory facility" in PDF documentation for details
 \
 \
-.( HEAP memory management ) 
+.( HEAP ) 
 \
 NEEDS SKIP-PAGE
 NEEDS FAR

@@ -12,6 +12,9 @@ WARNING @
 
 WARNING !
     
+    NEEDS >FAR      NEEDS <FAR
+    NEEDS EXEC:
+    NEEDS RND
     NEEDS 3DUP
     NEEDS CHECKSUM
     NEEDS RANDOMIZE
@@ -19,7 +22,6 @@ WARNING !
     NEEDS SPEED!    NEEDS SPEED@
     NEEDS DEFER!    NEEDS DEFER@    NEEDS DEFER
     NEEDS IS        NEEDS [']
-    NEEDS 
 
  \ Save base value
 BASE    @ HEX \ all test needs base 16.
@@ -27,6 +29,10 @@ BASE    @ HEX \ all test needs base 16.
 CR
 
 TESTING \ Custom
+
+    INCLUDE  test/}far.f
+    INCLUDE  test/{far.f
+    INCLUDE  test/exec_.f
 
     INCLUDE  test/3dup.f
     INCLUDE  test/checksum.f
@@ -47,5 +53,5 @@ TESTING \ ZX Spectrum Next
 
     INCLUDE  test/speed!.f
 
-\ Restore base and warning values
+\ Restore base 
 BASE !

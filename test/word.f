@@ -16,5 +16,6 @@ T{ CHAR " GS3 GOODBYE" -> 7 CHAR G }T
 \ T{ BL GS3 
 \    DROP -> 0 }T \ Blank lines return zero-length strings
 
+\ vForth WORD uses a 0x00 "null" string to handle the end of input source
 T{ BL GS3
    -> 1 0 }T 

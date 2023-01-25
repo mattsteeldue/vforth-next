@@ -11,12 +11,11 @@ BASE @ \ save base status
 \ 
 CODE SPLIT ( n1 -- n2 n3 ) 
     HEX
-    D1 C,       \   pop  de
-    AF C,       \   xor  a
-    6A C,       \   ld   l,d
-    57 C,       \   ld   d,a
-    67 C,       \   ld   h,a
-    D5 C,       \   push de
+    E1 C,       \   pop  hl
+    7C C,       \   ld   a,h
+    26 C, 00 C, \   ld   h,0
+    E5 C,       \   push hl
+    6F C,       \   ld   l,a
     E5 C,       \   push hl
     DD C, E9 C, \   jp   (ix)
 

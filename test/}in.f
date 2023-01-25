@@ -18,6 +18,9 @@ T{   2 SCANS !
 345 RESCAN? 
 -> 345 345 }T
 
+\ *** N.B. nested EVALUATE still has bug ***
+\ so we cannot compile EVALUATE inside GS2 and let it work.
+\ instead, we can EVALUATE it during interpretation of this file
 \ : GS2 5 SCANS ! S" 123 RESCAN?" EVALUATE ; 
 \ T{ GS2 -> 123 123 123 123 123 }T
 
