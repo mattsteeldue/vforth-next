@@ -27,7 +27,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     ADCA        r|                          ADC A, r                   
     ADCHL      rr|                          ADC HL, BC/DE/HL/SP        
     ADDA     (HL)|                          ADD A, (HL)                
-    ADDA (IY+ n )|                          ADD A, (IY+d)             
+    ADDA (IY+ d )|                          ADD A, (IY+d)             
     ADDN        n    N,                     ADD A, n                   
     ADDA        r|                          ADD A, r                   
     ADDHL      rr|                          ADD HL, BC/DE/HL/SP        
@@ -39,7 +39,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     ADDBC,     nn   NN,                     ADD BC, nn         
     ADDIY      rr|                          ADD IY, BC/DE/IY/SP      
     ANDA     (HL)|                          AND (HL)                   
-    ANDA (IY+ n )|                          AND (IY+d)                
+    ANDA (IY+ d )|                          AND (IY+d)                
     ANDN        n    N,                     AND n                      
     ANDA        r|                          AND r                      
     BIT         b|     (HL)|                BIT b, (HL)                 
@@ -54,7 +54,7 @@ You can use   (IY+   operand wherever you can use   (IX+   operand.
     CALL            aa   AA,                CALL aa                    
     CCF                                     CCF                        
     CPA      (HL)|                          CP (HL)                    
-    CPA  (IY+ n )|                          CP (IY+d)                 
+    CPA  (IY+ d )|                          CP (IY+d)                 
     CPN         n    N,                     CP n                       
     CPA         r|                          CP r                       
     CPD                                     CPD                        
