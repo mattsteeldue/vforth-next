@@ -1,5 +1,18 @@
 #Forth on Sinclair ZX Spectrum Next
 
+   PDF reference can be found here <https://github.com/mattsteeldue/vforth-next/tree/master/doc>.
+   
+   To learn Forth Language or for a good reference I suggest the book "Starting FORTH" - Leo Brodie (1981, Forth Inc.).
+   PDF hopefully available here <https://www.forth.com/wp-content/uploads/2018/01/Starting-FORTH.pdf>
+   The first edition is old enough to stick on 16 bit integers numbers.
+   
+   
+
+#vForth1.6
+On January 2023, I published here on GitHub the latest version that represents the fastest up to now.
+It seems we're approaching some Golden Ratio version...
+
+
 #vForth1.52
 
 On April 27th 2020, I received my  ZX Spectrum Next  (Accelerated)  and immediately tried to port my Forth to the Next environment. 
