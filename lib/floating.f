@@ -30,6 +30,7 @@
 \ NEEDS ASSEMBLER
 NEEDS 2ROT
 NEEDS 2OVER
+NEEDS 2CONSTANT
 NEEDS [']
 
 MARKER FP-MARKER
@@ -78,7 +79,7 @@ CODE >W
     CB C, 15 C,     \ RL       L|         \ To keep sign as the msb of H,   
     CB C, 14 C,     \ RL       H|         \ so you can check for sign in the
     CB C, 1D C,     \ RR       L|         \ integer-way. Sorry.
-    06 C, 00 C,     \ LDN     B'|    HEX 00 N,  
+    06 C, A2 C,     \ LDN     B'|    HEX 00 N,  
     4B C,           \ LD      C'|    E|    
     5D C,           \ LD      E'|    L|    
     7C C,           \ LD      A'|    H|    
@@ -227,15 +228,6 @@ DECIMAL
 ;
 
 
-: F*/   ( d1 d2 d3 -- d4 )
-    ?ZERO   
-    >W >W >W    
-    04 FOP      
-    05 FOP
-    W>
-;
-    
-
 \ comparison
 : F0<   NIP    0<  ;
 : F0>   NIP    0>  ;
@@ -265,6 +257,40 @@ DECIMAL
 34  1FOP1  FASIN       ?FTRG        (   d -- d   )  \ arc-sine
 35  1FOP1  FACOS       ?FTRG        (   d -- d   )  \ arc-cosine
 36  1FOP1  FATAN       NOOP         (   d -- d   )  \ arc-tangent
+
+
+\ Compound
+
+: F*/   ( d1 d2 d3 -- d4 )
+    ?ZERO   
+    >R >R       \ d1 d2     R: d3
+    >W >W       \                   F: d2 d1
+    04 FOP      \ F*                F: d0
+    R> R>       \ d3        R:
+    >W 
+    05 FOP      \ F/                F: d0 d3
+    W>          \ d4
+;
+    
+
+: PI
+  [
+    1 0 >W 36 FOP  \ atan
+    4 0 >W 04 FOP  \ *4 
+    W>  
+  ] 
+  DLITERAL
+;
+
+
+: DEG>RAD
+    PI 180 0 F*/ 
+;
+
+
+: RAD>DEG
+    180 0 PI F*/
+;
 
 
 \ Number Interpretation
@@ -473,27 +499,11 @@ DECIMAL
 
 : F. 0 F.R SPACE ;
 
+
 : PLACES  PLACE ! ;
 
 
-: PI
-  [
-    1 0 >W 36 FOP  \ atan
-    4 0 >W 04 FOP  \ *4 
-    W>  
-  ] 
-  DLITERAL
-;
-
-
-: DEG>RAD
-    PI F* 180 0 F/ 
-;
-
-
-: RAD>DEG
-    180 0 F* PI F/ 
-;
+: FCONSTANT 2CONSTANT ; 
 
 
 : NO-FLOATING
@@ -539,5 +549,6 @@ CR
 .( FLOATING )
 \
 \ activate floating-point numbers
+: COLD NO-FLOATING COLD ;
 : FLOATING 1 NMODE ! ;
 

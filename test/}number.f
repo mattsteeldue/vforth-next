@@ -40,13 +40,20 @@ T{ 0 0 GN' Z' MAX-BASE >NUMBER-BASED -> 23 0 GN-CONSUMED }T
 : GN1 ( UD BASE -- UD' LEN )
    \ UD SHOULD EQUAL UD' AND LEN SHOULD BE ZERO.
    BASE @ >R BASE !
-   <# #S #> 2DUP TYPE SPACE
+   <# #S #> 
+        BASE @ 2 > IF 2DUP TYPE CR THEN  \ ** Why this row make all this work ?
    0 0 2SWAP >NUMBER SWAP DROP    \ RETURN LENGTH ONLY
    R> BASE ! ;
 
 T{        0   0        2 GN1 ->        0   0 0 }T
 T{ MAX-UINT   0        2 GN1 -> MAX-UINT   0 0 }T
 T{ MAX-UINT DUP        2 GN1 -> MAX-UINT DUP 0 }T
+
+T{        0   0       10 GN1 ->        0   0 0 }T
+T{ MAX-UINT   0       10 GN1 -> MAX-UINT   0 0 }T
+T{ MAX-UINT DUP       10 GN1 -> MAX-UINT DUP 0 }T
+
 T{        0   0 MAX-BASE GN1 ->        0   0 0 }T
 T{ MAX-UINT   0 MAX-BASE GN1 -> MAX-UINT   0 0 }T
 T{ MAX-UINT DUP MAX-BASE GN1 -> MAX-UINT DUP 0 }T
+

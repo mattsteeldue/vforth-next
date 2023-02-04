@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
-.( v-Forth 1.618 NextZXOS version ) CR
-.( build 20230116 ) CR
+.( v-Forth 1.62 NextZXOS version ) CR
+.( build 20230108 ) CR
 .( Direct Threaded Golden Ratio - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -35,15 +35,15 @@
 \
 \ AF 
 \ BC - Instruction Pointer: it must be preserved during ROM/OS calls
-\ DE - Return Stack Pointer: it must be preserved during ROM/OS calls
-\ HL - Working 
+\ DE -         (Low  word when used for 32-bit manipulations)
+\ HL - Working (High word when used for 32-bit manipulations)
 \
-\ AF'- Working - Sometime used for backup purpose
-\ BC'- Working 
-\ DE'- Working (High word when used for 32-bit manipulations)
-\ HL'- Working (High word when used for 32-bit manipulations)
+\ AF'- Sometime used for backup purpose
+\ BC'- Sometime used in tricky definitions
+\ DE'- Sometime used in tricky definitions
+\ HL'- Sometime used in tricky definitions
 \
-\ SP - Data Stack Pointer
+\ SP - Calc Stack Pointer
 \ IX - Inner interpreter next-address pointer. This is 2T-state faster than JP
 \      it must be preserved during ROM/OS calls
 \ IY - (ZX System: must be preserved)
@@ -3994,34 +3994,24 @@ CODE fill ( a n c -- )
 
 
 \ 7178h
-.( 2FIND )
-\ given c-addr searches the dictionary giving CFA and the heading byte 
-\ or zero if not found
-: 2find ( a -- cfa b 1 | 0 )
-    >r r@
-    context @ @     \ addr voc
-    (find)          \ cfa b 1   |  0
-    ?dup            \ cfa b 1 1 |  0
-    0=              \ cfa b 1 0 |  1
-    If  
-        r@          \ addr
-        latest      \ addr voc
-        (find)      \ cfa b 1   |  0 
-    Then   
-    r> drop
-    ;
-
-
-\ 7178h
 .( -FIND )
 \ used in the form -FIND "cccc"
 \ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : -find ( "ccc" -- cfa b 1 | 0 )
     bl word 
-    2find
+\ \ here            \ addr  
+    context @ @     \ addr voc
+    (find)          \ cfa b 1   |  0
+    
+    ?dup            \ cfa b 1 1 |  0
+    0=              \ cfa b 1 0 |  1
+    If  
+        here        \ addr
+        latest      \ addr voc
+        (find)      \ cfa b 1   |  0 
+    Then   
     ;
-
 
 \   dup 0=
 \   If
@@ -5668,7 +5658,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.618   NextZXOS version" -1 allot ]
-    [ decimal 13 here   ," Golden Ratio - build 20230116" -1 allot ]
+    [ decimal 13 here   ," Golden Ratio - build 20230108" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -6200,7 +6190,6 @@ RENAME   mcod           CODE        \ be careful on this
 RENAME   id.            ID.
 RENAME   error          ERROR
 RENAME   (abort)        (ABORT)
-RENAME   2find          2FIND
 RENAME   -find          -FIND
 RENAME   number         NUMBER
 

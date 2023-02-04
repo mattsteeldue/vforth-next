@@ -21,20 +21,21 @@ NEEDS HP@
 NEEDS HEAP-DOS          
 NEEDS HEAP-DONE
 NEEDS HEAP-INIT
+
+
 \
 \ Reserve n bytes of Heap, return heap-pointer address
 \ Heap is a linked-list starting from P:0002=$40:$E002
 : HEAP ( n -- ha )
-    DUP SKIP-PAGE       \ n             check 8k boundary
-    HP@ SWAP            \ ha n  
-    CELL+               \ ha n+2        room for link to previous HP
-    HP +!               \ ha            advance HP by n+2
-    HP@ 1+ SWAP         \ hp ha
-    TUCK                \ ha hp ha
-    FAR !               \ ha            store link to previous HP
-    CELL+               \ ha            final HP address
-    0 HP@ FAR C!        \ ha            trailing 0x00
-    1 HP +!             \ ha
+    HP@ >R              \ n        R: h0    ( save current HP )
+    DUP SKIP-PAGE       \ n                 ( check for room in current page )
+    HP@ CELL+ TUCK      \ ha n ha           ( prepare resulting hp )
+    OVER + FAR >R       \ ha n     R: h0 a1 
+    0 R@ !              \ ha n              ( zero pad )
+    R> CELL+            \ ha n a2  R: h0
+    R@ CELL- SWAP !     \ ha n              ( set back pointer )   
+    6 + HP +!           \ ha       R: h0    ( set HP to next area )
+    HP@ R> FAR !        \ ha                ( set forward pointer )
 ;
 \
 

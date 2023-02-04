@@ -1,0 +1,13 @@
+\
+\ test/true.f
+\
+
+
+NEEDS TESTING
+
+NEEDS TRUE
+
+TESTING F.6.2.2298 - TRUE
+
+T{ TRUE -> <TRUE> }T
+T{ TRUE -> 0 INVERT }T

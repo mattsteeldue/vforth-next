@@ -2,7 +2,7 @@
 \ CORE-TESTS.f
 \
 
-MARKER TESTING-TASK
+MARKER TESTING-DONE
     
     NEEDS :NONAME
     NEEDS 2OVER
@@ -28,14 +28,18 @@ MARKER TESTING-TASK
     NEEDS ['] 
     NEEDS EVALUATE
     NEEDS BINARY
-    CHARS
+    NEEDS CHARS
+    NEEDS COMPILE,
+
+    NEEDS DEFER
+    NEEDS DEFER!
+    NEEDS DEFER@
+    NEEDS IS
+    NEEDS CASE
+    NEEDS FALSE
+    NEEDS TRUE
     
-WARNING @ 
-0 WARNING ! \ reduce messaging #4
-
     NEEDS TESTING
-
-WARNING !
 
 
 \ Save base value
@@ -52,6 +56,7 @@ TESTING \ F.3.1 Basic Assumptions
 \ has yet to be proposed.
 
     INCLUDE  test/basic-assumptions.f
+    INCLUDE  test/(.f           ( filler )
 
 
 TESTING \ F.3.2 Booleans
@@ -67,6 +72,9 @@ TESTING \ F.3.2 Booleans
     INCLUDE  test/and.f
     INCLUDE  test/or.f
     INCLUDE  test/xor.f
+
+    INCLUDE  test/true.f
+    INCLUDE  test/false.f
 
 
 TESTING \ F.3.3 Shifts
@@ -243,6 +251,8 @@ TESTING \ F.3.12 Characters
     INCLUDE  test/[char].f
     INCLUDE  test/[.f
     INCLUDE  test/s~.f      \ S" 
+    
+\   INCLUDE  test/c~.f      \ C" *** to do ***
 
 
 TESTING \ F.3.13 Dictionary
@@ -261,6 +271,7 @@ TESTING \ F.3.13 Dictionary
     INCLUDE  test/state.f
 
     INCLUDE  test/[compile].f  
+\   INCLUDE  test/compile,.f   *** q not fount ***
 \   INCLUDE  test/compile.f    *** TO TO ***
 
 
@@ -275,6 +286,7 @@ TESTING \ F.3.14 Flow Control
     INCLUDE  test/while.f   
     INCLUDE  test/until.f
     INCLUDE  test/recurse.f  
+    INCLUDE  test/case.f
 
 
 TESTING \ F.3.15 Counted Loops
@@ -304,13 +316,20 @@ TESTING \ F.3.16 Defining Words
 \ which also tests ;, F.6.1.0950 CONSTANT, F.6.1.2410 VARIABLE, F.6.1.1250 DOES>
 \ which includes tests CREATE, and F.6.1.0550 >BODY which also tests CREATE.
 
-WARNING @ 0 WARNING ! \ reduce messaging #4
     INCLUDE  test/_.f 
-WARNING !
     INCLUDE  test/constant.f
     INCLUDE  test/variable.f
     INCLUDE  test/}body.f   \ >BODY       
     INCLUDE  test/does}.f   \ DOES>
+
+\   INCLUDE  test/_noname.f
+
+    INCLUDE  test/value.f
+    INCLUDE  test/is.f
+
+    INCLUDE  test/defer.f
+    INCLUDE  test/defer!.f
+    INCLUDE  test/defer@.f
 
 
 TESTING \ F.3.17 Evaluate
@@ -365,8 +384,10 @@ TESTING \ F.3.19 Number Patterns
     INCLUDE  test/sign.f            
     INCLUDE  test/#.f
     INCLUDE  test/#S.f              
-    INCLUDE  test/}number.f \ >NUMBER \ 
+    INCLUDE  test/}number.f 
     INCLUDE  test/base.f
+
+    INCLUDE  test/holds.f
 
 
 TESTING \ F.3.20 Memory movement
@@ -393,33 +414,15 @@ TESTING \ F.3.23 Dictionary Search Rules
 \ TESTING \ other
 
 \   NEEDS BUFFER:
-\   NEEDS C"
-\   NEEDS COMPILE,
 \   NEEDS ACTION-OF
-\   NEEDS DEFER
-\   NEEDS DEFER!
-\   NEEDS DEFER@
-\   NEEDS IS
-\   NEEDS CASE
-\   NEEDS FALSE
 \
-\   INCLUDE  test/(.f           ( filler )
 \   INCLUDE  test/_noname.f
 \   INCLUDE  test/buffer_.f
-\   INCLUDE  test/c~.f
-\   INCLUDE  test/case.f
-\   INCLUDE  test/compile,.f
 \   INCLUDE  test/action-of.f
-\   INCLUDE  test/defer.f
-\   INCLUDE  test/defer!.f
-\   INCLUDE  test/defer@.f
-\   INCLUDE  test/is.f
-\   INCLUDE  test/false.f   
-\   INCLUDE  test/holds.f
 \   INCLUDE  test/parse-name.f
 \   INCLUDE  test/save-input.f
     
 ( end of test session )
 BASE !
 
-
+TESTING-DONE

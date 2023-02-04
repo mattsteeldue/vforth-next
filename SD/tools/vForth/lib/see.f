@@ -18,10 +18,17 @@ NEEDS .WORD
 NEEDS .S
 \
 
+HP @ 
+HEX -00F0 HP +!
+
 \ display NFA, LFA, CFA report-rows
 : DEB-NFA ( pfa -- )  S" Nfa: " TYPE NFA DUP U. C@ . CR ;
 : DEB-LFA ( pfa -- )  S" Lfa: " TYPE LFA DUP U. @ ID. CR ;
 : DEB-CFA ( pfa -- )  S" Cfa: " TYPE CFA DUP U. 2 CFA NEGATE + @ U. ;
+
+\ CR HP ? CR
+
+HP !
 
 \ display simple DUMP 
 : DEB-PFA ( pfa -- )             CFA 32 DUMP ;

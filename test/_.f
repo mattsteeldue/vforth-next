@@ -18,6 +18,8 @@ T{ NOP1 -> }T
 T{ NOP2 -> }T
 
 \ The following tests the dictionary search order:
+TESTING It's correct seeing the message
+TESTING GDX has already been defined.
 
 T{ : GDX   123 ;    : GDX   GDX 234 ; -> CR }T
 T{ GDX -> 123 234 }T
