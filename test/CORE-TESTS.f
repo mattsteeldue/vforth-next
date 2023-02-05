@@ -271,7 +271,7 @@ TESTING \ F.3.13 Dictionary
     INCLUDE  test/state.f
 
     INCLUDE  test/[compile].f  
-\   INCLUDE  test/compile,.f   *** q not fount ***
+\   INCLUDE  test/compile,.f   *** q not found ***
 \   INCLUDE  test/compile.f    *** TO TO ***
 
 
