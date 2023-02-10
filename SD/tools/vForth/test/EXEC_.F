@@ -14,12 +14,12 @@ TESTING Zx Next - Custom - EXEC:
 
 : EXEC:TEST ( n -- )
   DUP
-  EXEC: ZERO ONE TWO THREE FOUR
+  EXEC: ZERO ONE TWO THREE 
 ;
 
-T{ 0 -> 0 0 }T
-T{ 1 -> 1 1 }T
-T{ 2 -> 2 2 }T
-T{ 3 -> 3 3 }T
-T{ 4 -> 4   }T
+T{ 0 EXEC:TEST -> 0 0 }T
+T{ 1 EXEC:TEST -> 1 1 }T
+T{ 2 EXEC:TEST -> 2 2 }T
+T{ 3 EXEC:TEST -> 3 3 }T
+T{ 4 EXEC:TEST -> 4   }T
 

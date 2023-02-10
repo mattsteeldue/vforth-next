@@ -13,14 +13,32 @@
 \
 .( HEAP ) 
 \
-NEEDS SKIP-PAGE
 NEEDS FAR
 NEEDS HP@
 \
-\ these are not real dependencies, but useful having them here
-NEEDS HEAP-DOS          
-NEEDS HEAP-DONE
-NEEDS HEAP-INIT
+
+BASE @
+
+\ never completely fill a page, leave alone some byte to avoid page spillover
+\ this constant is 80 byte 
+
+HEX 1F80 CONSTANT PAGE-WATERMARK
+
+\
+\ check if  n  more bytes are available in the current 8K-page in Heap
+\ otherwise skip  HP  to the beginning of next 8K-page
+\
+: SKIP-PAGE ( n -- )
+    HP@    
+    1FFF  AND                   \ take only offset part of HP heap-address
+    + 
+    PAGE-WATERMARK
+    >                           \ check if it is greater than watermark
+    IF
+        HP@  1FFF OR 1+ 2+ HP ! \ HP goes to the next page
+    THEN
+    \ HP@  0=  [ DECIMAL 12 ] LITERAL  ?ERROR  \ out of memory check
+;
 
 
 \
@@ -39,6 +57,28 @@ NEEDS HEAP-INIT
 ;
 \
 
+\ allocate or free 8K-pages number $20 to $27.
+\ This is 64K of ram avalable for Heap Management
+\ passed parameter must be 2 for alloc, or 3 for free
+HEX
+
+: HEAP-DOS ( n -- )
+    28 20          \ decimal 32-39
+    DO
+        DUP        \  n1 = hl register parameter value
+        I          \  n2 = de register parameter value
+        0          \  n3 = bc register parameter value
+        0          \  n4 =  a register parameter value
+        01BD       \   a = routine address in ROM 3
+        M_P3DOS
+        2C ?ERROR       \ error #44 NextZXOS DOS call error
+        2DROP 2DROP
+    LOOP DROP           \ consume n.
+;
+: HEAP-DONE  3 HEAP-DOS ;
+: HEAP-INIT  2 HEAP-DOS ;
+
+
 HEAP-DONE               \ free 8K-pages without error
 HEAP-INIT               \ require 8K-pages $40 to $47
 
@@ -51,3 +91,5 @@ WARNING @ 0 WARNING !
 ;
 
 WARNING !
+BASE !
+
