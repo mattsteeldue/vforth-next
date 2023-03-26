@@ -196,10 +196,10 @@ CODE Z80-TESTER
     SET          n| (IY+ d )|
     SET          n|        r|
 \   SET          n|        r|  (IY+ d )|    
-    SLL       (HL)|
-    SLL   (IY+ d )|
-    SLL          r|
-\   SLL          r| (IY+ d )|               
+    SL1       (HL)|
+    SL1   (IY+ d )|
+    SL1          r|
+\   SL1          r| (IY+ d )|               
     SLA       (HL)|
     SLA   (IY+ d )|
     SLA          r|

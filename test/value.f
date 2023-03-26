@@ -10,7 +10,7 @@ NEEDS TO
 
 \ F.6.2.2295      - TO
 
-TESTING F.6.2.2405 -  VALUE 
+TESTING F.6.2.2405 - VALUE 
 
 
 T{  111 VALUE v1 -> }T

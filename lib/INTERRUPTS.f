@@ -70,6 +70,7 @@ CODE  SETIREG  ( n -- )
 \ IY is not considered since, normally we do not alter it.
 \
 CODE  ISR-RET  ( -- )
+    \ SP
     ED C, 7B C, ISR-SAVE ,      \ ld sp,(ISR-SAVE)
     E1 C,                       \ pop hl
     22 C, 30 +ORIGIN ,          \ ld (RP), hl
@@ -112,6 +113,8 @@ CODE  ISR-SUB  ( -- )
     \
     21 C, 6330 ,                \ ld hl,6330h
     22 C, 30 +ORIGIN ,          \ ld (RP),hl
+    \ RP
+    EB C,                       \ ex de,hl
     \ SP
     ED C, 73 C, ISR-SAVE ,      \ ld (ISR-SAVE),sp
     21 C, -04 ,                 \ ld hl,-04

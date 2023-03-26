@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.62 NextZXOS version ) CR
-.( build 20230108 ) CR
+.( build 20230321 ) CR
 .( Direct Threaded Golden Ratio - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -3994,23 +3994,24 @@ CODE fill ( a n c -- )
 
 
 \ 7178h
-.( -FIND )
+.( 2FIND )
 \ used in the form -FIND "cccc"
 \ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
-: -find ( "ccc" -- cfa b 1 | 0 )
-    bl word 
-\ \ here            \ addr  
+: 2find ( a -- cfa b 1 | 0 )
+    >r              \
+    r@              \ addr
     context @ @     \ addr voc
     (find)          \ cfa b 1   |  0
     
     ?dup            \ cfa b 1 1 |  0
     0=              \ cfa b 1 0 |  1
     If  
-        here        \ addr
+        r@          \ addr
         latest      \ addr voc
         (find)      \ cfa b 1   |  0 
-    Then   
+    Then 
+    r> drop  
     ;
 
 \   dup 0=
@@ -4019,6 +4020,16 @@ CODE fill ( a n c -- )
 \       here latest (find) \ cfa b f 
 \   Then
 \   ;
+
+
+.( -FIND )
+\ used in the form -FIND "cccc"
+\ searches the dictionary giving CFA and the heading byte 
+\ or zero if not found
+: -find ( "ccc" -- cfa b 1 | 0 )
+    bl word         \ a
+    2find
+;
 
 
 \ 71A2h
@@ -5658,7 +5669,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 88 here ," v-Forth 1.618   NextZXOS version" -1 allot ]
-    [ decimal 13 here   ," Golden Ratio - build 20230108" -1 allot ]
+    [ decimal 13 here   ," Golden Ratio - build 20230321" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5969,7 +5980,7 @@ decimal
             b/buf cell- >in !
         Then
     Else
-        [ decimal 80 ] Literal  >in !
+        0 tib @ >in @ + !
     Then
     ;
     immediate
@@ -6191,6 +6202,7 @@ RENAME   id.            ID.
 RENAME   error          ERROR
 RENAME   (abort)        (ABORT)
 RENAME   -find          -FIND
+RENAME   2find          2FIND
 RENAME   number         NUMBER
 
 \ RENAME   (exp)          (EXP) 

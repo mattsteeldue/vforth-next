@@ -38,6 +38,9 @@ MARKER TESTING-DONE
     NEEDS CASE
     NEEDS FALSE
     NEEDS TRUE
+    NEEDS VALUE
+    NEEDS TO
+    NEEDS +TO
     
     NEEDS TESTING
 
@@ -46,6 +49,7 @@ MARKER TESTING-DONE
 BASE    @ HEX \ all test needs base 16.
 
 CR
+
 
 TESTING \ F.3.1 Basic Assumptions
 
@@ -285,6 +289,7 @@ TESTING \ F.3.14 Flow Control
     INCLUDE  test/if.f
     INCLUDE  test/while.f   
     INCLUDE  test/until.f
+    INCLUDE  test/_noname.f
     INCLUDE  test/recurse.f  
     INCLUDE  test/case.f
 
@@ -321,8 +326,6 @@ TESTING \ F.3.16 Defining Words
     INCLUDE  test/variable.f
     INCLUDE  test/}body.f   \ >BODY       
     INCLUDE  test/does}.f   \ DOES>
-
-\   INCLUDE  test/_noname.f
 
     INCLUDE  test/value.f
     INCLUDE  test/is.f
@@ -386,7 +389,6 @@ TESTING \ F.3.19 Number Patterns
     INCLUDE  test/#S.f              
     INCLUDE  test/}number.f 
     INCLUDE  test/base.f
-
     INCLUDE  test/holds.f
 
 
@@ -416,7 +418,6 @@ TESTING \ F.3.23 Dictionary Search Rules
 \   NEEDS BUFFER:
 \   NEEDS ACTION-OF
 \
-\   INCLUDE  test/_noname.f
 \   INCLUDE  test/buffer_.f
 \   INCLUDE  test/action-of.f
 \   INCLUDE  test/parse-name.f

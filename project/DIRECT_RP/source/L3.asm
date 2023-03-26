@@ -703,7 +703,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      88
                 db      "v-Forth 1.618   NextZXOS version", 13    // 29
-                db      "Golden Ratio - build 20230116", 13  // 31
+                db      "Golden Ratio - build 20230321", 13  // 31
                 db      "1990-2023 Matteo Vitturi", 13        // 25
                 dw      EXIT
 
@@ -951,7 +951,7 @@ Backslash_Endif_2:
                 dw      BRANCH
                 dw      Backslash_Endif_1 - $
 Backslash_Else_1:
-                dw          LIT, 80, TO_IN, STORE
+                dw          ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, STORE
 Backslash_Endif_1:
                 dw      EXIT
 

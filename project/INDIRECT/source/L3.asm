@@ -703,7 +703,7 @@ Index_Leave:
                 dw      C_DOT_QUOTE
                 db      90  // length of the following string CR included.
                 db      "v-Forth 1.52 NextZXOS version", 13
-                db      "Indirect Threaded - build 20230108", 13
+                db      "Indirect Threaded - build 20230321", 13
                 db      "1990-2023 Matteo Vitturi", 13
                 dw      EXIT
 
@@ -1045,7 +1045,7 @@ Backslash_Endif_2:
                 dw      BRANCH
                 dw      Backslash_Endif_1 - $
 Backslash_Else_1:
-                dw          LIT, 80, TO_IN, STORE
+                dw          ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, STORE
 Backslash_Endif_1:
                 dw      EXIT
 

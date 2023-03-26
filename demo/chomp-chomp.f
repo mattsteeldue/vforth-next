@@ -289,6 +289,9 @@ set-maze-run  \ ...and do it now
 ;
 
 
+.( Chomp.f - array )
+
+
 \ Array is an area 6 x 8 bytes
 create Array   6 08 * allot
 
@@ -340,6 +343,7 @@ create Array   6 08 * allot
   to sprite-no ;
 
 
+.( Chomp.f - objects )
 
 \ array index by name
 0  name-of  Inky
@@ -377,6 +381,8 @@ create Array   6 08 * allot
     R> sprite@ y-pre c! ;
 \
 
+
+.( Chomp.f - ghosts )
 
 \ setup standard ghost colors
 : Ghost-color ( -- )
@@ -417,6 +423,8 @@ ghost-color \ and doit now
 
 \ Setup pacman appearance
 
+.( Chomp.f - pac )
+
 4 name-of Pacman
 
 \ setup standard pacman
@@ -437,6 +445,7 @@ pacman-init
 
 
 
+.( Chomp.f - cherry )
 
 
 5 name-of Cherry
@@ -456,6 +465,7 @@ pacman-init
 cherry-init 
 
 
+.( Chomp.f - move )
 
 \ draw current sprite, well they aren't ZX Spectrum Next's Sprite, just UDG
 \ usage:
@@ -731,7 +741,7 @@ cherry-init
   then ;
 
 
-
+.( Chomp.f - display )
 
 : init-display
  LAYER11 30 emitc 8 emitc

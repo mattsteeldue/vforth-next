@@ -8,7 +8,7 @@ NEEDS TESTING
 \
 TESTING F.6.1.2410 - VARIABLE 
 
-T{ VARIABLE V1 ->     }T
-T{    123 V1 ! ->     }T
-T{        V1 @ -> 123 }T
+T{ VARIABLE VV1 ->     }T
+T{    123 VV1 ! ->     }T
+T{        VV1 @ -> 123 }T
 \

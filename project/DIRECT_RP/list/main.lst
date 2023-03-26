@@ -1,11 +1,11 @@
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/main.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/main.asm
    1  0000              //  ______________________________________________________________________
    2  0000              //
    3  0000              //  main.asm
    4  0000              //  ______________________________________________________________________
    5  0000              //
    6  0000              //  v-Forth 1.6 NextZXOS version
-   7  0000              //  build 20230101
+   7  0000              //  build 20230321
    8  0000              //
    9  0000              //  Direct-Threaded version.
   10  0000              //
@@ -108,7 +108,7 @@
  107  6366              //    - Words that collide with Assembler are normally suffixed with "_OP"
  108  6366
  109  6366                              include "system.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/system.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/system.asm
    1+ 6366              //  ______________________________________________________________________
    2+ 6366              //
    3+ 6366              //  system.asm
@@ -287,9 +287,9 @@
  176+ 6366              FIRST_system:   equ     $D1E4               // Address of first BUFFER
  177+ 6366              LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
  178+ 6366
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/system.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/system.asm
  110  6366                              include "L0.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L0.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L0.asm
    1+ 6366              //  ______________________________________________________________________
    2+ 6366              //
    3+ 6366              //  L0.asm
@@ -326,8 +326,8 @@
   34+ 637C E8 D0        TIB_origin:     dw      TIB_system
   35+ 637E 1F 00        WIDTH_origin:   dw      31
   36+ 6380 01 00        WARNING_origin: dw      1
-  37+ 6382 CF 86        FENCE_origin:   dw      Fence_Word
-  38+ 6384 CF 86        DP_origin       dw      Fence_Word
+  37+ 6382 D5 86        FENCE_origin:   dw      Fence_Word
+  38+ 6384 D5 86        DP_origin       dw      Fence_Word
   39+ 6386 26 78        VOCLINK_origin: dw      Voclink_Ptr
   40+ 6388 E4 D1                        dw      FIRST_system
   41+ 638A 00 E0                        dw      LIMIT_system
@@ -1913,7 +1913,7 @@
 1001+ 674D              // this include is "here" for backward compatibility
 1002+ 674D
 1003+ 674D                              include "next-opt0.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/next-opt0.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/next-opt0.asm
    1++674D              //  ______________________________________________________________________
    2++674D              //
    3++674D              //  next-opt.asm
@@ -2366,7 +2366,7 @@
  233++683E A4                            db      $A4
  234++683F 18 C9                         jr      F_Open_Exit
  235++6841
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/next-opt0.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/next-opt0.asm
 1004+ 6841
 1005+ 6841
 1006+ 6841              //  ______________________________________________________________________
@@ -4631,9 +4631,9 @@
 2001+ 6BB8
 2002+ 6BB8              //  ______________________________________________________________________
 2003+ 6BB8
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L0.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L0.asm
  111  6BB8                              include "L1.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L1.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L1.asm
    1+ 6BB8              //  ______________________________________________________________________
    2+ 6BB8              //
    3+ 6BB8              //  L1.asm
@@ -9117,9 +9117,9 @@
 1390+ 7788 40 69                        dw      EXIT                    // ;
 1391+ 778A
 1392+ 778A
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L1.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L1.asm
  112  778A                              include "L2.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L2.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L2.asm
    1+ 778A              //  ______________________________________________________________________
    2+ 778A              //
    3+ 778A              //  L2.asm
@@ -9312,7 +9312,7 @@
  111+ 7820 0D 78                        dw      Vocabulary_Does
  112+ 7822 81 A0                        db      $81, $A0
  113+ 7824              Forth_Latest_Ptr:
- 114+ 7824 CF 86                        dw      Here_Dictionary // Fence_Word // Latest_Definition // Here_Dictionary
+ 114+ 7824 D5 86                        dw      Here_Dictionary // Fence_Word // Latest_Definition // Here_Dictionary
  115+ 7826              Voclink_Ptr:
  116+ 7826 00 00                        dw      0
  117+ 7828              // Any new vocabulary is structured as follow:
@@ -10337,9 +10337,9 @@
  519+ 7B1B
  520+ 7B1B              //  ______________________________________________________________________
  521+ 7B1B
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L2.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L2.asm
  113  7B1B                              include "next-opt1.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/next-opt1.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/next-opt1.asm
    1+ 7B1B              //  ______________________________________________________________________
    2+ 7B1B              //
    3+ 7B1B              //  next-opt.asm
@@ -10894,9 +10894,9 @@
  255+ 7C7D
  256+ 7C7D
  257+ 7C7D
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/next-opt1.asm
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/next-opt1.asm
  114  7C7D                              include "L3.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L3.asm
+# file opened: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L3.asm
    1+ 7C7D              //  ______________________________________________________________________
    2+ 7C7D              //
    3+ 7C7D              //  L3.asm
@@ -12743,14 +12743,14 @@
  705+ 8478 20 76 65 72
  705+ 847C 73 69 6F 6E
  705+ 8480 0D
- 706+ 8481 47 6F 6C 64                  db      "Golden Ratio - build 20230116", 13  // 31
+ 706+ 8481 47 6F 6C 64                  db      "Golden Ratio - build 20230321", 13  // 31
  706+ 8485 65 6E 20 52
  706+ 8489 61 74 69 6F
  706+ 848D 20 2D 20 62
  706+ 8491 75 69 6C 64
  706+ 8495 20 32 30 32
- 706+ 8499 33 30 31 31
- 706+ 849D 36 0D
+ 706+ 8499 33 30 33 32
+ 706+ 849D 31 0D
  707+ 849F 31 39 39 30                  db      "1990-2023 Matteo Vitturi", 13        // 25
  707+ 84A3 2D 32 30 32
  707+ 84A7 33 20 4D 61
@@ -13478,36 +13478,38 @@
  949+ 86BD 68 6D 0C 6B
  950+ 86C1              Backslash_Endif_2:
  951+ 86C1 08 64                        dw      BRANCH
- 952+ 86C3 0A 00                        dw      Backslash_Endif_1 - $
+ 952+ 86C3 10 00                        dw      Backslash_Endif_1 - $
  953+ 86C5              Backslash_Else_1:
- 954+ 86C5 A5 63 50 00                  dw          LIT, 80, TO_IN, STORE
- 954+ 86C9 68 6D 0C 6B
- 955+ 86CD              Backslash_Endif_1:
- 956+ 86CD 40 69                        dw      EXIT
- 957+ 86CF
- 958+ 86CF              Fence_Word:
- 959+ 86CF              //  ______________________________________________________________________
- 960+ 86CF              //
- 961+ 86CF
- 962+ 86CF 00           Here_Dictionary db      0
- 963+ 86D0
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/L3.asm
- 115  86D0
- 116  86D0              // now we save the compiled file so we can either run it or debug it
- 117  86D0                              SAVENEX OPEN "output/main.nex", ORIGIN
- 118  86D0                              SAVENEX CORE 3, 0, 0                                // Next core 3.0.0 required as minimum
- 119  86D0                              SAVENEX CFG  0
- 120  86D0                              SAVENEX BANK 2, 0
- 121  86D0                              SAVENEX AUTO
- 122  86D0                              SAVENEX CLOSE
- 123  86D0
- 124  86D0              //              PAGE 7 ;set 7 page to current slot
- 125  86D0              //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
- 126  86D0              //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file
- 127  86D0
- 128  86D0                              SAVETAP "output/F16c.tap", CODE, "forth16c", ORIGIN, 9999
- 129  86D0
- 130  86D0                              SAVEBIN "output/forth16c.bin", ORIGIN, 9999
- 131  86D0
- 132  86D0                              END
-# file closed: C:\Zx\CSpect\Projects\vForth15_DIRECT_RP/source/main.asm
+ 954+ 86C5 48 6C E8 6C                  dw          ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, STORE
+ 954+ 86C9 00 6B 68 6D
+ 954+ 86CD 00 6B AB 69
+ 954+ 86D1 0C 6B
+ 955+ 86D3              Backslash_Endif_1:
+ 956+ 86D3 40 69                        dw      EXIT
+ 957+ 86D5
+ 958+ 86D5              Fence_Word:
+ 959+ 86D5              //  ______________________________________________________________________
+ 960+ 86D5              //
+ 961+ 86D5
+ 962+ 86D5 00           Here_Dictionary db      0
+ 963+ 86D6
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/L3.asm
+ 115  86D6
+ 116  86D6              // now we save the compiled file so we can either run it or debug it
+ 117  86D6                              SAVENEX OPEN "output/main.nex", ORIGIN
+ 118  86D6                              SAVENEX CORE 3, 0, 0                                // Next core 3.0.0 required as minimum
+ 119  86D6                              SAVENEX CFG  0
+ 120  86D6                              SAVENEX BANK 2, 0
+ 121  86D6                              SAVENEX AUTO
+ 122  86D6                              SAVENEX CLOSE
+ 123  86D6
+ 124  86D6              //              PAGE 7 ;set 7 page to current slot
+ 125  86D6              //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
+ 126  86D6              //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file
+ 127  86D6
+ 128  86D6                              SAVETAP "output/F16c.tap", CODE, "forth16c", ORIGIN, 9999
+ 129  86D6
+ 130  86D6                              SAVEBIN "output/forth16c.bin", ORIGIN, 9999
+ 131  86D6
+ 132  86D6                              END
+# file closed: C:\Zx\CSpect\Projects\vForth16_DIRECT_RP/source/main.asm

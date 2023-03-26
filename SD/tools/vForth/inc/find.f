@@ -14,6 +14,7 @@
 
 
 NEEDS FLIP
+NEEDS 2FIND
 
 : FIND (  a -- a 0  |  xt 1  |  xt -1  )
     DUP                     \  a  a

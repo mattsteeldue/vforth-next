@@ -409,3 +409,17 @@ some scaling operation in 5.12 sec.
 8.744 iterations with Direct Threaded version (v1.52)
 9.773 iterations with latest version (v1.6)
 
+\ VERSION 1.7
+\ build 20230321
+With this new subversion I ventured to split the dictionary in two parts:
+name-space and code-space. In this way I'm using higher 8k-ram pages fitted
+at MMU7 to keep the linked list of definitions names, while the actual compiled 
+code is stored in lower memory as usual.
+The total effect is:
+1. There is much more memory available for real programs, say two times more.
+2. There is no more fear in create long-name definitions.
+3. The HEAP facility is still available 
+
+
+
+

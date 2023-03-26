@@ -8,7 +8,7 @@ NEEDS CHAR+
 
 ( Test Suite - Number Patterns  )
 
-TESTING F6.1.0050 - #s
+TESTING F.6.1.0050 - #s
 
 HEX
 

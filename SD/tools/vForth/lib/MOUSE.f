@@ -16,7 +16,7 @@ NEEDS INTERRUPTS
 
 BASE @
 
-MARKER NO-MOUSE     \ completely remove MOUSE
+MARKER NO-MOUSE     \ completely remove MOUSE disabling Forth ISR
 
 
 DECIMAL 0 CONSTANT MOUSE-SPRITE-ID
@@ -31,9 +31,9 @@ HEX  303B CONSTANT SPRITE-SLOT-SELECT-PORT
 MARKER NO-MOUSE-DEF
 
 HEX  14 REG@ CONSTANT E3 \ Global Transparency Colour
-: ` 00 C, ;  \ Black     
-: o 6D C, ;  \ Dark-Grey 
-: w B6 C, ;  \ Light-Gray
+: " 00 C, ;  \ Black     
+: | 6D C, ;  \ Dark-Grey 
+: v B6 C, ;  \ Light-Gray
 : M FF C, ;  \ White     
 : _ E3 C, ;  \ Transparency
 
@@ -43,16 +43,16 @@ HEX  14 REG@ CONSTANT E3 \ Global Transparency Colour
 CREATE MOUSE-FACE 
 \ 0 1 2 3 4 5 6 7  \      
 \ ---------------  \     
-  M _ ` ` _ _ _ _  \  0 
-  M M ` ` ` _ _ _  \  1 
-  M M M ` ` ` _ _  \  2 
-  M M M M ` ` ` _  \  3 
-  M M M M M ` ` `  \  4 
-  M M M w w ` ` `  \  5 
-  M w M M ` ` ` _  \  6 
-  w o w M w ` ` `  \  7 
-  _ _ w M M ` ` `  \  8 
-  _ _ _ w w ` ` `  \  9 
+  M _ " " _ _ _ _  \  0 
+  M M " " " _ _ _  \  1 
+  M M M " " " _ _  \  2 
+  M M M M " " " _  \  3 
+  M M M M M " " "  \  4 
+  M M M v v " " "  \  5 
+  M v M M " " " _  \  6 
+  v | v M v " " "  \  7 
+  _ _ v M M " " "  \  8 
+  _ _ _ v v _ " "  \  9 
 
 \
 \ setup sprite n using 10x8 pixel-data available at address a
@@ -111,19 +111,21 @@ HEX
 VARIABLE  mouse-flag C0 mouse-flag !
 
 \ re-draw mouse
-: MOUSE-UPDATE      ( -- )
+: mouse-redraw      ( -- )
     MOUSE-SPRITE-ID       SPRITE-SLOT-SELECT-PORT P!    \ slot
     mouse-y @ split >R      SPRITE-ATTRIBUTE-PORT P!    \ attribute 0
     mouse-x @               SPRITE-ATTRIBUTE-PORT P!    \ attribute 1
-            @ R>    01 AND  SPRITE-ATTRIBUTE-PORT P!    \ attribute 2
+              R>    01 AND  SPRITE-ATTRIBUTE-PORT P!    \ attribute 2
     MOUSE-SPRITE-ID mouse-flag @ 
                        OR   SPRITE-ATTRIBUTE-PORT P!    \ attribute 3
 ; 
 
+
+\ enable or disable display of arrow
 : mouse! ( f -- )
     if C0 else 00 then
     mouse-flag !
-    mouse-update
+    mouse-redraw
 ;
 
 DECIMAL
@@ -143,8 +145,8 @@ DECIMAL
     then
 ;
 
-\ this definition reads the mouse ports and determines 
-\ three variables mouse-rx, mouse-ry, mouse-rs
+\ this definition reads the mouse ports and determines the values of
+\ the three variables mouse-rx, mouse-ry, mouse-rs
 HEX
 : mouse-read ( -- ) 
     0FFDF P@  FLIP  mouse-rx !  \ Kempston mouse Y (vertical) * 256
@@ -163,22 +165,23 @@ DECIMAL
     mouse-ry @      
     mouse-rs @
     
-    mouse-read      \ this modify all 3 mouse-rx, ry, rs.
+    \ this modify all 3 variables mouse-rx, ry, rs.
+    mouse-read      
     
-    \ compute delta
+    \ compute delta between current and previous values
     mouse-rs @       -              mouse-ds !   
     mouse-ry @ swap  -  mouse-norm  mouse-dy !   
     mouse-rx @       -  mouse-norm  mouse-dx !   
 
     \ update xy-coords 
-    mouse-dx @ mouse-dy @ 
+    mouse-dx @ mouse-dy @ or
     if
         mouse-x @ mouse-dx @ +  0 max  255 min  mouse-x !
         mouse-y @ mouse-dy @ +  0 max  319 min  mouse-y !
-        MOUSE-UPDATE
+        mouse-redraw
     then
     
-    \ update mouse events  -2, -1, 1, 2
+    \ update mouse button-events  -2, -1, 1, 2
     mouse-ds @ ?dup 
     if
         dup 0< if 2* 2* abs  then 
@@ -208,8 +211,8 @@ DECIMAL
 
 \ return the current status of mouse
 \ s : 1 right button click-down event
-\   : 2 right button click-up   event
-\   : 4 left  button click-down event
+\   : 2 left  button click-down event
+\   : 4 right button click-up   event
 \   : 8 left  button click-up   event
 .( MOUSE )
 
@@ -219,6 +222,7 @@ DECIMAL
         0 mouse-s !
     then
 ;
+
 
 WARNING @ 
 0 WARNING !         \ reduce message verbosity
@@ -236,8 +240,9 @@ WARNING @
 ;
 WARNING !
 
+
 ISR-OFF 
-' MOUSE-DELTA ISR-XT !
+    ' MOUSE-DELTA ISR-XT !
 ISR-ON
     
 

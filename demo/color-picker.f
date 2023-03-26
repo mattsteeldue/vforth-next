@@ -206,6 +206,13 @@ DECIMAL
     draw-grid  
     0 mouse-s !
     begin
+        mouse 7 >
+        ?terminal
+        or 
+
+    until
+    0 mouse-s !
+    begin
         interrupts ISR-SYNC
 
         \ MOUSE-XY 22 0 .at 4 .R 4 .R

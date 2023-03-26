@@ -15,38 +15,17 @@
 \
 NEEDS FAR
 NEEDS HP@
+NEEDS SKIP-HP-PAGE
 \
 
 BASE @
-
-\ never completely fill a page, leave alone some byte to avoid page spillover
-\ this constant is 80 byte 
-
-HEX 1F80 CONSTANT PAGE-WATERMARK
-
-\
-\ check if  n  more bytes are available in the current 8K-page in Heap
-\ otherwise skip  HP  to the beginning of next 8K-page
-\
-: SKIP-PAGE ( n -- )
-    HP@    
-    1FFF  AND                   \ take only offset part of HP heap-address
-    + 
-    PAGE-WATERMARK
-    >                           \ check if it is greater than watermark
-    IF
-        HP@  1FFF OR 1+ 2+ HP ! \ HP goes to the next page
-    THEN
-    \ HP@  0=  [ DECIMAL 12 ] LITERAL  ?ERROR  \ out of memory check
-;
-
 
 \
 \ Reserve n bytes of Heap, return heap-pointer address
 \ Heap is a linked-list starting from P:0002=$40:$E002
 : HEAP ( n -- ha )
     HP@ >R              \ n        R: h0    ( save current HP )
-    DUP SKIP-PAGE       \ n                 ( check for room in current page )
+    DUP SKIP-HP-PAGE    \ n                 ( check for room in current page )
     HP@ CELL+ TUCK      \ ha n ha           ( prepare resulting hp )
     OVER + FAR >R       \ ha n     R: h0 a1 
     0 R@ !              \ ha n              ( zero pad )
@@ -79,16 +58,16 @@ HEX
 : HEAP-INIT  2 HEAP-DOS ;
 
 
-HEAP-DONE               \ free 8K-pages without error
-HEAP-INIT               \ require 8K-pages $40 to $47
+\ HEAP-DONE               \ free 8K-pages without error
+\ HEAP-INIT               \ require 8K-pages $40 to $47
 
 WARNING @ 0 WARNING !
 
 \ modify COLD to free them
-: COLD 
-    HEAP-DONE 
-    COLD 
-;
+\ : COLD 
+\     HEAP-DONE 
+\     COLD 
+\ ;
 
 WARNING !
 BASE !

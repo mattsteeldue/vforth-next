@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.52 MDR/MGT version ) CR
-.( build 20230101 ) CR 
+.( build 20230321 ) CR 
 \
 \ ZX Microdrive version + MGT DISCiPLE version
 \ ______________________________________________________________________
@@ -143,6 +143,7 @@ DECIMAL
      0  VALUE     block^        \ patch of WORD with BLOCK
      0  VALUE     block2^       \ patch of WORD with (LINE)
      0  VALUE     quit^         \ patch of ERROR with QUIT
+     0  VALUE     quit2^        \ patch of INTERPRET with QUIT
      0  VALUE     abort^        \ patch of (ABORT)
    \ 0  VALUE     xi/o^         \ patch of XI/O and WARM in COLD
    \ 0  VALUE     xi/o2^        \ patch of BLK-INIT in WARM 
@@ -3970,7 +3971,11 @@ CODE fop
             Then 
         Then 
         ?stack 
-\       ?terminal If (abort) Then
+        ?terminal 
+        If 
+            [ HERE TO quit2^ ]
+            QUIT
+        Then
     Again
     ;
 
@@ -4065,6 +4070,7 @@ immediate
     ;        
     
     ' quit quit^ ! 
+    ' quit quit2^ ! 
     
 \   -2 ALLOT \ we can save two bytes because the infinite loop
 
@@ -4484,7 +4490,8 @@ hex 5CF0 variable mmap          mmap !
 \ 7719h
 \ CHNL 
 hex 5D2F variable chnl          chnl !
-       4 variable mgt           mgt  !
+       4 variable mgt           mgt  !  
+    \  1 variable mgt           mgt  !   \ for DISCiPLE 
 
 \ 7734h INKEY  <<<
 \
@@ -5090,7 +5097,7 @@ CODE cls
     cls
     [compile] (.")
     [ decimal 69 here ," v-Forth 1.52 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20230101" -1 allot ]
+    [ decimal 13 here ," build 20230321" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -5396,7 +5403,8 @@ CODE cls
     If
         >in @ c/l mod c/l swap - >in +!
     Else
-        [ decimal 80 ] Literal  >in !
+\       [ decimal 80 ] Literal  >in !
+        0 tib @ >in @ + !
     Then
     ;
     immediate

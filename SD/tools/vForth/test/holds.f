@@ -2,8 +2,8 @@
 \ test/holds.f  
 \ 
 
-
 NEEDS TESTING
+NEEDS HOLDS
 
 ( Test Suite - Number Patterns )
 

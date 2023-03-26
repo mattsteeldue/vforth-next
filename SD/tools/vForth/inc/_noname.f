@@ -4,18 +4,37 @@
 .( :NONAME )
 \
 \ Tipical usage is
-\   DEFER print
+\   DEFER  print
 \   :NONAME . ;   IS print 
 \
+\ This is just a quick'n'dirty implementation of :NONAME
+
+NEEDS FAR
+NEEDS HP@
+NEEDS SKIP-HP-PAGE
 
 BASE @ \ save base status
 
-: :NONAME ( -- cccc )
+: :NONAME ( -- cccc ) ( -- xt )
     ?EXEC
 
-    HERE                    \ NFA to be kept as LATEST via CURRENT @ !
-    [ HEX ] A081 ,          \ name is an undetectable space
-    LATEST ,                \ compile LFA pointer
+    \ detect if this is 1.7, 
+    [ ' LIT <NAME 0< ] LITERAL
+    IF
+        HP@                     \ use HP "NFA" address 
+        DUP FAR
+        [ HEX ] A081 OVER !     \ compile name 
+        CELL+
+        CURRENT @ @  OVER !     \ compile LFA
+        CELL+
+        HERE SWAP !
+        6 HP +!
+        0 skip-hp-page
+    ELSE
+        HERE                    \ NFA to be kept as LATEST via CURRENT @ !
+        [ HEX ] A081 ,          \ name is an undetectable space
+        LATEST ,                \ compile LFA pointer
+    THEN
     
     HERE                    \ this is xt that will be left on TOS
     
