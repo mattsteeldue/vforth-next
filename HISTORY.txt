@@ -409,6 +409,7 @@ some scaling operation in 5.12 sec.
 8.744 iterations with Direct Threaded version (v1.52)
 9.773 iterations with latest version (v1.6)
 
+
 \ VERSION 1.7
 \ build 20230321
 With this new subversion I ventured to split the dictionary in two parts:
