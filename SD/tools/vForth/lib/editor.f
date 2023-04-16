@@ -78,3 +78,13 @@ FORTH DEFINITIONS
     -1 SCR +! L 
 ;
 
+: NN ( -- )         \ index next 20 screens
+    SCR @ 20 SCR +!
+    SCR @ INDEX
+;
+
+: BB ( -- )         \ index PREVIOUS 20 screens
+    SCR @ 40 - 
+    DUP 1 < IF DROP 1 THEN
+    SCR ! NN
+;

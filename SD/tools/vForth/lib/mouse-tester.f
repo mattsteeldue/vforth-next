@@ -15,7 +15,7 @@ NEEDS .AT
     ." delta " mouse-dx @ . mouse-dy @ . mouse-ds @ . 7 spaces cr
     2dup swap 2+ swap .at
     ." coord " mouse-x @ .  mouse-y @ .  mouse-s @ .  7 spaces cr
-    2dup swap 3 + swap .at
+         swap 3 + swap .at
     ." LASTK " [ hex ] 5C08 C@ .
     mouse 
     dup 1 and if ." ---------- right down " then

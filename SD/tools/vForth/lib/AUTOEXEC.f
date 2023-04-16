@@ -46,11 +46,11 @@ ASK-Y/N \ to continue loading
 CR \ ." Loading the following utilities:" CR
 
 NEEDS    REMOUNT  \  Remount utility
-NEEDS    HEAP     \  Heap Memory Management
-NEEDS    S"       \  String on heap facility
 NEEDS    WHERE    \  Line Editor
 NEEDS    EDIT     \  Full Screen Editor
 NEEDS    DUMP     
+NEEDS    HEAP     \  Heap Memory Management
+NEEDS    S"       \  String on heap facility
 NEEDS    SEE      \  Decompiler / Inspector
 
 \ NEEDS    POINTER  \  Heap memory Pseudo-Pointer

@@ -91,7 +91,7 @@ last_NFA        defl    0
 len_NFA         defl    0
 
 Dict_Ptr        defl    0
-Heap_Ptr        defl    2
+Heap_Ptr        defl    $0002
 Prev_Ptr        defl    0
 mirror_Ptr      defl    0
 
@@ -118,7 +118,7 @@ Dict_Ptr        defl    $
 //              Heap part
 
 
-                org     Heap_Ptr + $E000
+                org     (Heap_Ptr & $1FFF) + $E000
 
 temp_NFA        defl    $                   // save this NFA address to temp_NFA
 Latest_Definition defl  Heap_Ptr

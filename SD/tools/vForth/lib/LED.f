@@ -266,11 +266,11 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
     KEYB DUP EMIT         10 DIGIT DROP + ; DECIMAL
 HEX
 
-: DONEC             8F 26 +ORIGIN C!    \ reset cursor face
-                    5F 28 +ORIGIN C! ;  \ reset cursor face
+: DONEC             8F 28 +ORIGIN C!    \ reset cursor face
+                    5F 2A +ORIGIN C! ;  \ reset cursor face
 
-: INITC   CURC@ BL MAX 26 +ORIGIN C!    \ change cursor face
-                    8F 28 +ORIGIN C! ;
+: INITC   CURC@ BL MAX 28 +ORIGIN C!    \ change cursor face
+                    8F 2A +ORIGIN C! ;
 DECIMAL
 
 : REFRESH                           \ refresh current line

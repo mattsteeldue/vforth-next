@@ -9,9 +9,12 @@ NEEDS SHOW-PROGRESS
 NEEDS SEARCH.SCR
 
 \
+BASE @
 \
+HEX
+
 : LOCATE.SCR ( -- f )
-    BL WORD @ 14849 = \ this is the sequence ": " for a colon-defnition
+    BL WORD @ 3A01 =  \ this is the sequence ": " for a colon-defnition
     IF 
         SEARCH.SCR    \ then the following word should be a definition-name
     ELSE 
@@ -46,6 +49,8 @@ NEEDS SEARCH.SCR
 \
 \ try to locate where cccc colon-definition is defined
 
+DECIMAL
+
 : LOCATE ( -- cccc )
     BL TEXT                 \ accepts a word to PAD
     2001 1 DO               \ Block 2001 is bottom part of Screen#1000
@@ -56,3 +61,5 @@ NEEDS SEARCH.SCR
 ;
 
 \
+BASE !
+

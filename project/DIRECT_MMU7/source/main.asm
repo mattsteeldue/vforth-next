@@ -64,8 +64,8 @@ DEBUGGING       equ     0
 //  ______________________________________________________________________
 
                 if ( -1 == DEBUGGING ) 
-ORIGIN          equ     $62E6                   // for binary comparison
-//ORIGIN          equ     $8CC1                   // for binary comparison
+ORIGIN          equ     $6366 - $80                 // for binary comparison
+//ORIGIN          equ     39606 - $80               // for binary comparison
                 endif
 //  ______________________________________________________________________
 

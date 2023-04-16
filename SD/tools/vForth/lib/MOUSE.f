@@ -43,38 +43,35 @@ HEX  14 REG@ CONSTANT E3 \ Global Transparency Colour
 CREATE MOUSE-FACE 
 \ 0 1 2 3 4 5 6 7  \      
 \ ---------------  \     
-  M _ " " _ _ _ _  \  0 
-  M M " " " _ _ _  \  1 
-  M M M " " " _ _  \  2 
-  M M M M " " " _  \  3 
-  M M M M M " " "  \  4 
-  M M M v v " " "  \  5 
-  M v M M " " " _  \  6 
-  v | v M v " " "  \  7 
-  _ _ v M M " " "  \  8 
-  _ _ _ v v _ " "  \  9 
+  M | " " _ _ _ _ _ _ _ _ _ _ _ _ \  0 
+  M M | " " _ _ _ _ _ _ _ _ _ _ _ \  1 
+  M M M | " " _ _ _ _ _ _ _ _ _ _ \  2 
+  M M M M | " " _ _ _ _ _ _ _ _ _ \  3 
+  M M M M M | " " _ _ _ _ _ _ _ _ \  4 
+  M M M M M M | " " _ _ _ _ _ _ _ \  5 
+  M M M M M M M | " " _ _ _ _ _ _ \  6 
+  M M M M M M M M | " " _ _ _ _ _ \  7 
+  M M M M M M M M M | " " _ _ _ _ \  8 
+  M M M M M M | " " " " " " _ _ _ \  9 
+  M M | v M M | " " " _ _ _ _ _ _ \  A
+  M | " v M M v | " " _ _ _ _ _ _ \  B
+  | " _ _ v M M | " " _ _ _ _ _ _ \  C
+  _ _ _ _ v M M v | " " _ _ _ _ _ \  D
+  _ _ _ _ _ M M v | " " _ _ _ _ _ \  E
+  _ _ _ _ _ v v | " " " _ _ _ _ _ \  F
 
 \
 \ setup sprite n using 10x8 pixel-data available at address a
 \
 : MOUSE-SPRITE-SET ( a n -- )
     SPRITE-SLOT-SELECT-PORT   P!    \ a 
-    [ DECIMAL ] 80 OVER + SWAP      \ a+80 a 
+    [ DECIMAL ] 256 OVER + SWAP      \ a+80 a 
     DO
-        8 I + I 
+        16 I + I 
         DO
             I C@  SPRITE-PATTERN-PORT P!
         LOOP
-        8 0 DO
-            E3  SPRITE-PATTERN-PORT P!
-        LOOP
-    8 +LOOP
-    6 0 DO
-        [ DECIMAL ]
-        16 0 DO
-            E3  SPRITE-PATTERN-PORT P!
-        LOOP
-    LOOP
+    16 +LOOP
 ;    
 
 \ directly change Sprite #0

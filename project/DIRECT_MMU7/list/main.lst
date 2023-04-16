@@ -1,4 +1,4 @@
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/main.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm
    1  0000              //  ______________________________________________________________________
    2  0000              //
    3  0000              //  main.asm
@@ -65,8 +65,8 @@
   64  0000              //  ______________________________________________________________________
   65  0000
   66  0000                              if ( -1 == DEBUGGING )
-  67  0000 ~            ORIGIN          equ     $62E6                   // for binary comparison
-  68  0000 ~            //ORIGIN          equ     $8CC1                   // for binary comparison
+  67  0000 ~            ORIGIN          equ     $6366 - $80                 // for binary comparison
+  68  0000 ~            //ORIGIN          equ     39606 - $80               // for binary comparison
   69  0000                              endif
   70  0000              //  ______________________________________________________________________
   71  0000
@@ -109,7 +109,7 @@
  108  6366              //    - Words that collide with Assembler are normally suffixed with "_OP"
  109  6366
  110  6366                              include "system.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/system.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/system.asm
    1+ 6366              //  ______________________________________________________________________
    2+ 6366              //
    3+ 6366              //  system.asm
@@ -203,7 +203,7 @@
   91+ 6366              len_NFA         defl    0
   92+ 6366
   93+ 6366              Dict_Ptr        defl    0
-  94+ 6366              Heap_Ptr        defl    2
+  94+ 6366              Heap_Ptr        defl    $0002
   95+ 6366              Prev_Ptr        defl    0
   96+ 6366              mirror_Ptr      defl    0
   97+ 6366
@@ -230,7 +230,7 @@
  118+ 6366 ~            //              Heap part
  119+ 6366 ~
  120+ 6366 ~
- 121+ 6366 ~                            org     Heap_Ptr + $E000
+ 121+ 6366 ~                            org     (Heap_Ptr & $1FFF) + $E000
  122+ 6366 ~
  123+ 6366 ~            temp_NFA        defl    $                   // save this NFA address to temp_NFA
  124+ 6366 ~            Latest_Definition defl  Heap_Ptr
@@ -319,9 +319,9 @@
  207+ 6366              FIRST_system:   equ     $D1E4               // Address of first BUFFER
  208+ 6366              LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
  209+ 6366
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/system.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/system.asm
  111  6366                              include "L0.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L0.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L0.asm
    1+ 6366              //  ______________________________________________________________________
    2+ 6366              //
    3+ 6366              //  L0.asm
@@ -439,7 +439,7 @@
  110+ 63A1             >//              Heap part
  110+ 63A1             >
  110+ 63A1             >
- 110+ 63A1             >                org     Heap_Ptr + $E000
+ 110+ 63A1             >                org     (Heap_Ptr & $1FFF) + $E000
  110+ E002             >
  110+ E002             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  110+ E002             >Latest_Definition defl  Heap_Ptr
@@ -503,7 +503,7 @@
  126+ 63AC             >//              Heap part
  126+ 63AC             >
  126+ 63AC             >
- 126+ 63AC             >                org     Heap_Ptr + $E000
+ 126+ 63AC             >                org     (Heap_Ptr & $1FFF) + $E000
  126+ E00A             >
  126+ E00A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  126+ E00A             >Latest_Definition defl  Heap_Ptr
@@ -572,7 +572,7 @@
  146+ 63AF             >//              Heap part
  146+ 63AF             >
  146+ 63AF             >
- 146+ 63AF             >                org     Heap_Ptr + $E000
+ 146+ 63AF             >                org     (Heap_Ptr & $1FFF) + $E000
  146+ E016             >
  146+ E016             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  146+ E016             >Latest_Definition defl  Heap_Ptr
@@ -677,7 +677,7 @@
  201+ 63DE             >//              Heap part
  201+ 63DE             >
  201+ 63DE             >
- 201+ 63DE             >                org     Heap_Ptr + $E000
+ 201+ 63DE             >                org     (Heap_Ptr & $1FFF) + $E000
  201+ E022             >
  201+ E022             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  201+ E022             >Latest_Definition defl  Heap_Ptr
@@ -736,7 +736,7 @@
  211+ 63E6             >//              Heap part
  211+ 63E6             >
  211+ 63E6             >
- 211+ 63E6             >                org     Heap_Ptr + $E000
+ 211+ 63E6             >                org     (Heap_Ptr & $1FFF) + $E000
  211+ E02D             >
  211+ E02D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  211+ E02D             >Latest_Definition defl  Heap_Ptr
@@ -806,7 +806,7 @@
  231+ 63F3             >//              Heap part
  231+ 63F3             >
  231+ 63F3             >
- 231+ 63F3             >                org     Heap_Ptr + $E000
+ 231+ 63F3             >                org     (Heap_Ptr & $1FFF) + $E000
  231+ E038             >
  231+ E038             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  231+ E038             >Latest_Definition defl  Heap_Ptr
@@ -871,7 +871,7 @@
  246+ 63FE             >//              Heap part
  246+ 63FE             >
  246+ 63FE             >
- 246+ 63FE             >                org     Heap_Ptr + $E000
+ 246+ 63FE             >                org     (Heap_Ptr & $1FFF) + $E000
  246+ E044             >
  246+ E044             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  246+ E044             >Latest_Definition defl  Heap_Ptr
@@ -937,7 +937,7 @@
  262+ 640A             >//              Heap part
  262+ 640A             >
  262+ 640A             >
- 262+ 640A             >                org     Heap_Ptr + $E000
+ 262+ 640A             >                org     (Heap_Ptr & $1FFF) + $E000
  262+ E050             >
  262+ E050             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  262+ E050             >Latest_Definition defl  Heap_Ptr
@@ -1037,7 +1037,7 @@
  312+ 6432             >//              Heap part
  312+ 6432             >
  312+ 6432             >
- 312+ 6432             >                org     Heap_Ptr + $E000
+ 312+ 6432             >                org     (Heap_Ptr & $1FFF) + $E000
  312+ E05A             >
  312+ E05A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  312+ E05A             >Latest_Definition defl  Heap_Ptr
@@ -1094,7 +1094,7 @@
  322+ 6438             >//              Heap part
  322+ 6438             >
  322+ 6438             >
- 322+ 6438             >                org     Heap_Ptr + $E000
+ 322+ 6438             >                org     (Heap_Ptr & $1FFF) + $E000
  322+ E063             >
  322+ E063             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  322+ E063             >Latest_Definition defl  Heap_Ptr
@@ -1162,7 +1162,7 @@
  342+ 6443             >//              Heap part
  342+ 6443             >
  342+ 6443             >
- 342+ 6443             >                org     Heap_Ptr + $E000
+ 342+ 6443             >                org     (Heap_Ptr & $1FFF) + $E000
  342+ E069             >
  342+ E069             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  342+ E069             >Latest_Definition defl  Heap_Ptr
@@ -1224,7 +1224,7 @@
  357+ 644B             >//              Heap part
  357+ 644B             >
  357+ 644B             >
- 357+ 644B             >                org     Heap_Ptr + $E000
+ 357+ 644B             >                org     (Heap_Ptr & $1FFF) + $E000
  357+ E070             >
  357+ E070             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  357+ E070             >Latest_Definition defl  Heap_Ptr
@@ -1330,7 +1330,7 @@
  412+ 6482             >//              Heap part
  412+ 6482             >
  412+ 6482             >
- 412+ 6482             >                org     Heap_Ptr + $E000
+ 412+ 6482             >                org     (Heap_Ptr & $1FFF) + $E000
  412+ E07A             >
  412+ E07A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  412+ E07A             >Latest_Definition defl  Heap_Ptr
@@ -1390,7 +1390,7 @@
  422+ 648B             >//              Heap part
  422+ 648B             >
  422+ 648B             >
- 422+ 648B             >                org     Heap_Ptr + $E000
+ 422+ 648B             >                org     (Heap_Ptr & $1FFF) + $E000
  422+ E085             >
  422+ E085             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  422+ E085             >Latest_Definition defl  Heap_Ptr
@@ -1449,7 +1449,7 @@
  431+ 6494             >//              Heap part
  431+ 6494             >
  431+ 6494             >
- 431+ 6494             >                org     Heap_Ptr + $E000
+ 431+ 6494             >                org     (Heap_Ptr & $1FFF) + $E000
  431+ E091             >
  431+ E091             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  431+ E091             >Latest_Definition defl  Heap_Ptr
@@ -1544,7 +1544,7 @@
  475+ 64B9             >//              Heap part
  475+ 64B9             >
  475+ 64B9             >
- 475+ 64B9             >                org     Heap_Ptr + $E000
+ 475+ 64B9             >                org     (Heap_Ptr & $1FFF) + $E000
  475+ E09B             >
  475+ E09B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  475+ E09B             >Latest_Definition defl  Heap_Ptr
@@ -1720,7 +1720,7 @@
  600+ 6527             >//              Heap part
  600+ 6527             >
  600+ 6527             >
- 600+ 6527             >                org     Heap_Ptr + $E000
+ 600+ 6527             >                org     (Heap_Ptr & $1FFF) + $E000
  600+ E0A6             >
  600+ E0A6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  600+ E0A6             >Latest_Definition defl  Heap_Ptr
@@ -1833,7 +1833,7 @@
  661+ 6559             >//              Heap part
  661+ 6559             >
  661+ 6559             >
- 661+ 6559             >                org     Heap_Ptr + $E000
+ 661+ 6559             >                org     (Heap_Ptr & $1FFF) + $E000
  661+ E0B2             >
  661+ E0B2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  661+ E0B2             >Latest_Definition defl  Heap_Ptr
@@ -1915,7 +1915,7 @@
  692+ 6573             >//              Heap part
  692+ 6573             >
  692+ 6573             >
- 692+ 6573             >                org     Heap_Ptr + $E000
+ 692+ 6573             >                org     (Heap_Ptr & $1FFF) + $E000
  692+ E0BC             >
  692+ E0BC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  692+ E0BC             >Latest_Definition defl  Heap_Ptr
@@ -2012,7 +2012,7 @@
  736+ 65A0             >//              Heap part
  736+ 65A0             >
  736+ 65A0             >
- 736+ 65A0             >                org     Heap_Ptr + $E000
+ 736+ 65A0             >                org     (Heap_Ptr & $1FFF) + $E000
  736+ E0CA             >
  736+ E0CA             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  736+ E0CA             >Latest_Definition defl  Heap_Ptr
@@ -2081,7 +2081,7 @@
  755+ 65B4             >//              Heap part
  755+ 65B4             >
  755+ 65B4             >
- 755+ 65B4             >                org     Heap_Ptr + $E000
+ 755+ 65B4             >                org     (Heap_Ptr & $1FFF) + $E000
  755+ E0D4             >
  755+ E0D4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  755+ E0D4             >Latest_Definition defl  Heap_Ptr
@@ -2160,7 +2160,7 @@
  787+ 65D2             >//              Heap part
  787+ 65D2             >
  787+ 65D2             >
- 787+ 65D2             >                org     Heap_Ptr + $E000
+ 787+ 65D2             >                org     (Heap_Ptr & $1FFF) + $E000
  787+ E0DB             >
  787+ E0DB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  787+ E0DB             >Latest_Definition defl  Heap_Ptr
@@ -2303,7 +2303,7 @@
  877+ 6636             >//              Heap part
  877+ 6636             >
  877+ 6636             >
- 877+ 6636             >                org     Heap_Ptr + $E000
+ 877+ 6636             >                org     (Heap_Ptr & $1FFF) + $E000
  877+ E0E7             >
  877+ E0E7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  877+ E0E7             >Latest_Definition defl  Heap_Ptr
@@ -2403,7 +2403,7 @@
  929+ 667E             >//              Heap part
  929+ 667E             >
  929+ 667E             >
- 929+ 667E             >                org     Heap_Ptr + $E000
+ 929+ 667E             >                org     (Heap_Ptr & $1FFF) + $E000
  929+ E0F0             >
  929+ E0F0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  929+ E0F0             >Latest_Definition defl  Heap_Ptr
@@ -2528,7 +2528,7 @@
 1005+ 66B1             >//              Heap part
 1005+ 66B1             >
 1005+ 66B1             >
-1005+ 66B1             >                org     Heap_Ptr + $E000
+1005+ 66B1             >                org     (Heap_Ptr & $1FFF) + $E000
 1005+ E0F8             >
 1005+ E0F8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1005+ E0F8             >Latest_Definition defl  Heap_Ptr
@@ -2620,7 +2620,7 @@
 1045+ 66C5             >//              Heap part
 1045+ 66C5             >
 1045+ 66C5             >
-1045+ 66C5             >                org     Heap_Ptr + $E000
+1045+ 66C5             >                org     (Heap_Ptr & $1FFF) + $E000
 1045+ E106             >
 1045+ E106             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1045+ E106             >Latest_Definition defl  Heap_Ptr
@@ -2683,7 +2683,7 @@
 1063+ 66E1              // this include is "here" for backward compatibility
 1064+ 66E1
 1065+ 66E1                              include "next-opt0.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/next-opt0.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/next-opt0.asm
    1++66E1              //  ______________________________________________________________________
    2++66E1              //
    3++66E1              //  next-opt.asm
@@ -2704,7 +2704,7 @@
   13++66E1             >//              Heap part
   13++66E1             >
   13++66E1             >
-  13++66E1             >                org     Heap_Ptr + $E000
+  13++66E1             >                org     (Heap_Ptr & $1FFF) + $E000
   13++E111             >
   13++E111             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   13++E111             >Latest_Definition defl  Heap_Ptr
@@ -2783,7 +2783,7 @@
   41++66FD             >//              Heap part
   41++66FD             >
   41++66FD             >
-  41++66FD             >                org     Heap_Ptr + $E000
+  41++66FD             >                org     (Heap_Ptr & $1FFF) + $E000
   41++E11C             >
   41++E11C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   41++E11C             >Latest_Definition defl  Heap_Ptr
@@ -2854,7 +2854,7 @@
   63++6709             >//              Heap part
   63++6709             >
   63++6709             >
-  63++6709             >                org     Heap_Ptr + $E000
+  63++6709             >                org     (Heap_Ptr & $1FFF) + $E000
   63++E128             >
   63++E128             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   63++E128             >Latest_Definition defl  Heap_Ptr
@@ -2923,7 +2923,7 @@
   83++6715             >//              Heap part
   83++6715             >
   83++6715             >
-  83++6715             >                org     Heap_Ptr + $E000
+  83++6715             >                org     (Heap_Ptr & $1FFF) + $E000
   83++E133             >
   83++E133             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   83++E133             >Latest_Definition defl  Heap_Ptr
@@ -3001,7 +3001,7 @@
  109++672D             >//              Heap part
  109++672D             >
  109++672D             >
- 109++672D             >                org     Heap_Ptr + $E000
+ 109++672D             >                org     (Heap_Ptr & $1FFF) + $E000
  109++E141             >
  109++E141             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  109++E141             >Latest_Definition defl  Heap_Ptr
@@ -3080,7 +3080,7 @@
  138++6748             >//              Heap part
  138++6748             >
  138++6748             >
- 138++6748             >                org     Heap_Ptr + $E000
+ 138++6748             >                org     (Heap_Ptr & $1FFF) + $E000
  138++E14C             >
  138++E14C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  138++E14C             >Latest_Definition defl  Heap_Ptr
@@ -3170,7 +3170,7 @@
  179++6758             >//              Heap part
  179++6758             >
  179++6758             >
- 179++6758             >                org     Heap_Ptr + $E000
+ 179++6758             >                org     (Heap_Ptr & $1FFF) + $E000
  179++E158             >
  179++E158             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  179++E158             >Latest_Definition defl  Heap_Ptr
@@ -3247,7 +3247,7 @@
  207++676D             >//              Heap part
  207++676D             >
  207++676D             >
- 207++676D             >                org     Heap_Ptr + $E000
+ 207++676D             >                org     (Heap_Ptr & $1FFF) + $E000
  207++E163             >
  207++E163             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  207++E163             >Latest_Definition defl  Heap_Ptr
@@ -3313,7 +3313,7 @@
  222++677B             >//              Heap part
  222++677B             >
  222++677B             >
- 222++677B             >                org     Heap_Ptr + $E000
+ 222++677B             >                org     (Heap_Ptr & $1FFF) + $E000
  222++E171             >
  222++E171             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  222++E171             >Latest_Definition defl  Heap_Ptr
@@ -3370,7 +3370,7 @@
  233++6788 A4                            db      $A4
  234++6789 18 DD                         jr      F_Open_Exit
  235++678B
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/next-opt0.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/next-opt0.asm
 1066+ 678B
 1067+ 678B
 1068+ 678B              //  ______________________________________________________________________
@@ -3387,7 +3387,7 @@
 1074+ 678B             >//              Heap part
 1074+ 678B             >
 1074+ 678B             >
-1074+ 678B             >                org     Heap_Ptr + $E000
+1074+ 678B             >                org     (Heap_Ptr & $1FFF) + $E000
 1074+ E17F             >
 1074+ E17F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1074+ E17F             >Latest_Definition defl  Heap_Ptr
@@ -3458,7 +3458,7 @@
 1095+ 679A             >//              Heap part
 1095+ 679A             >
 1095+ 679A             >
-1095+ 679A             >                org     Heap_Ptr + $E000
+1095+ 679A             >                org     (Heap_Ptr & $1FFF) + $E000
 1095+ E189             >
 1095+ E189             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1095+ E189             >Latest_Definition defl  Heap_Ptr
@@ -3538,7 +3538,7 @@
 1125+ 67AF             >//              Heap part
 1125+ 67AF             >
 1125+ 67AF             >
-1125+ 67AF             >                org     Heap_Ptr + $E000
+1125+ 67AF             >                org     (Heap_Ptr & $1FFF) + $E000
 1125+ E194             >
 1125+ E194             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1125+ E194             >Latest_Definition defl  Heap_Ptr
@@ -3628,7 +3628,7 @@
 1167+ 67D7             >//              Heap part
 1167+ 67D7             >
 1167+ 67D7             >
-1167+ 67D7             >                org     Heap_Ptr + $E000
+1167+ 67D7             >                org     (Heap_Ptr & $1FFF) + $E000
 1167+ E19C             >
 1167+ E19C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1167+ E19C             >Latest_Definition defl  Heap_Ptr
@@ -3726,7 +3726,7 @@
 1215+ 680A             >//              Heap part
 1215+ 680A             >
 1215+ 680A             >
-1215+ 680A             >                org     Heap_Ptr + $E000
+1215+ 680A             >                org     (Heap_Ptr & $1FFF) + $E000
 1215+ E1A7             >
 1215+ E1A7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1215+ E1A7             >Latest_Definition defl  Heap_Ptr
@@ -3792,7 +3792,7 @@
 1233+ 6819             >//              Heap part
 1233+ 6819             >
 1233+ 6819             >
-1233+ 6819             >                org     Heap_Ptr + $E000
+1233+ 6819             >                org     (Heap_Ptr & $1FFF) + $E000
 1233+ E1AF             >
 1233+ E1AF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1233+ E1AF             >Latest_Definition defl  Heap_Ptr
@@ -3858,7 +3858,7 @@
 1251+ 6828             >//              Heap part
 1251+ 6828             >
 1251+ 6828             >
-1251+ 6828             >                org     Heap_Ptr + $E000
+1251+ 6828             >                org     (Heap_Ptr & $1FFF) + $E000
 1251+ E1B6             >
 1251+ E1B6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1251+ E1B6             >Latest_Definition defl  Heap_Ptr
@@ -3924,7 +3924,7 @@
 1269+ 6837             >//              Heap part
 1269+ 6837             >
 1269+ 6837             >
-1269+ 6837             >                org     Heap_Ptr + $E000
+1269+ 6837             >                org     (Heap_Ptr & $1FFF) + $E000
 1269+ E1BE             >
 1269+ E1BE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1269+ E1BE             >Latest_Definition defl  Heap_Ptr
@@ -3985,7 +3985,7 @@
 1281+ 6840             >//              Heap part
 1281+ 6840             >
 1281+ 6840             >
-1281+ 6840             >                org     Heap_Ptr + $E000
+1281+ 6840             >                org     (Heap_Ptr & $1FFF) + $E000
 1281+ E1C6             >
 1281+ E1C6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1281+ E1C6             >Latest_Definition defl  Heap_Ptr
@@ -4043,7 +4043,7 @@
 1291+ 6846             >//              Heap part
 1291+ 6846             >
 1291+ 6846             >
-1291+ 6846             >                org     Heap_Ptr + $E000
+1291+ 6846             >                org     (Heap_Ptr & $1FFF) + $E000
 1291+ E1CE             >
 1291+ E1CE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1291+ E1CE             >Latest_Definition defl  Heap_Ptr
@@ -4104,7 +4104,7 @@
 1304+ 684B             >//              Heap part
 1304+ 684B             >
 1304+ 684B             >
-1304+ 684B             >                org     Heap_Ptr + $E000
+1304+ 684B             >                org     (Heap_Ptr & $1FFF) + $E000
 1304+ E1D6             >
 1304+ E1D6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1304+ E1D6             >Latest_Definition defl  Heap_Ptr
@@ -4163,7 +4163,7 @@
 1315+ 6850             >//              Heap part
 1315+ 6850             >
 1315+ 6850             >
-1315+ 6850             >                org     Heap_Ptr + $E000
+1315+ 6850             >                org     (Heap_Ptr & $1FFF) + $E000
 1315+ E1DE             >
 1315+ E1DE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1315+ E1DE             >Latest_Definition defl  Heap_Ptr
@@ -4245,7 +4245,7 @@
 1349+ 685A             >//              Heap part
 1349+ 685A             >
 1349+ 685A             >
-1349+ 685A             >                org     Heap_Ptr + $E000
+1349+ 685A             >                org     (Heap_Ptr & $1FFF) + $E000
 1349+ E1E7             >
 1349+ E1E7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1349+ E1E7             >Latest_Definition defl  Heap_Ptr
@@ -4309,7 +4309,7 @@
 1365+ 6865             >//              Heap part
 1365+ 6865             >
 1365+ 6865             >
-1365+ 6865             >                org     Heap_Ptr + $E000
+1365+ 6865             >                org     (Heap_Ptr & $1FFF) + $E000
 1365+ E1EE             >
 1365+ E1EE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1365+ E1EE             >Latest_Definition defl  Heap_Ptr
@@ -4375,7 +4375,7 @@
 1383+ 6870             >//              Heap part
 1383+ 6870             >
 1383+ 6870             >
-1383+ 6870             >                org     Heap_Ptr + $E000
+1383+ 6870             >                org     (Heap_Ptr & $1FFF) + $E000
 1383+ E1F5             >
 1383+ E1F5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1383+ E1F5             >Latest_Definition defl  Heap_Ptr
@@ -4437,7 +4437,7 @@
 1398+ 6875             >//              Heap part
 1398+ 6875             >
 1398+ 6875             >
-1398+ 6875             >                org     Heap_Ptr + $E000
+1398+ 6875             >                org     (Heap_Ptr & $1FFF) + $E000
 1398+ E1FC             >
 1398+ E1FC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1398+ E1FC             >Latest_Definition defl  Heap_Ptr
@@ -4501,7 +4501,7 @@
 1413+ 6883             >//              Heap part
 1413+ 6883             >
 1413+ 6883             >
-1413+ 6883             >                org     Heap_Ptr + $E000
+1413+ 6883             >                org     (Heap_Ptr & $1FFF) + $E000
 1413+ E203             >
 1413+ E203             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1413+ E203             >Latest_Definition defl  Heap_Ptr
@@ -4555,7 +4555,7 @@
 1420+ 6888             >//              Heap part
 1420+ 6888             >
 1420+ 6888             >
-1420+ 6888             >                org     Heap_Ptr + $E000
+1420+ 6888             >                org     (Heap_Ptr & $1FFF) + $E000
 1420+ E20B             >
 1420+ E20B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1420+ E20B             >Latest_Definition defl  Heap_Ptr
@@ -4614,7 +4614,7 @@
 1430+ 6891             >//              Heap part
 1430+ 6891             >
 1430+ 6891             >
-1430+ 6891             >                org     Heap_Ptr + $E000
+1430+ 6891             >                org     (Heap_Ptr & $1FFF) + $E000
 1430+ E212             >
 1430+ E212             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1430+ E212             >Latest_Definition defl  Heap_Ptr
@@ -4680,7 +4680,7 @@
 1447+ 68A3             >//              Heap part
 1447+ 68A3             >
 1447+ 68A3             >
-1447+ 68A3             >                org     Heap_Ptr + $E000
+1447+ 68A3             >                org     (Heap_Ptr & $1FFF) + $E000
 1447+ E219             >
 1447+ E219             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1447+ E219             >Latest_Definition defl  Heap_Ptr
@@ -4746,7 +4746,7 @@
 1465+ 68AD             >//              Heap part
 1465+ 68AD             >
 1465+ 68AD             >
-1465+ 68AD             >                org     Heap_Ptr + $E000
+1465+ 68AD             >                org     (Heap_Ptr & $1FFF) + $E000
 1465+ E21F             >
 1465+ E21F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1465+ E21F             >Latest_Definition defl  Heap_Ptr
@@ -4812,7 +4812,7 @@
 1483+ 68BC             >//              Heap part
 1483+ 68BC             >
 1483+ 68BC             >
-1483+ 68BC             >                org     Heap_Ptr + $E000
+1483+ 68BC             >                org     (Heap_Ptr & $1FFF) + $E000
 1483+ E226             >
 1483+ E226             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1483+ E226             >Latest_Definition defl  Heap_Ptr
@@ -4871,7 +4871,7 @@
 1493+ 68C3             >//              Heap part
 1493+ 68C3             >
 1493+ 68C3             >
-1493+ 68C3             >                org     Heap_Ptr + $E000
+1493+ 68C3             >                org     (Heap_Ptr & $1FFF) + $E000
 1493+ E22D             >
 1493+ E22D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1493+ E22D             >Latest_Definition defl  Heap_Ptr
@@ -4930,7 +4930,7 @@
 1503+ 68CA             >//              Heap part
 1503+ 68CA             >
 1503+ 68CA             >
-1503+ 68CA             >                org     Heap_Ptr + $E000
+1503+ 68CA             >                org     (Heap_Ptr & $1FFF) + $E000
 1503+ E234             >
 1503+ E234             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1503+ E234             >Latest_Definition defl  Heap_Ptr
@@ -4991,7 +4991,7 @@
 1515+ 68D2             >//              Heap part
 1515+ 68D2             >
 1515+ 68D2             >
-1515+ 68D2             >                org     Heap_Ptr + $E000
+1515+ 68D2             >                org     (Heap_Ptr & $1FFF) + $E000
 1515+ E23B             >
 1515+ E23B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1515+ E23B             >Latest_Definition defl  Heap_Ptr
@@ -5054,7 +5054,7 @@
 1529+ 68D7             >//              Heap part
 1529+ 68D7             >
 1529+ 68D7             >
-1529+ 68D7             >                org     Heap_Ptr + $E000
+1529+ 68D7             >                org     (Heap_Ptr & $1FFF) + $E000
 1529+ E245             >
 1529+ E245             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1529+ E245             >Latest_Definition defl  Heap_Ptr
@@ -5117,7 +5117,7 @@
 1541+ 68DF             >//              Heap part
 1541+ 68DF             >
 1541+ 68DF             >
-1541+ 68DF             >                org     Heap_Ptr + $E000
+1541+ 68DF             >                org     (Heap_Ptr & $1FFF) + $E000
 1541+ E24F             >
 1541+ E24F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1541+ E24F             >Latest_Definition defl  Heap_Ptr
@@ -5171,7 +5171,7 @@
 1548+ 68E4             >//              Heap part
 1548+ 68E4             >
 1548+ 68E4             >
-1548+ 68E4             >                org     Heap_Ptr + $E000
+1548+ 68E4             >                org     (Heap_Ptr & $1FFF) + $E000
 1548+ E256             >
 1548+ E256             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1548+ E256             >Latest_Definition defl  Heap_Ptr
@@ -5235,7 +5235,7 @@
 1562+ 68F2             >//              Heap part
 1562+ 68F2             >
 1562+ 68F2             >
-1562+ 68F2             >                org     Heap_Ptr + $E000
+1562+ 68F2             >                org     (Heap_Ptr & $1FFF) + $E000
 1562+ E261             >
 1562+ E261             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1562+ E261             >Latest_Definition defl  Heap_Ptr
@@ -5306,7 +5306,7 @@
 1583+ 6905             >//              Heap part
 1583+ 6905             >
 1583+ 6905             >
-1583+ 6905             >                org     Heap_Ptr + $E000
+1583+ 6905             >                org     (Heap_Ptr & $1FFF) + $E000
 1583+ E26D             >
 1583+ E26D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1583+ E26D             >Latest_Definition defl  Heap_Ptr
@@ -5368,7 +5368,7 @@
 1597+ 690E             >//              Heap part
 1597+ 690E             >
 1597+ 690E             >
-1597+ 690E             >                org     Heap_Ptr + $E000
+1597+ 690E             >                org     (Heap_Ptr & $1FFF) + $E000
 1597+ E276             >
 1597+ E276             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1597+ E276             >Latest_Definition defl  Heap_Ptr
@@ -5424,7 +5424,7 @@
 1605+ 6913             >//              Heap part
 1605+ 6913             >
 1605+ 6913             >
-1605+ 6913             >                org     Heap_Ptr + $E000
+1605+ 6913             >                org     (Heap_Ptr & $1FFF) + $E000
 1605+ E27F             >
 1605+ E27F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1605+ E27F             >Latest_Definition defl  Heap_Ptr
@@ -5482,7 +5482,7 @@
 1615+ 6919             >//              Heap part
 1615+ 6919             >
 1615+ 6919             >
-1615+ 6919             >                org     Heap_Ptr + $E000
+1615+ 6919             >                org     (Heap_Ptr & $1FFF) + $E000
 1615+ E287             >
 1615+ E287             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1615+ E287             >Latest_Definition defl  Heap_Ptr
@@ -5542,7 +5542,7 @@
 1627+ 6922             >//              Heap part
 1627+ 6922             >
 1627+ 6922             >
-1627+ 6922             >                org     Heap_Ptr + $E000
+1627+ 6922             >                org     (Heap_Ptr & $1FFF) + $E000
 1627+ E290             >
 1627+ E290             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1627+ E290             >Latest_Definition defl  Heap_Ptr
@@ -5600,7 +5600,7 @@
 1637+ 6929             >//              Heap part
 1637+ 6929             >
 1637+ 6929             >
-1637+ 6929             >                org     Heap_Ptr + $E000
+1637+ 6929             >                org     (Heap_Ptr & $1FFF) + $E000
 1637+ E299             >
 1637+ E299             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1637+ E299             >Latest_Definition defl  Heap_Ptr
@@ -5659,7 +5659,7 @@
 1648+ 6930             >//              Heap part
 1648+ 6930             >
 1648+ 6930             >
-1648+ 6930             >                org     Heap_Ptr + $E000
+1648+ 6930             >                org     (Heap_Ptr & $1FFF) + $E000
 1648+ E2A1             >
 1648+ E2A1             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1648+ E2A1             >Latest_Definition defl  Heap_Ptr
@@ -5722,7 +5722,7 @@
 1663+ 693B             >//              Heap part
 1663+ 693B             >
 1663+ 693B             >
-1663+ 693B             >                org     Heap_Ptr + $E000
+1663+ 693B             >                org     (Heap_Ptr & $1FFF) + $E000
 1663+ E2A9             >
 1663+ E2A9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1663+ E2A9             >Latest_Definition defl  Heap_Ptr
@@ -5784,7 +5784,7 @@
 1677+ 6946             >//              Heap part
 1677+ 6946             >
 1677+ 6946             >
-1677+ 6946             >                org     Heap_Ptr + $E000
+1677+ 6946             >                org     (Heap_Ptr & $1FFF) + $E000
 1677+ E2B2             >
 1677+ E2B2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1677+ E2B2             >Latest_Definition defl  Heap_Ptr
@@ -5903,7 +5903,7 @@
 1748+ 6952             >//              Heap part
 1748+ 6952             >
 1748+ 6952             >
-1748+ 6952             >                org     Heap_Ptr + $E000
+1748+ 6952             >                org     (Heap_Ptr & $1FFF) + $E000
 1748+ E2BB             >
 1748+ E2BB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1748+ E2BB             >Latest_Definition defl  Heap_Ptr
@@ -5978,7 +5978,7 @@
 1773+ 6958             >//              Heap part
 1773+ 6958             >
 1773+ 6958             >
-1773+ 6958             >                org     Heap_Ptr + $E000
+1773+ 6958             >                org     (Heap_Ptr & $1FFF) + $E000
 1773+ E2C5             >
 1773+ E2C5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1773+ E2C5             >Latest_Definition defl  Heap_Ptr
@@ -6045,7 +6045,7 @@
 1790+ 6965             >//              Heap part
 1790+ 6965             >
 1790+ 6965             >
-1790+ 6965             >                org     Heap_Ptr + $E000
+1790+ 6965             >                org     (Heap_Ptr & $1FFF) + $E000
 1790+ E2CF             >
 1790+ E2CF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1790+ E2CF             >Latest_Definition defl  Heap_Ptr
@@ -6155,7 +6155,7 @@
 1852+ 696F             >//              Heap part
 1852+ 696F             >
 1852+ 696F             >
-1852+ 696F             >                org     Heap_Ptr + $E000
+1852+ 696F             >                org     (Heap_Ptr & $1FFF) + $E000
 1852+ E2D8             >
 1852+ E2D8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1852+ E2D8             >Latest_Definition defl  Heap_Ptr
@@ -6221,7 +6221,7 @@
 1870+ 697E             >//              Heap part
 1870+ 697E             >
 1870+ 697E             >
-1870+ 697E             >                org     Heap_Ptr + $E000
+1870+ 697E             >                org     (Heap_Ptr & $1FFF) + $E000
 1870+ E2DF             >
 1870+ E2DF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1870+ E2DF             >Latest_Definition defl  Heap_Ptr
@@ -6284,7 +6284,7 @@
 1883+ 6987             >//              Heap part
 1883+ 6987             >
 1883+ 6987             >
-1883+ 6987             >                org     Heap_Ptr + $E000
+1883+ 6987             >                org     (Heap_Ptr & $1FFF) + $E000
 1883+ E2EA             >
 1883+ E2EA             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1883+ E2EA             >Latest_Definition defl  Heap_Ptr
@@ -6345,7 +6345,7 @@
 1896+ 6991             >//              Heap part
 1896+ 6991             >
 1896+ 6991             >
-1896+ 6991             >                org     Heap_Ptr + $E000
+1896+ 6991             >                org     (Heap_Ptr & $1FFF) + $E000
 1896+ E2F0             >
 1896+ E2F0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1896+ E2F0             >Latest_Definition defl  Heap_Ptr
@@ -6407,7 +6407,7 @@
 1910+ 699C             >//              Heap part
 1910+ 699C             >
 1910+ 699C             >
-1910+ 699C             >                org     Heap_Ptr + $E000
+1910+ 699C             >                org     (Heap_Ptr & $1FFF) + $E000
 1910+ E2F6             >
 1910+ E2F6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1910+ E2F6             >Latest_Definition defl  Heap_Ptr
@@ -6467,7 +6467,7 @@
 1921+ 69A5             >//              Heap part
 1921+ 69A5             >
 1921+ 69A5             >
-1921+ 69A5             >                org     Heap_Ptr + $E000
+1921+ 69A5             >                org     (Heap_Ptr & $1FFF) + $E000
 1921+ E2FD             >
 1921+ E2FD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1921+ E2FD             >Latest_Definition defl  Heap_Ptr
@@ -6533,7 +6533,7 @@
 1939+ 69AE             >//              Heap part
 1939+ 69AE             >
 1939+ 69AE             >
-1939+ 69AE             >                org     Heap_Ptr + $E000
+1939+ 69AE             >                org     (Heap_Ptr & $1FFF) + $E000
 1939+ E304             >
 1939+ E304             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1939+ E304             >Latest_Definition defl  Heap_Ptr
@@ -6607,7 +6607,7 @@
 1965+ 69BF             >//              Heap part
 1965+ 69BF             >
 1965+ 69BF             >
-1965+ 69BF             >                org     Heap_Ptr + $E000
+1965+ 69BF             >                org     (Heap_Ptr & $1FFF) + $E000
 1965+ E30B             >
 1965+ E30B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1965+ E30B             >Latest_Definition defl  Heap_Ptr
@@ -6674,7 +6674,7 @@
 1984+ 69CF             >//              Heap part
 1984+ 69CF             >
 1984+ 69CF             >
-1984+ 69CF             >                org     Heap_Ptr + $E000
+1984+ 69CF             >                org     (Heap_Ptr & $1FFF) + $E000
 1984+ E312             >
 1984+ E312             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1984+ E312             >Latest_Definition defl  Heap_Ptr
@@ -6735,7 +6735,7 @@
 1997+ 69DB             >//              Heap part
 1997+ 69DB             >
 1997+ 69DB             >
-1997+ 69DB             >                org     Heap_Ptr + $E000
+1997+ 69DB             >                org     (Heap_Ptr & $1FFF) + $E000
 1997+ E319             >
 1997+ E319             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1997+ E319             >Latest_Definition defl  Heap_Ptr
@@ -6796,7 +6796,7 @@
 2010+ 69E5             >//              Heap part
 2010+ 69E5             >
 2010+ 69E5             >
-2010+ 69E5             >                org     Heap_Ptr + $E000
+2010+ 69E5             >                org     (Heap_Ptr & $1FFF) + $E000
 2010+ E320             >
 2010+ E320             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 2010+ E320             >Latest_Definition defl  Heap_Ptr
@@ -6856,7 +6856,7 @@
 2021+ 69EC             >//              Heap part
 2021+ 69EC             >
 2021+ 69EC             >
-2021+ 69EC             >                org     Heap_Ptr + $E000
+2021+ 69EC             >                org     (Heap_Ptr & $1FFF) + $E000
 2021+ E327             >
 2021+ E327             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 2021+ E327             >Latest_Definition defl  Heap_Ptr
@@ -6916,7 +6916,7 @@
 2032+ 69F6             >//              Heap part
 2032+ 69F6             >
 2032+ 69F6             >
-2032+ 69F6             >                org     Heap_Ptr + $E000
+2032+ 69F6             >                org     (Heap_Ptr & $1FFF) + $E000
 2032+ E32E             >
 2032+ E32E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 2032+ E32E             >Latest_Definition defl  Heap_Ptr
@@ -6980,7 +6980,7 @@
 2046+ 6A02             >//              Heap part
 2046+ 6A02             >
 2046+ 6A02             >
-2046+ 6A02             >                org     Heap_Ptr + $E000
+2046+ 6A02             >                org     (Heap_Ptr & $1FFF) + $E000
 2046+ E339             >
 2046+ E339             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 2046+ E339             >Latest_Definition defl  Heap_Ptr
@@ -7044,7 +7044,7 @@
 2060+ 6A0E             >//              Heap part
 2060+ 6A0E             >
 2060+ 6A0E             >
-2060+ 6A0E             >                org     Heap_Ptr + $E000
+2060+ 6A0E             >                org     (Heap_Ptr & $1FFF) + $E000
 2060+ E344             >
 2060+ E344             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 2060+ E344             >Latest_Definition defl  Heap_Ptr
@@ -7091,9 +7091,9 @@
 2063+ 6A13
 2064+ 6A13              //  ______________________________________________________________________
 2065+ 6A13
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L0.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L0.asm
  112  6A13                              include "L1.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L1.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L1.asm
    1+ 6A13              //  ______________________________________________________________________
    2+ 6A13              //
    3+ 6A13              //  L1.asm
@@ -7115,7 +7115,7 @@
   13+ 6A13             >//              Heap part
   13+ 6A13             >
   13+ 6A13             >
-  13+ 6A13             >                org     Heap_Ptr + $E000
+  13+ 6A13             >                org     (Heap_Ptr & $1FFF) + $E000
   13+ E34E             >
   13+ E34E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   13+ E34E             >Latest_Definition defl  Heap_Ptr
@@ -7194,7 +7194,7 @@
   43+ 6A35             >//              Heap part
   43+ 6A35             >
   43+ 6A35             >
-  43+ 6A35             >                org     Heap_Ptr + $E000
+  43+ 6A35             >                org     (Heap_Ptr & $1FFF) + $E000
   43+ E354             >
   43+ E354             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   43+ E354             >Latest_Definition defl  Heap_Ptr
@@ -7253,7 +7253,7 @@
   55+ 6A46             >//              Heap part
   55+ 6A46             >
   55+ 6A46             >
-  55+ 6A46             >                org     Heap_Ptr + $E000
+  55+ 6A46             >                org     (Heap_Ptr & $1FFF) + $E000
   55+ E35A             >
   55+ E35A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   55+ E35A             >Latest_Definition defl  Heap_Ptr
@@ -7310,7 +7310,7 @@
   63+ 6A4A             >//              Heap part
   63+ 6A4A             >
   63+ 6A4A             >
-  63+ 6A4A             >                org     Heap_Ptr + $E000
+  63+ 6A4A             >                org     (Heap_Ptr & $1FFF) + $E000
   63+ E363             >
   63+ E363             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   63+ E363             >Latest_Definition defl  Heap_Ptr
@@ -7382,7 +7382,7 @@
   84+ 6A5D             >//              Heap part
   84+ 6A5D             >
   84+ 6A5D             >
-  84+ 6A5D             >                org     Heap_Ptr + $E000
+  84+ 6A5D             >                org     (Heap_Ptr & $1FFF) + $E000
   84+ E370             >
   84+ E370             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   84+ E370             >Latest_Definition defl  Heap_Ptr
@@ -7450,7 +7450,7 @@
  101+ 6A6A             >//              Heap part
  101+ 6A6A             >
  101+ 6A6A             >
- 101+ 6A6A             >                org     Heap_Ptr + $E000
+ 101+ 6A6A             >                org     (Heap_Ptr & $1FFF) + $E000
  101+ E37D             >
  101+ E37D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  101+ E37D             >Latest_Definition defl  Heap_Ptr
@@ -7518,7 +7518,7 @@
  120+ 6A7F             >//              Heap part
  120+ 6A7F             >
  120+ 6A7F             >
- 120+ 6A7F             >                org     Heap_Ptr + $E000
+ 120+ 6A7F             >                org     (Heap_Ptr & $1FFF) + $E000
  120+ E386             >
  120+ E386             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  120+ E386             >Latest_Definition defl  Heap_Ptr
@@ -7568,7 +7568,7 @@
  121+ 6A86             >//              Heap part
  121+ 6A86             >
  121+ 6A86             >
- 121+ 6A86             >                org     Heap_Ptr + $E000
+ 121+ 6A86             >                org     (Heap_Ptr & $1FFF) + $E000
  121+ E38C             >
  121+ E38C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  121+ E38C             >Latest_Definition defl  Heap_Ptr
@@ -7618,7 +7618,7 @@
  122+ 6A8D             >//              Heap part
  122+ 6A8D             >
  122+ 6A8D             >
- 122+ 6A8D             >                org     Heap_Ptr + $E000
+ 122+ 6A8D             >                org     (Heap_Ptr & $1FFF) + $E000
  122+ E392             >
  122+ E392             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  122+ E392             >Latest_Definition defl  Heap_Ptr
@@ -7668,7 +7668,7 @@
  123+ 6A94             >//              Heap part
  123+ 6A94             >
  123+ 6A94             >
- 123+ 6A94             >                org     Heap_Ptr + $E000
+ 123+ 6A94             >                org     (Heap_Ptr & $1FFF) + $E000
  123+ E398             >
  123+ E398             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  123+ E398             >Latest_Definition defl  Heap_Ptr
@@ -7718,7 +7718,7 @@
  124+ 6A9B             >//              Heap part
  124+ 6A9B             >
  124+ 6A9B             >
- 124+ 6A9B             >                org     Heap_Ptr + $E000
+ 124+ 6A9B             >                org     (Heap_Ptr & $1FFF) + $E000
  124+ E39E             >
  124+ E39E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  124+ E39E             >Latest_Definition defl  Heap_Ptr
@@ -7768,7 +7768,7 @@
  125+ 6AA2             >//              Heap part
  125+ 6AA2             >
  125+ 6AA2             >
- 125+ 6AA2             >                org     Heap_Ptr + $E000
+ 125+ 6AA2             >                org     (Heap_Ptr & $1FFF) + $E000
  125+ E3A5             >
  125+ E3A5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  125+ E3A5             >Latest_Definition defl  Heap_Ptr
@@ -7818,7 +7818,7 @@
  126+ 6AA9             >//              Heap part
  126+ 6AA9             >
  126+ 6AA9             >
- 126+ 6AA9             >                org     Heap_Ptr + $E000
+ 126+ 6AA9             >                org     (Heap_Ptr & $1FFF) + $E000
  126+ E3AC             >
  126+ E3AC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  126+ E3AC             >Latest_Definition defl  Heap_Ptr
@@ -7868,7 +7868,7 @@
  127+ 6AB0             >//              Heap part
  127+ 6AB0             >
  127+ 6AB0             >
- 127+ 6AB0             >                org     Heap_Ptr + $E000
+ 127+ 6AB0             >                org     (Heap_Ptr & $1FFF) + $E000
  127+ E3B4             >
  127+ E3B4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  127+ E3B4             >Latest_Definition defl  Heap_Ptr
@@ -7920,7 +7920,7 @@
  128+ 6AB7             >//              Heap part
  128+ 6AB7             >
  128+ 6AB7             >
- 128+ 6AB7             >                org     Heap_Ptr + $E000
+ 128+ 6AB7             >                org     (Heap_Ptr & $1FFF) + $E000
  128+ E3BE             >
  128+ E3BE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  128+ E3BE             >Latest_Definition defl  Heap_Ptr
@@ -7972,7 +7972,7 @@
  129+ 6ABE             >//              Heap part
  129+ 6ABE             >
  129+ 6ABE             >
- 129+ 6ABE             >                org     Heap_Ptr + $E000
+ 129+ 6ABE             >                org     (Heap_Ptr & $1FFF) + $E000
  129+ E3C8             >
  129+ E3C8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  129+ E3C8             >Latest_Definition defl  Heap_Ptr
@@ -8031,7 +8031,7 @@
  138+ 6AC5             >//              Heap part
  138+ 6AC5             >
  138+ 6AC5             >
- 138+ 6AC5             >                org     Heap_Ptr + $E000
+ 138+ 6AC5             >                org     (Heap_Ptr & $1FFF) + $E000
  138+ E3D2             >
  138+ E3D2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  138+ E3D2             >Latest_Definition defl  Heap_Ptr
@@ -8094,7 +8094,7 @@
  150+ 6AD1             >//              Heap part
  150+ 6AD1             >
  150+ 6AD1             >
- 150+ 6AD1             >                org     Heap_Ptr + $E000
+ 150+ 6AD1             >                org     (Heap_Ptr & $1FFF) + $E000
  150+ E3DE             >
  150+ E3DE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  150+ E3DE             >Latest_Definition defl  Heap_Ptr
@@ -8150,7 +8150,7 @@
  155+ 6AD8             >//              Heap part
  155+ 6AD8             >
  155+ 6AD8             >
- 155+ 6AD8             >                org     Heap_Ptr + $E000
+ 155+ 6AD8             >                org     (Heap_Ptr & $1FFF) + $E000
  155+ E3E9             >
  155+ E3E9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  155+ E3E9             >Latest_Definition defl  Heap_Ptr
@@ -8200,7 +8200,7 @@
  156+ 6ADE             >//              Heap part
  156+ 6ADE             >
  156+ 6ADE             >
- 156+ 6ADE             >                org     Heap_Ptr + $E000
+ 156+ 6ADE             >                org     (Heap_Ptr & $1FFF) + $E000
  156+ E3F0             >
  156+ E3F0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  156+ E3F0             >Latest_Definition defl  Heap_Ptr
@@ -8250,7 +8250,7 @@
  157+ 6AE4             >//              Heap part
  157+ 6AE4             >
  157+ 6AE4             >
- 157+ 6AE4             >                org     Heap_Ptr + $E000
+ 157+ 6AE4             >                org     (Heap_Ptr & $1FFF) + $E000
  157+ E3F7             >
  157+ E3F7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  157+ E3F7             >Latest_Definition defl  Heap_Ptr
@@ -8300,7 +8300,7 @@
  158+ 6AEA             >//              Heap part
  158+ 6AEA             >
  158+ 6AEA             >
- 158+ 6AEA             >                org     Heap_Ptr + $E000
+ 158+ 6AEA             >                org     (Heap_Ptr & $1FFF) + $E000
  158+ E3FF             >
  158+ E3FF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  158+ E3FF             >Latest_Definition defl  Heap_Ptr
@@ -8352,7 +8352,7 @@
  159+ 6AF0             >//              Heap part
  159+ 6AF0             >
  159+ 6AF0             >
- 159+ 6AF0             >                org     Heap_Ptr + $E000
+ 159+ 6AF0             >                org     (Heap_Ptr & $1FFF) + $E000
  159+ E409             >
  159+ E409             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  159+ E409             >Latest_Definition defl  Heap_Ptr
@@ -8404,7 +8404,7 @@
  160+ 6AF6             >//              Heap part
  160+ 6AF6             >
  160+ 6AF6             >
- 160+ 6AF6             >                org     Heap_Ptr + $E000
+ 160+ 6AF6             >                org     (Heap_Ptr & $1FFF) + $E000
  160+ E415             >
  160+ E415             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  160+ E415             >Latest_Definition defl  Heap_Ptr
@@ -8456,7 +8456,7 @@
  161+ 6AFC             >//              Heap part
  161+ 6AFC             >
  161+ 6AFC             >
- 161+ 6AFC             >                org     Heap_Ptr + $E000
+ 161+ 6AFC             >                org     (Heap_Ptr & $1FFF) + $E000
  161+ E41F             >
  161+ E41F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  161+ E41F             >Latest_Definition defl  Heap_Ptr
@@ -8506,7 +8506,7 @@
  162+ 6B02             >//              Heap part
  162+ 6B02             >
  162+ 6B02             >
- 162+ 6B02             >                org     Heap_Ptr + $E000
+ 162+ 6B02             >                org     (Heap_Ptr & $1FFF) + $E000
  162+ E426             >
  162+ E426             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  162+ E426             >Latest_Definition defl  Heap_Ptr
@@ -8558,7 +8558,7 @@
  163+ 6B08             >//              Heap part
  163+ 6B08             >
  163+ 6B08             >
- 163+ 6B08             >                org     Heap_Ptr + $E000
+ 163+ 6B08             >                org     (Heap_Ptr & $1FFF) + $E000
  163+ E433             >
  163+ E433             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  163+ E433             >Latest_Definition defl  Heap_Ptr
@@ -8610,7 +8610,7 @@
  164+ 6B0E             >//              Heap part
  164+ 6B0E             >
  164+ 6B0E             >
- 164+ 6B0E             >                org     Heap_Ptr + $E000
+ 164+ 6B0E             >                org     (Heap_Ptr & $1FFF) + $E000
  164+ E43D             >
  164+ E43D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  164+ E43D             >Latest_Definition defl  Heap_Ptr
@@ -8662,7 +8662,7 @@
  165+ 6B14             >//              Heap part
  165+ 6B14             >
  165+ 6B14             >
- 165+ 6B14             >                org     Heap_Ptr + $E000
+ 165+ 6B14             >                org     (Heap_Ptr & $1FFF) + $E000
  165+ E447             >
  165+ E447             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  165+ E447             >Latest_Definition defl  Heap_Ptr
@@ -8712,7 +8712,7 @@
  166+ 6B1A             >//              Heap part
  166+ 6B1A             >
  166+ 6B1A             >
- 166+ 6B1A             >                org     Heap_Ptr + $E000
+ 166+ 6B1A             >                org     (Heap_Ptr & $1FFF) + $E000
  166+ E44E             >
  166+ E44E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  166+ E44E             >Latest_Definition defl  Heap_Ptr
@@ -8764,7 +8764,7 @@
  167+ 6B20             >//              Heap part
  167+ 6B20             >
  167+ 6B20             >
- 167+ 6B20             >                org     Heap_Ptr + $E000
+ 167+ 6B20             >                org     (Heap_Ptr & $1FFF) + $E000
  167+ E458             >
  167+ E458             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  167+ E458             >Latest_Definition defl  Heap_Ptr
@@ -8814,7 +8814,7 @@
  168+ 6B26             >//              Heap part
  168+ 6B26             >
  168+ 6B26             >
- 168+ 6B26             >                org     Heap_Ptr + $E000
+ 168+ 6B26             >                org     (Heap_Ptr & $1FFF) + $E000
  168+ E460             >
  168+ E460             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  168+ E460             >Latest_Definition defl  Heap_Ptr
@@ -8864,7 +8864,7 @@
  169+ 6B2C             >//              Heap part
  169+ 6B2C             >
  169+ 6B2C             >
- 169+ 6B2C             >                org     Heap_Ptr + $E000
+ 169+ 6B2C             >                org     (Heap_Ptr & $1FFF) + $E000
  169+ E468             >
  169+ E468             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  169+ E468             >Latest_Definition defl  Heap_Ptr
@@ -8914,7 +8914,7 @@
  170+ 6B32             >//              Heap part
  170+ 6B32             >
  170+ 6B32             >
- 170+ 6B32             >                org     Heap_Ptr + $E000
+ 170+ 6B32             >                org     (Heap_Ptr & $1FFF) + $E000
  170+ E470             >
  170+ E470             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  170+ E470             >Latest_Definition defl  Heap_Ptr
@@ -8964,7 +8964,7 @@
  171+ 6B38             >//              Heap part
  171+ 6B38             >
  171+ 6B38             >
- 171+ 6B38             >                org     Heap_Ptr + $E000
+ 171+ 6B38             >                org     (Heap_Ptr & $1FFF) + $E000
  171+ E478             >
  171+ E478             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  171+ E478             >Latest_Definition defl  Heap_Ptr
@@ -9016,7 +9016,7 @@
  172+ 6B3E             >//              Heap part
  172+ 6B3E             >
  172+ 6B3E             >
- 172+ 6B3E             >                org     Heap_Ptr + $E000
+ 172+ 6B3E             >                org     (Heap_Ptr & $1FFF) + $E000
  172+ E483             >
  172+ E483             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  172+ E483             >Latest_Definition defl  Heap_Ptr
@@ -9068,7 +9068,7 @@
  173+ 6B44             >//              Heap part
  173+ 6B44             >
  173+ 6B44             >
- 173+ 6B44             >                org     Heap_Ptr + $E000
+ 173+ 6B44             >                org     (Heap_Ptr & $1FFF) + $E000
  173+ E48F             >
  173+ E48F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  173+ E48F             >Latest_Definition defl  Heap_Ptr
@@ -9120,7 +9120,7 @@
  174+ 6B4A             >//              Heap part
  174+ 6B4A             >
  174+ 6B4A             >
- 174+ 6B4A             >                org     Heap_Ptr + $E000
+ 174+ 6B4A             >                org     (Heap_Ptr & $1FFF) + $E000
  174+ E49B             >
  174+ E49B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  174+ E49B             >Latest_Definition defl  Heap_Ptr
@@ -9172,7 +9172,7 @@
  175+ 6B50             >//              Heap part
  175+ 6B50             >
  175+ 6B50             >
- 175+ 6B50             >                org     Heap_Ptr + $E000
+ 175+ 6B50             >                org     (Heap_Ptr & $1FFF) + $E000
  175+ E4A5             >
  175+ E4A5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  175+ E4A5             >Latest_Definition defl  Heap_Ptr
@@ -9222,7 +9222,7 @@
  176+ 6B56             >//              Heap part
  176+ 6B56             >
  176+ 6B56             >
- 176+ 6B56             >                org     Heap_Ptr + $E000
+ 176+ 6B56             >                org     (Heap_Ptr & $1FFF) + $E000
  176+ E4AE             >
  176+ E4AE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  176+ E4AE             >Latest_Definition defl  Heap_Ptr
@@ -9272,7 +9272,7 @@
  177+ 6B5C             >//              Heap part
  177+ 6B5C             >
  177+ 6B5C             >
- 177+ 6B5C             >                org     Heap_Ptr + $E000
+ 177+ 6B5C             >                org     (Heap_Ptr & $1FFF) + $E000
  177+ E4B6             >
  177+ E4B6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  177+ E4B6             >Latest_Definition defl  Heap_Ptr
@@ -9322,7 +9322,7 @@
  178+ 6B62             >//              Heap part
  178+ 6B62             >
  178+ 6B62             >
- 178+ 6B62             >                org     Heap_Ptr + $E000
+ 178+ 6B62             >                org     (Heap_Ptr & $1FFF) + $E000
  178+ E4BE             >
  178+ E4BE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  178+ E4BE             >Latest_Definition defl  Heap_Ptr
@@ -9372,7 +9372,7 @@
  179+ 6B68             >//              Heap part
  179+ 6B68             >
  179+ 6B68             >
- 179+ 6B68             >                org     Heap_Ptr + $E000
+ 179+ 6B68             >                org     (Heap_Ptr & $1FFF) + $E000
  179+ E4C6             >
  179+ E4C6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  179+ E4C6             >Latest_Definition defl  Heap_Ptr
@@ -9422,7 +9422,7 @@
  180+ 6B6E             >//              Heap part
  180+ 6B6E             >
  180+ 6B6E             >
- 180+ 6B6E             >                org     Heap_Ptr + $E000
+ 180+ 6B6E             >                org     (Heap_Ptr & $1FFF) + $E000
  180+ E4CD             >
  180+ E4CD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  180+ E4CD             >Latest_Definition defl  Heap_Ptr
@@ -9472,7 +9472,7 @@
  181+ 6B74             >//              Heap part
  181+ 6B74             >
  181+ 6B74             >
- 181+ 6B74             >                org     Heap_Ptr + $E000
+ 181+ 6B74             >                org     (Heap_Ptr & $1FFF) + $E000
  181+ E4D5             >
  181+ E4D5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  181+ E4D5             >Latest_Definition defl  Heap_Ptr
@@ -9522,7 +9522,7 @@
  182+ 6B7A             >//              Heap part
  182+ 6B7A             >
  182+ 6B7A             >
- 182+ 6B7A             >                org     Heap_Ptr + $E000
+ 182+ 6B7A             >                org     (Heap_Ptr & $1FFF) + $E000
  182+ E4DD             >
  182+ E4DD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  182+ E4DD             >Latest_Definition defl  Heap_Ptr
@@ -9572,7 +9572,7 @@
  183+ 6B80             >//              Heap part
  183+ 6B80             >
  183+ 6B80             >
- 183+ 6B80             >                org     Heap_Ptr + $E000
+ 183+ 6B80             >                org     (Heap_Ptr & $1FFF) + $E000
  183+ E4E6             >
  183+ E4E6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  183+ E4E6             >Latest_Definition defl  Heap_Ptr
@@ -9622,7 +9622,7 @@
  184+ 6B86             >//              Heap part
  184+ 6B86             >
  184+ 6B86             >
- 184+ 6B86             >                org     Heap_Ptr + $E000
+ 184+ 6B86             >                org     (Heap_Ptr & $1FFF) + $E000
  184+ E4ED             >
  184+ E4ED             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  184+ E4ED             >Latest_Definition defl  Heap_Ptr
@@ -9674,7 +9674,7 @@
  185+ 6B8C             >//              Heap part
  185+ 6B8C             >
  185+ 6B8C             >
- 185+ 6B8C             >                org     Heap_Ptr + $E000
+ 185+ 6B8C             >                org     (Heap_Ptr & $1FFF) + $E000
  185+ E4F7             >
  185+ E4F7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  185+ E4F7             >Latest_Definition defl  Heap_Ptr
@@ -9728,7 +9728,7 @@
  186+ 6B92             >//              Heap part
  186+ 6B92             >
  186+ 6B92             >
- 186+ 6B92             >                org     Heap_Ptr + $E000
+ 186+ 6B92             >                org     (Heap_Ptr & $1FFF) + $E000
  186+ E505             >
  186+ E505             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  186+ E505             >Latest_Definition defl  Heap_Ptr
@@ -9778,7 +9778,7 @@
  187+ 6B98             >//              Heap part
  187+ 6B98             >
  187+ 6B98             >
- 187+ 6B98             >                org     Heap_Ptr + $E000
+ 187+ 6B98             >                org     (Heap_Ptr & $1FFF) + $E000
  187+ E50E             >
  187+ E50E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  187+ E50E             >Latest_Definition defl  Heap_Ptr
@@ -9830,7 +9830,7 @@
  188+ 6B9E             >//              Heap part
  188+ 6B9E             >
  188+ 6B9E             >
- 188+ 6B9E             >                org     Heap_Ptr + $E000
+ 188+ 6B9E             >                org     (Heap_Ptr & $1FFF) + $E000
  188+ E51A             >
  188+ E51A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  188+ E51A             >Latest_Definition defl  Heap_Ptr
@@ -9884,7 +9884,7 @@
  193+ 6BA4             >//              Heap part
  193+ 6BA4             >
  193+ 6BA4             >
- 193+ 6BA4             >                org     Heap_Ptr + $E000
+ 193+ 6BA4             >                org     (Heap_Ptr & $1FFF) + $E000
  193+ E522             >
  193+ E522             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  193+ E522             >Latest_Definition defl  Heap_Ptr
@@ -9939,7 +9939,7 @@
  200+ 6BAF             >//              Heap part
  200+ 6BAF             >
  200+ 6BAF             >
- 200+ 6BAF             >                org     Heap_Ptr + $E000
+ 200+ 6BAF             >                org     (Heap_Ptr & $1FFF) + $E000
  200+ E52B             >
  200+ E52B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  200+ E52B             >Latest_Definition defl  Heap_Ptr
@@ -9996,7 +9996,7 @@
  207+ 6BBA             >//              Heap part
  207+ 6BBA             >
  207+ 6BBA             >
- 207+ 6BBA             >                org     Heap_Ptr + $E000
+ 207+ 6BBA             >                org     (Heap_Ptr & $1FFF) + $E000
  207+ E535             >
  207+ E535             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  207+ E535             >Latest_Definition defl  Heap_Ptr
@@ -10052,7 +10052,7 @@
  215+ 6BC9             >//              Heap part
  215+ 6BC9             >
  215+ 6BC9             >
- 215+ 6BC9             >                org     Heap_Ptr + $E000
+ 215+ 6BC9             >                org     (Heap_Ptr & $1FFF) + $E000
  215+ E53B             >
  215+ E53B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  215+ E53B             >Latest_Definition defl  Heap_Ptr
@@ -10108,7 +10108,7 @@
  224+ 6BD8             >//              Heap part
  224+ 6BD8             >
  224+ 6BD8             >
- 224+ 6BD8             >                org     Heap_Ptr + $E000
+ 224+ 6BD8             >                org     (Heap_Ptr & $1FFF) + $E000
  224+ E542             >
  224+ E542             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  224+ E542             >Latest_Definition defl  Heap_Ptr
@@ -10169,7 +10169,7 @@
  237+ 6BE3             >//              Heap part
  237+ 6BE3             >
  237+ 6BE3             >
- 237+ 6BE3             >                org     Heap_Ptr + $E000
+ 237+ 6BE3             >                org     (Heap_Ptr & $1FFF) + $E000
  237+ E54A             >
  237+ E54A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  237+ E54A             >Latest_Definition defl  Heap_Ptr
@@ -10233,7 +10233,7 @@
  252+ 6BEF             >//              Heap part
  252+ 6BEF             >
  252+ 6BEF             >
- 252+ 6BEF             >                org     Heap_Ptr + $E000
+ 252+ 6BEF             >                org     (Heap_Ptr & $1FFF) + $E000
  252+ E550             >
  252+ E550             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  252+ E550             >Latest_Definition defl  Heap_Ptr
@@ -10288,7 +10288,7 @@
  260+ 6BFA             >//              Heap part
  260+ 6BFA             >
  260+ 6BFA             >
- 260+ 6BFA             >                org     Heap_Ptr + $E000
+ 260+ 6BFA             >                org     (Heap_Ptr & $1FFF) + $E000
  260+ E556             >
  260+ E556             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  260+ E556             >Latest_Definition defl  Heap_Ptr
@@ -10351,7 +10351,7 @@
  275+ 6C08             >//              Heap part
  275+ 6C08             >
  275+ 6C08             >
- 275+ 6C08             >                org     Heap_Ptr + $E000
+ 275+ 6C08             >                org     (Heap_Ptr & $1FFF) + $E000
  275+ E55D             >
  275+ E55D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  275+ E55D             >Latest_Definition defl  Heap_Ptr
@@ -10421,7 +10421,7 @@
  296+ 6C1D             >//              Heap part
  296+ 6C1D             >
  296+ 6C1D             >
- 296+ 6C1D             >                org     Heap_Ptr + $E000
+ 296+ 6C1D             >                org     (Heap_Ptr & $1FFF) + $E000
  296+ E563             >
  296+ E563             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  296+ E563             >Latest_Definition defl  Heap_Ptr
@@ -10476,7 +10476,7 @@
  303+ 6C28             >//              Heap part
  303+ 6C28             >
  303+ 6C28             >
- 303+ 6C28             >                org     Heap_Ptr + $E000
+ 303+ 6C28             >                org     (Heap_Ptr & $1FFF) + $E000
  303+ E569             >
  303+ E569             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  303+ E569             >Latest_Definition defl  Heap_Ptr
@@ -10538,7 +10538,7 @@
  317+ 6C3B             >//              Heap part
  317+ 6C3B             >
  317+ 6C3B             >
- 317+ 6C3B             >                org     Heap_Ptr + $E000
+ 317+ 6C3B             >                org     (Heap_Ptr & $1FFF) + $E000
  317+ E571             >
  317+ E571             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  317+ E571             >Latest_Definition defl  Heap_Ptr
@@ -10599,7 +10599,7 @@
  331+ 6C4E             >//              Heap part
  331+ 6C4E             >
  331+ 6C4E             >
- 331+ 6C4E             >                org     Heap_Ptr + $E000
+ 331+ 6C4E             >                org     (Heap_Ptr & $1FFF) + $E000
  331+ E579             >
  331+ E579             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  331+ E579             >Latest_Definition defl  Heap_Ptr
@@ -10662,7 +10662,7 @@
  345+ 6C59             >//              Heap part
  345+ 6C59             >
  345+ 6C59             >
- 345+ 6C59             >                org     Heap_Ptr + $E000
+ 345+ 6C59             >                org     (Heap_Ptr & $1FFF) + $E000
  345+ E582             >
  345+ E582             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  345+ E582             >Latest_Definition defl  Heap_Ptr
@@ -10716,7 +10716,7 @@
  351+ 6C5E             >//              Heap part
  351+ 6C5E             >
  351+ 6C5E             >
- 351+ 6C5E             >                org     Heap_Ptr + $E000
+ 351+ 6C5E             >                org     (Heap_Ptr & $1FFF) + $E000
  351+ E58B             >
  351+ E58B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  351+ E58B             >Latest_Definition defl  Heap_Ptr
@@ -10779,7 +10779,7 @@
  366+ 6C75             >//              Heap part
  366+ 6C75             >
  366+ 6C75             >
- 366+ 6C75             >                org     Heap_Ptr + $E000
+ 366+ 6C75             >                org     (Heap_Ptr & $1FFF) + $E000
  366+ E594             >
  366+ E594             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  366+ E594             >Latest_Definition defl  Heap_Ptr
@@ -10843,7 +10843,7 @@
  380+ 6C80             >//              Heap part
  380+ 6C80             >
  380+ 6C80             >
- 380+ 6C80             >                org     Heap_Ptr + $E000
+ 380+ 6C80             >                org     (Heap_Ptr & $1FFF) + $E000
  380+ E59E             >
  380+ E59E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  380+ E59E             >Latest_Definition defl  Heap_Ptr
@@ -10910,7 +10910,7 @@
  398+ 6C9D             >//              Heap part
  398+ 6C9D             >
  398+ 6C9D             >
- 398+ 6C9D             >                org     Heap_Ptr + $E000
+ 398+ 6C9D             >                org     (Heap_Ptr & $1FFF) + $E000
  398+ E5AB             >
  398+ E5AB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  398+ E5AB             >Latest_Definition defl  Heap_Ptr
@@ -10975,7 +10975,7 @@
  413+ 6CAA             >//              Heap part
  413+ 6CAA             >
  413+ 6CAA             >
- 413+ 6CAA             >                org     Heap_Ptr + $E000
+ 413+ 6CAA             >                org     (Heap_Ptr & $1FFF) + $E000
  413+ E5B5             >
  413+ E5B5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  413+ E5B5             >Latest_Definition defl  Heap_Ptr
@@ -11046,7 +11046,7 @@
  434+ 6CB3             >//              Heap part
  434+ 6CB3             >
  434+ 6CB3             >
- 434+ 6CB3             >                org     Heap_Ptr + $E000
+ 434+ 6CB3             >                org     (Heap_Ptr & $1FFF) + $E000
  434+ E5BF             >
  434+ E5BF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  434+ E5BF             >Latest_Definition defl  Heap_Ptr
@@ -11109,7 +11109,7 @@
  449+ 6CC0             >//              Heap part
  449+ 6CC0             >
  449+ 6CC0             >
- 449+ 6CC0             >                org     Heap_Ptr + $E000
+ 449+ 6CC0             >                org     (Heap_Ptr & $1FFF) + $E000
  449+ E5C8             >
  449+ E5C8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  449+ E5C8             >Latest_Definition defl  Heap_Ptr
@@ -11180,7 +11180,7 @@
  470+ 6CD5             >//              Heap part
  470+ 6CD5             >
  470+ 6CD5             >
- 470+ 6CD5             >                org     Heap_Ptr + $E000
+ 470+ 6CD5             >                org     (Heap_Ptr & $1FFF) + $E000
  470+ E5D1             >
  470+ E5D1             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  470+ E5D1             >Latest_Definition defl  Heap_Ptr
@@ -11241,7 +11241,7 @@
  481+ 6CE6             >//              Heap part
  481+ 6CE6             >
  481+ 6CE6             >
- 481+ 6CE6             >                org     Heap_Ptr + $E000
+ 481+ 6CE6             >                org     (Heap_Ptr & $1FFF) + $E000
  481+ E5DB             >
  481+ E5DB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  481+ E5DB             >Latest_Definition defl  Heap_Ptr
@@ -11298,7 +11298,7 @@
  490+ 6CF1             >//              Heap part
  490+ 6CF1             >
  490+ 6CF1             >
- 490+ 6CF1             >                org     Heap_Ptr + $E000
+ 490+ 6CF1             >                org     (Heap_Ptr & $1FFF) + $E000
  490+ E5E3             >
  490+ E5E3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  490+ E5E3             >Latest_Definition defl  Heap_Ptr
@@ -11361,7 +11361,7 @@
  503+ 6D04             >//              Heap part
  503+ 6D04             >
  503+ 6D04             >
- 503+ 6D04             >                org     Heap_Ptr + $E000
+ 503+ 6D04             >                org     (Heap_Ptr & $1FFF) + $E000
  503+ E5EE             >
  503+ E5EE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  503+ E5EE             >Latest_Definition defl  Heap_Ptr
@@ -11423,7 +11423,7 @@
  515+ 6D15             >//              Heap part
  515+ 6D15             >
  515+ 6D15             >
- 515+ 6D15             >                org     Heap_Ptr + $E000
+ 515+ 6D15             >                org     (Heap_Ptr & $1FFF) + $E000
  515+ E5F9             >
  515+ E5F9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  515+ E5F9             >Latest_Definition defl  Heap_Ptr
@@ -11479,7 +11479,7 @@
  523+ 6D20             >//              Heap part
  523+ 6D20             >
  523+ 6D20             >
- 523+ 6D20             >                org     Heap_Ptr + $E000
+ 523+ 6D20             >                org     (Heap_Ptr & $1FFF) + $E000
  523+ E601             >
  523+ E601             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  523+ E601             >Latest_Definition defl  Heap_Ptr
@@ -11539,7 +11539,7 @@
  528+ 6D27             >//              Heap part
  528+ 6D27             >
  528+ 6D27             >
- 528+ 6D27             >                org     Heap_Ptr + $E000
+ 528+ 6D27             >                org     (Heap_Ptr & $1FFF) + $E000
  528+ E614             >
  528+ E614             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  528+ E614             >Latest_Definition defl  Heap_Ptr
@@ -11610,7 +11610,7 @@
  545+ 6D50             >//              Heap part
  545+ 6D50             >
  545+ 6D50             >
- 545+ 6D50             >                org     Heap_Ptr + $E000
+ 545+ 6D50             >                org     (Heap_Ptr & $1FFF) + $E000
  545+ E625             >
  545+ E625             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  545+ E625             >Latest_Definition defl  Heap_Ptr
@@ -11669,7 +11669,7 @@
  554+ 6D5F             >//              Heap part
  554+ 6D5F             >
  554+ 6D5F             >
- 554+ 6D5F             >                org     Heap_Ptr + $E000
+ 554+ 6D5F             >                org     (Heap_Ptr & $1FFF) + $E000
  554+ E630             >
  554+ E630             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  554+ E630             >Latest_Definition defl  Heap_Ptr
@@ -11726,7 +11726,7 @@
  561+ 6D6A             >//              Heap part
  561+ 6D6A             >
  561+ 6D6A             >
- 561+ 6D6A             >                org     Heap_Ptr + $E000
+ 561+ 6D6A             >                org     (Heap_Ptr & $1FFF) + $E000
  561+ E63A             >
  561+ E63A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  561+ E63A             >Latest_Definition defl  Heap_Ptr
@@ -11794,7 +11794,7 @@
  579+ 6D89             >//              Heap part
  579+ 6D89             >
  579+ 6D89             >
- 579+ 6D89             >                org     Heap_Ptr + $E000
+ 579+ 6D89             >                org     (Heap_Ptr & $1FFF) + $E000
  579+ E644             >
  579+ E644             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  579+ E644             >Latest_Definition defl  Heap_Ptr
@@ -11849,7 +11849,7 @@
  586+ 6D94             >//              Heap part
  586+ 6D94             >
  586+ 6D94             >
- 586+ 6D94             >                org     Heap_Ptr + $E000
+ 586+ 6D94             >                org     (Heap_Ptr & $1FFF) + $E000
  586+ E64C             >
  586+ E64C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  586+ E64C             >Latest_Definition defl  Heap_Ptr
@@ -11905,7 +11905,7 @@
  594+ 6D9F             >//              Heap part
  594+ 6D9F             >
  594+ 6D9F             >
- 594+ 6D9F             >                org     Heap_Ptr + $E000
+ 594+ 6D9F             >                org     (Heap_Ptr & $1FFF) + $E000
  594+ E654             >
  594+ E654             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  594+ E654             >Latest_Definition defl  Heap_Ptr
@@ -11963,7 +11963,7 @@
  604+ 6DAE             >//              Heap part
  604+ 6DAE             >
  604+ 6DAE             >
- 604+ 6DAE             >                org     Heap_Ptr + $E000
+ 604+ 6DAE             >                org     (Heap_Ptr & $1FFF) + $E000
  604+ E65C             >
  604+ E65C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  604+ E65C             >Latest_Definition defl  Heap_Ptr
@@ -12033,7 +12033,7 @@
  626+ 6DD3             >//              Heap part
  626+ 6DD3             >
  626+ 6DD3             >
- 626+ 6DD3             >                org     Heap_Ptr + $E000
+ 626+ 6DD3             >                org     (Heap_Ptr & $1FFF) + $E000
  626+ E664             >
  626+ E664             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  626+ E664             >Latest_Definition defl  Heap_Ptr
@@ -12090,7 +12090,7 @@
  635+ 6DE0             >//              Heap part
  635+ 6DE0             >
  635+ 6DE0             >
- 635+ 6DE0             >                org     Heap_Ptr + $E000
+ 635+ 6DE0             >                org     (Heap_Ptr & $1FFF) + $E000
  635+ E66D             >
  635+ E66D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  635+ E66D             >Latest_Definition defl  Heap_Ptr
@@ -12158,7 +12158,7 @@
  653+ 6DF5             >//              Heap part
  653+ 6DF5             >
  653+ 6DF5             >
- 653+ 6DF5             >                org     Heap_Ptr + $E000
+ 653+ 6DF5             >                org     (Heap_Ptr & $1FFF) + $E000
  653+ E678             >
  653+ E678             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  653+ E678             >Latest_Definition defl  Heap_Ptr
@@ -12219,7 +12219,7 @@
  664+ 6E08             >//              Heap part
  664+ 6E08             >
  664+ 6E08             >
- 664+ 6E08             >                org     Heap_Ptr + $E000
+ 664+ 6E08             >                org     (Heap_Ptr & $1FFF) + $E000
  664+ E682             >
  664+ E682             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  664+ E682             >Latest_Definition defl  Heap_Ptr
@@ -12279,7 +12279,7 @@
  674+ 6E19             >//              Heap part
  674+ 6E19             >
  674+ 6E19             >
- 674+ 6E19             >                org     Heap_Ptr + $E000
+ 674+ 6E19             >                org     (Heap_Ptr & $1FFF) + $E000
  674+ E68C             >
  674+ E68C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  674+ E68C             >Latest_Definition defl  Heap_Ptr
@@ -12340,7 +12340,7 @@
  685+ 6E28             >//              Heap part
  685+ 6E28             >
  685+ 6E28             >
- 685+ 6E28             >                org     Heap_Ptr + $E000
+ 685+ 6E28             >                org     (Heap_Ptr & $1FFF) + $E000
  685+ E697             >
  685+ E697             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  685+ E697             >Latest_Definition defl  Heap_Ptr
@@ -12400,7 +12400,7 @@
  697+ 6E3D             >//              Heap part
  697+ 6E3D             >
  697+ 6E3D             >
- 697+ 6E3D             >                org     Heap_Ptr + $E000
+ 697+ 6E3D             >                org     (Heap_Ptr & $1FFF) + $E000
  697+ E6A0             >
  697+ E6A0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  697+ E6A0             >Latest_Definition defl  Heap_Ptr
@@ -12461,7 +12461,7 @@
  708+ 6E50             >//              Heap part
  708+ 6E50             >
  708+ 6E50             >
- 708+ 6E50             >                org     Heap_Ptr + $E000
+ 708+ 6E50             >                org     (Heap_Ptr & $1FFF) + $E000
  708+ E6AD             >
  708+ E6AD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  708+ E6AD             >Latest_Definition defl  Heap_Ptr
@@ -12523,7 +12523,7 @@
  720+ 6E65             >//              Heap part
  720+ 6E65             >
  720+ 6E65             >
- 720+ 6E65             >                org     Heap_Ptr + $E000
+ 720+ 6E65             >                org     (Heap_Ptr & $1FFF) + $E000
  720+ E6B9             >
  720+ E6B9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  720+ E6B9             >Latest_Definition defl  Heap_Ptr
@@ -12582,7 +12582,7 @@
  729+ 6E70             >//              Heap part
  729+ 6E70             >
  729+ 6E70             >
- 729+ 6E70             >                org     Heap_Ptr + $E000
+ 729+ 6E70             >                org     (Heap_Ptr & $1FFF) + $E000
  729+ E6C6             >
  729+ E6C6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  729+ E6C6             >Latest_Definition defl  Heap_Ptr
@@ -12639,7 +12639,7 @@
  738+ 6E7D             >//              Heap part
  738+ 6E7D             >
  738+ 6E7D             >
- 738+ 6E7D             >                org     Heap_Ptr + $E000
+ 738+ 6E7D             >                org     (Heap_Ptr & $1FFF) + $E000
  738+ E6CC             >
  738+ E6CC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  738+ E6CC             >Latest_Definition defl  Heap_Ptr
@@ -12696,7 +12696,7 @@
  747+ 6E8C             >//              Heap part
  747+ 6E8C             >
  747+ 6E8C             >
- 747+ 6E8C             >                org     Heap_Ptr + $E000
+ 747+ 6E8C             >                org     (Heap_Ptr & $1FFF) + $E000
  747+ E6D2             >
  747+ E6D2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  747+ E6D2             >Latest_Definition defl  Heap_Ptr
@@ -12756,7 +12756,7 @@
  757+ 6E9B             >//              Heap part
  757+ 6E9B             >
  757+ 6E9B             >
- 757+ 6E9B             >                org     Heap_Ptr + $E000
+ 757+ 6E9B             >                org     (Heap_Ptr & $1FFF) + $E000
  757+ E6DD             >
  757+ E6DD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  757+ E6DD             >Latest_Definition defl  Heap_Ptr
@@ -12818,7 +12818,7 @@
  767+ 6EAA             >//              Heap part
  767+ 6EAA             >
  767+ 6EAA             >
- 767+ 6EAA             >                org     Heap_Ptr + $E000
+ 767+ 6EAA             >                org     (Heap_Ptr & $1FFF) + $E000
  767+ E6EB             >
  767+ E6EB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  767+ E6EB             >Latest_Definition defl  Heap_Ptr
@@ -12875,7 +12875,7 @@
  776+ 6EB9             >//              Heap part
  776+ 6EB9             >
  776+ 6EB9             >
- 776+ 6EB9             >                org     Heap_Ptr + $E000
+ 776+ 6EB9             >                org     (Heap_Ptr & $1FFF) + $E000
  776+ E6F3             >
  776+ E6F3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  776+ E6F3             >Latest_Definition defl  Heap_Ptr
@@ -12934,7 +12934,7 @@
  785+ 6EC8             >//              Heap part
  785+ 6EC8             >
  785+ 6EC8             >
- 785+ 6EC8             >                org     Heap_Ptr + $E000
+ 785+ 6EC8             >                org     (Heap_Ptr & $1FFF) + $E000
  785+ E6FF             >
  785+ E6FF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  785+ E6FF             >Latest_Definition defl  Heap_Ptr
@@ -12999,7 +12999,7 @@
  800+ 6EE3             >//              Heap part
  800+ 6EE3             >
  800+ 6EE3             >
- 800+ 6EE3             >                org     Heap_Ptr + $E000
+ 800+ 6EE3             >                org     (Heap_Ptr & $1FFF) + $E000
  800+ E70B             >
  800+ E70B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  800+ E70B             >Latest_Definition defl  Heap_Ptr
@@ -13060,7 +13060,7 @@
  811+ 6EF4             >//              Heap part
  811+ 6EF4             >
  811+ 6EF4             >
- 811+ 6EF4             >                org     Heap_Ptr + $E000
+ 811+ 6EF4             >                org     (Heap_Ptr & $1FFF) + $E000
  811+ E715             >
  811+ E715             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  811+ E715             >Latest_Definition defl  Heap_Ptr
@@ -13128,7 +13128,7 @@
  829+ 6EFF             >//              Heap part
  829+ 6EFF             >
  829+ 6EFF             >
- 829+ 6EFF             >                org     Heap_Ptr + $E000
+ 829+ 6EFF             >                org     (Heap_Ptr & $1FFF) + $E000
  829+ E721             >
  829+ E721             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  829+ E721             >Latest_Definition defl  Heap_Ptr
@@ -13209,7 +13209,7 @@
  859+ 6F1C             >//              Heap part
  859+ 6F1C             >
  859+ 6F1C             >
- 859+ 6F1C             >                org     Heap_Ptr + $E000
+ 859+ 6F1C             >                org     (Heap_Ptr & $1FFF) + $E000
  859+ E72B             >
  859+ E72B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  859+ E72B             >Latest_Definition defl  Heap_Ptr
@@ -13284,7 +13284,7 @@
  884+ 6F29             >//              Heap part
  884+ 6F29             >
  884+ 6F29             >
- 884+ 6F29             >                org     Heap_Ptr + $E000
+ 884+ 6F29             >                org     (Heap_Ptr & $1FFF) + $E000
  884+ E735             >
  884+ E735             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  884+ E735             >Latest_Definition defl  Heap_Ptr
@@ -13349,7 +13349,7 @@
  899+ 6F31             >//              Heap part
  899+ 6F31             >
  899+ 6F31             >
- 899+ 6F31             >                org     Heap_Ptr + $E000
+ 899+ 6F31             >                org     (Heap_Ptr & $1FFF) + $E000
  899+ E740             >
  899+ E740             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  899+ E740             >Latest_Definition defl  Heap_Ptr
@@ -13422,7 +13422,7 @@
  919+ 6F70             >//              Heap part
  919+ 6F70             >
  919+ 6F70             >
- 919+ 6F70             >                org     Heap_Ptr + $E000
+ 919+ 6F70             >                org     (Heap_Ptr & $1FFF) + $E000
  919+ E74A             >
  919+ E74A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  919+ E74A             >Latest_Definition defl  Heap_Ptr
@@ -13488,7 +13488,7 @@
  937+ 6F87             >//              Heap part
  937+ 6F87             >
  937+ 6F87             >
- 937+ 6F87             >                org     Heap_Ptr + $E000
+ 937+ 6F87             >                org     (Heap_Ptr & $1FFF) + $E000
  937+ E753             >
  937+ E753             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  937+ E753             >Latest_Definition defl  Heap_Ptr
@@ -13572,7 +13572,7 @@
  969+ 6FB4             >//              Heap part
  969+ 6FB4             >
  969+ 6FB4             >
- 969+ 6FB4             >                org     Heap_Ptr + $E000
+ 969+ 6FB4             >                org     (Heap_Ptr & $1FFF) + $E000
  969+ E761             >
  969+ E761             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  969+ E761             >Latest_Definition defl  Heap_Ptr
@@ -13726,7 +13726,7 @@
 1067+ 705F             >//              Heap part
 1067+ 705F             >
 1067+ 705F             >
-1067+ 705F             >                org     Heap_Ptr + $E000
+1067+ 705F             >                org     (Heap_Ptr & $1FFF) + $E000
 1067+ E76C             >
 1067+ E76C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1067+ E76C             >Latest_Definition defl  Heap_Ptr
@@ -13787,7 +13787,7 @@
 1078+ 7078             >//              Heap part
 1078+ 7078             >
 1078+ 7078             >
-1078+ 7078             >                org     Heap_Ptr + $E000
+1078+ 7078             >                org     (Heap_Ptr & $1FFF) + $E000
 1078+ E776             >
 1078+ E776             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1078+ E776             >Latest_Definition defl  Heap_Ptr
@@ -13857,7 +13857,7 @@
 1099+ 708A             >//              Heap part
 1099+ 708A             >
 1099+ 708A             >
-1099+ 708A             >                org     Heap_Ptr + $E000
+1099+ 708A             >                org     (Heap_Ptr & $1FFF) + $E000
 1099+ E77F             >
 1099+ E77F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1099+ E77F             >Latest_Definition defl  Heap_Ptr
@@ -13915,7 +13915,7 @@
 1107+ 7095             >//              Heap part
 1107+ 7095             >
 1107+ 7095             >
-1107+ 7095             >                org     Heap_Ptr + $E000
+1107+ 7095             >                org     (Heap_Ptr & $1FFF) + $E000
 1107+ E789             >
 1107+ E789             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1107+ E789             >Latest_Definition defl  Heap_Ptr
@@ -13973,7 +13973,7 @@
 1115+ 70A0             >//              Heap part
 1115+ 70A0             >
 1115+ 70A0             >
-1115+ 70A0             >                org     Heap_Ptr + $E000
+1115+ 70A0             >                org     (Heap_Ptr & $1FFF) + $E000
 1115+ E793             >
 1115+ E793             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1115+ E793             >Latest_Definition defl  Heap_Ptr
@@ -14032,7 +14032,7 @@
 1125+ 70B3             >//              Heap part
 1125+ 70B3             >
 1125+ 70B3             >
-1125+ 70B3             >                org     Heap_Ptr + $E000
+1125+ 70B3             >                org     (Heap_Ptr & $1FFF) + $E000
 1125+ E79C             >
 1125+ E79C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1125+ E79C             >Latest_Definition defl  Heap_Ptr
@@ -14097,7 +14097,7 @@
 1142+ 70C2             >//              Heap part
 1142+ 70C2             >
 1142+ 70C2             >
-1142+ 70C2             >                org     Heap_Ptr + $E000
+1142+ 70C2             >                org     (Heap_Ptr & $1FFF) + $E000
 1142+ E7A4             >
 1142+ E7A4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1142+ E7A4             >Latest_Definition defl  Heap_Ptr
@@ -14179,7 +14179,7 @@
 1171+ 710D             >//              Heap part
 1171+ 710D             >
 1171+ 710D             >
-1171+ 710D             >                org     Heap_Ptr + $E000
+1171+ 710D             >                org     (Heap_Ptr & $1FFF) + $E000
 1171+ E7AD             >
 1171+ E7AD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1171+ E7AD             >Latest_Definition defl  Heap_Ptr
@@ -14239,7 +14239,7 @@
 1182+ 7124             >//              Heap part
 1182+ 7124             >
 1182+ 7124             >
-1182+ 7124             >                org     Heap_Ptr + $E000
+1182+ 7124             >                org     (Heap_Ptr & $1FFF) + $E000
 1182+ E7B6             >
 1182+ E7B6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1182+ E7B6             >Latest_Definition defl  Heap_Ptr
@@ -14296,7 +14296,7 @@
 1191+ 7133             >//              Heap part
 1191+ 7133             >
 1191+ 7133             >
-1191+ 7133             >                org     Heap_Ptr + $E000
+1191+ 7133             >                org     (Heap_Ptr & $1FFF) + $E000
 1191+ E7BF             >
 1191+ E7BF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1191+ E7BF             >Latest_Definition defl  Heap_Ptr
@@ -14356,7 +14356,7 @@
 1203+ 714A             >//              Heap part
 1203+ 714A             >
 1203+ 714A             >
-1203+ 714A             >                org     Heap_Ptr + $E000
+1203+ 714A             >                org     (Heap_Ptr & $1FFF) + $E000
 1203+ E7C6             >
 1203+ E7C6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1203+ E7C6             >Latest_Definition defl  Heap_Ptr
@@ -14424,7 +14424,7 @@
 1222+ 716F             >//              Heap part
 1222+ 716F             >
 1222+ 716F             >
-1222+ 716F             >                org     Heap_Ptr + $E000
+1222+ 716F             >                org     (Heap_Ptr & $1FFF) + $E000
 1222+ E7CD             >
 1222+ E7CD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1222+ E7CD             >Latest_Definition defl  Heap_Ptr
@@ -14480,7 +14480,7 @@
 1230+ 717C             >//              Heap part
 1230+ 717C             >
 1230+ 717C             >
-1230+ 717C             >                org     Heap_Ptr + $E000
+1230+ 717C             >                org     (Heap_Ptr & $1FFF) + $E000
 1230+ E7D4             >
 1230+ E7D4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1230+ E7D4             >Latest_Definition defl  Heap_Ptr
@@ -14539,7 +14539,7 @@
 1241+ 7189             >//              Heap part
 1241+ 7189             >
 1241+ 7189             >
-1241+ 7189             >                org     Heap_Ptr + $E000
+1241+ 7189             >                org     (Heap_Ptr & $1FFF) + $E000
 1241+ E7DB             >
 1241+ E7DB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1241+ E7DB             >Latest_Definition defl  Heap_Ptr
@@ -14630,7 +14630,7 @@
 1278+ 71C6             >//              Heap part
 1278+ 71C6             >
 1278+ 71C6             >
-1278+ 71C6             >                org     Heap_Ptr + $E000
+1278+ 71C6             >                org     (Heap_Ptr & $1FFF) + $E000
 1278+ E7E5             >
 1278+ E7E5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1278+ E7E5             >Latest_Definition defl  Heap_Ptr
@@ -14716,7 +14716,7 @@
 1314+ 720B             >//              Heap part
 1314+ 720B             >
 1314+ 720B             >
-1314+ 720B             >                org     Heap_Ptr + $E000
+1314+ 720B             >                org     (Heap_Ptr & $1FFF) + $E000
 1314+ E7F2             >
 1314+ E7F2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1314+ E7F2             >Latest_Definition defl  Heap_Ptr
@@ -14797,7 +14797,7 @@
 1341+ 724C             >//              Heap part
 1341+ 724C             >
 1341+ 724C             >
-1341+ 724C             >                org     Heap_Ptr + $E000
+1341+ 724C             >                org     (Heap_Ptr & $1FFF) + $E000
 1341+ E7FD             >
 1341+ E7FD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1341+ E7FD             >Latest_Definition defl  Heap_Ptr
@@ -14869,7 +14869,7 @@
 1361+ 7275             >//              Heap part
 1361+ 7275             >
 1361+ 7275             >
-1361+ 7275             >                org     Heap_Ptr + $E000
+1361+ 7275             >                org     (Heap_Ptr & $1FFF) + $E000
 1361+ E807             >
 1361+ E807             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1361+ E807             >Latest_Definition defl  Heap_Ptr
@@ -14927,7 +14927,7 @@
 1369+ 7282             >//              Heap part
 1369+ 7282             >
 1369+ 7282             >
-1369+ 7282             >                org     Heap_Ptr + $E000
+1369+ 7282             >                org     (Heap_Ptr & $1FFF) + $E000
 1369+ E811             >
 1369+ E811             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1369+ E811             >Latest_Definition defl  Heap_Ptr
@@ -14989,7 +14989,7 @@
 1381+ 728B             >//              Heap part
 1381+ 728B             >
 1381+ 728B             >
-1381+ 728B             >                org     Heap_Ptr + $E000
+1381+ 728B             >                org     (Heap_Ptr & $1FFF) + $E000
 1381+ E81D             >
 1381+ E81D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1381+ E81D             >Latest_Definition defl  Heap_Ptr
@@ -15067,7 +15067,7 @@
 1404+ 72C3             >//              Heap part
 1404+ 72C3             >
 1404+ 72C3             >
-1404+ 72C3             >                org     Heap_Ptr + $E000
+1404+ 72C3             >                org     (Heap_Ptr & $1FFF) + $E000
 1404+ E827             >
 1404+ E827             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1404+ E827             >Latest_Definition defl  Heap_Ptr
@@ -15132,7 +15132,7 @@
 1420+ 72EE             >//              Heap part
 1420+ 72EE             >
 1420+ 72EE             >
-1420+ 72EE             >                org     Heap_Ptr + $E000
+1420+ 72EE             >                org     (Heap_Ptr & $1FFF) + $E000
 1420+ E82F             >
 1420+ E82F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1420+ E82F             >Latest_Definition defl  Heap_Ptr
@@ -15232,7 +15232,7 @@
 1464+ 7367             >//              Heap part
 1464+ 7367             >
 1464+ 7367             >
-1464+ 7367             >                org     Heap_Ptr + $E000
+1464+ 7367             >                org     (Heap_Ptr & $1FFF) + $E000
 1464+ E838             >
 1464+ E838             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1464+ E838             >Latest_Definition defl  Heap_Ptr
@@ -15300,7 +15300,7 @@
 1479+ 7380             >//              Heap part
 1479+ 7380             >
 1479+ 7380             >
-1479+ 7380             >                org     Heap_Ptr + $E000
+1479+ 7380             >                org     (Heap_Ptr & $1FFF) + $E000
 1479+ E843             >
 1479+ E843             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1479+ E843             >Latest_Definition defl  Heap_Ptr
@@ -15363,7 +15363,7 @@
 1490+ 7393             >//              Heap part
 1490+ 7393             >
 1490+ 7393             >
-1490+ 7393             >                org     Heap_Ptr + $E000
+1490+ 7393             >                org     (Heap_Ptr & $1FFF) + $E000
 1490+ E851             >
 1490+ E851             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1490+ E851             >Latest_Definition defl  Heap_Ptr
@@ -15426,7 +15426,7 @@
 1503+ 73A8             >//              Heap part
 1503+ 73A8             >
 1503+ 73A8             >
-1503+ 73A8             >                org     Heap_Ptr + $E000
+1503+ 73A8             >                org     (Heap_Ptr & $1FFF) + $E000
 1503+ E85D             >
 1503+ E85D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1503+ E85D             >Latest_Definition defl  Heap_Ptr
@@ -15491,7 +15491,7 @@
 1518+ 73BD             >//              Heap part
 1518+ 73BD             >
 1518+ 73BD             >
-1518+ 73BD             >                org     Heap_Ptr + $E000
+1518+ 73BD             >                org     (Heap_Ptr & $1FFF) + $E000
 1518+ E86A             >
 1518+ E86A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1518+ E86A             >Latest_Definition defl  Heap_Ptr
@@ -15548,7 +15548,7 @@
 1525+ 73C8             >//              Heap part
 1525+ 73C8             >
 1525+ 73C8             >
-1525+ 73C8             >                org     Heap_Ptr + $E000
+1525+ 73C8             >                org     (Heap_Ptr & $1FFF) + $E000
 1525+ E875             >
 1525+ E875             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1525+ E875             >Latest_Definition defl  Heap_Ptr
@@ -15633,7 +15633,7 @@
 1559+ 7405             >//              Heap part
 1559+ 7405             >
 1559+ 7405             >
-1559+ 7405             >                org     Heap_Ptr + $E000
+1559+ 7405             >                org     (Heap_Ptr & $1FFF) + $E000
 1559+ E87B             >
 1559+ E87B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
 1559+ E87B             >Latest_Definition defl  Heap_Ptr
@@ -15695,9 +15695,9 @@
 1574+ 7436 52 68                        dw      EXIT                    // ;
 1575+ 7438
 1576+ 7438
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L1.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L1.asm
  113  7438                              include "L2.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L2.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L2.asm
    1+ 7438              //  ______________________________________________________________________
    2+ 7438              //
    3+ 7438              //  L2.asm
@@ -15728,7 +15728,7 @@
   22+ 7438             >//              Heap part
   22+ 7438             >
   22+ 7438             >
-  22+ 7438             >                org     Heap_Ptr + $E000
+  22+ 7438             >                org     (Heap_Ptr & $1FFF) + $E000
   22+ E886             >
   22+ E886             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   22+ E886             >Latest_Definition defl  Heap_Ptr
@@ -15844,7 +15844,7 @@
   84+ 7483             >//              Heap part
   84+ 7483             >
   84+ 7483             >
-  84+ 7483             >                org     Heap_Ptr + $E000
+  84+ 7483             >                org     (Heap_Ptr & $1FFF) + $E000
   84+ E894             >
   84+ E894             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   84+ E894             >Latest_Definition defl  Heap_Ptr
@@ -15923,7 +15923,7 @@
  110+ 74AE             >//              Heap part
  110+ 74AE             >
  110+ 74AE             >
- 110+ 74AE             >                org     Heap_Ptr + $E000
+ 110+ 74AE             >                org     (Heap_Ptr & $1FFF) + $E000
  110+ E8A3             >
  110+ E8A3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  110+ E8A3             >Latest_Definition defl  Heap_Ptr
@@ -15998,7 +15998,7 @@
  135+ 74BB             >//              Heap part
  135+ 74BB             >
  135+ 74BB             >
- 135+ 74BB             >                org     Heap_Ptr + $E000
+ 135+ 74BB             >                org     (Heap_Ptr & $1FFF) + $E000
  135+ E8AD             >
  135+ E8AD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  135+ E8AD             >Latest_Definition defl  Heap_Ptr
@@ -16059,7 +16059,7 @@
  144+ 74CA             >//              Heap part
  144+ 74CA             >
  144+ 74CA             >
- 144+ 74CA             >                org     Heap_Ptr + $E000
+ 144+ 74CA             >                org     (Heap_Ptr & $1FFF) + $E000
  144+ E8BD             >
  144+ E8BD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  144+ E8BD             >Latest_Definition defl  Heap_Ptr
@@ -16116,7 +16116,7 @@
  153+ 74D9             >//              Heap part
  153+ 74D9             >
  153+ 74D9             >
- 153+ 74D9             >                org     Heap_Ptr + $E000
+ 153+ 74D9             >                org     (Heap_Ptr & $1FFF) + $E000
  153+ E8C3             >
  153+ E8C3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  153+ E8C3             >Latest_Definition defl  Heap_Ptr
@@ -16197,7 +16197,7 @@
  182+ 7515             >//              Heap part
  182+ 7515             >
  182+ 7515             >
- 182+ 7515             >                org     Heap_Ptr + $E000
+ 182+ 7515             >                org     (Heap_Ptr & $1FFF) + $E000
  182+ E8CC             >
  182+ E8CC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  182+ E8CC             >Latest_Definition defl  Heap_Ptr
@@ -16261,7 +16261,7 @@
  195+ 752C             >//              Heap part
  195+ 752C             >
  195+ 752C             >
- 195+ 752C             >                org     Heap_Ptr + $E000
+ 195+ 752C             >                org     (Heap_Ptr & $1FFF) + $E000
  195+ E8D6             >
  195+ E8D6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  195+ E8D6             >Latest_Definition defl  Heap_Ptr
@@ -16320,7 +16320,7 @@
  205+ 753F             >//              Heap part
  205+ 753F             >
  205+ 753F             >
- 205+ 753F             >                org     Heap_Ptr + $E000
+ 205+ 753F             >                org     (Heap_Ptr & $1FFF) + $E000
  205+ E8DF             >
  205+ E8DF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  205+ E8DF             >Latest_Definition defl  Heap_Ptr
@@ -16423,7 +16423,7 @@
  255+ 75A7             >//              Heap part
  255+ 75A7             >
  255+ 75A7             >
- 255+ 75A7             >                org     Heap_Ptr + $E000
+ 255+ 75A7             >                org     (Heap_Ptr & $1FFF) + $E000
  255+ E8E8             >
  255+ E8E8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  255+ E8E8             >Latest_Definition defl  Heap_Ptr
@@ -16489,7 +16489,7 @@
  271+ 75B9             >//              Heap part
  271+ 75B9             >
  271+ 75B9             >
- 271+ 75B9             >                org     Heap_Ptr + $E000
+ 271+ 75B9             >                org     (Heap_Ptr & $1FFF) + $E000
  271+ E8F2             >
  271+ E8F2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  271+ E8F2             >Latest_Definition defl  Heap_Ptr
@@ -16550,7 +16550,7 @@
  284+ 75C8             >//              Heap part
  284+ 75C8             >
  284+ 75C8             >
- 284+ 75C8             >                org     Heap_Ptr + $E000
+ 284+ 75C8             >                org     (Heap_Ptr & $1FFF) + $E000
  284+ E8F9             >
  284+ E8F9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  284+ E8F9             >Latest_Definition defl  Heap_Ptr
@@ -16610,7 +16610,7 @@
  296+ 75D7             >//              Heap part
  296+ 75D7             >
  296+ 75D7             >
- 296+ 75D7             >                org     Heap_Ptr + $E000
+ 296+ 75D7             >                org     (Heap_Ptr & $1FFF) + $E000
  296+ E901             >
  296+ E901             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  296+ E901             >Latest_Definition defl  Heap_Ptr
@@ -16666,7 +16666,7 @@
  304+ 75E2             >//              Heap part
  304+ 75E2             >
  304+ 75E2             >
- 304+ 75E2             >                org     Heap_Ptr + $E000
+ 304+ 75E2             >                org     (Heap_Ptr & $1FFF) + $E000
  304+ E909             >
  304+ E909             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  304+ E909             >Latest_Definition defl  Heap_Ptr
@@ -16723,7 +16723,7 @@
  313+ 75ED             >//              Heap part
  313+ 75ED             >
  313+ 75ED             >
- 313+ 75ED             >                org     Heap_Ptr + $E000
+ 313+ 75ED             >                org     (Heap_Ptr & $1FFF) + $E000
  313+ E912             >
  313+ E912             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  313+ E912             >Latest_Definition defl  Heap_Ptr
@@ -16784,7 +16784,7 @@
  325+ 7606             >//              Heap part
  325+ 7606             >
  325+ 7606             >
- 325+ 7606             >                org     Heap_Ptr + $E000
+ 325+ 7606             >                org     (Heap_Ptr & $1FFF) + $E000
  325+ E919             >
  325+ E919             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  325+ E919             >Latest_Definition defl  Heap_Ptr
@@ -16852,7 +16852,7 @@
  341+ 762B             >//              Heap part
  341+ 762B             >
  341+ 762B             >
- 341+ 762B             >                org     Heap_Ptr + $E000
+ 341+ 762B             >                org     (Heap_Ptr & $1FFF) + $E000
  341+ E924             >
  341+ E924             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  341+ E924             >Latest_Definition defl  Heap_Ptr
@@ -16941,7 +16941,7 @@
  380+ 7662             >//              Heap part
  380+ 7662             >
  380+ 7662             >
- 380+ 7662             >                org     Heap_Ptr + $E000
+ 380+ 7662             >                org     (Heap_Ptr & $1FFF) + $E000
  380+ E92F             >
  380+ E92F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  380+ E92F             >Latest_Definition defl  Heap_Ptr
@@ -16999,7 +16999,7 @@
  388+ 766B             >//              Heap part
  388+ 766B             >
  388+ 766B             >
- 388+ 766B             >                org     Heap_Ptr + $E000
+ 388+ 766B             >                org     (Heap_Ptr & $1FFF) + $E000
  388+ E939             >
  388+ E939             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  388+ E939             >Latest_Definition defl  Heap_Ptr
@@ -17055,7 +17055,7 @@
  396+ 7676             >//              Heap part
  396+ 7676             >
  396+ 7676             >
- 396+ 7676             >                org     Heap_Ptr + $E000
+ 396+ 7676             >                org     (Heap_Ptr & $1FFF) + $E000
  396+ E940             >
  396+ E940             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  396+ E940             >Latest_Definition defl  Heap_Ptr
@@ -17112,7 +17112,7 @@
  405+ 7681             >//              Heap part
  405+ 7681             >
  405+ 7681             >
- 405+ 7681             >                org     Heap_Ptr + $E000
+ 405+ 7681             >                org     (Heap_Ptr & $1FFF) + $E000
  405+ E946             >
  405+ E946             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  405+ E946             >Latest_Definition defl  Heap_Ptr
@@ -17170,7 +17170,7 @@
  414+ 7690             >//              Heap part
  414+ 7690             >
  414+ 7690             >
- 414+ 7690             >                org     Heap_Ptr + $E000
+ 414+ 7690             >                org     (Heap_Ptr & $1FFF) + $E000
  414+ E94F             >
  414+ E94F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  414+ E94F             >Latest_Definition defl  Heap_Ptr
@@ -17225,7 +17225,7 @@
  421+ 769B             >//              Heap part
  421+ 769B             >
  421+ 769B             >
- 421+ 769B             >                org     Heap_Ptr + $E000
+ 421+ 769B             >                org     (Heap_Ptr & $1FFF) + $E000
  421+ E955             >
  421+ E955             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  421+ E955             >Latest_Definition defl  Heap_Ptr
@@ -17283,7 +17283,7 @@
  431+ 76A6             >//              Heap part
  431+ 76A6             >
  431+ 76A6             >
- 431+ 76A6             >                org     Heap_Ptr + $E000
+ 431+ 76A6             >                org     (Heap_Ptr & $1FFF) + $E000
  431+ E95D             >
  431+ E95D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  431+ E95D             >Latest_Definition defl  Heap_Ptr
@@ -17342,7 +17342,7 @@
  440+ 76B5             >//              Heap part
  440+ 76B5             >
  440+ 76B5             >
- 440+ 76B5             >                org     Heap_Ptr + $E000
+ 440+ 76B5             >                org     (Heap_Ptr & $1FFF) + $E000
  440+ E967             >
  440+ E967             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  440+ E967             >Latest_Definition defl  Heap_Ptr
@@ -17414,7 +17414,7 @@
  464+ 76C0             >//              Heap part
  464+ 76C0             >
  464+ 76C0             >
- 464+ 76C0             >                org     Heap_Ptr + $E000
+ 464+ 76C0             >                org     (Heap_Ptr & $1FFF) + $E000
  464+ E96E             >
  464+ E96E             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  464+ E96E             >Latest_Definition defl  Heap_Ptr
@@ -17480,7 +17480,7 @@
  479+ 76DD             >//              Heap part
  479+ 76DD             >
  479+ 76DD             >
- 479+ 76DD             >                org     Heap_Ptr + $E000
+ 479+ 76DD             >                org     (Heap_Ptr & $1FFF) + $E000
  479+ E979             >
  479+ E979             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  479+ E979             >Latest_Definition defl  Heap_Ptr
@@ -17543,7 +17543,7 @@
  491+ 76EA             >//              Heap part
  491+ 76EA             >
  491+ 76EA             >
- 491+ 76EA             >                org     Heap_Ptr + $E000
+ 491+ 76EA             >                org     (Heap_Ptr & $1FFF) + $E000
  491+ E983             >
  491+ E983             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  491+ E983             >Latest_Definition defl  Heap_Ptr
@@ -17620,7 +17620,7 @@
  516+ 7718             >//              Heap part
  516+ 7718             >
  516+ 7718             >
- 516+ 7718             >                org     Heap_Ptr + $E000
+ 516+ 7718             >                org     (Heap_Ptr & $1FFF) + $E000
  516+ E98F             >
  516+ E98F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  516+ E98F             >Latest_Definition defl  Heap_Ptr
@@ -17666,9 +17666,9 @@
  517+ 771F
  518+ 771F              //  ______________________________________________________________________
  519+ 771F
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L2.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L2.asm
  114  771F                              include "next-opt1.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/next-opt1.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/next-opt1.asm
    1+ 771F              //  ______________________________________________________________________
    2+ 771F              //
    3+ 771F              //  next-opt.asm
@@ -17695,7 +17695,7 @@
   19+ 771F             >//              Heap part
   19+ 771F             >
   19+ 771F             >
-  19+ 771F             >                org     Heap_Ptr + $E000
+  19+ 771F             >                org     (Heap_Ptr & $1FFF) + $E000
   19+ E99A             >
   19+ E99A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   19+ E99A             >Latest_Definition defl  Heap_Ptr
@@ -17766,7 +17766,7 @@
   42+ 772F             >//              Heap part
   42+ 772F             >
   42+ 772F             >
-  42+ 772F             >                org     Heap_Ptr + $E000
+  42+ 772F             >                org     (Heap_Ptr & $1FFF) + $E000
   42+ E9A3             >
   42+ E9A3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   42+ E9A3             >Latest_Definition defl  Heap_Ptr
@@ -17841,7 +17841,7 @@
   69+ 773F             >//              Heap part
   69+ 773F             >
   69+ 773F             >
-  69+ 773F             >                org     Heap_Ptr + $E000
+  69+ 773F             >                org     (Heap_Ptr & $1FFF) + $E000
   69+ E9AC             >
   69+ E9AC             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   69+ E9AC             >Latest_Definition defl  Heap_Ptr
@@ -17939,7 +17939,7 @@
  116+ 776B             >//              Heap part
  116+ 776B             >
  116+ 776B             >
- 116+ 776B             >                org     Heap_Ptr + $E000
+ 116+ 776B             >                org     (Heap_Ptr & $1FFF) + $E000
  116+ E9B8             >
  116+ E9B8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  116+ E9B8             >Latest_Definition defl  Heap_Ptr
@@ -17991,7 +17991,7 @@
  118+ 7772             >//              Heap part
  118+ 7772             >
  118+ 7772             >
- 118+ 7772             >                org     Heap_Ptr + $E000
+ 118+ 7772             >                org     (Heap_Ptr & $1FFF) + $E000
  118+ E9C3             >
  118+ E9C3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  118+ E9C3             >Latest_Definition defl  Heap_Ptr
@@ -18054,7 +18054,7 @@
  126+ 779F             >//              Heap part
  126+ 779F             >
  126+ 779F             >
- 126+ 779F             >                org     Heap_Ptr + $E000
+ 126+ 779F             >                org     (Heap_Ptr & $1FFF) + $E000
  126+ E9D1             >
  126+ E9D1             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  126+ E9D1             >Latest_Definition defl  Heap_Ptr
@@ -18116,7 +18116,7 @@
  137+ 77B6             >//              Heap part
  137+ 77B6             >
  137+ 77B6             >
- 137+ 77B6             >                org     Heap_Ptr + $E000
+ 137+ 77B6             >                org     (Heap_Ptr & $1FFF) + $E000
  137+ E9DE             >
  137+ E9DE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  137+ E9DE             >Latest_Definition defl  Heap_Ptr
@@ -18180,7 +18180,7 @@
  150+ 77CF             >//              Heap part
  150+ 77CF             >
  150+ 77CF             >
- 150+ 77CF             >                org     Heap_Ptr + $E000
+ 150+ 77CF             >                org     (Heap_Ptr & $1FFF) + $E000
  150+ E9EB             >
  150+ E9EB             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  150+ E9EB             >Latest_Definition defl  Heap_Ptr
@@ -18246,7 +18246,7 @@
  163+ 77E8             >//              Heap part
  163+ 77E8             >
  163+ 77E8             >
- 163+ 77E8             >                org     Heap_Ptr + $E000
+ 163+ 77E8             >                org     (Heap_Ptr & $1FFF) + $E000
  163+ E9F9             >
  163+ E9F9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  163+ E9F9             >Latest_Definition defl  Heap_Ptr
@@ -18313,7 +18313,7 @@
  177+ 780B             >//              Heap part
  177+ 780B             >
  177+ 780B             >
- 177+ 780B             >                org     Heap_Ptr + $E000
+ 177+ 780B             >                org     (Heap_Ptr & $1FFF) + $E000
  177+ EA06             >
  177+ EA06             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  177+ EA06             >Latest_Definition defl  Heap_Ptr
@@ -18359,9 +18359,9 @@
  180+ 7812
  181+ 7812
  182+ 7812
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/next-opt1.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/next-opt1.asm
  115  7812                              include "L3.asm"
-# file opened: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L3.asm
+# file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L3.asm
    1+ 7812              //  ______________________________________________________________________
    2+ 7812              //
    3+ 7812              //  L3.asm
@@ -18384,7 +18384,7 @@
   14+ 7812             >//              Heap part
   14+ 7812             >
   14+ 7812             >
-  14+ 7812             >                org     Heap_Ptr + $E000
+  14+ 7812             >                org     (Heap_Ptr & $1FFF) + $E000
   14+ EA0F             >
   14+ EA0F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   14+ EA0F             >Latest_Definition defl  Heap_Ptr
@@ -18458,7 +18458,7 @@
   39+ 783F             >//              Heap part
   39+ 783F             >
   39+ 783F             >
-  39+ 783F             >                org     Heap_Ptr + $E000
+  39+ 783F             >                org     (Heap_Ptr & $1FFF) + $E000
   39+ EA17             >
   39+ EA17             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   39+ EA17             >Latest_Definition defl  Heap_Ptr
@@ -18527,7 +18527,7 @@
   57+ 7866             >//              Heap part
   57+ 7866             >
   57+ 7866             >
-  57+ 7866             >                org     Heap_Ptr + $E000
+  57+ 7866             >                org     (Heap_Ptr & $1FFF) + $E000
   57+ EA20             >
   57+ EA20             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   57+ EA20             >Latest_Definition defl  Heap_Ptr
@@ -18590,7 +18590,7 @@
   67+ 787F             >//              Heap part
   67+ 787F             >
   67+ 787F             >
-  67+ 787F             >                org     Heap_Ptr + $E000
+  67+ 787F             >                org     (Heap_Ptr & $1FFF) + $E000
   67+ EA2B             >
   67+ EA2B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   67+ EA2B             >Latest_Definition defl  Heap_Ptr
@@ -18658,7 +18658,7 @@
   80+ 7894             >//              Heap part
   80+ 7894             >
   80+ 7894             >
-  80+ 7894             >                org     Heap_Ptr + $E000
+  80+ 7894             >                org     (Heap_Ptr & $1FFF) + $E000
   80+ EA3D             >
   80+ EA3D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
   80+ EA3D             >Latest_Definition defl  Heap_Ptr
@@ -18744,7 +18744,7 @@
  114+ 78D7             >//              Heap part
  114+ 78D7             >
  114+ 78D7             >
- 114+ 78D7             >                org     Heap_Ptr + $E000
+ 114+ 78D7             >                org     (Heap_Ptr & $1FFF) + $E000
  114+ EA48             >
  114+ EA48             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  114+ EA48             >Latest_Definition defl  Heap_Ptr
@@ -18834,7 +18834,7 @@
  151+ 7930             >//              Heap part
  151+ 7930             >
  151+ 7930             >
- 151+ 7930             >                org     Heap_Ptr + $E000
+ 151+ 7930             >                org     (Heap_Ptr & $1FFF) + $E000
  151+ EA52             >
  151+ EA52             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  151+ EA52             >Latest_Definition defl  Heap_Ptr
@@ -18890,7 +18890,7 @@
  156+ 7937             >//              Heap part
  156+ 7937             >
  156+ 7937             >
- 156+ 7937             >                org     Heap_Ptr + $E000
+ 156+ 7937             >                org     (Heap_Ptr & $1FFF) + $E000
  156+ EA5C             >
  156+ EA5C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  156+ EA5C             >Latest_Definition defl  Heap_Ptr
@@ -18959,7 +18959,7 @@
  173+ 7958             >//              Heap part
  173+ 7958             >
  173+ 7958             >
- 173+ 7958             >                org     Heap_Ptr + $E000
+ 173+ 7958             >                org     (Heap_Ptr & $1FFF) + $E000
  173+ EA66             >
  173+ EA66             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  173+ EA66             >Latest_Definition defl  Heap_Ptr
@@ -19070,7 +19070,7 @@
  223+ 79F1             >//              Heap part
  223+ 79F1             >
  223+ 79F1             >
- 223+ 79F1             >                org     Heap_Ptr + $E000
+ 223+ 79F1             >                org     (Heap_Ptr & $1FFF) + $E000
  223+ EA74             >
  223+ EA74             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  223+ EA74             >Latest_Definition defl  Heap_Ptr
@@ -19203,7 +19203,7 @@
  290+ 7AA8             >//              Heap part
  290+ 7AA8             >
  290+ 7AA8             >
- 290+ 7AA8             >                org     Heap_Ptr + $E000
+ 290+ 7AA8             >                org     (Heap_Ptr & $1FFF) + $E000
  290+ EA82             >
  290+ EA82             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  290+ EA82             >Latest_Definition defl  Heap_Ptr
@@ -19269,7 +19269,7 @@
  303+ 7ACB             >//              Heap part
  303+ 7ACB             >
  303+ 7ACB             >
- 303+ 7ACB             >                org     Heap_Ptr + $E000
+ 303+ 7ACB             >                org     (Heap_Ptr & $1FFF) + $E000
  303+ EA8C             >
  303+ EA8C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  303+ EA8C             >Latest_Definition defl  Heap_Ptr
@@ -19331,7 +19331,7 @@
  316+ 7ADC             >//              Heap part
  316+ 7ADC             >
  316+ 7ADC             >
- 316+ 7ADC             >                org     Heap_Ptr + $E000
+ 316+ 7ADC             >                org     (Heap_Ptr & $1FFF) + $E000
  316+ EA98             >
  316+ EA98             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  316+ EA98             >Latest_Definition defl  Heap_Ptr
@@ -19383,7 +19383,7 @@
  319+ 7B04             >//              Heap part
  319+ 7B04             >
  319+ 7B04             >
- 319+ 7B04             >                org     Heap_Ptr + $E000
+ 319+ 7B04             >                org     (Heap_Ptr & $1FFF) + $E000
  319+ EAA4             >
  319+ EAA4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  319+ EAA4             >Latest_Definition defl  Heap_Ptr
@@ -19435,7 +19435,7 @@
  322+ 7B31             >//              Heap part
  322+ 7B31             >
  322+ 7B31             >
- 322+ 7B31             >                org     Heap_Ptr + $E000
+ 322+ 7B31             >                org     (Heap_Ptr & $1FFF) + $E000
  322+ EAB1             >
  322+ EAB1             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  322+ EAB1             >Latest_Definition defl  Heap_Ptr
@@ -19489,7 +19489,7 @@
  324+ 7B3C             >//              Heap part
  324+ 7B3C             >
  324+ 7B3C             >
- 324+ 7B3C             >                org     Heap_Ptr + $E000
+ 324+ 7B3C             >                org     (Heap_Ptr & $1FFF) + $E000
  324+ EABF             >
  324+ EABF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  324+ EABF             >Latest_Definition defl  Heap_Ptr
@@ -19547,7 +19547,7 @@
  329+ 7B47             >//              Heap part
  329+ 7B47             >
  329+ 7B47             >
- 329+ 7B47             >                org     Heap_Ptr + $E000
+ 329+ 7B47             >                org     (Heap_Ptr & $1FFF) + $E000
  329+ EACD             >
  329+ EACD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  329+ EACD             >Latest_Definition defl  Heap_Ptr
@@ -19622,7 +19622,7 @@
  352+ 7B7E             >//              Heap part
  352+ 7B7E             >
  352+ 7B7E             >
- 352+ 7B7E             >                org     Heap_Ptr + $E000
+ 352+ 7B7E             >                org     (Heap_Ptr & $1FFF) + $E000
  352+ EAD8             >
  352+ EAD8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  352+ EAD8             >Latest_Definition defl  Heap_Ptr
@@ -19676,7 +19676,7 @@
  357+ 7B8D             >//              Heap part
  357+ 7B8D             >
  357+ 7B8D             >
- 357+ 7B8D             >                org     Heap_Ptr + $E000
+ 357+ 7B8D             >                org     (Heap_Ptr & $1FFF) + $E000
  357+ EAE1             >
  357+ EAE1             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  357+ EAE1             >Latest_Definition defl  Heap_Ptr
@@ -19733,7 +19733,7 @@
  364+ 7B9C             >//              Heap part
  364+ 7B9C             >
  364+ 7B9C             >
- 364+ 7B9C             >                org     Heap_Ptr + $E000
+ 364+ 7B9C             >                org     (Heap_Ptr & $1FFF) + $E000
  364+ EAEA             >
  364+ EAEA             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  364+ EAEA             >Latest_Definition defl  Heap_Ptr
@@ -19800,7 +19800,7 @@
  380+ 7BBF             >//              Heap part
  380+ 7BBF             >
  380+ 7BBF             >
- 380+ 7BBF             >                org     Heap_Ptr + $E000
+ 380+ 7BBF             >                org     (Heap_Ptr & $1FFF) + $E000
  380+ EAF5             >
  380+ EAF5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  380+ EAF5             >Latest_Definition defl  Heap_Ptr
@@ -19879,7 +19879,7 @@
  407+ 7BFE             >//              Heap part
  407+ 7BFE             >
  407+ 7BFE             >
- 407+ 7BFE             >                org     Heap_Ptr + $E000
+ 407+ 7BFE             >                org     (Heap_Ptr & $1FFF) + $E000
  407+ EB01             >
  407+ EB01             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  407+ EB01             >Latest_Definition defl  Heap_Ptr
@@ -19954,7 +19954,7 @@
  430+ 7C35             >//              Heap part
  430+ 7C35             >
  430+ 7C35             >
- 430+ 7C35             >                org     Heap_Ptr + $E000
+ 430+ 7C35             >                org     (Heap_Ptr & $1FFF) + $E000
  430+ EB0B             >
  430+ EB0B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  430+ EB0B             >Latest_Definition defl  Heap_Ptr
@@ -20023,7 +20023,7 @@
  445+ 7C64             >//              Heap part
  445+ 7C64             >
  445+ 7C64             >
- 445+ 7C64             >                org     Heap_Ptr + $E000
+ 445+ 7C64             >                org     (Heap_Ptr & $1FFF) + $E000
  445+ EB14             >
  445+ EB14             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  445+ EB14             >Latest_Definition defl  Heap_Ptr
@@ -20086,7 +20086,7 @@
  459+ 7C83             >//              Heap part
  459+ 7C83             >
  459+ 7C83             >
- 459+ 7C83             >                org     Heap_Ptr + $E000
+ 459+ 7C83             >                org     (Heap_Ptr & $1FFF) + $E000
  459+ EB1C             >
  459+ EB1C             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  459+ EB1C             >Latest_Definition defl  Heap_Ptr
@@ -20144,7 +20144,7 @@
  469+ 7C94             >//              Heap part
  469+ 7C94             >
  469+ 7C94             >
- 469+ 7C94             >                org     Heap_Ptr + $E000
+ 469+ 7C94             >                org     (Heap_Ptr & $1FFF) + $E000
  469+ EB22             >
  469+ EB22             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  469+ EB22             >Latest_Definition defl  Heap_Ptr
@@ -20227,7 +20227,7 @@
  497+ 7CDD             >//              Heap part
  497+ 7CDD             >
  497+ 7CDD             >
- 497+ 7CDD             >                org     Heap_Ptr + $E000
+ 497+ 7CDD             >                org     (Heap_Ptr & $1FFF) + $E000
  497+ EB2D             >
  497+ EB2D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  497+ EB2D             >Latest_Definition defl  Heap_Ptr
@@ -20318,7 +20318,7 @@
  522+ 7D48             >//              Heap part
  522+ 7D48             >
  522+ 7D48             >
- 522+ 7D48             >                org     Heap_Ptr + $E000
+ 522+ 7D48             >                org     (Heap_Ptr & $1FFF) + $E000
  522+ EB38             >
  522+ EB38             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  522+ EB38             >Latest_Definition defl  Heap_Ptr
@@ -20382,7 +20382,7 @@
  536+ 7D5F             >//              Heap part
  536+ 7D5F             >
  536+ 7D5F             >
- 536+ 7D5F             >                org     Heap_Ptr + $E000
+ 536+ 7D5F             >                org     (Heap_Ptr & $1FFF) + $E000
  536+ EB43             >
  536+ EB43             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  536+ EB43             >Latest_Definition defl  Heap_Ptr
@@ -20438,7 +20438,7 @@
  543+ 7D6C             >//              Heap part
  543+ 7D6C             >
  543+ 7D6C             >
- 543+ 7D6C             >                org     Heap_Ptr + $E000
+ 543+ 7D6C             >                org     (Heap_Ptr & $1FFF) + $E000
  543+ EB4A             >
  543+ EB4A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  543+ EB4A             >Latest_Definition defl  Heap_Ptr
@@ -20496,7 +20496,7 @@
  551+ 7D7F             >//              Heap part
  551+ 7D7F             >
  551+ 7D7F             >
- 551+ 7D7F             >                org     Heap_Ptr + $E000
+ 551+ 7D7F             >                org     (Heap_Ptr & $1FFF) + $E000
  551+ EB51             >
  551+ EB51             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  551+ EB51             >Latest_Definition defl  Heap_Ptr
@@ -20556,7 +20556,7 @@
  562+ 7D92             >//              Heap part
  562+ 7D92             >
  562+ 7D92             >
- 562+ 7D92             >                org     Heap_Ptr + $E000
+ 562+ 7D92             >                org     (Heap_Ptr & $1FFF) + $E000
  562+ EB5A             >
  562+ EB5A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  562+ EB5A             >Latest_Definition defl  Heap_Ptr
@@ -20631,7 +20631,7 @@
  584+ 7DCB             >//              Heap part
  584+ 7DCB             >
  584+ 7DCB             >
- 584+ 7DCB             >                org     Heap_Ptr + $E000
+ 584+ 7DCB             >                org     (Heap_Ptr & $1FFF) + $E000
  584+ EB60             >
  584+ EB60             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  584+ EB60             >Latest_Definition defl  Heap_Ptr
@@ -20690,7 +20690,7 @@
  595+ 7DDE             >//              Heap part
  595+ 7DDE             >
  595+ 7DDE             >
- 595+ 7DDE             >                org     Heap_Ptr + $E000
+ 595+ 7DDE             >                org     (Heap_Ptr & $1FFF) + $E000
  595+ EB67             >
  595+ EB67             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  595+ EB67             >Latest_Definition defl  Heap_Ptr
@@ -20752,7 +20752,7 @@
  606+ 7DFF             >//              Heap part
  606+ 7DFF             >
  606+ 7DFF             >
- 606+ 7DFF             >                org     Heap_Ptr + $E000
+ 606+ 7DFF             >                org     (Heap_Ptr & $1FFF) + $E000
  606+ EB6F             >
  606+ EB6F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  606+ EB6F             >Latest_Definition defl  Heap_Ptr
@@ -20809,7 +20809,7 @@
  615+ 7E0E             >//              Heap part
  615+ 7E0E             >
  615+ 7E0E             >
- 615+ 7E0E             >                org     Heap_Ptr + $E000
+ 615+ 7E0E             >                org     (Heap_Ptr & $1FFF) + $E000
  615+ EB76             >
  615+ EB76             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  615+ EB76             >Latest_Definition defl  Heap_Ptr
@@ -20865,7 +20865,7 @@
  622+ 7E1B             >//              Heap part
  622+ 7E1B             >
  622+ 7E1B             >
- 622+ 7E1B             >                org     Heap_Ptr + $E000
+ 622+ 7E1B             >                org     (Heap_Ptr & $1FFF) + $E000
  622+ EB7D             >
  622+ EB7D             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  622+ EB7D             >Latest_Definition defl  Heap_Ptr
@@ -20920,7 +20920,7 @@
  629+ 7E26             >//              Heap part
  629+ 7E26             >
  629+ 7E26             >
- 629+ 7E26             >                org     Heap_Ptr + $E000
+ 629+ 7E26             >                org     (Heap_Ptr & $1FFF) + $E000
  629+ EB83             >
  629+ EB83             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  629+ EB83             >Latest_Definition defl  Heap_Ptr
@@ -20975,7 +20975,7 @@
  636+ 7E31             >//              Heap part
  636+ 7E31             >
  636+ 7E31             >
- 636+ 7E31             >                org     Heap_Ptr + $E000
+ 636+ 7E31             >                org     (Heap_Ptr & $1FFF) + $E000
  636+ EB89             >
  636+ EB89             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  636+ EB89             >Latest_Definition defl  Heap_Ptr
@@ -21030,7 +21030,7 @@
  643+ 7E3C             >//              Heap part
  643+ 7E3C             >
  643+ 7E3C             >
- 643+ 7E3C             >                org     Heap_Ptr + $E000
+ 643+ 7E3C             >                org     (Heap_Ptr & $1FFF) + $E000
  643+ EB90             >
  643+ EB90             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  643+ EB90             >Latest_Definition defl  Heap_Ptr
@@ -21112,7 +21112,7 @@
  667+ 7E8F             >//              Heap part
  667+ 7E8F             >
  667+ 7E8F             >
- 667+ 7E8F             >                org     Heap_Ptr + $E000
+ 667+ 7E8F             >                org     (Heap_Ptr & $1FFF) + $E000
  667+ EB9A             >
  667+ EB9A             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  667+ EB9A             >Latest_Definition defl  Heap_Ptr
@@ -21191,7 +21191,7 @@
  694+ 7ED2             >//              Heap part
  694+ 7ED2             >
  694+ 7ED2             >
- 694+ 7ED2             >                org     Heap_Ptr + $E000
+ 694+ 7ED2             >                org     (Heap_Ptr & $1FFF) + $E000
  694+ EBA3             >
  694+ EBA3             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  694+ EBA3             >Latest_Definition defl  Heap_Ptr
@@ -21265,7 +21265,7 @@
  715+ 7EFF             >//              Heap part
  715+ 7EFF             >
  715+ 7EFF             >
- 715+ 7EFF             >                org     Heap_Ptr + $E000
+ 715+ 7EFF             >                org     (Heap_Ptr & $1FFF) + $E000
  715+ EBAD             >
  715+ EBAD             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  715+ EBAD             >Latest_Definition defl  Heap_Ptr
@@ -21321,7 +21321,7 @@
  722+ 7F0C             >//              Heap part
  722+ 7F0C             >
  722+ 7F0C             >
- 722+ 7F0C             >                org     Heap_Ptr + $E000
+ 722+ 7F0C             >                org     (Heap_Ptr & $1FFF) + $E000
  722+ EBB5             >
  722+ EBB5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  722+ EBB5             >Latest_Definition defl  Heap_Ptr
@@ -21404,7 +21404,7 @@
  734+ 7F6F             >//              Heap part
  734+ 7F6F             >
  734+ 7F6F             >
- 734+ 7F6F             >                org     Heap_Ptr + $E000
+ 734+ 7F6F             >                org     (Heap_Ptr & $1FFF) + $E000
  734+ EBC0             >
  734+ EBC0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  734+ EBC0             >Latest_Definition defl  Heap_Ptr
@@ -21465,7 +21465,7 @@
  744+ 7F80             >//              Heap part
  744+ 7F80             >
  744+ 7F80             >
- 744+ 7F80             >                org     Heap_Ptr + $E000
+ 744+ 7F80             >                org     (Heap_Ptr & $1FFF) + $E000
  744+ EBCA             >
  744+ EBCA             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  744+ EBCA             >Latest_Definition defl  Heap_Ptr
@@ -21529,7 +21529,7 @@
  758+ 7F99             >//              Heap part
  758+ 7F99             >
  758+ 7F99             >
- 758+ 7F99             >                org     Heap_Ptr + $E000
+ 758+ 7F99             >                org     (Heap_Ptr & $1FFF) + $E000
  758+ EBD7             >
  758+ EBD7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  758+ EBD7             >Latest_Definition defl  Heap_Ptr
@@ -21613,7 +21613,7 @@
  793+ 7FB0             >//              Heap part
  793+ 7FB0             >
  793+ 7FB0             >
- 793+ 7FB0             >                org     Heap_Ptr + $E000
+ 793+ 7FB0             >                org     (Heap_Ptr & $1FFF) + $E000
  793+ EBDF             >
  793+ EBDF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  793+ EBDF             >Latest_Definition defl  Heap_Ptr
@@ -21671,7 +21671,7 @@
  802+ 7FBD             >//              Heap part
  802+ 7FBD             >
  802+ 7FBD             >
- 802+ 7FBD             >                org     Heap_Ptr + $E000
+ 802+ 7FBD             >                org     (Heap_Ptr & $1FFF) + $E000
  802+ EBE8             >
  802+ EBE8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  802+ EBE8             >Latest_Definition defl  Heap_Ptr
@@ -21730,7 +21730,7 @@
  812+ 7FD0             >//              Heap part
  812+ 7FD0             >
  812+ 7FD0             >
- 812+ 7FD0             >                org     Heap_Ptr + $E000
+ 812+ 7FD0             >                org     (Heap_Ptr & $1FFF) + $E000
  812+ EBEF             >
  812+ EBEF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  812+ EBEF             >Latest_Definition defl  Heap_Ptr
@@ -21790,7 +21790,7 @@
  822+ 7FE7             >//              Heap part
  822+ 7FE7             >
  822+ 7FE7             >
- 822+ 7FE7             >                org     Heap_Ptr + $E000
+ 822+ 7FE7             >                org     (Heap_Ptr & $1FFF) + $E000
  822+ EBF8             >
  822+ EBF8             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  822+ EBF8             >Latest_Definition defl  Heap_Ptr
@@ -21848,7 +21848,7 @@
  830+ 7FF0             >//              Heap part
  830+ 7FF0             >
  830+ 7FF0             >
- 830+ 7FF0             >                org     Heap_Ptr + $E000
+ 830+ 7FF0             >                org     (Heap_Ptr & $1FFF) + $E000
  830+ EC02             >
  830+ EC02             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  830+ EC02             >Latest_Definition defl  Heap_Ptr
@@ -21913,7 +21913,7 @@
  845+ 800F             >//              Heap part
  845+ 800F             >
  845+ 800F             >
- 845+ 800F             >                org     Heap_Ptr + $E000
+ 845+ 800F             >                org     (Heap_Ptr & $1FFF) + $E000
  845+ EC0B             >
  845+ EC0B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  845+ EC0B             >Latest_Definition defl  Heap_Ptr
@@ -21972,7 +21972,7 @@
  854+ 801C             >//              Heap part
  854+ 801C             >
  854+ 801C             >
- 854+ 801C             >                org     Heap_Ptr + $E000
+ 854+ 801C             >                org     (Heap_Ptr & $1FFF) + $E000
  854+ EC15             >
  854+ EC15             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  854+ EC15             >Latest_Definition defl  Heap_Ptr
@@ -22032,7 +22032,7 @@
  864+ 802F             >//              Heap part
  864+ 802F             >
  864+ 802F             >
- 864+ 802F             >                org     Heap_Ptr + $E000
+ 864+ 802F             >                org     (Heap_Ptr & $1FFF) + $E000
  864+ EC1F             >
  864+ EC1F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  864+ EC1F             >Latest_Definition defl  Heap_Ptr
@@ -22092,7 +22092,7 @@
  874+ 8042             >//              Heap part
  874+ 8042             >
  874+ 8042             >
- 874+ 8042             >                org     Heap_Ptr + $E000
+ 874+ 8042             >                org     (Heap_Ptr & $1FFF) + $E000
  874+ EC29             >
  874+ EC29             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  874+ EC29             >Latest_Definition defl  Heap_Ptr
@@ -22147,7 +22147,7 @@
  881+ 804B             >//              Heap part
  881+ 804B             >
  881+ 804B             >
- 881+ 804B             >                org     Heap_Ptr + $E000
+ 881+ 804B             >                org     (Heap_Ptr & $1FFF) + $E000
  881+ EC31             >
  881+ EC31             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  881+ EC31             >Latest_Definition defl  Heap_Ptr
@@ -22206,7 +22206,7 @@
  890+ 8056             >//              Heap part
  890+ 8056             >
  890+ 8056             >
- 890+ 8056             >                org     Heap_Ptr + $E000
+ 890+ 8056             >                org     (Heap_Ptr & $1FFF) + $E000
  890+ EC3B             >
  890+ EC3B             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  890+ EC3B             >Latest_Definition defl  Heap_Ptr
@@ -22266,7 +22266,7 @@
  900+ 8061             >//              Heap part
  900+ 8061             >
  900+ 8061             >
- 900+ 8061             >                org     Heap_Ptr + $E000
+ 900+ 8061             >                org     (Heap_Ptr & $1FFF) + $E000
  900+ EC46             >
  900+ EC46             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  900+ EC46             >Latest_Definition defl  Heap_Ptr
@@ -22336,7 +22336,7 @@
  920+ 8084             >//              Heap part
  920+ 8084             >
  920+ 8084             >
- 920+ 8084             >                org     Heap_Ptr + $E000
+ 920+ 8084             >                org     (Heap_Ptr & $1FFF) + $E000
  920+ EC4F             >
  920+ EC4F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  920+ EC4F             >Latest_Definition defl  Heap_Ptr
@@ -22394,7 +22394,7 @@
  929+ 8099             >//              Heap part
  929+ 8099             >
  929+ 8099             >
- 929+ 8099             >                org     Heap_Ptr + $E000
+ 929+ 8099             >                org     (Heap_Ptr & $1FFF) + $E000
  929+ EC56             >
  929+ EC56             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  929+ EC56             >Latest_Definition defl  Heap_Ptr
@@ -22451,7 +22451,7 @@
  938+ 80AA             >//              Heap part
  938+ 80AA             >
  938+ 80AA             >
- 938+ 80AA             >                org     Heap_Ptr + $E000
+ 938+ 80AA             >                org     (Heap_Ptr & $1FFF) + $E000
  938+ EC5F             >
  938+ EC5F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  938+ EC5F             >Latest_Definition defl  Heap_Ptr
@@ -22510,7 +22510,7 @@
  947+ 80BB             >//              Heap part
  947+ 80BB             >
  947+ 80BB             >
- 947+ 80BB             >                org     Heap_Ptr + $E000
+ 947+ 80BB             >                org     (Heap_Ptr & $1FFF) + $E000
  947+ EC69             >
  947+ EC69             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  947+ EC69             >Latest_Definition defl  Heap_Ptr
@@ -22570,7 +22570,7 @@
  957+ 80D8             >//              Heap part
  957+ 80D8             >
  957+ 80D8             >
- 957+ 80D8             >                org     Heap_Ptr + $E000
+ 957+ 80D8             >                org     (Heap_Ptr & $1FFF) + $E000
  957+ EC71             >
  957+ EC71             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
  957+ EC71             >Latest_Definition defl  Heap_Ptr
@@ -22644,7 +22644,7 @@
  981+ 8123
  982+ 8123 00           Here_Dictionary db      0
  983+ 8124
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/L3.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L3.asm
  116  8124
  117  8124              // now we save the compiled file so we can either run it or debug it
  118  8124                              SAVENEX OPEN "output/main.nex", ORIGIN
@@ -22669,4 +22669,4 @@
  137  8124                              //      LOAD "forth17d.bin" CODE
  138  8124
  139  8124                              END
-# file closed: C:\Zx\CSpect\Projects\vForth16_MMU7/source/main.asm
+# file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm

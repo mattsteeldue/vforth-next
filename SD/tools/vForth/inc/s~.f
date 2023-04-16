@@ -9,14 +9,15 @@
 \
 NEEDS FAR
 NEEDS H"
+NEEDS (H")
 \
 \ immutable  string on heap
-: (S") R@ @ FAR COUNT R> CELL+ >R ;
+\ : (H") R@ @ FAR COUNT R> CELL+ >R ;
 \
 : S"  ( -- a n )
     STATE @
     IF
-        COMPILE (S") H" ,
+        COMPILE (H") H" ,
     ELSE
         H" FAR COUNT
     THEN

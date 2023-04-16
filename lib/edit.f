@@ -3,6 +3,8 @@
 \
 .( EDIT Full Screen Editor )
 \
+\ also available via DECIMAL 190 LOAD for backward compatibility
+\
 
 NEEDS INVV
 NEEDS TRUV
@@ -22,7 +24,7 @@ BASE @
     KEYB DUP EMIT ;
 
 : KEYBEMITD  ( -- b )       \ and treat it as a hex digit
-    KEYBEMIT [ HEx ] 10 [ DECIMAL ] DIGIT DROP ;
+    KEYBEMIT [ HEX ] 10 [ DECIMAL ] DIGIT DROP ;
 
 \
 DECIMAL   0 VARIABLE NROW  NROW !       \ current row

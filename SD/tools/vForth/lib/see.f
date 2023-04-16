@@ -68,7 +68,7 @@ NEEDS FAR
         ['] BRANCH      OF  DEB-B  ENDOF
         ['] LIT         OF  DEB-L  ENDOF
         ['] (.")        OF  DEB."  ENDOF
-      \ ['] (S")        OF  DEB.S  ENDOF
+      \ ['] (H")        OF  DEB.S  ENDOF
         ['] COMPILE     OF  DEB-W CELL+ INVV DEB-W ENDOF
             DUP .WORD
     ENDCASE

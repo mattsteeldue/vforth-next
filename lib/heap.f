@@ -20,55 +20,48 @@ NEEDS SKIP-HP-PAGE
 
 BASE @
 
+
+\ keep allocated 8K-pages number $20 to $27.
+\ This is 64K of ram avalable for Heap Management
+\ passed parameter must be 2 for alloc, or 3 for free
+\  n1 = hl register parameter value
+\  n2 = de register parameter value
+\  n3 = bc register parameter value
+\  n4 =  a register parameter value
+\   a = routine address in ROM 3
+
+\   hl de bc  a  addr           f     a  bc  de hl
+
+HEX  2 20  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 21  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 22  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 23  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 24  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 25  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 26  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+HEX  2 27  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+
+
 \
 \ Reserve n bytes of Heap, return heap-pointer address
 \ Heap is a linked-list starting from P:0002=$40:$E002
 : HEAP ( n -- ha )
-    HP@ >R              \ n        R: h0    ( save current HP )
+    HP@ >R              \ n         R: h0   ( save current HP )
     DUP SKIP-HP-PAGE    \ n                 ( check for room in current page )
     HP@ CELL+ TUCK      \ ha n ha           ( prepare resulting hp )
-    OVER + FAR >R       \ ha n     R: h0 a1 
+    OVER + FAR          \ ha n a1
+    >R                  \ ha n      R: h0 a1 
     0 R@ !              \ ha n              ( zero pad )
-    R> CELL+            \ ha n a2  R: h0
-    R@ CELL- SWAP !     \ ha n              ( set back pointer )   
-    6 + HP +!           \ ha       R: h0    ( set HP to next area )
-    HP@ R> FAR !        \ ha                ( set forward pointer )
+    R>                  \ ha n a1
+    CELL+               \ ha n a2  
+    R@                  \ ha n a2 h0
+    SWAP !              \ ha n              ( set back pointer )   
+    6 + HP +!           \ ha                ( set HP to next area )
+    HP@                 \ ha hp
+    R>                  \ hp hp h0
+    FAR !               \ ha                ( set forward pointer )
 ;
 \
 
-\ allocate or free 8K-pages number $20 to $27.
-\ This is 64K of ram avalable for Heap Management
-\ passed parameter must be 2 for alloc, or 3 for free
-HEX
-
-: HEAP-DOS ( n -- )
-    28 20          \ decimal 32-39
-    DO
-        DUP        \  n1 = hl register parameter value
-        I          \  n2 = de register parameter value
-        0          \  n3 = bc register parameter value
-        0          \  n4 =  a register parameter value
-        01BD       \   a = routine address in ROM 3
-        M_P3DOS
-        2C ?ERROR       \ error #44 NextZXOS DOS call error
-        2DROP 2DROP
-    LOOP DROP           \ consume n.
-;
-: HEAP-DONE  3 HEAP-DOS ;
-: HEAP-INIT  2 HEAP-DOS ;
-
-
-\ HEAP-DONE               \ free 8K-pages without error
-\ HEAP-INIT               \ require 8K-pages $40 to $47
-
-WARNING @ 0 WARNING !
-
-\ modify COLD to free them
-\ : COLD 
-\     HEAP-DONE 
-\     COLD 
-\ ;
-
-WARNING !
 BASE !
 
