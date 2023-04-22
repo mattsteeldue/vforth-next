@@ -8,7 +8,7 @@
 
 BASE @
 
-: IDE_MODE! ( hl de bc a -- )      
+: IDE_MODE! ( n -- )      
     >R 0 0 R> 1
     [ HEX ] 01D5 M_P3DOS [ DECIMAL ]
     44 ?ERROR

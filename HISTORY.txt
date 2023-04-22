@@ -317,7 +317,7 @@ and fast code.
  
 \ build 20220214
 Slight modification in illegal filename character map.
-Improvement in GRAPHICS libary that now can handle every Graphics-Mode.
+Improvement in GRAPHICS libary that now can handle every Graphic-Mode.
 
  
 \ build 20220306
@@ -422,5 +422,8 @@ The total effect is:
 3. The HEAP facility is still available 
 
 
+\ build 20230416
+This build improves GRAPHICS.f : some definitios now are coded in machine code
+in particular the ones that handle LAYER 2
 
 

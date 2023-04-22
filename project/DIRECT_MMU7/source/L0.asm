@@ -889,7 +889,7 @@ Cur_Wait:
                     call    $1601               // SELECT Standard-ROM Routine
     
                     // software-flash: flips face every 320 ms
-                    ld      a, $10              // Timing based
+                    ld      a, $20              // Timing based
                     and     (iy + $3E)          // FRAMES (5C3A+3E)
     
                     ld      a, (Block_Face)     // see origin.asm

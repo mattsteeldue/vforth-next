@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20230321 ) CR
+.( build 20230416 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -1356,7 +1356,7 @@ CODE curs ( -- )
             CALL    HEX 1601 AA,
 
             \ software-flash: flips face every 320 ms
-            LDN     A'| HEX 10 N,             \ Timing  
+            LDN     A'| HEX 20 N,             \ Timing  
             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
 
 \           LDN     A'| HEX 8F N,             \ block character
@@ -5831,7 +5831,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Heap Vocabulary - build 20230321" -1 allot ]
+    [ decimal 13 here ," Heap Vocabulary - build 20230416" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
