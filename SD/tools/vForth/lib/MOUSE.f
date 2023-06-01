@@ -41,8 +41,8 @@ HEX  14 REG@ CONSTANT E3 \ Global Transparency Colour
 
 \ Semi-graphical mouse-face definition 10x8-pixels arrow
 CREATE MOUSE-FACE 
-\ 0 1 2 3 4 5 6 7  \      
-\ ---------------  \     
+\ 0 1 2 3 4 5 6 7 8 9 A B C D E F \      
+\ ------------------------------- \     
   M | " " _ _ _ _ _ _ _ _ _ _ _ _ \  0 
   M M | " " _ _ _ _ _ _ _ _ _ _ _ \  1 
   M M M | " " _ _ _ _ _ _ _ _ _ _ \  2 

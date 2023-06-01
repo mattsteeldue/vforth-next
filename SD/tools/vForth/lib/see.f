@@ -7,8 +7,6 @@ BASE @
 DECIMAL
 \
 
-\ NEEDS S"
-\ NEEDS FAR
 NEEDS [']
 NEEDS DUMP
 NEEDS INVV
@@ -17,10 +15,8 @@ NEEDS CASE
 NEEDS .WORD
 NEEDS .S
 NEEDS FAR
+NEEDS (H")
 \
-
-\ HP @ 
-\ HEX -00F0 HP !
 
 \ display NFA, LFA, CFA report-rows
 \ : DEB-NFA ( pfa -- )  S" Nfa: " TYPE NFA DUP U. C@ . CR ;
@@ -31,10 +27,6 @@ NEEDS FAR
 : DEB-LFA ( pfa -- )  ." Lfa: "      LFA DUP U. @ DUP U. ID. CR ;
 : DEB-CFA ( pfa -- )  ." Cfa: "      CFA DUP U. 2 CFA NEGATE + @ U. ;
 
-
-\ CR HP ? CR
-
-\ HP !
 
 \ display simple DUMP 
 : DEB-PFA ( pfa -- )             CFA 24 DUMP ;
@@ -68,7 +60,7 @@ NEEDS FAR
         ['] BRANCH      OF  DEB-B  ENDOF
         ['] LIT         OF  DEB-L  ENDOF
         ['] (.")        OF  DEB."  ENDOF
-      \ ['] (H")        OF  DEB.S  ENDOF
+        ['] (H")        OF  DEB.S  ENDOF  \ relies on S"
         ['] COMPILE     OF  DEB-W CELL+ INVV DEB-W ENDOF
             DUP .WORD
     ENDCASE
