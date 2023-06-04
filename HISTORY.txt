@@ -427,3 +427,5 @@ This build improves GRAPHICS.f : some definitios now are coded in machine code
 in particular the ones that handle LAYER 2
 
 
+\ MIT License
+Following Rob Probin's suggestion a MIT License has been added to this software.

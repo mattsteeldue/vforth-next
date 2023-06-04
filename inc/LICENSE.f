@@ -1,0 +1,28 @@
+\
+\ LICENSE.f
+\
+
+.( MIT LICENSE ) 
+
+( MIT License )
+NEEDS PAD"
+
+BASE @
+DECIMAL
+
+: LICENSE
+    PAD" LICENSE.MD"
+    PAD DUP 10 - 01 F_OPEN 41 ?ERROR >R
+    30 EMITC 6 EMITC
+    BEGIN
+        1 BLOCK B/BUF R@ F_GETLINE
+        DUP IF 
+            1 BLOCK B/BUF 1- -TRAILING TYPE CR 
+        THEN
+    0= UNTIL
+    30 EMITC 8 EMITC
+    R> F_CLOSE 42 ?ERROR
+;
+
+BASE !
+

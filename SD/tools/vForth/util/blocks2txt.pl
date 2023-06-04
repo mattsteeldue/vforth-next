@@ -13,7 +13,7 @@
  "N" is passed as second parameter.
   
  For example 
-    perl  block!.pl 1000 !Blocks.bin 
+    perl  blocks2txt.pl  !Blocks.bin   1000
  
  will produce !Blocks.bin.txt 
  
@@ -33,8 +33,41 @@ my $screen = 1 ;
 
 print T "File: $f\n" ;
 print T "Created: " . localtime . "\n\n" ;
-print T "Index:\n\n";
+print T "See index at end of file.\n\n";
 
+sysread( B, my $header, 512 ) ;
+my @header = split /\n/, $header ;
+map { s/\s+$// } @header ;
+$header = join( "\n", @header ) ;
+print T "$header\n" ;
+
+print T "\n\n";
+$count  = 0 ;
+$screen = 1 ;
+
+seek B, 512, 0 ;
+while ( sysread( B, my $line, 64 ) ) {
+    # my @dump = sprintf( '%02X ' x 64 ,unpack( 'C32', $line ) ) ;
+    $line =~ s/\x00/ /g ;
+    $line =~ s/\s+$// ;
+    $buffer .= sprintf( " %2d %s\n", $count, $line ) ;
+    if ( $count >= 15 ) {
+        print T "\nScr# $screen \n" ;
+        print T "$buffer" ;
+        $buffer = '' ;
+        $count = -1 ;
+        $screen ++ ;
+        last if $screen >= $N ;
+    }
+    $count ++ ;
+}
+print T $buffer ;
+
+print T "\n\n";
+$count  = 0 ;
+$screen = 1 ;
+
+print T "Index:\n\n";
 seek B, 512, 0 ;
 while ( sysread( B, my $line, 64 ) ) {
     $line =~ s/\x00//g ;
@@ -54,26 +87,6 @@ while ( sysread( B, my $line, 64 ) ) {
     $count ++ ;
 }
 
-print T "\n\n";
-$count  = 0 ;
-$screen = 1 ;
-seek B, 512, 0 ;
-while ( sysread( B, my $line, 64 ) ) {
-    # my @dump = sprintf( '%02X ' x 64 ,unpack( 'C32', $line ) ) ;
-    $line =~ s/\x00/ /g ;
-    $line =~ s/\s+$// ;
-    $buffer .= sprintf( " %2d %s\n", $count, $line ) ;
-    if ( $count >= 15 ) {
-        print T "\nScr# $screen \n" ;
-        print T "$buffer" ;
-        $buffer = '' ;
-        $count = -1 ;
-        $screen ++ ;
-        last if $screen >= $N ;
-    }
-    $count ++ ;
-}
-print T $buffer ;
 
 close T ;
 close B; 
