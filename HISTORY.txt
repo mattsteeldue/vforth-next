@@ -433,5 +433,5 @@ Following Rob Probin's suggestion a MIT License has been added to this software.
 
 \ build 20230619
 Improvement on MOUSE central-wheel click recognition.
-Experiment about AFX sound file format, how to play 9 channel-voices at unison.
+Experiments on AFX sound file format, how to play 9 channel-voices at unison.
 Introducing $ hex-prefix in NUMBER parser, following Rob Probin's suggestion
