@@ -178,10 +178,14 @@ DECIMAL
         mouse-redraw
     then
     
-    \ update mouse button-events  -2, -1, 1, 2
+    \ update mouse button-events  
+    \ +/-   1 : right button
+    \ +/-   2 : left button
+    \ +/-   4 : wheel button
+    \ +/-  16 : wheel rotation
     mouse-ds @ ?dup 
     if
-        dup 0< if 2* 2* abs  then 
+        dup 0< if abs flip then 
         mouse-s @ 
         or 
         mouse-s !
@@ -207,10 +211,14 @@ DECIMAL
 
 
 \ return the current status of mouse
-\ s : 1 right button click-down event
-\   : 2 left  button click-down event
-\   : 4 right button click-up   event
-\   : 8 left  button click-up   event
+\ s :    1  right button click-down event
+\   :    2  left  button click-down event
+\   :    4  wheel button click-down event
+\   :   16  wheel up direction      event
+\   :  256  right button click-up   event
+\   :  512  left  button click-up   event
+\   : 1024  wheel button click-up   event
+\   : 4096  wheel down direction    event
 .( MOUSE )
 
 : MOUSE

@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20230416 ) CR
+.( build 20230619 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -4177,6 +4177,14 @@ CODE fill ( a n c -- )
     ;
 
 
+: (prefix) ( a1 -- a2 )
+    dup 1+ c@
+    [ CHAR $ ] Literal = If 1+ 16 base ! Then
+\   [ CHAR % ] Literal = If 1+  2 base ! Then
+\   [ CHAR # ] Literal = If 1+ 10 base ! Then
+;
+
+
 \ 70C1h
 .( NUMBER )
 : number  ( a -- d )
@@ -4184,10 +4192,10 @@ CODE fill ( a n c -- )
     rot
     (sgn) >r
     -1 dpl !
-
+    base @ >r (prefix)    
     (number)    
     dup c@
-    [ decimal 46 ] Literal =
+    [ CHAR . ] Literal =
     If
         0 dpl !
         (number)
@@ -5831,7 +5839,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Heap Vocabulary - build 20230416" -1 allot ]
+    [ decimal 13 here ," Heap Vocabulary - build 20230619" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

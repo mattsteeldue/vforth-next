@@ -1257,7 +1257,8 @@ CSgn_Else_0:
                 dw          ZBRANCH
                 dw          CSgn_Endif_1 - $
                 dw              ONE_PLUS        //          1+
-                dw              ONE, DPL        //          1 dpl
+                dw              ONE, DPL        //                dw      EXIT
+          1 dpl
                 dw              PLUSSTORE       //          +!
 CSgn_Endif_1                                    //      endif
                 dw          ZERO                //      0    
@@ -1310,15 +1311,32 @@ CNumber_While_end:                              // repeat
 
 //  ______________________________________________________________________ 
 //
+// prefix
+                Colon_Def CPREFIX,  "(PREFIX)", is_normal
+                dw      DUP, ONE_PLUS, CFETCH   // dup 1+ c@
+                dw      LIT, "$", EQUALS        // [char] $ =
+                                                // if
+                dw      ZBRANCH
+                dw      CPrefix_Endif_0 - $   
+                dw          ONE_PLUS            //      1+
+                dw          LIT, 16, 
+                dw          BASE, STORE         //      16 base !
+CPrefix_Endif_0:                                // endif
+                dw      EXIT
+
+//  ______________________________________________________________________ 
+//
 // number       a -- d
                 Colon_Def NUMBER,  "NUMBER", is_normal
                 dw      ZERO, ZERO              // 0 0
                 dw      ROT                     // rot
                 dw      CSGN, TO_R              // (sgn) >r
                 dw      NEG_ONE, DPL, STORE     // -1 dpl !
+                dw      BASE, FETCH, TO_R       // base @ >r  // ***
+                dw      CPREFIX                 // (prefix)   // ***
                 dw      CNUMBER                 // (number)
                 dw      DUP, CFETCH             // dup c@
-                dw      LIT, 46, EQUALS         // [char] . =  ( decimal point )
+                dw      LIT, ".", EQUALS        // [char] . =  ( decimal point )
                                                 // if
                 dw      ZBRANCH
                 dw      Number_Endif_1 - $
@@ -1327,6 +1345,7 @@ CNumber_While_end:                              // repeat
 Number_Endif_1:                                 // endif   
                 dw      CFETCH, BL              // c@ bl
                 dw      SUBTRACT, ZERO, QERROR  // - 0 ?error
+                dw      R_TO, BASE, STORE       // r> base !  // ***
                 dw      R_TO                    // r>
                                                 // if
                 dw      ZBRANCH

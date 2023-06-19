@@ -34,6 +34,7 @@ CREATE   AFX-MIXER   06 ALLOT
 \  bit7     Disable N
 \ 
   FORTH
+\ afxFrame-sub:  
   HERE  \ call-hook for AFXFRAME
   TOOLS-ASM !TALLY !CSP
   ASSEMBLER 
@@ -186,10 +187,10 @@ code AFXFRAME ( -- )
 \ afxFrameAY:
   HERE
         inc     l'|
-        out(c)  l'|                     \ select AY1, 2, 3
+        out(c)  l'|                     \ select AY1, AY2, AY3
         exx
         ldx     bc|  HEX 03FD  NN,      \    03FD
-        call    SWAP AA,                \ use call-hook
+        call    SWAP AA,                \ use call-hook to afxFrame-sub
         exx
         dec     h'|
         jrf    nz'|    BACK,            \ resolve afxFrameAY

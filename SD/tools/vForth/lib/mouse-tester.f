@@ -17,11 +17,12 @@ NEEDS .AT
     ." coord " mouse-x @ .  mouse-y @ .  mouse-s @ .  7 spaces cr
          swap 3 + swap .at
     ." LASTK " [ hex ] 5C08 C@ .
-    mouse 
+    mouse
     dup 1 and if ." ---------- right down " then
     dup 4 and if ." ---------- right up   " then
     dup 2 and if ." ---------- left  down " then
     dup 8 and if ." ---------- left  up   " then
+    dup if INTERRUPTS ISR-SYNC ISR-SYNC then
     0=        if ." no event " then
 ;
 
