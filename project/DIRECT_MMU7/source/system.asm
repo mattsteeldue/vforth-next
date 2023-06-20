@@ -91,7 +91,7 @@ last_NFA        defl    0
 len_NFA         defl    0
 
 Dict_Ptr        defl    0
-Heap_Ptr        defl    $0002
+// Heap_Ptr        defl    $0002
 Prev_Ptr        defl    0
 mirror_Ptr      defl    0
 

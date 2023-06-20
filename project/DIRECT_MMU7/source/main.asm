@@ -64,19 +64,25 @@ DEBUGGING       equ     0
 //  ______________________________________________________________________
 
                 if ( -1 == DEBUGGING ) 
-ORIGIN          equ     $6366 - $80                 // for binary comparison
-//ORIGIN          equ     39606 - $80               // for binary comparison
+// ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
+ORIGIN          equ     39606 - $80               // for binary comparison with single compilation
+Heap_Ptr        defl    $0002
+
                 endif
 //  ______________________________________________________________________
 
                 if (  0 == DEBUGGING ) 
 ORIGIN          equ     $6366                   // binary and Tape
 // ORIGIN          equ     $9A93                // binary and Tape
+Heap_Ptr        defl    $0002
+
                 endif
 //  ______________________________________________________________________
 
                 if (  1 == DEBUGGING ) 
 ORIGIN          equ     $8080                   // for DeZog
+Heap_Ptr        defl    $0002
+
                 endif
 //  ______________________________________________________________________
 

@@ -1,9 +1,9 @@
 |SLD.data.version|1
-C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|83||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
+C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|89||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
 C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|62||0|-1|0|D|DEBUGGING
 C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|62||0|-1|0|L|,DEBUGGING,,+equ,+used
-C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|73||0|-1|25446|D|ORIGIN
-C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|73||0|-1|25446|L|,ORIGIN,,+equ,+used
+C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|75||0|-1|25446|D|ORIGIN
+C:\Zx\CSpect\Projects\vForth17_MMU7/source/main.asm|75||0|-1|25446|L|,ORIGIN,,+equ,+used
 C:\Zx\CSpect\Projects\vForth17_MMU7/source/system.asm|17||0|-1|23692|D|SCR_CT
 C:\Zx\CSpect\Projects\vForth17_MMU7/source/system.asm|17||0|-1|23692|L|,SCR_CT,,+equ,+used
 C:\Zx\CSpect\Projects\vForth17_MMU7/source/system.asm|18||0|-1|23560|D|LASTK
