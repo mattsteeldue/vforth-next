@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 //  v-Forth 1.62 NextZXOS version 
-//  build 20230619
+//  build 20230626
 // 
 //  Direct-Threaded version.
 // 
@@ -65,8 +65,9 @@ DEBUGGING       equ     0
 
                 if ( -1 == DEBUGGING ) 
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
-ORIGIN          equ     39606 - $80               // for binary comparison with single compilation
-Heap_Ptr        defl    $0002
+ORIGIN          equ     39612 - $80               // for binary comparison with single compilation
+Heap_Ptr        defl    -6                      // HP before compilation
+Heap_offset     defl     $2000
 
                 endif
 //  ______________________________________________________________________
@@ -75,6 +76,7 @@ Heap_Ptr        defl    $0002
 ORIGIN          equ     $6366                   // binary and Tape
 // ORIGIN          equ     $9A93                // binary and Tape
 Heap_Ptr        defl    $0002
+Heap_offset     defl     0
 
                 endif
 //  ______________________________________________________________________
@@ -82,6 +84,7 @@ Heap_Ptr        defl    $0002
                 if (  1 == DEBUGGING ) 
 ORIGIN          equ     $8080                   // for DeZog
 Heap_Ptr        defl    $0002
+Heap_offset     defl     0
 
                 endif
 //  ______________________________________________________________________

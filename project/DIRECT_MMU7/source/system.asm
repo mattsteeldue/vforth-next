@@ -133,7 +133,7 @@ len_NFA         defl    $ - temp_NFA
                 org     $-1                 // alter last byte of Name just above to set
                 db      {b $} | END_BIT     // msb as name end 
 
-                dw      Prev_Ptr            // Link to previous definition Name
+                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
 Prev_Ptr        defl    Heap_Ptr
                 
 mirror_Ptr      defl    $ 
@@ -148,7 +148,7 @@ Current_HP      defl  $ - $E000             // used to set HP once!
 
                 org     Dict_Ptr
 
-                dw      mirror_Ptr - $E000
+                dw      mirror_Ptr - $E000 + Heap_offset
 
 label:          if runcode != 0 ; ok        // This is the start address of the direct jp(hl)
                 call    runcode ; ok        // for primitive definitions  actual code

@@ -1257,8 +1257,7 @@ CSgn_Else_0:
                 dw          ZBRANCH
                 dw          CSgn_Endif_1 - $
                 dw              ONE_PLUS        //          1+
-                dw              ONE, DPL        //                dw      EXIT
-          1 dpl
+                dw              ONE, DPL        //          1 dpl
                 dw              PLUSSTORE       //          +!
 CSgn_Endif_1                                    //      endif
                 dw          ZERO                //      0    
@@ -1311,17 +1310,27 @@ CNumber_While_end:                              // repeat
 
 //  ______________________________________________________________________ 
 //
-// prefix
+// (prefix)
                 Colon_Def CPREFIX,  "(PREFIX)", is_normal
                 dw      DUP, ONE_PLUS, CFETCH   // dup 1+ c@
+                dw      DUP, TO_R               // dup >r
                 dw      LIT, "$", EQUALS        // [char] $ =
                                                 // if
                 dw      ZBRANCH
                 dw      CPrefix_Endif_0 - $   
                 dw          ONE_PLUS            //      1+
-                dw          LIT, 16, 
+                dw          LIT, 16 
                 dw          BASE, STORE         //      16 base !
 CPrefix_Endif_0:                                // endif
+                dw      R_TO                    // r>
+                dw      LIT, "%", EQUALS        // [char] $ =
+                                                // if
+                dw      ZBRANCH
+                dw      CPrefix_Endif_1 - $   
+                dw          ONE_PLUS            //      1+
+                dw          TWO                 
+                dw          BASE, STORE         //      2 base !
+CPrefix_Endif_1:                                // endif
                 dw      EXIT
 
 //  ______________________________________________________________________ 

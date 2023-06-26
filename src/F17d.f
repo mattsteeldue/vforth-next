@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20230619 ) CR
+.( build 20230626 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -4176,12 +4176,15 @@ CODE fill ( a n c -- )
     r>              ( d a )
     ;
 
-
+\ recognize $ prefix for hex numbers at next character in current string a1.
+\ address is incremented if $ was found 
 : (prefix) ( a1 -- a2 )
     dup 1+ c@
-    [ CHAR $ ] Literal = If 1+ 16 base ! Then
-\   [ CHAR % ] Literal = If 1+  2 base ! Then
-\   [ CHAR # ] Literal = If 1+ 10 base ! Then
+    dup >r
+    [ CHAR $ ] Literal = If 1+ [ decimal 16 ] Literal base ! Then
+    r>
+    [ CHAR % ] Literal = If 1+                      2 base ! Then
+\   [ CHAR # ] Literal = If 1+ [ decimal 10 ] Literal base ! Then
 ;
 
 
@@ -4192,7 +4195,7 @@ CODE fill ( a n c -- )
     rot
     (sgn) >r
     -1 dpl !
-    base @ >r (prefix)    
+    base @ >r (prefix)    \ save base
     (number)    
     dup c@
     [ CHAR . ] Literal =
@@ -4201,6 +4204,7 @@ CODE fill ( a n c -- )
         (number)
     Then
     c@ bl - 0 ?error
+    r> base !
     r> If
         dnegate
     Then
@@ -5839,7 +5843,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Heap Vocabulary - build 20230619" -1 allot ]
+    [ decimal 13 here ," Heap Vocabulary - build 20230626" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
@@ -6349,6 +6353,7 @@ RENAME   number         NUMBER
 \ RENAME   >w             >W    
 
 RENAME   (number)       (NUMBER)
+RENAME   (prefix)       (PREFIX)
 RENAME   (sgn)          (SGN) 
 RENAME   .(             .(    
 ( )
