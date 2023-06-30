@@ -439,4 +439,6 @@ Introducing $ hex-prefix in NUMBER parser, following Rob Probin's suggestion
 
 \ build 20230626
 Introducing % binary-prefix in NUMBER parser along with $ hex-prefix.
+Documentation explains the dictionary structure splitted into name-space 
+and code-space.
 

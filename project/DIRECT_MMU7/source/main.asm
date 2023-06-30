@@ -65,7 +65,7 @@ DEBUGGING       equ     0
 
                 if ( -1 == DEBUGGING ) 
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
-ORIGIN          equ     39612 - $80               // for binary comparison with single compilation
+ORIGIN          equ     39844 - $80               // for binary comparison with single compilation
 Heap_Ptr        defl    -6                      // HP before compilation
 Heap_offset     defl     $2000
 
