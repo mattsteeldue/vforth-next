@@ -7,7 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Memory  )
 
-TESTING F.6.1.0130  +!
+TESTING F.6.1.0130 - +!
 
 \ Before this test you need test ,  (comma)
 
