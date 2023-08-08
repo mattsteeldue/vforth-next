@@ -719,13 +719,23 @@ Index_Leave:
 //  ______________________________________________________________________ 
 //
 // splash       --
+//              Colon_Def SPLASH, "SPLASH", is_normal
+//              dw      CLS
+//              dw      C_DOT_QUOTE
+//              db      87
+//              db      "v-Forth 1.7 NextZXOS version", 13    // 29
+//              db      "Heap Vocabulary - build 20230809", 13  // 33
+//              db      "1990-2023 Matteo Vitturi", 13        // 25
+//              dw      EXIT
+
+//  ______________________________________________________________________ 
+//
+// splash       --
                 Colon_Def SPLASH, "SPLASH", is_normal
                 dw      CLS
-                dw      C_DOT_QUOTE
-                db      87
-                db      "v-Forth 1.7 NextZXOS version", 13    // 29
-                db      "Heap Vocabulary - build 20230626", 13  // 33
-                db      "1990-2023 Matteo Vitturi", 13        // 25
+                dw      LIT, Splash_Ptr
+                dw      TO_FAR, MMU7_STORE
+                dw      COUNT, TYPE
                 dw      EXIT
 
 //  ______________________________________________________________________ 

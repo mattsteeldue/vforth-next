@@ -10,7 +10,7 @@ NEEDS TESTING
 
 \ F.6.1.0460     - ;
 
-TESTING F.6.1.0450  -  : 
+TESTING F.6.1.0450 - : 
 
 T{ : NOP : POSTPONE ; ; -> }T
 T{ NOP NOP1 NOP NOP2 -> }T

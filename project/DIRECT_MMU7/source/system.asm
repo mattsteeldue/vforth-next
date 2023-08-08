@@ -199,6 +199,24 @@ Colon_Def       macro   label, namec, bits
 
 //  ______________________________________________________________________
 //
+// Create a "heap-string"
+Start_Heap      macro   
+temp_ORG        defl    $                   // save this ORG
+                org     (Heap_Ptr & $1FFF) + $E000
+                
+                endm
+
+End_Heap        macro   
+Heap_Ptr        defl    $ - $E000
+                org     temp_ORG
+
+                endm
+
+
+//  ______________________________________________________________________
+//
+
+
 
 S0_system:      equ     $D0E8               // Address of top of Calc Stack
 TIB_system      equ     $D0E8               // TIB grows upwards, Return-Stack downward.

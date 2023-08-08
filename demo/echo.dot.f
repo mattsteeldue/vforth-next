@@ -4,6 +4,8 @@
 
 needs assembler
 needs save-bytes
+needs pad"
+
 
 variable org
 
@@ -29,7 +31,7 @@ code echo
 
 decimal
 
-filename" echo"  
+pad" echo"  
 Org @ Here over -  \  start-addres & length
 save-bytes
 

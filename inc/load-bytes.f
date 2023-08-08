@@ -5,7 +5,11 @@
 .( LOAD-BYTES ) 
 
 \ load bytes from filename held in PAD
-\ PAD is volatile
+\ PAD content is volatile
+
+\ Usage:
+\ pad" test.bin"       \ the space is needed but is not part of filename
+\ <address> <size> laod-bytes
 
 \ Example:
 \ PAD" filename"  HEX 4000 1000 LOAD-BYTES
@@ -14,6 +18,7 @@ BASE @
 
 DECIMAL
 
+\ load n bytes at address a from file named in PAD
 \ a is destination address, better < $E000
 \ n maximumb length in bytes
 : LOAD-BYTES ( a n -- )

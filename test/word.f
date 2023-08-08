@@ -7,7 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Parser Input Source Control  )
 
-TESTING 6.1.2450 - WORD
+TESTING F.6.1.2450 - WORD
 
 : GS3 WORD COUNT SWAP C@ ;
 T{ BL GS3 HELLO -> 5 CHAR H }T

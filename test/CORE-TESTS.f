@@ -41,6 +41,7 @@ MARKER TESTING-DONE
     NEEDS VALUE
     NEEDS TO
     NEEDS +TO
+    NEEDS .PAD
     
     NEEDS TESTING
 
@@ -354,22 +355,6 @@ TESTING \ F.3.18 Parser Input Source Control
    INCLUDE  test/word.f            \ *** incorrect result on emtpy lines ***
 
 
-TESTING \ F.3.20 Memory movement
-
-    INCLUDE  test/fill.f  
-    INCLUDE  test/move.f  
-
-
-TESTING \ F.3.21 Output
-
-    INCLUDE  test/emit.f
-
-
-TESTING \ F.3.22 Input
-
-    INCLUDE  test/accept.f
-
-
 TESTING \ F.3.19 Number Patterns
 
 \ The number formatting words produce a string, a word that compares 
@@ -406,7 +391,22 @@ TESTING \ F.3.19 Number Patterns
     INCLUDE  test/base.f
     INCLUDE  test/holds.f
     INCLUDE  test/}number.f 
-    INCLUDE  test/}number.f     \ retry...
+
+
+TESTING \ F.3.20 Memory movement
+
+    INCLUDE  test/fill.f  
+    INCLUDE  test/move.f  
+
+
+TESTING \ F.3.21 Output
+
+    INCLUDE  test/emit.f
+
+
+TESTING \ F.3.22 Input
+
+    INCLUDE  test/accept.f
 
 
 TESTING \ F.3.23 Dictionary Search Rules 

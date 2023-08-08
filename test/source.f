@@ -9,7 +9,7 @@ NEEDS SOURCE
 NEEDS EVALUATE
 NEEDS COMPARE
 
-TESTING F.6.1.2216  -  SOURCE
+TESTING F.6.1.2216 - SOURCE
 
 \ v-Forth has a system dependency on S" in that the address obtained by S"
 \ is available while the page MMU7 hasn't changed.

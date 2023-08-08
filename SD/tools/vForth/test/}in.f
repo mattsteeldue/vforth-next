@@ -10,7 +10,7 @@ NEEDS S"
 
 ( Test Suite - Parser Input Source Control )
 
-TESTING F.6.1.0560  -  >IN 
+TESTING F.6.1.0560 - >IN 
 
 VARIABLE SCANS
 : RESCAN? -1 SCANS +! SCANS @ IF 0 >IN ! THEN ;

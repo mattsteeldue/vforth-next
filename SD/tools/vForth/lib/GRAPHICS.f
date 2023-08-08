@@ -23,6 +23,10 @@ NEEDS IDE_MODE@
 NEEDS DEFER 
 NEEDS IS
 
+: GRAPHICS 
+    NOOP
+;
+
 BASE @
 
 \ ____________________________________________________________________
@@ -806,11 +810,16 @@ HEX
     
 \ if passed  f  is zero, then it forgets all this library
 \ Typical usage:  0 GRAPHICS 
-: GRAPHICS ( f -- )
+: FGRAPHICS ( f -- )
     NOT IF 
         LAYER12 NO-GRAPHICS 
     THEN
 ;
+
+
+\ this allows FORGET GRAPHICS to remove this whole package
+
+' FGRAPHICS ' GRAPHICS >BODY !
 
 
 
@@ -850,7 +859,7 @@ DECIMAL
 \
 \ Immediately setup current mode 
 
-MARKER SETUP-DONE
+MARKER SETUP-DONE 
 NEEDS CASE
 NEEDS IDE_MODE@
 HEX

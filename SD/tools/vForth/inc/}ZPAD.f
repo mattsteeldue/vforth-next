@@ -5,9 +5,10 @@
 \ this definition ports a string+length into a z-string to PAD
 : >ZPAD  ( a n -- )
     PAD 255 BLANK           \ a    n
-    2DUP + 0                \ a    n  a+n   0
-    SWAP !                  \ a    n
-    PAD SWAP                \ a  pad  n
-    1+ CMOVE 
+    >R                      \ a             R: n
+    PAD R@                  \ a  pad  n
+    CMOVE                   \
+    0 PAD R>                \ 0  pad  n
+    + C!                    \
 ;  
 

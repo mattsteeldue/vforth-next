@@ -442,3 +442,9 @@ Introducing % binary-prefix in NUMBER parser along with $ hex-prefix.
 Documentation explains the dictionary structure splitted into name-space 
 and code-space.
 
+
+\ build 20230809
+Introducing DIR definition and simple VIEW <filename>.
+Improved a small demo to experiment AFX sound file format.
+After moving all strings to HEAP, the binary core now less than 7.5 KBytes.
+I'm thinking to port this Forth environment in a "dot" command like .forth 

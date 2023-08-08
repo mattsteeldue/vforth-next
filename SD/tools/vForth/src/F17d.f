@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20230626 ) CR
+.( build 20230809 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -174,8 +174,8 @@ DECIMAL
 \ : Psh1     ASSEMBLER  JP next^  1-   AA, ;
 \ : Next     ASSEMBLER  JP next^       AA, ;
 
-: Psh2     ASSEMBLER  PUSH DE|   PUSH HL|   JPIX ;
-: Psh1     ASSEMBLER             PUSH HL|   JPIX ;
+\ : Psh2     ASSEMBLER  PUSH DE|   PUSH HL|   JPIX ;
+\ : Psh1     ASSEMBLER             PUSH HL|   JPIX ;
 : Next     ASSEMBLER                        JPIX ;
 
 
@@ -5843,7 +5843,7 @@ decimal
     cls
     [compile] (.")
     [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Heap Vocabulary - build 20230626" -1 allot ]
+    [ decimal 13 here ," Heap Vocabulary - build 20230809" -1 allot ]
     [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;

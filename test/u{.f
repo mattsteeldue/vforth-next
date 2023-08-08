@@ -8,7 +8,7 @@ NEEDS TESTING
 
 ( Test Suite - Comparison        )
 
-TESTING F.6.1.2340 -  U<
+TESTING F.6.1.2340 - U<
 T{         0        1 U< -> <TRUE>   }T
 T{         1        2 U< -> <TRUE>   }T
 T{         0 MID-UINT U< -> <TRUE>   }T

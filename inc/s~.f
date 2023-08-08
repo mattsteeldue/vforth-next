@@ -17,7 +17,8 @@ NEEDS (H")
 : S"  ( -- a n )
     STATE @
     IF
-        COMPILE (H") H" ,
+        COMPILE (H") 
+        H" COMPILE,
     ELSE
         H" FAR COUNT
     THEN

@@ -7,7 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Comparison        )
 
-TESTING F.6.1.1880 -  MAX
+TESTING F.6.1.1880 - MAX
 
 T{        0       1 MAX ->       1  }T
 T{        1       2 MAX ->       2  }T

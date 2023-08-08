@@ -3,8 +3,8 @@
 //  main.asm
 //  ______________________________________________________________________ 
 // 
-//  v-Forth 1.62 NextZXOS version 
-//  build 20230626
+//  v-Forth 1.7 NextZXOS version 
+//  build 20230809
 // 
 //  Direct-Threaded version.
 // 

@@ -1,24 +1,30 @@
 \
 \ LED.f
 \
-.( LED - Large EDitor )
+.( LED )
 \
 \ Large file EDitor. This source creates a new word LED, an editor that
 \ uses all RAM available.
 \ Each line can be 85 characters long, so the maximum line number is 17.664.
 \ Tipical usage:
 \
-\   LED      cccc       edit file cccc
+\   LED      cccc       edit file cccc 
 \                       file can be saved while editing using EDIT+W command.
 \
-\   LED-EDIT            re-enter editor on current RAM content
+\   LED                 re-enter editor on current RAM content
 \
 \   LED-SAVE            force a save of RAM content to file set by LED-FILE.
 \
 \   LED-FILE cccc       set LED-FN to cccc, useful to rename file on save.
 \
 
-MARKER FORGET-LED \ this allows you to forget all this package.
+BASE @
+
+DECIMAL
+
+: LED ( -- cccc )
+    NOOP
+;
 
 : KEYB CURS KEY ;
 
@@ -87,10 +93,14 @@ decimal
 \ z-string
 DECIMAL
 : LED-FILE ( -- cccc )
-    bl word dup 1+ c@ if
+    bl word dup 1+ c@ 
+    if
         led-fn 80 erase
         led-fn over c@ 1+ cmove
-    else drop then
+        1
+    else
+        drop 0
+    then
 ;
 
 \ open file and load to RAM
@@ -325,9 +335,15 @@ DECIMAL
     AGAIN  \ quit using EDIT-key + Q
 ;
 
-: LED
+: LED-CCCC
     LED-FILE
-    LED-LOAD
+    IF LED-LOAD THEN
     LED-EDIT
 ;
+
+\ this allows FORGET DIR to remove this whole package
+
+' LED-CCCC ' LED >BODY !
+
+BASE !
 

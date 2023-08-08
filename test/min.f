@@ -7,7 +7,7 @@ NEEDS TESTING
 
 ( Test Suite - Comparison        )
 
-TESTING F.6.1.1880 -  MIN
+TESTING F.6.1.1880 - MIN
 
 T{        0       1 MIN ->       0  }T
 T{        1       2 MIN ->       1  }T
