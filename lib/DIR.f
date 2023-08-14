@@ -69,16 +69,18 @@ DECIMAL
     f_opendir 43 ?error >R              \ keep filehandle in R@
     begin
         ?escape if
-            1
+            0                           \ FALSE for the IF after WHILE
+            -1                          \ TRUE  for the AND before WHILE
         else
+            -1                          \ TRUE for the IF after WHILE
             HERE                        \ use HERE as temp area
             PAD                         \ wildcard ignored
-            R@  f_readdir  46 ?error
+            R@  f_readdir  46 ?error    \ returns number of byte read
         then
-        ?TERMINAL NOT 
+        ?TERMINAL NOT                   \ BREAK stops
         AND
     while
-        ?escape not if
+        if
             HERE      DUP C@ >R         \ keep attribute byte
             1+        .filename space
             1+        DUP @  >R         \ keep time

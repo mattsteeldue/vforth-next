@@ -7,8 +7,9 @@
 \
 .( POINTER )
 \
+
 NEEDS FAR
-NEEDS HEAP
+
 \
 \ like CONSTANT but returns a Heap-Pointer-Address.
 \ When invoked a  FAR  turns it into a real address with the correct page 

@@ -112,8 +112,9 @@ Buffer_Endif:                                   // endif
 // See also BUFFER, R/W, UPDATE, FLUSH.
 
                 Colon_Def BLOCK, "BLOCK", is_normal
-                dw      OFFSET, FETCH           // offset @
-                dw      PLUS, TO_R              // + >r
+            //  dw      OFFSET, FETCH           // offset @
+            //  dw      PLUS
+                dw      TO_R                    // + >r
                 dw      PREV, FETCH             // prev @
                 dw      DUP, FETCH              // dup @
                 dw      R_OP, SUBTRACT          // r -

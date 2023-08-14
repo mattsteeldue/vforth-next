@@ -3,20 +3,20 @@
 \
 .( ISR Handler ) 
 \
-\ used in the form
+\ Used in the form:
 \
 \   ISR-OFF
 \   ' cccc ISR-XT !
 \   ISR-ON
 \
 \ set up an interrupt-vector to the  cccc  definition.
-\ To use this ISR utility you have to define a suitable word 
+\ To use this ISR utility you have to define a suitable word  cccc
 \ that can be executed in background in a Interrupt-Driven way
 \
 
 BASE @
 
-MARKER NO-INTERRUPTS
+MARKER FORGET-INTERRUPTS
 
 \ ____________________________________________________________________
 
@@ -24,7 +24,9 @@ VOCABULARY INTERRUPTS IMMEDIATE
 
 INTERRUPTS DEFINITIONS 
 
-HEX
+\ ____________________________________________________________________
+
+HEX 
 
 CODE  ISR-EI  ( -- )
     FB C,                       \ ei
@@ -57,11 +59,16 @@ CODE  SETIREG  ( n -- )
     47ED ,                      \ ld i,a
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
+\ very low level definition
+
 \ ____________________________________________________________________
 
-\ address used to save SP register during ISR
 
-6302  CONSTANT ISR-SAVE
+HEX 6302 CONSTANT ISR-SAVE      \ address used to save SP register during ISR
+HEX 6200 CONSTANT ISR-TABLE     \ 257 bytes IM2 vector table 
+HEX 6363 CONSTANT ISR-VECTOR    \ new ISR address
+HEX 0038 CONSTANT ISR-HANDLER   \ standard ISR handler
+
 
 \ ____________________________________________________________________
 \
@@ -121,7 +128,7 @@ CODE  ISR-SUB  ( -- )
     39 C, ( ADD HL,SP )         \ add hl,sp
     F9 C, ( LD  SP,HL  )        \ ld sp,hl
     \
-    01 C, ISR-XT ,              \ ld bc, ISR-XT
+    01 C, FORTH ISR-XT ,        \ ld bc, ISR-XT
     \
     DD C, 21 C,  (NEXT) ,       \ ld ix, (NEXT)  \ this is safer...
     DD C, E9 C, ( NEXT )        \ jp (ix)
@@ -132,27 +139,40 @@ SMUDGE
 
 FORTH DEFINITIONS
 
-HEX 
+HEX
 
 .( ISR-ON )
 
+\ enable interrupts to execute user's definition kept in ISR-XT 
 : ISR-ON  ( -- )
     INTERRUPTS
     ISR-DI
-    63 6200 C! 6200 6201 100 CMOVE   \ setup vector table
-    C3 6363 C!   \ jp to ISR-SUB address
+    \ ISR-HANDLER ISR-TABLE ! 
+    
+    \ setup vector table
+    ISR-VECTOR ISR-TABLE ! 
+    ISR-TABLE  DUP 2+ 00FF CMOVE   
+    
+    \ put jp op-code at ISR-VECTOR address, to jump to ISR-SUB address
+    C3 ISR-VECTOR C!   
     
     \ The start-address code of ISR-SUB depends on which version
     \ we have between Direct vs Indirect threaded core.
     \ The following calculation determines if the address the ISR jumps to
     \ is the CFA or CFA >BODY
-    [ 
-        ' ISR-SUB >BODY
-        DUP 
+    [   ' ISR-SUB >BODY DUP 
         ' ISR-SUB - 1- 2/ 3 * -
-    ] LITERAL 6364 !
+    ] LITERAL ISR-VECTOR 1+ !
     
-    62 SETIREG ISR-IM2
+    \ New Hardware Next's interrupt facility
+    \ ISR-VECTOR ISR-TABLE 11 CELLS + !
+    \ ISR-TABLE  %11100000 AND %00000001 OR  C0  REG!
+    \ %10000001 C4 REG! \ enable expansion bus INT and ULA interrupts
+    \ %00000000 C5 REG! \ disable all CTC channel interrupts
+    \ %00000000 C6 REG! \ disable UART interrupts
+    
+    ISR-TABLE 8 RSHIFT SETIREG 
+    ISR-IM2
     ISR-EI
 ;
 
@@ -160,16 +180,25 @@ HEX
 
 .( ISR-OFF )
 
+\ correctly disable interrupts
 : ISR-OFF  ( -- )
     INTERRUPTS
     ISR-DI
-    0038 6364 !
-    3F SETIREG ISR-IM1
+    ISR-HANDLER ISR-VECTOR 1+ !
+    3F SETIREG 
+    ISR-IM1
     ISR-EI
 ;
 
 \ ____________________________________________________________________
 
 FORTH DEFINITIONS
+
+
+: NO-INTERRUPTS
+  ISR-OFF
+  FORGET-INTERRUPTS
+;
+
 
 BASE !

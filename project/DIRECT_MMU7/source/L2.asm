@@ -85,13 +85,22 @@ Interpret_Endif_5:                                      //      endif
                 
                 dw      CBUILDS
 
+                // dummy word + link part
                 dw      LIT, $A081, COMMA       // $81A0 ,
-                dw      CURRENT, FETCH          // current @    
-                dw      CELL_MINUS, COMMA       // cell- ,
-                dw      HERE                    // here 
-                dw      VOC_LINK, FETCH, COMMA  // voc-link @ ,
-                dw      VOC_LINK, STORE         // voc-link !
 
+                dw      LIT, $A081, HCOMMA      // $81A0 , 
+
+                dw      CURRENT, FETCH          // current @    
+                dw      FETCH
+            //  dw      CELL_MINUS              // cell-
+                dw      COMMA                   // ,       
+
+                // voc-link part
+                dw      HERE                    // here 
+                dw      VOC_LINK, FETCH         // voc-link @
+                dw      COMMA                   // ,
+                dw      VOC_LINK, STORE         // voc-link !
+                // DOES part
                 dw      DOES_TO                 // does>
 Vocabulary_Does:
                 dw      CELL_PLUS               // cell+
@@ -493,9 +502,8 @@ Fm_Mod_Endif:
                                                 // if
                 dw      ZBRANCH
                 dw      Message_Else - $
-                dw          LIT, 4              //      4
-                dw          OFFSET, FETCH       //      offset @
-                dw          BSCR, DIV, SUBTRACT //      b/scr / -
+                dw          LIT, 32, PLUS       //      32 +
+                dw          TWO                 //      2
                 dw          DOT_LINE            //      .line
                 dw          SPACE               //      space
                                                 // else

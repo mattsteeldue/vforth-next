@@ -1,7 +1,7 @@
 \
 \ editor.f
 \
-.( EDITOR vocabulary ) 
+.( EDITOR ) 
 \
 
 NEEDS TEXT      ( c -- )     \ accept following text to PAD
@@ -32,7 +32,7 @@ EDITOR DEFINITIONS
 ;
 
 : S ( n -- )        \ shift lines >= n down by one
-    DUP  L/SCR 1- 
+    DUP 1 MAX L/SCR 1- 
     DO  
         I 1- LINE  
         I -MOVE  

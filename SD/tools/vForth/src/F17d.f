@@ -3055,7 +3055,7 @@ DECIMAL
   32     user    >in       \ incremented when consuming input buffer
   34     user    out       \ incremented when sending to output
   36     user    scr       \ latest screen retreieved by LIST
-  38     user    offset    \ 
+  38     user    offset    \ current edit position within current screen
   40     user    context   \ pointer to the vocabulary where search begins
   42     user    current   \ pointer to the vocabulary where search continues
   44     user    state     \ compilation status. 0 interpreting.
@@ -3106,6 +3106,14 @@ DECIMAL
 : c,  ( c -- )
     here    c!
     1 allot
+    ;
+
+
+\ new cell to heap
+.( , )
+: HP,  ( n -- )
+    hp@ far !
+    2 hp +!
     ;
 
 
@@ -4184,30 +4192,42 @@ CODE fill ( a n c -- )
     [ CHAR $ ] Literal = If 1+ [ decimal 16 ] Literal base ! Then
     r>
     [ CHAR % ] Literal = If 1+                      2 base ! Then
-\   [ CHAR # ] Literal = If 1+ [ decimal 10 ] Literal base ! Then
+\      [ CHAR # ] Literal = If 1+ [ decimal 10 ] Literal base ! Then
 ;
+
+
+create pdom hex    (   , / - :   )
+    char , c,  char / c,  char - c,  char : c, 
+
+create pcdm hex    (   . . . .   )
+    char . c,  char . c,  char . c,  char . c, 
 
 
 \ 70C1h
 .( NUMBER )
 : number  ( a -- d )
-    0 0 
-    rot
-    (sgn) >r
-    -1 dpl !
+    0 0 rot                 \ d a
+
+    (sgn) >r            
     base @ >r (prefix)    \ save base
-    (number)    
-    dup c@
-    [ CHAR . ] Literal =
-    If
-        0 dpl !
-        (number)
-    Then
+
+    -1 dpl !
+    (number)                \ d a
+    Begin
+        dup c@ >r pcdm pdom 4 r> (map) ( a2 a1 n c1 -- c2 ) 
+        0 swap             \ d a 0 c
+        [ CHAR . ] Literal = 
+        If 
+            0 dpl !  1+     \ d a  1
+        Then
+    While        
+        (number)            \ d a
+    Repeat                  \ d a
+
     c@ bl - 0 ?error
+
     r> base !
-    r> If
-        dnegate
-    Then
+    r> If dnegate Then
     ;
 
 
@@ -4561,7 +4581,9 @@ CODE fill ( a n c -- )
 : vocabulary  ( -- cccc )
     <builds
         [ hex A081 ] literal , 
-        current @ cell- , 
+        hp@
+        [ hex A081 ] literal hp, 
+        current @ @ , 
         here voc-link @ ,       
         voc-link !
     does>
@@ -4999,9 +5021,11 @@ CODE basic ( n -- )
     If
         \ ?dup
         \ If
-            [ decimal 4 ] literal
-            offset @
-            b/scr / -
+            [ decimal 32 ] literal 
+            +       
+            2
+            \   offset @
+            \   b/scr / -
             .line
             space
         \ Then
@@ -5278,7 +5302,8 @@ decimal #SEC constant #sec
 \ disk before reading the block n.
 \ See also BUFFER, R/W, UPDATE, FLUSH.
 : block  ( n -- a )
-    offset @ + >r 
+    \ offset @ + 
+    >r 
     prev @  
     dup @  r@ - dup +   \ check equality without most significant bit
     If  
@@ -5719,7 +5744,7 @@ decimal
 
 \ 7d50
 .( .R )
-: .r
+: .r   ( n1 n2 -- )
     >r  s>d  r>
     d.r
     ;
@@ -5727,7 +5752,7 @@ decimal
 
 \ 7d61
 .( D. )
-: d.
+: d.  ( d -- )
     0 d.r space
     ;
 

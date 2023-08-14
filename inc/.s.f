@@ -4,13 +4,11 @@
 .( .S )
 \
 \ show the stack content without modify it
-NEEDS DEPTH
 \
 : .S ( -- )
-    DEPTH IF
-        CR 
-        DEPTH 1+ 1 DO
-            S0 @ I CELLS - @ U.
-        LOOP
+    SP@ S0 @ < IF
+        CR SP@ S0 @ 2- DO
+            I @ U. 
+        0 2- +LOOP
     THEN 
 ;

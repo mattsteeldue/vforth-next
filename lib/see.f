@@ -1,11 +1,15 @@
 \
 \ see.f
 \
-.( SEE Inspector ) 
+.( SEE ) 
 \
 BASE @ 
 DECIMAL
 \
+
+: SEE  ( -- cccc )
+    NOOP
+;
 
 NEEDS [']
 NEEDS DUMP
@@ -29,7 +33,7 @@ NEEDS (H")
 
 
 \ display simple DUMP 
-: DEB-PFA ( pfa -- )             CFA 24 DUMP ;
+: DEB-PFA ( pfa -- )             CFA 10 DUMP ;
 
 \ display current definition ID.
 : DEB-W   ( pfa -- pfa   )  DUP @ .WORD ;
@@ -104,11 +108,15 @@ NEEDS (H")
 ;
 
 \
-: SEE  ( -- )
+: SEE-CCCC  ( -- cccc )
   -FIND 0= 0 ?ERROR  
   .   
   CR (SEE) 
 ;
+
+\ this allows FORGET SEE to remove this whole package
+
+' SEE-CCCC ' SEE >BODY !
 
 BASE !
 

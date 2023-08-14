@@ -1,10 +1,21 @@
 \
 \ edit.f
 \
-.( EDIT Full Screen Editor )
+.( EDIT )
 \
 \ also available via DECIMAL 190 LOAD for backward compatibility
+\ Typical usage:
 \
+\   n LIST EDIT
+\
+
+
+FORTH DEFINITIONS
+
+: EDIT     ( -- )
+    NOOP
+;
+
 
 NEEDS INVV
 NEEDS TRUV
@@ -30,7 +41,7 @@ BASE @
 DECIMAL   0 VARIABLE NROW  NROW !       \ current row
           0 VARIABLE NCOL  NCOL !       \ current columns
 
-: HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home
+: HOMEC   0 NROW ! 0 NCOL ! ;           \ cursor at home (variables only)
 
 : ADDRC   ( -- a )                      \ calc cursor addr
     NROW @ LINE NCOL @ + ;
@@ -41,7 +52,7 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
 : AT-XY   ( col row -- )                \ set print position
     22 EMITC  EMITC EMITC ;               \ using standard AT
 
-: HOME 0 0 AT-XY ;                      \ cursor at home
+: HOME 0 0 AT-XY ;                      \ cursor at home (display only)
 
 : BUZZ    7 EMIT ;                      \ sound BEL
 
@@ -53,6 +64,7 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
 \
 : RULER 6 0 DO ." +----.----" LOOP ." +--" ;
 
+\ move cursor
 : UPC     NROW @  0 > IF -1  NROW +!  ELSE  BUZZ  THEN ;
 
 : DOWNC   NROW @ 15 < IF  1  NROW +!  ELSE  BUZZ  THEN ;
@@ -61,12 +73,15 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
 
 : RIGHTC  NCOL @ 63 < IF  1  ELSE  DOWNC -63 THEN NCOL +! ;
 
+\ display page
 : PUTPAGE ." Screen # " SCR @ . CR RULER CR
           L/SCR 0 DO I SCR @ (LINE) TYPE CR LOOP RULER ;
 
-: REFRESH                             \ refresh current line
+\ refresh current line
+: REFRESH                             
     NROW @ SCR @  OVER 0 TO-SCR AT-XY  (LINE) TYPE ;
-\
+
+\ refresh bottom frame
 : EDIT-FRAME
     0 19 AT-XY
     INVV ."  row:" TRUV 5 SPACES INVV ."  col:" TRUV 5 SPACES
@@ -77,18 +92,21 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
     CR ." U-ndo    B-ack    D-el     I-nsert   H-old"
     CR ." Q-uit    N-ext    S-hift   R-eplace  P-ut hex byte"
     56 0 AT-XY  INVV ."   edit  " TRUV ;
-\
+
+\ refresh numbers
 : EDIT-STAT 
     CURC@
     25 19 AT-XY  HEX DUP 3 .R  36 19 AT-XY  DECIMAL DUP 3 .R
     47 19 AT-XY  32 MAX EMIT
     15 19 AT-XY  NCOL @  3 .R  05 19 AT-XY  NROW @      3 .R ;
-\
-: BYTE ( -- b ) \ accept two hex digit as a byte
+
+\ accept two hex digit as a byte for current position
+: BYTE ( -- b ) 
     KEYBEMITD  4 LSHIFT
     KEYBEMITD  + ; DECIMAL
 
-: UNDO  ( -- ) \ discard changes on current Screen
+\ discard changes on current Screen
+: UNDO  ( -- ) 
   B/SCR 0 DO
     SCR @ B/SCR * I +
     BLOCK CELL-
@@ -96,15 +114,16 @@ DECIMAL   0 VARIABLE NROW  NROW !       \ current row
   LOOP ;
 
 HEX
-
+\ exiting editor session
 : DONEC             8F 28 +ORIGIN C!    \ reset cursor face
                     5F 2A +ORIGIN C! ;  \ reset cursor face
 
+\ entering editor session
 : INITC   CURC@ BL MAX 28 +ORIGIN C!    \ change cursor face
                     8F 2A +ORIGIN C! ;
 DECIMAL
-\
-: CMD    ( c -- )   \ handle EDIT key options
+\ handle EDIT key options
+: CMD    ( c -- )   
     6 21 AT-XY DONEC KEYBEMIT UPPER BL MAX 
     CASE
     [CHAR] P OF BYTE CURC! ENDOF  \ put a byte at cursor
@@ -118,18 +137,21 @@ DECIMAL
     [CHAR] U OF UNDO BUZZ  ENDOF
     [CHAR] Q OF ."  ok" CR C/L 2 * SPACES
                 0 21 AT-XY QUIT ENDOF
-    ENDCASE 0 0 AT-XY PUTPAGE EDIT-FRAME ;
-\
-: DELC    ( -- )    \ back-space
+    ENDCASE HOME PUTPAGE EDIT-FRAME ;
+
+\ back-space
+: DELC    ( -- )    
     NCOL @  0 > IF -1 NCOL +! THEN
     ADDRC DUP 1+ SWAP C/L NCOL @ - 1- CMOVE UPDATE
     BL NROW @ LINE C/L + 1- C! ;
 
-: INSC    ( -- )    \ insert blank at cursor and shift the rest
+\ insert blank at cursor and shift the rest
+: INSC    ( -- )    
     ADDRC DUP 1+      C/L NCOL @ - 1- CMOVE>
     BL ADDRC  C!  UPDATE ;
 
-: CTRLC  ( c -- )   \ manage control keys
+\ manage control keys
+: CTRLC  ( c -- )   
     CASE 08 OF LEFTC  ENDOF      09 OF RIGHTC ENDOF
          10 OF DOWNC  ENDOF      11 OF UPC    ENDOF
          12 OF DELC   REFRESH ENDOF
@@ -140,9 +162,9 @@ DECIMAL
 
 FORTH DEFINITIONS
 
-: EDIT     ( -- )
+: EDIT-DEF     ( -- )
 
-    EDITOR
+    EDITOR \ vocabulary
 
     CLS HOMEC PUTPAGE EDIT-FRAME
     BEGIN
@@ -154,8 +176,12 @@ FORTH DEFINITIONS
         ELSE
             CURC! AT-XY DROP CURC@ EMIT RIGHTC
         THEN
-    AGAIN  \ quit using EDIT-key + Q
+    AGAIN  \ quit via EDIT-key + Q
 ;
+
+\ this allows FORGET EDIT to remove this whole package
+
+' EDIT-DEF ' EDIT >BODY !
 
 FORTH DEFINITIONS
 

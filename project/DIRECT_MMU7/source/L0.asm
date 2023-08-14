@@ -62,11 +62,11 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 db      120
-                db      "|   v-Forth 1.7 - NextZXOS version ", $0D      // 36 
-                db      "|   Heap Vocabulary - build 2023-08-09 ", $0D  // 40
-                db      "|   MIT License ", 127,                        // 17
+                db      "    v-Forth 1.7 - NextZXOS version ", $0D      // 36 
+                db      "    Heap Vocabulary - build 2023-08-09 ", $0D  // 40
+                db      "    MIT License ", 127                         // 17
                 db      " 1990-2023 Matteo Vitturi ", $0D               // 27
-                db      "|"
+                db      " "
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -110,6 +110,11 @@ Exec_Ptr:
                 jp      (hl)                // and jump to it    
                                             // there you'll find the real code or a CALL to a ;code part
                                   
+// temp_NULL       defl    Heap_Ptr & $1FFF
+// 0x00         n --      ( compile time )
+//              New_Def NUL_DUMMY,  $00, is_code, is_immediate
+//              next
+
 //  ______________________________________________________________________ 
 //
 // lit          -- x

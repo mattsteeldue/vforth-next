@@ -16,7 +16,7 @@ NEEDS INTERRUPTS
 
 BASE @
 
-MARKER NO-MOUSE     \ completely remove MOUSE disabling Forth ISR
+MARKER FORGET-MOUSE     \ completely remove MOUSE disabling Forth ISR
 
 
 DECIMAL 0 CONSTANT MOUSE-SPRITE-ID
@@ -108,7 +108,7 @@ HEX
 VARIABLE  mouse-flag C0 mouse-flag !
 
 \ re-draw mouse
-: mouse-redraw      ( -- )
+: MOUSE-REDRAW      ( -- )
     MOUSE-SPRITE-ID       SPRITE-SLOT-SELECT-PORT P!    \ slot
     mouse-y @ split >R      SPRITE-ATTRIBUTE-PORT P!    \ attribute 0
     mouse-x @               SPRITE-ATTRIBUTE-PORT P!    \ attribute 1
@@ -119,7 +119,7 @@ VARIABLE  mouse-flag C0 mouse-flag !
 
 
 \ enable or disable display of arrow
-: mouse! ( f -- )
+: MOUSE! ( f -- )
     if C0 else 00 then
     mouse-flag !
     mouse-redraw
@@ -130,7 +130,7 @@ DECIMAL
 
 \ this definition "normalizes" delta number
 \ if delta  is less than mouse stated sensibility, it slows down motion
-: mouse-norm ( n -- b )
+: MOUSE-NORM ( n -- b )
     dup mouse-sens @ <
     if
         2/      \ reduce sensibility.
@@ -145,7 +145,7 @@ DECIMAL
 \ this definition reads the mouse ports and determines the values of
 \ the three variables mouse-rx, mouse-ry, mouse-rs
 HEX
-: mouse-read ( -- ) 
+: MOUSE-READ ( -- ) 
     0FFDF P@  FLIP  mouse-rx !  \ Kempston mouse Y (vertical) * 256
     0FBDF P@  FLIP  mouse-ry !  \ Kempston mouse X (horizontal) * 256
     0FADF P@        mouse-rs !  \ Kempston mouse Wheel, Buttons
@@ -156,7 +156,7 @@ DECIMAL
 \ this definition compares the latest two mouse-reads
 \ to determine some "delta" values.
 \ This definition is called by Interrupt-Service-Routine
-: mouse-delta ( -- ) 
+: MOUSE-DELTA ( -- ) 
     \ keeps in stack current raw-data mouse status
     mouse-rx @      
     mouse-ry @      
@@ -229,16 +229,17 @@ DECIMAL
 ;
 
 
-WARNING @ 
-0 WARNING !         \ reduce message verbosity
-: no-mouse
+: NO-MOUSE  
     0 mouse!
     isr-off
-    no-mouse
+    FORGET-MOUSE
 ;
 
 
-: bye 
+WARNING @ 
+0 WARNING !         \ reduce message verbosity
+
+: BYE 
     isr-off
     0 mouse!
     bye 

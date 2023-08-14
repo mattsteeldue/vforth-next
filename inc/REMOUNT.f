@@ -18,8 +18,8 @@
   >R 2DROP 2DROP R>             \ keep only returned status 0=ok 1=ko
   CR
   IF                            \ there is a problem, maybe an open file
-    ." Cannot unmount, there something still open." CR
-    ." Please use F_CLOSE manually then retry" CR
+    ." Can't unmount, there's something still open." CR
+    ." Use F_CLOSE manually, then retry." CR
   ELSE
     ." Remove/insert SD and press Y "
     BEGIN

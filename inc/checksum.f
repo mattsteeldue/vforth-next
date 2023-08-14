@@ -10,7 +10,7 @@ BASE @
 \ calculate the checksum of addresses between a and a+n inclusive.
 \ Checksum algoritm is adding each byte (mod 256).
 
-CODE CHECKSUM ( a n -- n2 )
+CODE CHECKSUM ( a u -- n )
 
         HEX 
 

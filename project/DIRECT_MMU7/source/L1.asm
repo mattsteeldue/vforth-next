@@ -219,6 +219,14 @@ User_Ptr:
 
 //  ______________________________________________________________________ 
 //
+// hpcomma      n --
+                Colon_Def HCOMMA, "HP,", is_normal
+                dw      HP_FETCH, FAR, STORE    // HP@ FAR !
+                dw      TWO, HP, PLUSSTORE      // 2 HP +!
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
 // s>d          n -- d
 // converts a single precision integer in a double precision
                 New_Def S_TO_D, "S>D", is_code, is_normal
@@ -1334,24 +1342,48 @@ CPrefix_Endif_1:                                // endif
                 dw      EXIT
 
 //  ______________________________________________________________________ 
+
+                New_Def PDOM,   "NDOM", Create_Ptr, is_normal  
+                db ',/-:'
+                db 0
+
+                New_Def PCDM,   "NCDM", Create_Ptr, is_normal  
+                db '....' 
+                db 0
+
+//  ______________________________________________________________________ 
 //
 // number       a -- d
                 Colon_Def NUMBER,  "NUMBER", is_normal
                 dw      ZERO, ZERO              // 0 0
                 dw      ROT                     // rot
                 dw      CSGN, TO_R              // (sgn) >r
-                dw      NEG_ONE, DPL, STORE     // -1 dpl !
                 dw      BASE, FETCH, TO_R       // base @ >r  // ***
                 dw      CPREFIX                 // (prefix)   // ***
+                dw      NEG_ONE, DPL, STORE     // -1 dpl !
                 dw      CNUMBER                 // (number)
-                dw      DUP, CFETCH             // dup c@
-                dw      LIT, ".", EQUALS        // [char] . =  ( decimal point )
-                                                // if
-                dw      ZBRANCH
-                dw      Number_Endif_1 - $
-                dw          ZERO, DPL, STORE    //      0 dpl !
-                dw          CNUMBER             //      (number)
-Number_Endif_1:                                 // endif   
+Number_Begin:                                   // begin
+                dw        DUP, CFETCH             // dup c@
+                dw        TO_R                    // >r
+                dw        PCDM, PDOM, LIT, 4      // pcdm pdom 4
+                dw        R_TO                    // r>
+                dw        C_MAP                   // (map)
+                dw        ZERO, SWAP              // 0 swap
+                dw        LIT, ".", EQUALS        // [char] . =  ( decimal point )
+                                                  
+                dw        ZBRANCH                 // if  
+                dw        Number_Endif_1 - $
+                dw          ZERO, DPL, STORE        //      0 dpl !
+                dw          ONE_PLUS                //      1+
+Number_Endif_1:                                   // endif   
+
+                dw      ZBRANCH                // while
+                dw      Number_While_end - $
+                dw        CNUMBER                 // (number)
+                dw      BRANCH                 
+                dw      Number_Begin - $        
+Number_While_end:                               // repeat          
+
                 dw      CFETCH, BL              // c@ bl
                 dw      SUBTRACT, ZERO, QERROR  // - 0 ?error
                 dw      R_TO, BASE, STORE       // r> base !  // ***
