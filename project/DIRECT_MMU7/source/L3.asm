@@ -735,7 +735,7 @@ Index_Leave:
                 Colon_Def SPLASH, "SPLASH", is_normal
                 dw      CLS
                 dw      LIT, Splash_Ptr
-                dw      TO_FAR, MMU7_STORE
+                dw      FAR
                 dw      COUNT, TYPE
                 dw      EXIT
 

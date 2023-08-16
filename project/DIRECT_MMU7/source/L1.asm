@@ -220,10 +220,10 @@ User_Ptr:
 //  ______________________________________________________________________ 
 //
 // hpcomma      n --
-                Colon_Def HCOMMA, "HP,", is_normal
-                dw      HP_FETCH, FAR, STORE    // HP@ FAR !
-                dw      TWO, HP, PLUSSTORE      // 2 HP +!
-                dw      EXIT                    // ;
+//              Colon_Def HCOMMA, "HP,", is_normal
+//              dw      HP_FETCH, FAR, STORE    // HP@ FAR !
+//              dw      TWO, HP, PLUSSTORE      // 2 HP +!
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
@@ -1343,13 +1343,11 @@ CPrefix_Endif_1:                                // endif
 
 //  ______________________________________________________________________ 
 
-                New_Def PDOM,   "NDOM", Create_Ptr, is_normal  
+                New_Def PDOM,   "PDOM", Create_Ptr, is_normal  
                 db ',/-:'
-                db 0
 
-                New_Def PCDM,   "NCDM", Create_Ptr, is_normal  
+                New_Def PCDM,   "PCDM", Create_Ptr, is_normal  
                 db '....' 
-                db 0
 
 //  ______________________________________________________________________ 
 //
@@ -1411,6 +1409,20 @@ Number_Endif_2:                                 // endif
                 // dw          LATEST               //      latest
                 dw          CURRENT, FETCH, FETCH   // context @ @
                 dw          C_FIND              //      (find)
+
+                    dw      QDUP                    // ?dup
+                    dw      ZEQUAL                  // 0=
+                                                    // if
+                    dw      ZBRANCH
+                    dw      LFind_Endif2 - $
+                    dw          R_OP                //      r@
+                    dw          LIT, FORTH, TO_BODY
+                    dw          CELL_PLUS, CELL_PLUS
+                    dw          FETCH
+                    dw          C_FIND              //      (find)
+LFind_Endif2:                                    // endif
+
+
 LFind_Endif:                                    // endif
                 dw      R_TO, DROP              // r> drop
                 dw      EXIT                    // ;    

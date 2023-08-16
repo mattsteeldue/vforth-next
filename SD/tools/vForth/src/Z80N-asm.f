@@ -56,41 +56,24 @@
 
 NEEDS INVERT        \   : INVERT -1 XOR ;
 NEEDS FLIP
+\ NEEDS CHECKSUM
+\ NEEDS RENAME        \ this is just a patch to be removed in the future
+\ NEEDS CODE          \ this is just a patch to be removed in the future 
 
 FORTH DEFINITIONS 
 
 MARKER FORGET-ASSEMBLER
-
-' LIT <NAME CONSTANT PAGE-ORG
-
-HEX 
-
-\ depending on which version is running, a different use of MMU7 ram page
-\ is allowed. Up to version 1.6, 8k-ram page 01 is used.
-
-: PAGE-IN
-    PAGE-ORG 0E000 U< IF
-        DP @ LP ! E080 DP !
-    THEN
-;
-
-: PAGE-OUT
-    PAGE-ORG 0E000 U< IF
-        DP @ LP @ DP !  LP !
-    THEN
-;
-
 VOCABULARY TOOLS-ASM IMMEDIATE
 VOCABULARY FORTH-ASM
 
-: ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
+: ASSEMBLER FORTH-ASM         ; IMMEDIATE
 
 DECIMAL
 
 \ Screen# 101 
 ASSEMBLER TOOLS-ASM DEFINITIONS
 
-HEX PAGE-IN \ -->  DP @ LP ! HEX E080 DP !
+HEX \ -->  DP @ LP ! HEX E080 DP !
   
 \  : INVERT -1 XOR ;
 : @+ >R R@ CELL+ R> @ ;
@@ -146,7 +129,7 @@ HEX PAGE-IN \ -->  DP @ LP ! HEX E080 DP !
 DECIMAL
 
 \ Screen# 106 
-.( Z80 Generate errors )
+( Z80 Generate errors )
 : CHECK26     AT-REST? 0= 26 ?ERROR ;
 : CHECK27     BAD? 27 ?ERROR ;
 : CHECK31     2DUP SWAP  CONTAINED-IN 0= 31 ?ERROR ;
@@ -157,7 +140,7 @@ DECIMAL
 HEX
 
 \ Screen# 107 
-.( Assembler Z80 )
+( Assembler Z80 )
 : OR!         >R R@ @ CHECK28 OR R> ! ;
 : OR!U        >R R@ @ OR R> ! ;
 : AND!        >R INVERT R@ @  CHECK29 AND R> ! ;
@@ -313,7 +296,7 @@ TOOLS-ASM
 \ LDX BC| nn NN,
 
 \ Screen# 124 
-( Z80 immediate data )
+.( Z80 immediate data )
 HEX
 00 0100 00 T!
 08 D3 2 1FAMILY,    OUTA  INA
@@ -327,7 +310,7 @@ HEX
 
 
 \ Screen# 125 
-( Z80 address )
+.( Z80 address )
 00 0400 00 T!
 08 22 4 1FAMILY,    LD()HL LDHL() LD()A LDA()
 0A C3 2 1FAMILY,    JP CALL
@@ -355,7 +338,7 @@ HEX
 
 
 \ Screen# 127 
-( Z80 relative jump )
+.( Z80 relative jump )
 HEX
 00 1000 00 T!
 08 10 2 1FAMILY,    DJNZ JR
@@ -413,9 +396,9 @@ HEX
 
 
 \ Screen# 131 
-.( CB prefix )
+.( CB Prefix )
 00 00 07 T!
-08 00 8 CBFAMILY,   RLC  RRC  RL  RR  SLA  SRA  SL1 SRL
+08 00 8 CBFAMILY,   RLC  RRC  RL  RR  SLA  SRA  SLL SRL
 00 00 43F T!
 40 40 3 CBFAMILY,   BIT  RES  SET
 00 00 438 T!
@@ -427,7 +410,7 @@ HEX
 \ SET 3| B|
 
 \ Screen# 132 
-.( IX IY )
+( IX IY )
 HEX
 00 00 00 T!
 02 E3 1 DDFAMILY,   EX(SP)IX
@@ -576,7 +559,7 @@ ASSEMBLER DEFINITIONS HEX
 : | ;
 
 \ Screen# 141 
-.( Z80 Near struct. )
+( Z80 Near struct. )
 : THEN, HERE DISP, ;
 : ELSE, JR HOLDPLACE  SWAP THEN, ;
 
@@ -627,13 +610,13 @@ TOOLS-ASM
 
 FORTH DEFINITIONS DECIMAL
 
-PAGE-OUT \ --> DP @ LP @ DP !  LP !
+\ --> DP @ LP @ DP !  LP !
 
 
 \ Screen# 117 
-.( Assembler Z80 final )
+( Final CODE )
 
-FORTH DEFINITIONS 
+FORTH DEFINITIONS \ RENAME CODE MCOD
 
 : CODE 
     ?EXEC 
@@ -651,4 +634,9 @@ FORTH DEFINITIONS
 
 FORTH DEFINITIONS DECIMAL
 
+\ Final checksum
+\ NEEDS CHECKSUM
+\ HEX E080 LP @ OVER - 
+\ 1 MMU7! CHECKSUM . CR
+FORTH DEFINITIONS DECIMAL
 

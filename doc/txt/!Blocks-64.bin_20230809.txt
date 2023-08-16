@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Mon Aug 14 23:20:49 2023
+Created: Wed Aug 16 16:25:20 2023
 
 See index at end of file.
 
@@ -3345,14 +3345,14 @@ Scr# 185
  15 
 
 Scr# 186 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
+  0 ( VOCABULARY exploration )
+  1 MARKER TASK
+  2 VOCABULARY VOC1 IMMEDIATE
+  3 VOCABULARY VOC2 IMMEDIATE
+  4 VOC1 DEFINITIONS : T1 NOOP ;
+  5 VOC2 DEFINITIONS : T2 NOOP ;
+  6 FORTH DEFINITIONS : F0 NOOP ;
+  7 VOC1 DEFINITIONS : K1 NOOP ;
   8 
   9 
  10 
@@ -3369,15 +3369,15 @@ Scr# 187
   3 \
   4 \ ##  USE WITH CARE  ##
   5 \
-  6 ' AUTOEXEC
-  7 ' ABORT >BODY 6 CELLS +
-  8 !
-  9 DECIMAL 14 EMITC
- 10 BYE
- 11 \
- 12 \ and remember Scr# 220
- 13 \ to move up or down LIMIT
- 14 
+  6 ' ABORT >BODY 9 CELLS + @
+  7 ' NOOP - 14 ?ERROR
+  8 ' AUTOEXEC
+  9 ' ABORT >BODY 9 CELLS + !
+ 10 DECIMAL 14 EMITC
+ 11 BYE
+ 12 \
+ 13 \ and remember Scr# 220
+ 14 \ to move up or down LIMIT
  15 
 
 Scr# 188 
@@ -15182,13 +15182,13 @@ Scr# 842
 Scr# 843 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 \      : SCORE-MORE   20 + ;
-  3   HEX  : SCORE-MORE   14 + ;  DECIMAL
+  2 DECIMAL
+  3        : SCORE-MORE   20 + ;
   4 
-  5 
+  5 HEX    : SCORE-MORE   14 + ;  DECIMAL
   6 
-  7 
-  8 
+  7        : EXAMPLE  HEX 20 . DECIMAL ;
+  8 EXAMPLE
   9 
  10 
  11 
@@ -36193,7 +36193,7 @@ Index:
   183 ( Line Editor          4/6 )
   184 ( Line Editor          5/6 )
   185 ( Line Editor          6/6 )
-  186 
+  186 ( VOCABULARY exploration )
   187 ( Utility: Restore AUTOEXEC )
   188 ( Editor utility           )
   189 .( Call utility. )        CR

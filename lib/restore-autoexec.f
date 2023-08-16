@@ -2,11 +2,14 @@
 \ restore-autoexec.f
 \
 \    ##  USE WITH CARE  ##
-' AUTOEXEC
-' ABORT >BODY 6 CELLS +
-!
-DECIMAL 14 EMITC
-BYE
 
-\ and remember to move LIMIT up or down
+
+\ First check there is NOOP 
+' ABORT >BODY 9 CELLS + @
+' NOOP - 14 ?ERROR
+
+\ Then restore AUTOEXEC
+' AUTOEXEC
+' ABORT >BODY 9 CELLS + !
+
 

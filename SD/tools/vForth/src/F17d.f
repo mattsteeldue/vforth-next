@@ -344,6 +344,8 @@ DECIMAL
                             \ 6366h
 \
 .( Origin )
+
+HERE U. KEY
 \
 \ ______________________________________________________________________
 
@@ -3109,12 +3111,12 @@ DECIMAL
     ;
 
 
-\ new cell to heap
-.( , )
-: HP,  ( n -- )
-    hp@ far !
-    2 hp +!
-    ;
+\ \ new cell to heap
+\ .( , )
+\ : HP,  ( n -- )
+\     hp@ far !
+\     2 hp +!
+\     ;
 
 
 \ 754Ch
@@ -4195,11 +4197,12 @@ CODE fill ( a n c -- )
 \      [ CHAR # ] Literal = If 1+ [ decimal 10 ] Literal base ! Then
 ;
 
+( *** )
 
-create pdom hex    (   , / - :   )
+CREATE pdom hex    (   , / - :   )
     char , c,  char / c,  char - c,  char : c, 
 
-create pcdm hex    (   . . . .   )
+CREATE pcdm hex    (   . . . .   )
     char . c,  char . c,  char . c,  char . c, 
 
 
@@ -4214,7 +4217,8 @@ create pcdm hex    (   . . . .   )
     -1 dpl !
     (number)                \ d a
     Begin
-        dup c@ >r pcdm pdom 4 r> (map) ( a2 a1 n c1 -- c2 ) 
+        dup c@ >r pcdm pdom 
+        [ decimal 4 ] Literal r> (map) ( a2 a1 n c1 -- c2 ) 
         0 swap             \ d a 0 c
         [ CHAR . ] Literal = 
         If 
@@ -4249,6 +4253,16 @@ create pcdm hex    (   . . . .   )
         \ latest    \ addr voc
         current @ @
         (find)      \ cfa b 1   |  0 
+
+            ?dup            \ cfa b 1 1 |  0
+            0=              \ cfa b 1 0 |  1
+            If  
+                r@          \ addr
+                \ FORTH     \ addr voc
+                [ ' FORTH ] Literal >body cell+ cell+ @       ( *** )
+                (find)      \ cfa b 1   |  0 
+            Then   
+
     Then   
     r> drop    
     ;
@@ -4581,8 +4595,6 @@ create pcdm hex    (   . . . .   )
 : vocabulary  ( -- cccc )
     <builds
         [ hex A081 ] literal , 
-        hp@
-        [ hex A081 ] literal hp, 
         current @ @ , 
         here voc-link @ ,       
         voc-link !
@@ -4678,7 +4690,9 @@ immediate
 \ Clean stack. Go to command state.
 \ Gives control to console via QUIT.
 : abort  ( -- )
-    s0 @ sp!
+    s0 @ 
+    bl over !
+    sp!
     decimal
     \ .cpu
     [compile] forth 
@@ -5022,10 +5036,8 @@ CODE basic ( n -- )
         \ ?dup
         \ If
             [ decimal 32 ] literal 
-            +       
-            2
-            \   offset @
-            \   b/scr / -
+            +       \   offset @
+            2       \   b/scr / -
             .line
             space
         \ Then
@@ -5866,11 +5878,12 @@ decimal
 .( SPLASH )
 : splash
     cls
-    [compile] (.")
-    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-    [ decimal 13 here ," Heap Vocabulary - build 20230809" -1 allot ]
-    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
-    [ decimal 13 c, c! c! c! ] 
+    [ decimal 2 ] Literal far count type
+\    [compile] (.")
+\    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20230809" -1 allot ]
+\    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
+\    [ decimal 13 c, c! c! c! ] 
     ;
 
     ' splash splash^ ! \ patch 

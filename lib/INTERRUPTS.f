@@ -128,7 +128,7 @@ CODE  ISR-SUB  ( -- )
     39 C, ( ADD HL,SP )         \ add hl,sp
     F9 C, ( LD  SP,HL  )        \ ld sp,hl
     \
-    01 C, FORTH ISR-XT ,        \ ld bc, ISR-XT
+    01 C, ISR-XT ,              \ ld bc, ISR-XT
     \
     DD C, 21 C,  (NEXT) ,       \ ld ix, (NEXT)  \ this is safer...
     DD C, E9 C, ( NEXT )        \ jp (ix)

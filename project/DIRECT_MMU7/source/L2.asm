@@ -87,11 +87,8 @@ Interpret_Endif_5:                                      //      endif
 
                 // dummy word + link part
                 dw      LIT, $A081, COMMA       // $81A0 ,
-
-                dw      LIT, $A081, HCOMMA      // $81A0 , 
-
                 dw      CURRENT, FETCH          // current @    
-                dw      FETCH
+                dw      FETCH                   // @
             //  dw      CELL_MINUS              // cell-
                 dw      COMMA                   // ,       
 
@@ -118,11 +115,25 @@ Vocabulary_Does:
 
                 New_Def FORTH, "FORTH", Does_Ptr, is_immediate
                 dw      Vocabulary_Does
+                
                 db      $81, $A0
 Forth_Latest_Ptr:                
                 dw      Latest_Definition
 Voclink_Ptr:                
                 dw      0
+
+// ____
+// temp_VOC        defl    $                   // save this address
+//              org     (Heap_Ptr & $1FFF) + $E000
+//              db      $81, $A0
+// Forth_Latest_Ptr_HEAP:                
+//                 dw      Latest_Definition
+// Voclink_Ptr_HEAP:                
+//                 dw      0
+// Heap_Ptr        defl    $ - $E000           // save current HP
+//                 org     temp_VOC
+// ____
+
 // Any new vocabulary is structured as follow:
 // PFA+0 points to DOES> part of VOCABULARY to perform CELL+ CONTEXT !
 // PFA+2 is 81,A0 i.e. a null-word used as LATEST in the new vocabulary
@@ -189,7 +200,10 @@ Quit_Endif:                                     //      else
 //
 // abort        --
                 Colon_Def ABORT, "ABORT", is_normal
-                dw      S0, FETCH, SPSTORE      // s0 @ sp!
+                dw      S0, FETCH               // s0 @
+                dw      BL                      // bl
+                dw      OVER, STORE             // over !
+                dw      SPSTORE                 // sp!
                 dw      DECIMAL                 // decimal
                 dw      FORTH                   // [compile] forth
                 dw      DEFINITIONS             // definitions
