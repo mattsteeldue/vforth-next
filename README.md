@@ -4,8 +4,8 @@
    
    To learn Forth Language or for a good reference I suggest the book "Starting FORTH" - Leo Brodie (1981, Forth Inc.).
    PDF hopefully available here <https://www.forth.com/wp-content/uploads/2018/01/Starting-FORTH.pdf>
-   The first edition is old enough to stick on 16 bit integers numbers.
-   
+   The first edition is old enough to stick on 16 bit integers numbers. In this perspective, almost all Forth
+   source described in Leo's book are available in Screens from 800 upward.
    
 
 #vForth1.6
