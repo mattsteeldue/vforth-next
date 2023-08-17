@@ -341,7 +341,7 @@ DECIMAL
     LED-EDIT
 ;
 
-\ this allows FORGET DIR to remove this whole package
+\ this allows you to forget all this package.
 
 ' LED-CCCC ' LED >BODY !
 

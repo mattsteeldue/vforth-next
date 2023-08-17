@@ -99,6 +99,14 @@ is_code         equ     0                   // so the direct machine-code starts
 is_normal       equ     0                   // so the direct machine-code starts at CFA 
 is_immediate    equ     IMMEDIATE_BIT       // $40 - the definition is IMMEDIATE.
 
+
+Behave          macro   xp
+temp_PTR        defl    $                   // save this org
+                org     (Heap_Ptr & $1FFF) + $E000 -2
+                dw      xp
+                org     temp_PTR
+                endm
+
 //  ______________________________________________________________________
 //
 //  Create a new "low-level" definition

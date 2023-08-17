@@ -13,7 +13,7 @@ HEX 1F80 CONSTANT PAGE-WATERMARK
 : SKIP-HP-PAGE ( n -- )
     HP@    
     1FFF  AND                   \ take only offset part of HP heap-address
-    +
+    + 
     PAGE-WATERMARK
     >                           \ check if it is greater than watermark
     IF

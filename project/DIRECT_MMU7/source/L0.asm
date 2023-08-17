@@ -291,10 +291,11 @@ ZBranch_Ptr:
 Do_Ptr: 
                 // *** ldhlrp                 // prepare RP
                 // *** ex      de, hl
-                dec     de
-                dec     de
-                dec     de
-                dec     de
+                // dec     de
+                // dec     de
+                // dec     de
+                // dec     de
+                add     de, -4
                 push    de                  // pass it to h'l'
                 // *** ex      de, hl
                 // *** ldrphl 
@@ -1235,6 +1236,7 @@ Um_DivMod_OutOfRange:
                 ld      l, a
                 ld      a, d
                 and     h
+Boolean_exit:
                 ld      h, a
                 push    hl
                 exx
@@ -1253,10 +1255,11 @@ Um_DivMod_OutOfRange:
                 ld      l, a
                 ld      a, d
                 or      h
-                ld      h, a
-                push    hl
-                exx
-                next
+                jr      Boolean_exit
+          //    ld      h, a
+          //    push    hl
+          //    exx
+          //    next
 
 //  ______________________________________________________________________ 
 //
@@ -1271,10 +1274,11 @@ Um_DivMod_OutOfRange:
                 ld      l, a
                 ld      a, d
                 xor     h
-                ld      h, a
-                push    hl
-                exx
-                next
+                jr      Boolean_exit
+          //    ld      h, a
+          //    push    hl
+          //    exx
+          //    next
 
 //  ______________________________________________________________________ 
 //
@@ -1395,6 +1399,7 @@ Um_DivMod_OutOfRange:
 // return on top of stack the value of top of return-stack
 // Since this is the same as I, we alter R's CFA to jump there
                 New_Def R_OP, "R@", is_code, is_normal
+            //  Behave  I_Ptr
                 jp      I_Ptr
 
 //  ______________________________________________________________________ 
@@ -1425,6 +1430,7 @@ ZEqual_Skip:
 // not         a1 -- a2
 // increment by 2 top of stack
                 New_Def NOT_OP, "NOT", is_code, is_normal
+            //  Behave  Zero_Equal
                 jp      Zero_Equal
 
 //  ______________________________________________________________________ 
@@ -1738,21 +1744,21 @@ CellMinus:
 // 2over        d1 d2 -- d1 d2 d1
 //              n1 n2 n3 n4 -- n1 n2 n3 n4 n1 n2
 // copy the second double of stack and put on top.
-//              New_Def TWO_OVER, "2OVER", is_code, is_normal
-//              exx
-//              ld      hl, 7
-//              add     hl, sp
-//              ld      d, (hl)
-//              dec     hl
-//              ld      e, (hl)             // d1-L
-//              push    de
-//              dec     hl
-//              ld      d, (hl)
-//              dec     hl
-//              ld      e, (hl)             // d1-H
-//              push    de
-//              exx
-//              next
+                New_Def TWO_OVER, "2OVER", is_code, is_normal
+                exx
+                ld      hl, 7
+                add     hl, sp
+                ld      d, (hl)
+                dec     hl
+                ld      e, (hl)             // d1-L
+                push    de
+                dec     hl
+                ld      d, (hl)
+                dec     hl
+                ld      e, (hl)             // d1-H
+                push    de
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //

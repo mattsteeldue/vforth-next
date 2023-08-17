@@ -473,9 +473,9 @@ Traverse_Begin:                                 // begin
 
 //  ______________________________________________________________________ 
 //
-// ?mmu7        a -- f
+// ?IN_MMU7        a -- f
 // query current page in MMU7 8K-RAM : 0 and 223
-                Colon_Def QMMU7, "?MMU7", is_normal
+                Colon_Def QMMU7, "?IN_MMU7", is_normal
                 dw      DUP
                 dw      LIT, $E000
                 dw      ULESS
@@ -493,9 +493,9 @@ Traverse_Begin:                                 // begin
 
 //  ______________________________________________________________________ 
 //
-// ?heapp       n -- n f
+// ?HEAP_PTR       n -- n f
 // query current page in MMU7 8K-RAM : 0 and 223
-                Colon_Def QHEAPP, "?HEAPP", is_normal
+                Colon_Def QHEAPP, "?HEAP_PTR", is_normal
                 dw      DUP
                 dw      ZBRANCH
                 dw      QHeap_Skip - $

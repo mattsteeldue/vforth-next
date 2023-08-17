@@ -19,7 +19,14 @@
 
 \ FLUSH EMPTY-BUFFERS     \ ensure no i/o operation due to BLOCKs
 
-NEEDS GRAPHICS          \ this provides LAYERs and INK/PAPER/BRIGHT
+\ NEEDS GRAPHICS          \ this provides LAYERs and INK/PAPER/BRIGHT
+NEEDS VALUE
+NEEDS TO
+NEEDS LAYER11
+NEEDS LAYER12
+NEEDS .INK
+NEEDS .PAPER
+NEEDS .BRIGHT
 
 NEEDS .AT
 NEEDS .BORDER
@@ -480,6 +487,8 @@ cherry-init
     sync-emit             \ send all 12 chr  
 ;
 
+
+( init-all )
 \ draw every mob at their start position
 : init-all
     ghost-init
@@ -491,6 +500,7 @@ cherry-init
 ;
 
 
+( ?pac-trail )
 \ given a character c that is ahead of pacman
 \ verify if is a good trail
 : ?pac-trail  ( c -- )
@@ -505,6 +515,7 @@ cherry-init
     endcase ;
 
 
+( ?ghost-all )
 \ given a character c that is ahead of ghost
 \ verify if is a good trail
 : ?ghost-trail  ( c -- )
@@ -518,6 +529,7 @@ cherry-init
     endcase ;
 
 
+( go-right )
 : go-right
   Pacman
   xy-pos@      1+      maze@
@@ -534,7 +546,7 @@ cherry-init
   then ;
 
 
-
+( go-left )
 : go-left
   Pacman
   xy-pos@      1-      maze@
@@ -551,7 +563,7 @@ cherry-init
   then ;
 
 
-
+( go-up )
 : go-up
   Pacman
   xy-pos@ swap 1- swap maze@
@@ -565,7 +577,7 @@ cherry-init
   then ;
 
 
-
+( go-down )
 : go-down
   Pacman
   xy-pos@ swap 1+ swap maze@
@@ -579,7 +591,7 @@ cherry-init
   then ;
 
 
-
+( pacman-move )
 : pacman-move ( c -- )
  case
  key-right of go-right endof key+right of go-right endof
@@ -597,21 +609,21 @@ cherry-init
 ;
 
 
-
-: pacman-eat-pill ( c -- )
-  [udg] O = if
-   -1 hunt !
-   10 score d+!
-   10 total d+!
-   [ 50 25 bip ] 2lit bleep
-   [ 50 39 bip ] 2lit bleep
-   0 counting !
-   ghost-white
+( pacman-eat-pill ) 
+: pacman-eat-pill ( c -- ) 
+  [udg] O = if 
+   -1 hunt ! 
+   10 score d+! 
+   10 total d+! 
+   [ 50 25 bip ] 2lit bleep 
+   [ 50 39 bip ] 2lit bleep 
+   0 counting ! 
+   ghost-white 
   then ;
 \
 
 
-
+( pacman-walk )
 : pacman-walk ( c -- )
   >r r@ [udg]  O =
      r@ [char] . = or
@@ -627,7 +639,7 @@ cherry-init
 ;
 
 
-
+( pacman-eat-cherry )
 : pacman-eat-cherry ( c -- )
   [udg] U = if
    10 score d+!
@@ -637,7 +649,7 @@ cherry-init
   then ; 
 
 
-
+( ghost-right )
 : ghost-right ( c -- )
   xy-pos@ 1+ maze@
   ?ghost-trail if
@@ -653,7 +665,7 @@ cherry-init
 ;
 
 
-
+( ghost-left )
 : ghost-left  ( c -- )
   xy-pos@ 1- maze@
   ?ghost-trail if
@@ -669,7 +681,7 @@ cherry-init
 ;
 
 
-
+( ghost-down )
 : ghost-down  ( c -- )
   xy-pos@ swap 1+ swap maze@
   ?ghost-trail if
@@ -685,7 +697,7 @@ cherry-init
 ;
 
 
-
+( ghost-up )
 : ghost-up    ( c -- )
   xy-pos@ swap 1- swap maze@
   ?ghost-trail if
@@ -701,7 +713,7 @@ cherry-init
 ;
 
 
-
+( ghost-move )
 : ghost-move ( c -- )
  case
   key-right of
@@ -716,7 +728,7 @@ cherry-init
 \
 
 
-
+( ghost-decision )
 : ghost-decision ( -- )
   xy-pos@ xy-pre@ d= if
    4 choose

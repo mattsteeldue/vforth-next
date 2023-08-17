@@ -166,6 +166,7 @@ DECIMAL
      0  VALUE     f_seek_exit^  
      0  VALUE     f_read_exit^  
      0  VALUE     f_open_exit^  
+     0  VALUE     boolean_exit^  
 
 .( Psh2 Psh1 Next )
 
@@ -1949,6 +1950,7 @@ CODE and ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         ANDA     H|     
+HERE TO boolean_exit^        
         LD      H'|    A|
         PUSH    HL|
         EXX 
@@ -1968,10 +1970,11 @@ CODE or  ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         ORA      H|     
-        LD      H'|    A|
-        PUSH    HL|
-        EXX 
-        Next
+        JR      boolean_exit^ BACK,
+     \  LD      H'|    A|
+     \  PUSH    HL|
+     \  EXX 
+     \  Next
         C;
 
 
@@ -1987,11 +1990,12 @@ CODE xor ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         XORA     H|     
-        LD      H'|    A|
-        PUSH    HL|
-        EXX 
-        Next
-        C;
+        JR      boolean_exit^ BACK,
+     \  LD      H'|    A|
+     \  PUSH    HL|
+     \  EXX 
+     \  Next
+     \  C;
 
 
 \ 6486h
@@ -2509,22 +2513,22 @@ CODE pick ( n -- v )
 
 \ \ 6E8Bh >>>
 \ .( 2OVER )
-\ CODE 2over ( d1 d2 -- d1 d2 d1 )
-\         EXX 
-\         LDX     HL| 0007 NN,
-\         ADDHL   SP|
-\         LD      D'| (HL)|
-\         DECX    HL|
-\         LD      E'| (HL)|
-\         PUSH    DE|
-\         DECX    HL|
-\         LD      D'| (HL)|
-\         DECX    HL|
-\         LD      E'| (HL)|
-\         PUSH    DE|
-\         EXX 
-\         Next
-\         C;
+CODE 2over ( d1 d2 -- d1 d2 d1 )
+        EXX 
+        LDX     HL| 0007 NN,
+        ADDHL   SP|
+        LD      D'| (HL)|
+        DECX    HL|
+        LD      E'| (HL)|
+        PUSH    DE|
+        DECX    HL|
+        LD      D'| (HL)|
+        DECX    HL|
+        LD      E'| (HL)|
+        PUSH    DE|
+        EXX 
+        Next
+        C;
 
 
 \ 6E66h >>>
@@ -3112,7 +3116,7 @@ DECIMAL
 
 
 \ \ new cell to heap
-\ .( , )
+\ .( HP, )
 \ : HP,  ( n -- )
 \     hp@ far !
 \     2 hp +!
@@ -3365,8 +3369,8 @@ CODE <far ( a n -- ha )
 
 \ check if address lies on MMU7
 \ tf is passed address is on MMU7
-.( ?MMU7 )
-: ?mmu7  ( a -- f )
+.( ?IN_MMU7 )
+: ?in_mmu7  ( a -- f )
     dup [ HEX 0E000 ] Literal u< not
 ;
 
@@ -3380,10 +3384,11 @@ CODE <far ( a n -- ha )
     >far mmu7! ;
 
 
+.( ?HEAP_PTR )
 \ check if it's a non-zero heap-pointer 
 \ tf if passed argument is an hp
 \ ff if passed argument isn't hp
-: ?heapp  ( n -- f )
+: ?heap_ptr  ( n -- f )
     dup                 \ n n
     If                  \ n
         [ HEX 6000 ] Literal 
@@ -3397,7 +3402,7 @@ CODE <far ( a n -- ha )
 \ and converted to heap address updating MMU7 via FAR
 : ?>heap ( a | hp -- a | ha )
     dup             \ a a   |  hp hp
-    ?heapp          \ a ff  |  hp tf
+    ?heap_ptr       \ a ff  |  hp tf
     If              \ a     |  hp
         far         \ ha
     Then            \ a     |  ha
@@ -3458,7 +3463,7 @@ HEX 1F80 constant page-watermark
     \ check if this is an heap-pointer or the end of a name
     \ in the new model, this is a number between 0000 and 3FFF
     dup @           \ lfa n     |   a hp  
-    ?heapp          \ lfa ff    |   a tf
+    ?heap_ptr       \ lfa ff    |   a tf
     If  
         @ far       \ dereference pointer to heap-address
         cell-       \ skip heap-lfa pointer.
@@ -3502,7 +3507,7 @@ HEX 1F80 constant page-watermark
     cell+           \ cfa
 
     \ if cfa is in within MMU7, check for special case page 01.
-    ?mmu7
+    ?in_mmu7
     If
         mmu7@ 1 -   \ not 01 means real heap dictionary 
         If
@@ -4134,13 +4139,13 @@ CODE fill ( a n c -- )
 \ a flag. Returns f as the sign, true for negative, false for positive.
 \ called by NUMBER and (EXP)
 : (sgn)  ( a -- a f )
-    dup 1+ c@ 
-    dup [ CHAR - ] Literal =
+    dup 1+ c@                   \  a  c
+    dup [ CHAR - ] Literal =    \  a  c c=-
     If
-        drop 
-        1+  
+        drop                    \  a
+        1+                      \  a+1
         1 dpl +!
-        1
+        1                       \  a+1  tf
     Else
         [ CHAR + ] Literal =
         If
@@ -4327,6 +4332,7 @@ CREATE pcdm hex    (   . . . .   )
 \ 71E9h
 .( ID. )
 : id.  ( nfa -- )
+    \ shouldn't be, but in case, dereference the heap-pointer
     ?>heap
     dup 1 traverse 1+       \ a1 a2
     over - dup >r           \ a1 n      R: n
@@ -5662,7 +5668,7 @@ decimal
         \ get nfa of marker being defined
         dup @                       \ a nfa 
         \ if it's in heap then 
-    \   dup ?heapp                  \ a nfa f
+    \   dup ?heap_ptr                  \ a nfa f
     \   If      
             \ restore heap pointer
             dup hp !                \ a nfa
@@ -6440,13 +6446,13 @@ RENAME   pfa            PFA
 RENAME   nfa            NFA   
 RENAME   cfa            CFA   
 RENAME   lfa            LFA   
-RENAME   ?mmu7          ?MMU7
+RENAME   ?in_mmu7       ?IN_MMU7
 RENAME   latest         LATEST
 RENAME   skip-hp-page   SKIP-HP-PAGE
 RENAME   page-watermark PAGE-WATERMARK
 RENAME   hp@            HP@
 RENAME   ?>heap         ?>HEAP
-RENAME   ?heapp         ?HEAPP
+RENAME   ?heap_ptr      ?HEAP_PTR
 RENAME   reg!           REG!
 RENAME   reg@           REG@
 RENAME   far            FAR
