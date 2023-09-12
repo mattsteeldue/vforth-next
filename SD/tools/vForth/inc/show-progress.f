@@ -8,7 +8,7 @@
 \
 
 : SHOW-PROGRESS ( n -- )
-    3 AND 2*                \ span chars 41, 43, 45, 47 i.e  ")+-/"
+    6 AND                   \ span chars 41, 43, 45, 47 i.e  ")+-/"
     2 SELECT                \ progress is shown on screen only
     [CHAR] ) + EMIT 
     8 EMIT                  \ backspace

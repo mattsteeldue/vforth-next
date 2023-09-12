@@ -78,7 +78,7 @@ PBuf_Endif:                                     // endif
 // disk before reading the block n.
 
                 Colon_Def BUFFER, "BUFFER", is_normal
-                dw      USE, FETCH              // use @
+                dw      USED, FETCH             // used @
                 dw      DUP, TO_R               // dup >r
                                                 // begin
 Buffer_Begin:                                                
@@ -86,7 +86,7 @@ Buffer_Begin:
                                                 // until
                 dw      ZBRANCH
                 dw      Buffer_Begin - $
-                dw      USE, STORE              // use !
+                dw      USED, STORE             // used !
                 dw      R_OP, FETCH, ZLESS      // r @ 0<
                                                 // if
                 dw      ZBRANCH
@@ -725,7 +725,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20230809", 13  // 33
+//              db      "Heap Vocabulary - build 20230910", 13  // 33
 //              db      "1990-2023 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 

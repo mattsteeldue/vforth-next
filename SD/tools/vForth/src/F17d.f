@@ -4752,7 +4752,7 @@ immediate
 \   [ first @        ] Literal use   !
 \   [ first @        ] Literal prev  !
     first @ dup
-    use   !
+    used  !
     prev  !
 
     [ decimal      4 ] Literal place !
@@ -5294,12 +5294,12 @@ decimal #SEC constant #sec
 \ any block previously inside the buffer, if modified, is rewritten to
 \ disk before reading the block n.
 : buffer  ( n -- a )
-    use @   
+    used @   
     dup >r   
     Begin 
         +buf 
     Until 
-    use !  
+    used !  
     r@ @ 0< 
     If  
         r@ cell+  

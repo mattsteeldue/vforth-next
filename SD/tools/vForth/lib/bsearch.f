@@ -1,12 +1,11 @@
 \
 \ bsearch.f
 \
-.( BSEARCH Block search utility ) 
+.( BSEARCH ) 
 \ search for text word inside the first 1000 screens.
 
 NEEDS TEXT
-NEEDS SHOW-PROGRESS
-NEEDS SEARCH.SCR
+NEEDS COMPARE
 
 \ For debugging purposes
 \ : SEARCH.TRC  BLK @ 6 .R  >IN @ 6 .R ;
@@ -23,7 +22,8 @@ NEEDS SEARCH.SCR
     >IN @ >R
     0 >IN ! BLK !
     BEGIN
-        SEARCH.SCR
+        BL WORD COUNT
+        PAD COUNT COMPARE 
         0= IF 
             \ if found, display result in a human readable way
             SEARCH.SHOW 
@@ -37,7 +37,7 @@ NEEDS SEARCH.SCR
 \ Search the following word and show result
 \ search is performed in screens between n and m only
 : BSEARCH ( n m -- cccc )
-    BL TEXT                     \
+    BL TEXT                     \ accept text to PAD
     ." ...Searching for "
     PAD COUNT TYPE CR
     
@@ -45,11 +45,9 @@ NEEDS SEARCH.SCR
     
     1+ B/SCR *  SWAP B/SCR *
     DO
-        I  SHOW-PROGRESS
+        I  6 AND [CHAR] ) + EMIT 8 EMIT 
         I  SEARCH.BLK
         ?TERMINAL 
-        IF 
-            ." Stop at " I B/SCR / . LEAVE 
-        THEN
+        IF ." Stop at " I B/SCR / . ABORT THEN
     LOOP
 ;

@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Wed Aug 16 16:25:20 2023
+Created: Tue Sep 12 23:12:54 2023
 
 See index at end of file.
 
@@ -34,10 +34,10 @@ Scr# 1
 
 Scr# 2 
   0 ( Error messages    from -31 to -17 )
-  1 
-  2 
-  3 
-  4 
+  1 \   include demo/chomp-chomp.f
+  2 \
+  3     needs locate
+  4     locate assembler
   5 
   6 
   7 
@@ -65,8 +65,8 @@ Scr# 3
  11 
  12 
  13 
- 14 
- 15 
+ 14 -2
+ 15 -1
 
 Scr# 4 
   0 is undefined.
@@ -162,11 +162,11 @@ Scr# 9
   0 ( Print a complete error list )
   1 \ LOAD this screen to display the error list page by page
   2 DECIMAL MARKER FORGET-THIS-TASK
-  3 : LIST-A-PAGE ( n -- )
+  3  : LIST-A-PAGE ( n -- )
   4   DUP 1+ 16 * SWAP 16 * DO
-  5     I 3 .R SPACE [CHAR] : EMIT SPACE I MESSAGE CR
+  5     I 3 .R SPACE 58 EMIT SPACE I MESSAGE CR
   6   LOOP ;
-  7 : LIST-OF-ERRORS ( -- )
+  7  : LIST-OF-ERRORS ( -- )
   8   CR 4 0 DO I LIST-A-PAGE
   9     I 3 - IF ."   press any key..." KEY CR THEN
  10     ?TERMINAL IF LEAVE THEN
@@ -1799,13 +1799,13 @@ Scr# 99
 Scr# 100 
   0 .( Assembler. Use NEEDS ASSEMBLER instead )
   1 \ Loads ASSEMBLER vocabulary
-  2 NEEDS INVERT  NEEDS FLIP  NEEDS CHECKSUM CR
+  2 NEEDS INVERT  NEEDS FLIP \ NEEDS CHECKSUM CR
   3 FORTH  DEFINITIONS   MARKER FORGET-ASSEMBLER \ MARKER-ASM
-  4 DECIMAL 139 LOAD \ check how MMU7 can be used.
+  4 \ DECIMAL 139 LOAD \ check how MMU7 can be used.
   5 VOCABULARY TOOLS-ASM IMMEDIATE
   6 VOCABULARY FORTH-ASM
   7 \ DECIMAL 118 LOAD \ MMU allocation ( Seems bugged )
-  8 : ASSEMBLER FORTH-ASM 1 MMU7! ; IMMEDIATE
+  8  : ASSEMBLER FORTH-ASM ; IMMEDIATE
   9 DECIMAL 101 LOAD \ tools
  10 DECIMAL 120 LOAD \ Z80
  11 DECIMAL 140 LOAD \ structure
@@ -1817,7 +1817,7 @@ Scr# 100
 Scr# 101 
   0 .( Z80 Assembler. ) CR
   1 ASSEMBLER TOOLS-ASM DEFINITIONS
-  2 HEX PAGE-IN   \ DP @ LP ! HEX E080 DP !
+  2 HEX           \ DP @ LP ! HEX E080 DP !
   3 \
   4 NEEDS INVERT  \ : INVERT -1 XOR ;
   5 : @+ >R R@ CELL+ R> @ ;
@@ -2927,7 +2927,7 @@ Scr# 162
  11 \
  12 FORTH DEFINITIONS DECIMAL
  13 \
- 14 PAGE-OUT   \ DP @ LP @ DP !  LP !
+ 14         \ DP @ LP @ DP !  LP !
  15 \
 
 Scr# 163 
@@ -3220,16 +3220,16 @@ Scr# 178
 
 Scr# 179 
   0 ( CHECK NULL - search any 0x00 in blocks )
-  1 : J RP@ 6 + @ ;
+  1 needs J  \   : J RP@ 6 + @ ;
   2 : CHECKNULL
-  3 #SEC 1 DO
-  4 I .
-  5 I BLOCK @ 2020 = IF
-  6 ." WRONG " THEN
-  7 CR
-  8 ?ESCAPE IF QUIT THEN
-  9 LOOP
- 10 ;
+  3   800 650  DO
+  4     [CHAR] . EMIT
+  5     I BLOCK C@ 00   = IF
+  6       CR I .   ." WRONG "  I 2/ .   THEN
+  7     ?TERMINAL  IF QUIT THEN
+  8   LOOP
+  9 ;
+ 10 
  11 
  12 
  13 
@@ -6477,7 +6477,7 @@ Scr# 359
  15 
 
 Scr# 360 
-  0 ( F_STAT via RST 8 hook code )
+  0 ( F_STAT     via RST 8 hook code )
   1 CASEOFF
   2 \ Get file information/status
   3 code F_STAT ( fspec buff -- f )
@@ -6495,7 +6495,7 @@ Scr# 360
  15 -->
 
 Scr# 361 
-  0 ( F_FGETPOS via RST 08 hook code )
+  0 ( F_FGETPOS  via RST 08 hook code )
   1 code F_FGETPOS ( n -- d f ) \ Get current file position.
   2   pop   hl|
   3   ld    a'|   l|
@@ -6513,7 +6513,7 @@ Scr# 361
  15   jpix    c;  -->
 
 Scr# 362 
-  0 ( F_SEEK via RST 08 hook code )
+  0 ( F_SEEK     via RST 08 hook code )
   1 code F_SEEK ( d n -- f ) \ Sek to position in file.
   2   pop   hl|     ld   a'|  l|
   3   ld    h'|   b|
@@ -6531,7 +6531,7 @@ Scr# 362
  15   jpix    c;  -->
 
 Scr# 363 
-  0 ( F_WRITE via RST 8 hook code )
+  0 ( F_WRITE    via RST 8 hook code )
   1 code F_WRITE ( a b fh -- n f ) \ Write bytes to file
   2   ld    d'|   b|
   3   ld    e'|   c|
@@ -6549,7 +6549,7 @@ Scr# 363
  15   jpix    c;  -->
 
 Scr# 364 
-  0 ( F_READ via RST 8 hook code )
+  0 ( F_READ     via RST 8 hook code )
   1 code F_READ ( a b fh -- n f ) \ Read bytes from file.
   2   ld    d'|   b|
   3   ld    e'|   c|
@@ -6567,7 +6567,7 @@ Scr# 364
  15   jpix    c;  -->
 
 Scr# 365 
-  0 ( F_CLOSE via RST 8 hook code )
+  0 ( F_CLOSE    via RST 8 hook code )
   1 code F_CLOSE ( fh -- f ) \ Close a file or directory.
   2   pop   hl|
   3   ld    a'|   l|
@@ -6585,7 +6585,7 @@ Scr# 365
  15 
 
 Scr# 366 
-  0 ( F_OPEN via RST 8 hook code )
+  0 ( F_OPEN     via RST 8 hook code )
   1 code F_OPEN ( fspec buff mode -- fn f ) \ Open a file
   2   ld    h'|   b|
   3   ld    l'|   c|
@@ -6603,7 +6603,7 @@ Scr# 366
  15 
 
 Scr# 367 
-  0 ( F_OPEN via RST 8 hook code )
+  0 ( F_OPEN     via RST 8 hook code )
   1   sbchl hl|
   2   ld    e'|   a|
   3   ldn   d'|   0  n,
@@ -6621,7 +6621,7 @@ Scr# 367
  15 \ F_CLOSE
 
 Scr# 368 
-  0 ( F_FSTAT via RST 8 hook code )
+  0 ( F_FSTAT    via RST 8 hook code )
   1 \ Get file information/status
   2 code F_FSTAT ( buf fh -- f )
   3   pop   de|       \ file handle number
@@ -6639,7 +6639,7 @@ Scr# 368
  15 \ 2 PAD F_FSTAT
 
 Scr# 369 
-  0 ( F_SYNC via RST 8 hook code )
+  0 ( F_SYNC     via RST 8 hook code )
   1 code F_SYNC  ( fh -- f ) \ Sync file changes to disk.
   2   pop   hl|
   3   push  ix|
@@ -6675,7 +6675,7 @@ Scr# 370
  15 DECIMAL
 
 Scr# 371 
-  0 ( F_GETFREE via RST 08 hook code test )
+  0 ( F_GETFREE  via RST 08 hook code test )
   1 code f_getfree ( drive -- d ) \ Get free space on drive.
   2   pop   hl|
   3   push  ix|
@@ -6747,7 +6747,7 @@ Scr# 374
  15 
 
 Scr# 375 
-  0 ( F_OPENDIR via RST 8 hook code )
+  0 ( F_OPENDIR  via RST 8 hook code )
   1 code F_OPENDIR ( fspec -- fh f ) \ Open directory.
   2   ex(sp)ix     \ fspec nul-terminated
   3   push  bc|
@@ -6765,7 +6765,7 @@ Scr# 375
  15   jpix  c;    -->
 
 Scr# 376 
-  0 ( F_READDIR via RST 8 hook code )
+  0 ( F_READDIR  via RST 8 hook code )
   1 code F_READDIR ( buff fspec fh -- n f ) \ Read next entry.
   2   pop   hl|        \ file handle number
   3   ld    a'|   l|
@@ -6819,7 +6819,7 @@ Scr# 378
  15 ;
 
 Scr# 379 
-  0 ( NextZXOS IDE_MODE 01d5 )
+  0 ( NextZXOS - IDE_MODE 01d5 )
   1 : IDE_MODE! ( hl de bc a -- )
   2   >R 0 0 R> 1
   3   [ HEX ] 01D5 M_P3DOS [ DECIMAL ]
@@ -6873,7 +6873,7 @@ Scr# 381
  15 
 
 Scr# 382 
-  0 ( NextZXOS IDE_MODE 01d5 )
+  0 ( NextZXOS - IDE_MODE 01d5 )
   1 \ Set current NextBasic display mode
   2 : IDE_MODE! ( hl de bc a -- )
   3   >R 0 0 R> 1
@@ -6891,7 +6891,7 @@ Scr# 382
  15 
 
 Scr# 383 
-  0 ( NextZXOS IDE_MODE 01d5 )
+  0 ( NextZXOS - IDE_MODE 01d5 )
   1 \ Query current NextBasic display mode information
   2 : IDE_MODE@ ( -- hl de bc a )
   3   0 0 0 0
@@ -12599,7 +12599,7 @@ Scr# 699
 Scr# 700 
   0 \ HEAP colon-definition: 128K dictionary space.
   1 NEEDS  ASSEMBLER
-  2 
+  2 : TESTING ;
   3 -->
   4 
   5 
@@ -14407,12 +14407,12 @@ Scr# 799
 
 Scr# 800 
   0 \ Brodie - Starting FORTH - Ch. 1 - Fundamental Forth
-  1 
+  1 \ page 8
   2 \ Washer example (page 8)
   3 \ : WASHER  WASH SPIN RINSE SPIN ;
   4 \ : RINSE   FILL AGITATE DRAIN ;
   5 \ : FILL    FAUCETS OPEN TILL-FULL FAUCETS CLOSE ;
-  6 
+  6 \ page 11
   7 \ Star and large letter-F (page 11)
   8   : STAR    42 EMIT ;
   9   : STARS    0 DO STAR LOOP ;
@@ -14426,13 +14426,13 @@ Scr# 800
 Scr# 801 
   0 \ Brodie - Starting FORTH - Ch. 1 - Fundamental Forth
   1 
-  2 \ dot-quote (page 18)
+  2 \ dot-quote ( page 18 )
   3 
   4   : GREET   ." HELLO, I SPEAK FORTH " ;
   5 
   6 GREET
   7 
-  8 \ postfix notation (page 23)
+  8 \ postfix notation ( page 23 )
   9   : FOUR-MORE   4 + ;
  10 
  11   3 FOUR-MORE
@@ -14497,7 +14497,7 @@ Scr# 804
 
 Scr# 805 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
-  1 \ Quizzie 2-a
+  1 \ Quizzie 2-a  ( page 37 )
   2 
   3 \ Convert the following infix equation to postfix "calculato
   4 \ style." For example,  ab + c  would become  a b * c +
@@ -14515,7 +14515,7 @@ Scr# 805
 
 Scr# 806 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
-  1 \ Forth Arithmetic -- Definition Style
+  1 \ Forth Arithmetic -- Definition Style ( page 38 )
   2   : YARDS>IN   36 * ;   \ yards to inches
   3   : FT>IN      12 * ;   \ feet to inches
   4 \ supposing the result being always in inches:
@@ -14533,18 +14533,18 @@ Scr# 806
 
 Scr# 807 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
-  1 
-  2   : 5#SUM   + + + + +  ;
-  3 
-  4 17 20 132 3 9 5   5#SUM .
-  5 
-  6 \ Quizzie 2-a
-  7 \ expression   { a + b } * c
-  8   : SOLUTION   ( c a b -- {a+b}*c )  + * ;
-  9 
- 10 3 -2 1 SOLUTION .
+  1 \ page 39
+  2 
+  3   : 5#SUM   + + + + +  ;
+  4 
+  5 17 20 132 3 9 5   5#SUM .
+  6 
+  7 \ Definition-style Practice Problems   ( page 41 )
+  8 \ Quizzie 2-a
+  9 \ expression   { a + b } * c
+ 10   : SOLUTION   ( c a b -- {a+b}*c )  + * ;
  11 
- 12 
+ 12 3 -2 1 SOLUTION .
  13 
  14 
  15 
@@ -14570,12 +14570,12 @@ Scr# 808
 Scr# 809 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
   1 
-  2 \ The Division Operators
+  2 \ The Division Operators  ( page 42 )
   3   : QUARTERS  4 /MOD . ." ONES AND " . ." QUARTERS " ;
   4 
   5 22 QUARTERS
   6 
-  7 \ A Non-destructive Stack Print (page 50)
+  7 \ A Non-destructive Stack Print  ( page 50 )
   8 \ (for better safety, I added a IF-THEN)
   9   : .S
  10     SP@ S0 @ < IF
@@ -14588,25 +14588,25 @@ Scr# 809
 Scr# 810 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
   1 
-  2 \ Quizzie 2-c
-  3 \ 1. Write a phrase which flips three items on the stack,
-  4 \ leaving the middle number in the middle; that is,
-  5 \    a b c    becomes    c b a
-  6   ROT SWAP     or     -ROT SWAP
-  7 \ 2. Write a phrase that does what OVER does, without using
-  8 \ it.
-  9     SWAP DUP ROT SWAP   or   SWAP DUP -ROT
- 10 \ 3. Write a definition called <ROT, which rotates the top
- 11 \ three stack items in the opposite direction from ROT;
- 12 \ that is    a b c    becomes    c a b
- 13     : <ROT   ( a b c -- c a b )  ROT ROT ;
- 14 \   but we have -ROT that's equivalent.
- 15 
+  2 \ Stack Manipulation and Math Definitions ( page 51 )
+  3 \ Quizzie 2-c
+  4 \ 1. Write a phrase which flips three items on the stack,
+  5 \ leaving the middle number in the middle; that is,
+  6 \    a b c    becomes    c b a
+  7   ROT SWAP     or     -ROT SWAP
+  8 \ 2. Write a phrase that does what OVER does, without using
+  9 \ it.
+ 10     SWAP DUP ROT SWAP   or   SWAP DUP -ROT
+ 11 \ 3. Write a definition called <ROT, which rotates the top
+ 12 \ three stack items in the opposite direction from ROT;
+ 13 \ that is    a b c    becomes    c a b
+ 14     : <ROT   ( a b c -- c a b )  ROT ROT ;
+ 15 \   but we have -ROT that's equivalent.
 
 Scr# 811 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
   1 \
-  2 \ Quizzie 2-c  (2nd page)
+  2 \ Quizzie 2-c  ( 2nd page )
   3 \ Write definitions for the following equations, given the
   4 \ stack effect shown
   5 \ 4. (n + 1)/n
@@ -14642,7 +14642,7 @@ Scr# 812
 Scr# 813 
   0 \ Brodie - Starting FORTH - Ch. 2 - How to get results
   1 
-  2 \ Problems
+  2 \ Problems.
   3 \ Write definitions for the following infix equations,
   4 \ given the effect shown:
   5 
@@ -14677,25 +14677,25 @@ Scr# 814
 
 Scr# 815 
   0 \ Brodie - Starting FORTH - Ch. 3 - The Editor
-  1 
-  2 \ v-Forth provides a full-screen editor
-  3 
-  4   NEEDS EDIT
-  5 
-  6 \ and a "Large file EDitor"
-  7 
-  8   NEEDS LED
-  9 
+  1 \ page 57
+  2 
+  3 \ v-Forth provides a full-screen editor
+  4 
+  5 \ To keep the core dictionary as small as posible,
+  6 \ some definitions aren't available at startup, but
+  7 \ must be loaded as soon as they're needed using NEEDS
+  8 
+  9   NEEDS EDIT
  10 
- 11 
+ 11 \ and a "Large file EDitor"
  12 
- 13 
+ 13   NEEDS LED
  14 
  15 
 
 Scr# 816 
   0 \ Brodie - Starting FORTH - Ch. 4 - Decisions, Decisions...
-  1 \
+  1 \ page 90
   2   : ?FULL      12 =  IF ." IT'S FULL "  THEN ;
   3  11 ?FULL
   4  12 ?FULL
@@ -14703,18 +14703,18 @@ Scr# 816
   6   : ?TOO-HOT  220 >  IF ." DANGER -- REDUCE HEAT "  THEN ;
   7 220 ?TOO-HOT
   8 221 ?TOO-HOT
-  9 
+  9 \ page 92
  10   : ?DAY    32 <  IF ." LOOKS GOOD "  ELSE ." NO WAY "  THEN ;
  11  31 ?DAY
  12  32 ?DAY
- 13 
+ 13 \ page 93
  14   : /CHECK   DUP 0=  IF ." INVALID " DROP  ELSE /  THEN ;
  15  10 0 /CHECK
 
 Scr# 817 
   0 \ Brodie - Starting FORTH - Ch. 4 - Decisions, Decisions...
-  1 
-  2   : EGGSIZE DUP  18 < IF ." REJECT "       ELSE
+  1 \ page 93
+  2 : EGGSIZE DUP  18 < IF ." REJECT "       ELSE
   3             DUP  21 < IF ." SMALL "        ELSE
   4             DUP  24 < IF ." MEDIUM "       ELSE
   5             DUP  27 < IF ." LARGE "        ELSE
@@ -14723,15 +14723,15 @@ Scr# 817
   8                       THEN THEN THEN THEN THEN  DROP ;
   9 25 EGGSIZE
  10 
- 11   : /CHECK  DUP IF / ELSE ." INVALID " DROP THEN ;
- 12 
- 13 8 0 /CHECK
- 14 
+ 11 \ page 96
+ 12   : /CHECK  DUP IF / ELSE ." INVALID " DROP THEN ;
+ 13 
+ 14 8 0 /CHECK
  15 
 
 Scr# 818 
   0 \ Brodie - Starting FORTH - Ch. 4 - Decisions, Decisions...
-  1 
+  1 \ page 98
   2   : VEGETABLE  DUP 0<  SWAP 10 MOD 0= +
   3       IF ." ARTICHOKE " THEN ;
   4 -30 VEGETABLE
@@ -14740,29 +14740,29 @@ Scr# 818
   7       IF ." NO WAY " ELSE ." THANK YOU " THEN ;
   8 32 ?DAY
   9 
- 10   : BOXTEST   ( length width height -- )
- 11      6 >  ROT 22 >  ROT 19 >  AND AND
- 12      IF ." BIG ENOUGH " THEN ;
- 13 40 30 20 BOXTEST
- 14 
+ 10 \ page 100
+ 11   : BOXTEST   ( length width height -- )
+ 12      6 >  ROT 22 >  ROT 19 >  AND AND
+ 13      IF ." BIG ENOUGH " THEN ;
+ 14 40 30 20 BOXTEST
  15 
 
 Scr# 819 
   0 \ Brodie - Starting FORTH - Ch. 4 - Decisions, Decisions...
-  1 
-  2   : /CHECK1    DUP IF / ELSE DROP THEN ;
+  1 \ pag 101
+  2   : /CHECK1    DUP  IF  /  ELSE  DROP  THEN ;
   3 10 0 /CHECK1
-  4 \
-  5   : /CHECK2   ?DUP IF / THEN ;
-  6 10 0 /CHECK2
-  7 \
-  8   NEEDS ABORT"
-  9   : /CHECK3    DUP 0= ABORT" Zero denominator "  / ;
- 10 10 0 /CHECK3
- 11 \ after receiving the error message, you can give
- 12 \   WHERE  to show where the error has originated.
- 13 
- 14 
+  4   : /CHECK2   ?DUP  IF  /  THEN ;
+  5 10 0 /CHECK2
+  6 
+  7 \ ** Must use NEED to import ABORT" *
+  8 
+  9   NEEDS ABORT"
+ 10   : /CHECK3    DUP 0= ABORT" Zero denominator "  /  ;
+ 11 
+ 12 10 0 /CHECK3
+ 13 \ after receiving the error message, you can type
+ 14 \   WHERE  to show where the error has originated.
  15 
 
 Scr# 820 
@@ -14785,37 +14785,37 @@ Scr# 820
 
 Scr# 821 
   0 \ Brodie - Starting FORTH - Ch. 5 - Philosophy of Fixed Point
-  1 
+  1 \ pag 108
   2   : DIFFERENCE   - ABS ;
   3 
-  4   : COMMISSION   10 / 50 MIN ;
-  5 
-  6   \ ax^2 + bx + c
-  7   : QUADRATIC    ( a b c x -- n )
-  8     >R SWAP ROT I *  + R> *  + ;
-  9 
- 10   \ percent
- 11   : %   100 */ ;
- 12 
- 13 
- 14 
+  4 \ page 109
+  5   : COMMISSION   10 / 50 MIN ;
+  6 
+  7 \ page 112
+  8   \ ax^2 + bx + c
+  9   : QUADRATIC    ( a b c x -- n )
+ 10     >R SWAP ROT I *  + R> *  + ;
+ 11 
+ 12 \ pag 116
+ 13   \ percent
+ 14   : %   100 */ ;
  15 
 
 Scr# 822 
   0 \ Brodie - Starting FORTH - Ch. 5 - Philosophy of Fixed Point
-  1 
-  2   \ rounded percent
-  3   : R%   10 */ 5 + 10 / ;
-  4 
+  1 \ page 118
+  2 
+  3   \ rounded percent
+  4   : R%   10 */ 5 + 10 / ;
   5 
-  6 \ : PI           355   113 */ ;       \  2.7E-7
-  7 \ : SQRT(2)    19601 13860 */ ;       \  1.8E-9
-  8 \ : SQRT(3)    18817 10864 */ ;       \  2.4E-9
-  9 \ : EXP(1)     28667 10546 */ ;       \  1.5E-8  -
- 10 \ : SQRT(10)   22936  7253 */ ;       \  1.8E-8
- 11 \ : 12Sqrt(12) 26797 25293 */ ;       \  1.8E-9  -
- 12 
- 13 
+  6 \ page 122 - the footnote
+  7 
+  8   : pi           355   113 */ ;       \  2.7E-7
+  9   : sqrt(2)    19601 13860 */ ;       \  1.8E-9
+ 10   : sqrt(3)    18817 10864 */ ;       \  2.4E-9
+ 11   : exp(1)     28667 10546 */ ;       \  1.5E-8  -
+ 12   : sqrt(10)   22936  7253 */ ;       \  1.8E-8
+ 13   : 12sqrt(12) 26797 25293 */ ;       \  1.8E-9  -
  14 
  15 
 
@@ -14874,35 +14874,35 @@ Scr# 825
  15 233  DUP . ." ~K  "  K>C . ." ~C"  CR
 
 Scr# 826 
-  0 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
-  1 
+  0   Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
+  1 \ page 127
   2   : TEST   10 0 DO  CR ." HELLO " LOOP ;
-  3 TEST
-  4 CR
-  5   : DECADE   10 0 DO  I .  LOOP ;
-  6 DECADE
-  7 CR
-  8   : SAMPLE  -243 -250 DO  I .  LOOP ;
-  9 SAMPLE
- 10 CR
- 11   : MULTIPLICATIONS   CR 11 1 DO  DUP I * . LOOP  DROP ;
- 12 MULTIPLICATIONS
- 13 CR
+  3 TEST       CR
+  4 
+  5 \ page 130
+  6   : DECADE   10 0 DO  I .  LOOP ;
+  7 DECADE     CR
+  8 
+  9   : SAMPLE  -243 -250 DO  I .  LOOP ;
+ 10 SAMPLE     CR
+ 11 
+ 12   : MULTIPLICATIONS   CR 11 1 DO  DUP I * . LOOP  DROP ;
+ 13 MULTIPLICATIONS    CR
  14 
  15 
 
 Scr# 827 
   0 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
-  1 
-  2 \ rounded percent
-  3   DECIMAL 822 LOAD  \ this loads R% from Screen# 822.
-  4 
-  5   : COMPOUND  ( amt int -- )
-  6     SWAP  21 1 DO ." YEAR " I . 3 SPACES
-  7     2DUP  R% + DUP  ." BALANCE " . CR LOOP 2DROP ;
-  8 
-  9  1000 6 COMPOUND
- 10 
+  1 \ page 131
+  2 
+  3 \ rounded percent
+  4   DECIMAL 822 LOAD  \ this loads R% from Screen# 822.
+  5 
+  6   : COMPOUND  ( amt int -- )
+  7     SWAP  21 1 DO ." YEAR " I . 3 SPACES
+  8     2DUP  R% + DUP  ." BALANCE " . CR LOOP 2DROP ;
+  9 
+ 10  1000 6 COMPOUND
  11 
  12 
  13 
@@ -14911,12 +14911,12 @@ Scr# 827
 
 Scr# 828 
   0 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
-  1 
+  1 \ page 131
   2   : RECTANGLE  256 0 DO I  16 MOD 0= IF
   3        CR THEN  ." *" LOOP ;
-  4 
-  5 RECTANGLE   CR
-  6 
+  4 RECTANGLE   CR
+  5 
+  6 \ page 132
   7   : POEM   CR 11 1 DO I . ." LITTLE "
   8        I 3 MOD 0= IF ." INDIANS " CR THEN LOOP
   9          ." INDIAN BOYS. " ;
@@ -14932,49 +14932,49 @@ Scr# 829
   1 
   2   NEEDS J  NEEDS U.R
   3 
-  4   : TABLE  CR 11 1 DO
-  5       11 1 DO I J * 5 U.R LOOP CR LOOP ;
-  6 TABLE    CR
-  7 
-  8   : PENTAJUMPS  50 0 DO I . 5 +LOOP ;
-  9 PENTAJUMPS    CR
- 10 
- 11   : FALLING  -10 0  DO I . -1 +LOOP ;
+  4 \ page 132
+  5   : TABLE  CR 11 1 DO
+  6       11 1 DO I J * 5 U.R LOOP CR LOOP ;
+  7 TABLE    CR
+  8 
+  9 \ page 133
+ 10   : PENTAJUMPS  50 0 DO I . 5 +LOOP ;
+ 11 PENTAJUMPS    CR
  12 
- 13 FALLING       CR
- 14 
+ 13   : FALLING  -10 0  DO I . -1 +LOOP ;
+ 14 FALLING       CR
  15 
 
 Scr# 830 
   0 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
-  1 
+  1 \ page 133
   2   : INC-COUNT   DO I . DUP +LOOP DROP ;
-  3 
-  4  1   5   0   INC-COUNT  CR
-  5  2   5   0   INC-COUNT  CR
-  6 -3 -10  10   INC-COUNT  CR
-  7 
-  8 
-  9   : DOUBLING   32767 1 DO  I .  I +LOOP ;
- 10 DOUBLING
- 11 
+  3  1   5   0   INC-COUNT  CR
+  4  2   5   0   INC-COUNT  CR
+  5 -3 -10  10   INC-COUNT  CR
+  6 \ page 134
+  7   : DOUBLING   32767 1 DO  I .  I +LOOP ;
+  8 DOUBLING
+  9 \ page 135
+ 10   : TEST 100 10 DO I . -1 +LOOP ;
+ 11 \ TEST : this system uses the latest standard DO-LOOP
  12 
- 13 
- 14 
- 15 
+ 13 \ page 136
+ 14   : COMPOUND   ( amt int -- )
+ 15     SWAP 21 1 DO I . 2DUP R% + DUP . CR LOOP 2DROP ;
 
 Scr# 831 
   0 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
   1 
-  2   NEEDS U.R
-  3   : R%   10 */ 5 + 10 / ;
-  4   : DOUBLED   6 1000  21 1  DO  CR
-  5       ." YEAR "  I 2 U.R
-  6       2DUP R% +  DUP ."   BALANCE " .
-  7       DUP 2000 > IF CR CR  ." MORE THAN DOUBLED IN "
-  8                      I  . ." YEARS " LEAVE THEN
-  9                                 LOOP 2DROP ;
- 10 
+  2 \ page 140
+  3   NEEDS U.R
+  4   : R%   10 */ 5 + 10 / ;
+  5   : DOUBLED   6 1000  21 1  DO  CR
+  6       ." YEAR "  I 2 U.R
+  7       2DUP R% +  DUP ."   BALANCE " .
+  8       DUP 2000 > IF CR CR  ." MORE THAN DOUBLED IN "
+  9                      I  . ." YEARS " LEAVE THEN
+ 10                                 LOOP 2DROP ;
  11 
  12 DOUBLED
  13 
@@ -15092,31 +15092,31 @@ Scr# 837
 Scr# 838 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2   : PRINTABLES   127 32 DO I EMIT SPACE LOOP ;
-  3 
+  2 \ page 156
+  3   : PRINTABLES   127 32 DO I EMIT SPACE LOOP ;
   4 PRINTABLES
   5 
-  6 7 EMIT     ( beep! )
-  7 
-  8   : UD.   <# #S #> TYPE ;
-  9 12,345   UD.    CR
- 10 12.      UD.    CR
- 11 0.       UD.    CR
- 12 372-8493 UD.    CR
- 13 
- 14 
+  6 \ page 158
+  7 7 EMIT     ( beep! )
+  8 
+  9 \ page 166
+ 10   : UD.   <# #S #> TYPE ;
+ 11 12,345   UD.    CR
+ 12 12.      UD.    CR
+ 13 0.       UD.    CR
+ 14 372-8493 UD.    CR
  15 
 
 Scr# 839 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2   : .PH#   <# # # # # 45 HOLD #S #> TYPE SPACE ;
-  3 
+  2 \ page 167
+  3   : .PH#   <# # # # # 45 HOLD #S #> TYPE SPACE ;
   4 372-8493  .PH#  CR
   5 
   6   : .DATE  <# # # 47 HOLD # # 47 HOLD #S #> TYPE SPACE ;
-  7 
-  8 2023-08-09  .DATE  CR
+  7 2023-08-09  .DATE  CR
+  8 
   9 
  10 
  11 
@@ -15128,10 +15128,10 @@ Scr# 839
 Scr# 840 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2   : SEXTAL   6 BASE ! ;
-  3   : :00   #  SEXTAL  #  DECIMAL 58 HOLD ;
-  4   : SEC  <# :00 :00 #S #> TYPE SPACE ;
-  5 
+  2 \ page 168
+  3   : SEXTAL   6 BASE ! ;
+  4   : :00   #  SEXTAL  #  DECIMAL 58 HOLD ;
+  5   : SEC  <# :00 :00 #S #> TYPE SPACE ;
   6   60. SEC   CR
   7 1400. SEC   CR
   8 4500. SEC   CR
@@ -15146,16 +15146,16 @@ Scr# 840
 Scr# 841 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2   : .$   SWAP OVER  DABS
-  3       <# ROT SIGN # # 46 HOLD #S  36 HOLD #> TYPE SPACE ;
-  4 
-  5  2000.00 .$  CR
-  6 2,000.00 .$  CR
-  7 
-  8 \ the new Forth standard needs ROT before SIGN so that the
-  9 \ definition presented at page 171 won't work !
- 10 \ \  <# # # 46 HOLD #S SIGN 36 HOLD #> TYPE SPACE ;
- 11 
+  2 \ page 171
+  3   : .$   SWAP OVER  DABS
+  4       <# ROT SIGN # # 46 HOLD #S  36 HOLD #> TYPE SPACE ;
+  5 
+  6  2000.00 .$  CR
+  7 2,000.00 .$  CR
+  8 
+  9 \ the new Forth standard needs ROT before SIGN so that the
+ 10 \ definition presented at page 171 won't work !
+ 11 \ \  <# # # 46 HOLD #S SIGN 36 HOLD #> TYPE SPACE ;
  12 
  13 
  14 
@@ -15164,15 +15164,15 @@ Scr# 841
 Scr# 842 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2   NEEDS M*/  NEEDS M/  NEEDS M+
-  3 
-  4   : %   100 M*/ ;
-  5 
-  6 200.50 15 % D.       CR
-  7 200.50 15 % .$       CR
-  8 
-  9   : R%  10 M*/ 5 M+ 10 M/ ;
- 10 
+  2 \ Standard says  UM*  instead of  U*  etc.
+  3   NEEDS M*/  NEEDS M/  NEEDS M+
+  4 
+  5 \ page 175
+  6   : %   100 M*/ ;
+  7 200.50 15 % D.       CR
+  8 200.50 15 % .$       CR
+  9 
+ 10   : R%  10 M*/ 5 M+ 10 M/ ;
  11 987.65 15 R% .$      CR
  12 200,000 3 1 M*/ D.   CR
  13 200,000 1 4 M*/ D.   CR
@@ -15182,14 +15182,14 @@ Scr# 842
 Scr# 843 
   0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 DECIMAL
-  3        : SCORE-MORE   20 + ;
-  4 
-  5 HEX    : SCORE-MORE   14 + ;  DECIMAL
-  6 
-  7        : EXAMPLE  HEX 20 . DECIMAL ;
-  8 EXAMPLE
-  9 
+  2 \ page 176
+  3 DECIMAL
+  4        : SCORE-MORE   20 + ;
+  5 
+  6 HEX    : SCORE-MORE   14 + ;  DECIMAL
+  7 
+  8        : EXAMPLE  HEX 20 . DECIMAL ;
+  9 EXAMPLE
  10 
  11 
  12 
@@ -15198,177 +15198,177 @@ Scr# 843
  15 
 
 Scr# 844 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 
+  2 \ Problems.
   3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
+  4 \ 1.  Veronica Wainwright couldn't remember the upper limit
+  5 \ for a signed single-length number, and she had no book to
+  6 \ refer to, only a Forth terminal. So she wrote a defiinition
+  7 \ called N-MAX, using BEGIN...UNTIL loop. When she executed
+  8 \ she got   32767
+  9 \ What was her definition ?
  10 
- 11 
+ 11  : N-MAX 0 BEGIN 1+ DUP 0< UNTIL 1- . ;
  12 
  13 
  14 
  15 
 
 Scr# 845 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
+  2 \ 3. Write a definition that "rings" your terminal's bell
+  3 \ three times. Make sure that there is enough of delay
+  4 \ between the bells so that they are distinguishable.
+  5 \ Each time the bell rings, the word "BEEP" should appear
+  6 \ on the terminal screen.
   7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
+  8   : 3BELLS
+  9     3 BEGIN
+ 10       ." BEEP " 7 7 7 EMIT EMIT EMIT
+ 11       1- DUP WHILE
+ 12          30000 0 DO NOOP LOOP
+ 13     REPEAT DROP ;
  14 
- 15 
+ 15 3BELLS
 
 Scr# 846 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
+  2 \ Problems.
+  3 \ 4. Rewrite the temperatur conversion definitions ...
+  4   NEEDS D-  NEEDS M*/  NEEDS M+
+  5   : F>C   (  F --  C )  -32.0 D+  10 18  M*/ ;
+  6   : C>F   (  C --  F )  10 18 M*/  32.0  D+  ;
+  7   : K>C   (  K --  C )  -273.2 M+ ;
+  8   : C>K   (  C --  K )   273.2 M+ ;
+  9   : F>K   (  F --  K )  F>C  C>K ;
+ 10   : K>F   (  K --  F )  K>C  C>F ;
  11 
- 12 
- 13 
- 14 
+ 12   : .DEG   ( d -- )
+ 13     TUCK DABS
+ 14     <# # [CHAR] . HOLD #S ROT SIGN #> TYPE SPACE ;
  15 
 
 Scr# 847 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
+  2 \ Problems.
+  3 \ 5.a. Write a routine which evaluates  7x^2 + 20x + 5
+  4 \ given x, and returns a double-length value.
+  5 \ That is: x(7x +20) + 5
+  6   NEEDS D-  NEEDS M*/  NEEDS M+  NEEDS D<
+  7   : DPOLY   ( n -- d )
+  8     DUP   7 M* 20 M+   ROT 1 M*/   5 M+ ;
   9 
- 10 
- 11 
+ 10 \ 5.b. How large an x will work without overflowing
+ 11 \ thirty-two bits as a signed number ?
  12 
- 13 
- 14 
+ 13   : ?MAX-DPOLY  ( -- )
+ 14   0  BEGIN 1+  DUP DPOLY  NIP 0< UNTIL  1- . ;
  15 
 
 Scr# 848 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   1 
-  2 
-  3 
-  4 
-  5 
+  2 \ Problems.
+  3 \ 6. Write a word which prints the numbes 0 through 16
+  4 \ (decimal) in decimal, hexadecimal, and binary form in
+  5 \ three columns
   6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
+  7   NEEDS BINARY
+  8   : NUMS
+  9     17 0 DO
+ 10       DECIMAL  ." DECIMAL "  I  2  .R  3 SPACES
+ 11       HEX      ." HEX "      I  2  .R  3 SPACES
+ 12       BINARY   ." BINARY "   I  5  .R  CR
+ 13     LOOP  DECIMAL ;
  14 
  15 
 
 Scr# 849 
-  0 ( NUMBER )
-  1 create pdom hex
-  2   char , c,  char / c,  char - c,  char : c,
-  3 create pcdm hex
-  4   char . c,  char . c,  char . c,  char . c,
-  5 -->
-  6 
-  7 
+  0 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  1 
+  2 \ Problems
+  3 \ 8. Write a definition for phone-number formatting word
+  4 \ that will also print the area code with a slash if and
+  5 \ only if the number includes an area code. E.g.
+  6 \ 555-1234     .PH#  555-1234
+  7 \ 213/372-8493 .PH#  213/372-8493
   8 
-  9 
- 10 
- 11 
+  9   : .PH#  ( d -- )
+ 10     <# # # # # [CHAR] - HOLD # # #
+ 11        OVER IF [CHAR] / HOLD #S THEN #> TYPE SPACE ;
  12 
- 13 
- 14 
+ 13 \ 555.1234     .PH# \  555-1234
+ 14 \ 213.372.8493 .PH# \  213/372-8493
  15 
 
 Scr# 850 
-  0 ( NUMBER )
-  1 marker task
-  2 : nnumber     ( a -- d )
-  3   0 0 rot
-  4   (sgn) >r   base @ >r  (prefix)
-  5   -1 dpl !
-  6   begin
-  7     (number) .s
-  8     dup c@ >r pcdm pdom 4 r> (map)
-  9     -1 swap
- 10     [ CHAR . ] Literal =
- 11     If 0 dpl ! 1+ Then
- 12   until
- 13   c@ bl - 0 ?error
- 14   r> base !  r> If dnegate Then
- 15 ;
-
-Scr# 851 
-  0 ( NUMBER )
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 \ ' nnumber
-  3 \ ' interpret >body decimal 32 + !
-  4 marker task
-  5 here
-  6 ," 12:00:00 "
-  7 nnumber
-  8 cr
-  9 .s
- 10 
- 11 
+  2 \ page 183
+  3   VARIABLE  DATE
+  4 12  DATE !
+  5 
+  6 \ page 184
+  7 DATE @ . CR
+  8 DATE ?   CR
+  9 
+ 10 13  DATE !
+ 11 DATE ?   CR
  12 
  13 
  14 
  15 
 
-Scr# 852 
-  0 
+Scr# 851 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
+  2 \ pag 184
+  3   VARIABLE DATE  VARIABLE MONTH  VARIABLE YEAR
+  4   : !DATE  ( month day year -- )
+  5     YEAR !  DATE !  MONTH ! ;
+  6 7 31 23 !DATE
   7 
-  8 
-  9 
+  8   : .DATE   MONTH ?   DATE ?   YEAR ?  ;
+  9 .DATE
  10 
- 11 
- 12 
+ 11 \ : DECIMAL   10 BASE ! ;
+ 12 \ : HEX       16 BASE ! ;
+ 13 \ : OCTAL      8 BASE ! ;
+ 14 \ : BINARY     2 BASE ! !
+ 15 
+
+Scr# 852 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 
+  2 \ page 188
+  3   VARIABLE EGGS
+  4   : RESET   0 EGGS !  ;
+  5   : EGG     1 EGGS +! ;
+  6 
+  7 \ page 189
+  8 RESET
+  9 EGG
+ 10 EGG
+ 11 EGG
+ 12 EGGS ?
  13 
  14 
  15 
 
 Scr# 853 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
-  4 
-  5 
+  2 \ page 190
+  3   200 CONSTANT LIMIT     \ LIMIT is an user variable, so you
+  4                          \ get a warning message that warns
+  5                          \ you about that.
   6 
-  7 
-  8 
+  7   : ?TOO.HOT  LIMIT > IF ." DANGER -- REDUCE HEAT " THEN ;
+  8 201 ?TOO.HOT CR
   9 
  10 
  11 
@@ -15378,354 +15378,354 @@ Scr# 853
  15 
 
 Scr# 854 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
+  2   NEEDS 2VARIABLE
   3 
-  4 
-  5 
-  6 
-  7 
+  4 \ page 193
+  5   2VARIABLE DATE
+  6 800,000  DATE 2!
+  7 DATE 2@ D.    CR
   8 
-  9 
- 10 
+  9 \ from previous chapter
+ 10   : .DATE  <# # # 47 HOLD # # 47 HOLD #S #> TYPE SPACE ;
  11 
- 12 
- 13 
+ 12 7/16/23  DATE 2!
+ 13 DATE 2@ .DATE     CR
  14 
  15 
 
 Scr# 855 
-  0 
-  1 
-  2 
-  3 
-  4 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ page 193
+  2   NEEDS 2CONSTANT
+  3   200,000  2CONSTANT  APPLES
+  4 APPLES @ D.    CR
   5 
-  6 
-  7 
-  8 
-  9 
+  6 \ page 194
+  7   400,000  2CONSTANT  MUCH
+  8   : MUCH-MORE   MUCH D+  ;
+  9 APPLES MUCH-MORE D.     CR
  10 
- 11 
- 12 
+ 11   355 113  2CONSTANT PI
+ 12 10000 PI */ .           CR
  13 
  14 
  15 
 
 Scr# 856 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ page 196
+  2   VARIABLE LIMITS  8 ALLOT
+  3 220 LIMITS     !
+  4 340 LIMITS  2+ !
+  5 \ page 198
+  6   : LIMIT   2* LIMITS ! ;
+  7 170  2 LIMIT !
   8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+  9   : ?TOO.HOT  ( burner# temp -- )
+ 10     LIMIT @ >  IF ." DANGER -- REDUCE HEAT " THEN ;
+ 11 210  0 ?TOO.HOT   CR
+ 12 230  0 ?TOO.HOT   CR
+ 13 310  1 ?TOO.HOT   CR
+ 14 250  1 ?TOO.HOT   CR
+ 15 \ etc.
 
 Scr# 857 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
+  2   NEEDS U.R    NEEDS PAGE    NEEDS DUMP
   3 
-  4 
-  5 
-  6 
+  4 \ page 199
+  5   VARIABLE COUNTS  10 ALLOT
+  6   COUNTS 12 ERASE
   7 
-  8 
-  9 
- 10 
+  8   : RESET     COUNTS  12 ERASE ;
+  9   : COUNTER   2*  COUNTS + ;
+ 10   : TALLY     COUNTER 1  SWAP +! ;
  11 
- 12 
- 13 
+ 12 -->
+ 13 \ --> definition allows continuing LOADing the next Screen
  14 
  15 
 
 Scr# 858 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ page 200
+  2   : CATEGORY DUP 18 < IF 0 ELSE
+  3              DUP 21 < IF 1 ELSE
+  4              DUP 24 < IF 2 ELSE
+  5              DUP 27 < IF 3 ELSE
+  6              DUP 30 < IF 4 ELSE  5
+  7              THEN THEN THEN THEN THEN SWAP DROP ;
+  8 \ page 201
+  9   : LABEL    DUP  0= IF ." REJECT "      ELSE
+ 10              DUP 1 = IF ." SMALL "       ELSE
+ 11              DUP 2 = IF ." MEDIUM "      ELSE
+ 12              DUP 3 = IF ." LARGE "       ELSE
+ 13              DUP 4 = IF ." EXTRA LARGE " ELSE
+ 14              THEN THEN THEN THEN THEN DROP ;
+ 15 -->
 
 Scr# 859 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
+  2 \ page 201
+  3 1 LABEL    CR
   4 
-  5 
-  6 
+  5   : EGGSIZE   CATEGORY DUP LABEL TALLY ;
+  6 23 EGGSIZE  CR
   7 
-  8 
-  9 
- 10 
- 11 
- 12 
+  8 \ page 202
+  9   : REPORT   PAGE ." QUANTITY    SIZE " CR CR
+ 10     6 0 DO  I COUNTER @ 5 U.R
+ 11             7 SPACES I LABEL CR LOOP ;
+ 12 REPORT
  13 
- 14 
+ 14 COUNTS 12 DUMP
  15 
 
 Scr# 860 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
+  2 \ page 207
+  3   CREATE LIMITS  220 , 340 , 170 , 100 , 190 ,
   4 
-  5 
+  5   CREATE SIZES  18 C,  21 C,  24 C,  27 C,  30 C,  255 C,
   6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
+  7   : CATEGORY   ( n1 -- n2 )
+  8     6 0 DO
+  9       DUP SIZES I + C@ <
+ 10       IF
+ 11         DROP I LEAVE
+ 12       THEN
+ 13     LOOP ;
  14 
  15 
 
 Scr# 861 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
+  2 \ Problems.
+  3 \ 1. a) Write two words called BAKE-PIE and EAT-PIE.
+  4 \ The 1st word increases the number of available PIES by one
+  5 \ The 2nd decreases the number by 1 and thanks you for the pie
+  6 \ but if there is no pie, it types "What pie?"
   7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  8   CREATE PIES 0 ,
+  9   : BAKE-PIE  1 PIES +! ;
+ 10   : EAT-PIE  PIES @  IF ." THANK YOU " -1 PIES +!
+ 11                    ELSE ." WHAT PIE? "  THEN ;
+ 12 EAT-PIE      CR
+ 13 BAKE-PIE     CR
+ 14 EAT-PIE      CR
  15 
 
 Scr# 862 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
-  4 
-  5 
+  2 \ Problems.
+  3 \ 1. b) Write a words called FREEZE-PIES which takes all the
+  4 \ pies availale and adds them to the number of pies in the
+  5 \ freezer. Remember that frozen pies cannot be eaten.
   6 
-  7 
-  8 
+  7   CREATE FROZEN-PIES 0 ,
+  8   : FREEZE-PIES  PIES @ FROZEN-PIES +! 0 PIES ! ;
   9 
- 10 
- 11 
- 12 
+ 10 BAKE-PIE BAKE-PIE FREEZE-PIES     CR
+ 11 PIES ?                            CR
+ 12 FROZEN-PIES ?                     CR
  13 
  14 
  15 
 
 Scr# 863 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
   1 
-  2 
-  3 
-  4 
-  5 
+  2 \ Problems.
+  3 \ 3. Define a word called .BASE which prints the current
+  4 \ value of the variable BASE in decimal. Test it by first
+  5 \ changing BASE to some value other than ten.
   6 
-  7 
-  8 
-  9 
- 10 
+  7   : .BASE
+  8     BASE @ DUP
+  9     DECIMAL .
+ 10     BASE ! ;
  11 
- 12 
- 13 
+ 12 DECIMAL .BASE       CR
+ 13 HEX .BASE           CR
  14 
  15 
 
 Scr# 864 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ 3. Define a number-formatting word called M. which prints
+  2 \ a double-length number with a decimal point. The position
+  3 \ of the decimal point within the number is movable and
+  4 \ depends on the value of a variable you will define as
+  5 \ PLACES  for example, if you store a 1 into PLACES, you
+  6   will get  200,000 M.  20000.0 ok
+  7 \ that is, with the decimal point one place from the right.
+  8 \ A zero in PLACES should produce no decimal point at all.
+  9   VARIABLE PLACES    1 PLACES !
+ 10   : M.   ( d -- )  SWAP OVER DABS <#
+ 11         PLACES @ ?DUP IF 0 DO # LOOP [CHAR] . HOLD THEN
+ 12         #S   ROT   SIGN  #>  TYPE SPACE ;
  13 
- 14 
- 15 
+ 14 0 PLACES ! 200,000 M.    CR
+ 15 1 PLACES ! 200,000 M.    CR
 
 Scr# 865 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ 4. In order to keep track of the inventory of colord
+  2 \ pencils in your office, create an array, each cell of
+  3 \ which contains the count of different colored pencils.
+  4 \ Define a set of words so that, for exmple, the phrase
+  5 \  RED PENCILS
+  6 \ return the address of the cell that contains the count of
+  7 \ red pencils etc...
+  8   : ENUMERATED   ( n -- ) 0 DO I [COMPILE] CONSTANT LOOP ;
+  9   4 ENUMERATED     RED  BLUE  GREEN  ORANGE
+ 10   CREATE #PENCILS   23 ,  15 ,   12 ,     0 ,
+ 11   : PENCILS   ( n -- a )  2*  #PENCILS + ;
  12 
- 13 
- 14 
+ 13 RED  PENCILS  @ .    CR
+ 14 BLUE PENCILS  @ .    CR
  15 
 
 Scr# 866 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ 5. A histogram is a graphic representation of a series of
+  2 \ vaues. Each value is shown by the height or length of a
+  3 \ bar. In this exercise you will create an array of values
+  4 \ and print a histogram which displays a line of "*"s for
+  5 \ each value. First create an array with about ten cells.
+  6 \ Initialize each element with a value in the range 0 - 60
+  7 \ On each line print the number of the cell followed by a
+  8 \ number of "*"s equal to the content of that cell.
   9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+ 10   NEEDS U.R
+ 11   CREATE 'SAMPLES   11 ,  2 ,  5 ,  3 ,  3 ,  2 ,
+ 12                     15 , 21 ,  3 ,  8 , 10 ,  0 ,  3 ,
+ 13   : STARS ( n -- ) 0 ?DO [CHAR] * EMIT LOOP ;
+ 14   : SAMPLE ( n -- a ) 2* 'SAMPLES + ;
+ 15   : PLOT 11 0 DO CR I 2 U.R SPACE I SAMPLE @ STARS LOOP CR ;
 
 Scr# 867 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  0 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  1 \ 6. Tic-tac-toe ...
+  2   CREATE BOARD  9 ALLOT  : CLEAR  BOARD 9 ERASE ;  CLEAR
+  3   : BOARD@   ( n -- c )  BOARD + C@ ;
+  4   : BOARD!   ( b n -- )  BOARD + C! ;
+  5   : .HORIZ   DUP 2- 3 MOD 0=  SWAP  6 < AND
+  6              IF CR ." --|---|-- " CR THEN ;
+  7   : .VERT    3 MOD   IF [CHAR] | EMIT SPACE THEN ;
+  8   : DISPLAY     CR 9 0 DO
+  9       I .VERT  I BOARD@  ?DUP
+ 10       IF 1+ 2/ 9 * [CHAR] O + ELSE BL THEN
+ 11       EMIT SPACE I .HORIZ
+ 12     LOOP ;
+ 13   : X!  ( n -- ) 1-   1  SWAP BOARD! DISPLAY ;
+ 14   : O!  ( n -- ) 1-  -1  SWAP BOARD! DISPLAY ;
  15 
 
 Scr# 868 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
+  2   NEEDS SEE
   3 
-  4 
+  4   801 LOAD   ( Load GREET from ch. 1 )
   5 
-  6 
+  6   SEE GREET
   7 
-  8 
-  9 
+  8 \ page 215
+  9   ' GREET EXECUTE
  10 
- 11 
- 12 
- 13 
+ 11   VARIABLE POINTER
+ 12   ' GREET POINTER !
+ 13   POINTER @ EXECUTE
  14 
  15 
 
 Scr# 869 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
+  2 \ page 217
+  3   : HELLO     ." HELLO " ;
+  4   : GOODBYE   ." GOODBYE " ;
+  5   VARIABLE 'ALOHA
+  6   : ALOHA  'ALOHA @ EXECUTE ;
+  7 CR
   8 
-  9 
- 10 
+  9 ' HELLO   'ALOHA !
+ 10 ALOHA  CR
  11 
- 12 
- 13 
+ 12 ' GOODBYE 'ALOHA !
+ 13 ALOHA  CR
  14 
  15 
 
 Scr# 870 
-  0 
-  1 
-  2 
-  3 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  1 \ page 218
+  2 \ Here we adhere to FORTH Inc. standard
+  3   : SAY    '   'ALOHA !  ;
   4 
-  5 
-  6 
+  5 SAY HELLO
+  6 ALOHA      CR
   7 
-  8 
-  9 
+  8 SAY GOODBYE
+  9 ALOHA      CR
  10 
- 11 
- 12 
- 13 
- 14 
+ 11   : COMING   ['] HELLO    'ALOHA ! ;
+ 12   : GOING    ['] GOODBYE  'ALOHA ! ;
+ 13 COMING   ALOHA    CR
+ 14 GOING    ALOHA    CR
  15 
 
 Scr# 871 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
-  3 
+  2 \ page 219
+  3   SEE INTERPRET     CR CR
   4 
-  5 
-  6 
+  5 \ page 228
+  6   SEE QUIT          CR CR
   7 
-  8 
-  9 
+  8 \ page 233
+  9   SEE HERE          CR CR
  10 
- 11 
- 12 
+ 11 \ page 234
+ 12   SEE PAD           CR CR
  13 
  14 
  15 
 
 Scr# 872 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
-  3 
+  2 \ page 235
+  3   : 'S  SP@  ;
   4 
-  5 
-  6 
+  5 \ page 236
+  6   NEEDS DEPTH
   7 
-  8 
-  9 
- 10 
- 11 
+  8 \ page 243
+  9   NEEDS FORTH
+ 10   NEEDS EDITOR
+ 11   NEEDS ASSEMBLER
  12 
- 13 
+ 13   SEE DEFINITIONS
  14 
  15 
 
 Scr# 873 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
-  3 
+  2 \ page 245
+  3   NEEDS LOCATE
   4 
-  5 
+  5   LOCATE ASSEMBLER
   6 
   7 
   8 
@@ -15738,68 +15738,68 @@ Scr# 873
  15 
 
 Scr# 874 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  1 \ Problem 1.
+  2 \ First review Chap. 2, Prob. 6.  Without changing any of
+  3 \ those definitions, now write a word called COUNTS which
+  4 \ will allow the judge to optionally enter the numbe of
+  5 \ counts for any crime. For instance the entry
+  6 \ CONVICTED-OF BOOKMAKING 3 COUNTS TAX-EVASION WILL-SERVE
+  7 \   ==>  17 YEARS
+  8 \ will compute the sentence for one count of bookmaking and
+  9 \ three counts of tax evasion.
+ 10   MARKER TASK  DECIMAL 814 LOAD
+ 11   : COUNTS  ( n -- )
+ 12     ' -ROT 0 DO OVER EXECUTE LOOP NIP ;
+ 13 CONVICTED-OF BOOKMAKING
+ 14 3 COUNTS TAX-EVASION
+ 15 WILL-SERVE
 
 Scr# 875 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
   1 
-  2 
-  3 
-  4 
+  2 \ Problem 2. What is the beginning of your private dictionary ?
+  3 \ COLD    \ we don't have EMPTY yet.
+  4 \ HERE U.
   5 
-  6 
-  7 
-  8 
+  6 \ Problem 3. In your system, how far is the pad from the top
+  7 \ of your private dictionary ?
+  8   PAD HERE - U.
   9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
+ 10 \ Problem 4. Assuming that DATE has been defined by VARIABLE
+ 11 \ what is the difference between these two phrases:
+ 12   DATE    U.
+ 13   ' DATE  U.
+ 14   BASE    U.
+ 15   ' BASE  U.
 
 Scr# 876 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  0 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  1 \ Problem 5. In this exercise you will create a "vectored
+  2 \ execution ...
+  3   MARKER TASK  DECIMAL 832 LOAD
+  4   NEEDS EXEC:   \ Vectorized case structure.
+  5   : GREET      ." HELLO, I SPEAK FORTH. " ;
+  6   : SEQUENCE   11 1 DO I . LOOP ;
+  7   : TILE       10 5 BOX ;         \ Ch. 6
+  8   : NOTHING    ;
+  9   : DO-SOMETHING  ( index -- ) EXEC:  NOOP  \ 0
+ 10     GREET     \ 1
+ 11     SEQUENCE  \ 2
+ 12     TILE      \ 3
+ 13     NOTHING   \ 4
+ 14     NOTHING  NOTHING  ;
  15 
 
 Scr# 877 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   1 
-  2 
+  2   : TEST    ." SAMPLE " ;
   3 
-  4 
+  4 NEEDS SEE  NEEDS DUMP
   5 
-  6 
-  7 
+  6 SEE TEST        CR
+  7 ' TEST 10 DUMP  CR
   8 
   9 
  10 
@@ -15810,29 +15810,29 @@ Scr# 877
  15 
 
 Scr# 878 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   1 
-  2 
-  3 
-  4 
+  2 \    |       |      |      |      |       |
+  3   : "LABEL"
+  4   ." REJECT  SMALL  MEDIUM LARGE  XTRA LRGERROR   " ;
   5 
-  6 
-  7 
+  6 ' "LABEL"  5 +
+  7 16 + 8 TYPE         \ MEDIUM
   8 
-  9 
+  9   : LABEL   8 *  ['] "LABEL" 5 + + 8 TYPE SPACE ;
  10 
- 11 
+ 11   : LABEL  0 MAX 5 MIN  LABEL ;
  12 
  13 
  14 
  15 
 
 Scr# 879 
-  0 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   1 
-  2 
+  2 \ CR 214 BLOCK  512 + 64 TYPE
   3 
-  4 
+  4 CR 214 BLOCK 64 -TRAILING TYPE
   5 
   6 
   7 
@@ -15846,37 +15846,37 @@ Scr# 879
  15 
 
 Scr# 880 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Buzzphrases Generator - ver 1.
+  2   needs CHOOSE
+  3   : buzzword  ( n -- )
+  4     10 CHOOSE 2+  881 (LINE) DROP + 20 -TRAILING TYPE ;
+  5   : 1adj    0  buzzword ;
+  6   : 2adj   20  buzzword ;
+  7   : noun   40  buzzword ;
+  8   : phrase     1adj SPACE 2adj SPACE noun ;
+  9   : paragraph  CR  ." by using "
+ 10     phrase    ."  coordinated with "
+ 11     phrase    ."  it is possible for even the most "
+ 12     phrase    ."  to function as "
+ 13     phrase    ."  within the constraint of "
+ 14     phrase    ." ." CR ;
  15 
 
 Scr# 881 
-  0 
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Buzzphrases Generator - ver 1.
+  2 integrated          management          criteria
+  3 total               organization        flexibility
+  4 systematized        monitored           capability
+  5 parallel            reciprocal          mobility
+  6 functional          digital             programming
+  7 responsive          logistical          concepts
+  8 optimal             transitional        time phasing
+  9 synchronized        incremental         projections
+ 10 compatible          third generation    hardware
+ 11 qualified           policy              through-put
+ 12 partial             decision            engineering
  13 
  14 
  15 
@@ -17034,7 +17034,7 @@ Scr# 945
  15 
 
 Scr# 946 
-  0 ( variablili )
+  0 ( variables )
   1 VARIABLE MAIN-PROG   \
   2 VARIABLE MAP-KEYB    \ a:chr
   3 VARIABLE CAPS-LOCK   \ a:chr
@@ -36367,30 +36367,30 @@ Index:
   357 ( Matt Davies'  .helloworld )
   358 ( Speed Test - Benchmark - 5.12 sec. )
   359 
-  360 ( F_STAT via RST 8 hook code )
-  361 ( F_FGETPOS via RST 08 hook code )
-  362 ( F_SEEK via RST 08 hook code )
-  363 ( F_WRITE via RST 8 hook code )
-  364 ( F_READ via RST 8 hook code )
-  365 ( F_CLOSE via RST 8 hook code )
-  366 ( F_OPEN via RST 8 hook code )
-  367 ( F_OPEN via RST 8 hook code )
-  368 ( F_FSTAT via RST 8 hook code )
-  369 ( F_SYNC via RST 8 hook code )
+  360 ( F_STAT     via RST 8 hook code )
+  361 ( F_FGETPOS  via RST 08 hook code )
+  362 ( F_SEEK     via RST 08 hook code )
+  363 ( F_WRITE    via RST 8 hook code )
+  364 ( F_READ     via RST 8 hook code )
+  365 ( F_CLOSE    via RST 8 hook code )
+  366 ( F_OPEN     via RST 8 hook code )
+  367 ( F_OPEN     via RST 8 hook code )
+  368 ( F_FSTAT    via RST 8 hook code )
+  369 ( F_SYNC     via RST 8 hook code )
   370 ( M_DOSVERSION via RST 8 hook code )
-  371 ( F_GETFREE via RST 08 hook code test )
+  371 ( F_GETFREE  via RST 08 hook code test )
   372 ( M_P3DOS )
   373 ( M_P3DOS )
   374 ( M_P3DOS )
-  375 ( F_OPENDIR via RST 8 hook code )
-  376 ( F_READDIR via RST 8 hook code )
+  375 ( F_OPENDIR  via RST 8 hook code )
+  376 ( F_READDIR  via RST 8 hook code )
   377 ( CAT directory test )
   378 ( DIR TEST )
-  379 ( NextZXOS IDE_MODE 01d5 )
+  379 ( NextZXOS - IDE_MODE 01d5 )
   380 ( NextZXOS - IDE_CAPACITY $01b4 )
   381 ( NextZXOS - DOS_FREE_SPACE $0121 )
-  382 ( NextZXOS IDE_MODE 01d5 )
-  383 ( NextZXOS IDE_MODE 01d5 )
+  382 ( NextZXOS - IDE_MODE 01d5 )
+  383 ( NextZXOS - IDE_MODE 01d5 )
   384 ( DOS_FLUSH $0142 )
   385 ( DOS_VERSION / IDE_VERSION )
   386 ( IDE_BASIC 1/5 )
@@ -36836,7 +36836,7 @@ Restarting Supervisor
   823 \ Brodie - Starting FORTH - Ch. 5 - Philosophy of Fixed Point
   824 \ Brodie - Starting FORTH - Ch. 5 - Philosophy of Fixed Point
   825 \ Brodie - Starting FORTH - Ch. 5 - Philosophy of Fixed Point
-  826 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
+  826   Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
   827 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
   828 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
   829 \ Brodie - Starting FORTH - Ch. 6 - Throw it for a loop
@@ -36854,44 +36854,44 @@ Restarting Supervisor
   841 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   842 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
   843 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
-  844 
-  845 
-  846 
-  847 
-  848 
-  849 ( NUMBER )
-  850 ( NUMBER )
-  851 ( NUMBER )
-  852 
-  853 
-  854 
-  855 
-  856 
-  857 
-  858 
-  859 
-  860 
-  861 
-  862 
-  863 
-  864 
-  865 
-  866 
-  867 
-  868 
-  869 
-  870 
-  871 
-  872 
-  873 
-  874 
-  875 
-  876 
-  877 
-  878 
-  879 
-  880 
-  881 
+  844 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  845 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  846 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  847 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  848 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  849 \ Brodie - Starting FORTH - Ch. 7 - A Numbers of Kind of Numbers
+  850 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  851 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  852 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  853 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  854 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  855 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  856 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  857 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  858 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  859 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  860 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  861 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  862 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  863 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  864 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  865 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  866 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  867 \ Brodie - Starting FORTH - Ch. 8 - Variables, Constants, Arrays
+  868 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  869 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  870 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  871 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  872 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  873 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  874 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  875 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  876 \ Brodie - Starting FORTH - Ch. 9 - Under the Hood
+  877 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  878 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  879 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  880 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  881 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   882 
   883 
   884 
@@ -36956,7 +36956,7 @@ Restarting Supervisor
   943 ( UART Raspberry PI Zero - setup )
   944 
   945 
-  946 ( variablili )
+  946 ( variables )
   947 ( .python )
   948 ( UART Raspberry PI Zero - setup )
   949 ( UART Raspberry PI Zero - simple terminal )

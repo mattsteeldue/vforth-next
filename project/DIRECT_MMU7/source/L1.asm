@@ -178,7 +178,7 @@ User_Ptr:
                 User_Def CSP        , "CSP"       , 52 // used to temporary store Stack-Pointer value
                 User_Def RSHARP     , "R#"        , 54 // location of editing cursor
                 User_Def HLD        , "HLD"       , 56 // last character during a number conversion output
-                User_Def USE        , "USE"       , 58 // address of last used block
+                User_Def USED       , "USED"      , 58 // address of last used block
                 User_Def PREV       , "PREV"      , 60 // address of previous used block
                 User_Def LP         , "LP"        , 62 // line printer (not used)
                 User_Def PLACE      , "PLACE"     , 64 // number of digits after decimal point in output
@@ -838,7 +838,8 @@ QError_Endif:                                   // endif
                 dw      R_TO                    // r>
                 dw      LATEST                  // latest
                 dw      PFA                     // pfa 
-                dw      STORE                   // !
+                dw      STORE                   // !        \ old use of <BUILDS
+//              dw      COMMA                   // ,        \ new use of CREATE
                 dw      C_SEMICOLON_CODE        // ;code
 Does_Ptr:
                 // via call coded in CFA

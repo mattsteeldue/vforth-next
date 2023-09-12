@@ -1,46 +1,42 @@
 \
 \ locate.f
 \
-.( LOCATE Utility ) 
+.( LOCATE ) 
 \
 
 NEEDS TEXT
-NEEDS SHOW-PROGRESS
-NEEDS SEARCH.SCR
+NEEDS COMPARE
 
 \
 BASE @
 \
 HEX
 
-: LOCATE.SCR ( -- f )
-    BL WORD @ 3A01 =  \ this is the sequence ": " for a colon-defnition
-    IF 
-        SEARCH.SCR    \ then the following word should be a definition-name
-    ELSE 
-        1             \ to signal it did not found
-    THEN
-;
-
-\ search for a colon-definition in screen b.
-: LOCATE.BLK   ( b -- )
+\ search for a colon-definition in screen u.
+: LOCATE.BLK   ( u -- )
     BLK @ >R 
     >IN @ >R
     0 >IN !  BLK !
     BEGIN
-        LOCATE.SCR
-        0= IF 
-            CLS
-            BLK @ B/SCR / 
-            LIST 
-            QUIT 
+        BL WORD @ 3A01 = \ this is the sequence ": " for a colon-defnition
+        IF
+            BL WORD COUNT
+            PAD COUNT 
+            COMPARE 
+            0= IF 
+                CLS
+                BLK @ B/SCR / 
+                LIST 
+                ABORT 
+            THEN
         THEN
-            
+                    
         ?TERMINAL \ ?ESCAPE
         IF 
-            ." Stop at " BLK ? 
-            QUIT 
+            CR BLK @ 2/ .
+            ABORT
         THEN
+        
         HERE 1+ C@ 0=
     UNTIL
     R> >IN ! 
@@ -53,8 +49,8 @@ DECIMAL
 
 : LOCATE ( -- cccc )
     BL TEXT                 \ accepts a word to PAD
-    2001 1 DO               \ Block 2001 is bottom part of Screen#1000
-        I SHOW-PROGRESS
+    2002 1 DO               \ Block 2001 is bottom part of Screen#1000
+        I  6 AND [CHAR] ) + EMIT 8 EMIT
         I LOCATE.BLK        \ perform the actual search
     LOOP
     ." Not found. " 

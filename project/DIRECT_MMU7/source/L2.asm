@@ -238,7 +238,7 @@ Autoexec_Ptr:
                 dw      STORE                   // ! 
                 dw      ZERO, NMODE, STORE      // 0 nmode !
                 dw      FIRST, FETCH, DUP       // first @ dup
-                dw      USE, STORE              // use !
+                dw      USED, STORE             // used !
                 dw      PREV, STORE             // prev !
                 dw      LIT, 4, PLACE, STORE    // 4 place !
 //              dw      LIT, 8
