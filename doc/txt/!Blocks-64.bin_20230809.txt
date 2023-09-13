@@ -1,5 +1,5 @@
 File: c:\Zx\forth\F15\!Blocks-64.bin
-Created: Tue Sep 12 23:12:54 2023
+Created: Wed Sep 13 23:17:03 2023
 
 See index at end of file.
 
@@ -3383,7 +3383,7 @@ Scr# 187
 Scr# 188 
   0 ( Editor utility           )
   1 \ multiple BCOPY
-  2 : MBC. ( n1 n2 -- )  WAP . ." -> " . ;
+  2 : MBC. ( n1 n2 -- )  SWAP . ." -> " . ;
   3 : MBCOPY ( b1 b2 n --- )
   4   FLUSH >R 2DUP > IF          \ b1 > b2
   5     R> 0 DO 2DUP MBC. 2DUP BCOPY
@@ -7163,8 +7163,8 @@ Scr# 397
 Scr# 398 
   0 ( looking for AT position in LAYERs )
   1 \ search memory for a specific xt for debug purposes
-  2 DECIMAL
-  3 : AT.
+  2 DECIMAL NEEDS .AT
+  3 : .AT
   4 22 EMITC 31 AND SWAP 21 MIN EMITC EMITC ;
   5 HEX
   6 : LOOK-FOR
@@ -7343,7 +7343,7 @@ Scr# 407
 Scr# 408 
   0 ( Sprite Test )
   1 \
-  2 \ open<   ../../demos/NextBASIC/basicSprites/DKSprite.spr
+  2 .( open<   ../../demos/NextBASIC/basicSprites/DKSprite.spr  )
   3 \
   4 \
   5 SPRITE-LOAD< ../../demos/NextBASIC/basicSprites/DKSprite.spr
@@ -7370,7 +7370,7 @@ Scr# 409
   8 \ enable Sprite on Border and set Layer-Priority to SLU
   9 \ BINARY 00000011 HEX 15 REG!
  10 3 HEX 15 REG!
- 11 
+ 11 -->
  12 
  13 
  14 
@@ -7414,7 +7414,7 @@ Scr# 411
 
 Scr# 412 
   0 ( ISR-TEST )
-  1 NEEDS INTERRUPT
+  1 NEEDS INTERRUPTS
   2 : ISR-TEST
   3   23672 ( FRAMES ) @ 7 AND 0= IF
   4     SPRITE _xcoord @ 320 >
@@ -7425,19 +7425,19 @@ Scr# 412
   9     SPRITE  0  SPRITE-UPDATE
  10   THEN
  11 ;
- 12 INT-OFF
- 13 ' ISR-TEST INT-W !
- 14 \ INT-ON
+ 12 ISR-OFF
+ 13 ' ISR-TEST ISR-XT !
+ 14 \ ISR-ON
  15 -->
 
 Scr# 413 
   0 ( SPRITE with ISR-TEST )
-  1 : BYE INT-OFF BYE ;
+  1 : BYE ISR-OFF BYE ;
   2 INVV CR
   3 ." GIVE INT-OFF to stop before exit with BYE."
   4 TRUV CR
   5 \
-  6   INT-ON
+  6   ISR-ON
   7 \
   8 
   9 
