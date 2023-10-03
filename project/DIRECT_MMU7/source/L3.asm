@@ -299,6 +299,17 @@ FInclude_Endif_2:                               // endif
 
 //  ______________________________________________________________________ 
 //
+// use          -- cccc
+// Include the following filename
+                Colon_Def USE, "USE", is_normal
+                dw      OPEN_FH                 // open<
+                dw      BLK_FH, FETCH           // blk-fh @
+                dw      F_CLOSE, DROP           // f_close drop
+                dw      BLK_FH, STORE           // blk-fh !
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
 // include      -- cccc
 // Include the following filename
                 Colon_Def INCLUDE, "INCLUDE", is_normal
@@ -725,7 +736,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20230910", 13  // 33
+//              db      "Heap Vocabulary - build 20231004", 13  // 33
 //              db      "1990-2023 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 

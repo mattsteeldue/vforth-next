@@ -207,6 +207,10 @@ Quit_Endif:                                     //      else
                 dw      DECIMAL                 // decimal
                 dw      FORTH                   // [compile] forth
                 dw      DEFINITIONS             // definitions
+
+                dw      SQUARED_OPEN            // [compile] [
+                dw      R0, FETCH, RPSTORE      //      r0 @ rp!
+
 Autoexec_Ptr:                
                 dw      AUTOEXEC                // autoexec, patched to noop
                 dw      QUIT                    // quit
@@ -243,6 +247,9 @@ Autoexec_Ptr:
                 dw      LIT, 4, PLACE, STORE    // 4 place !
 //              dw      LIT, 8
 //              dw      LIT, FLAGS2, CSTORE     // 8 5C6A c!
+                dw      EMPTY_BUFFERS
+                dw      ZERO, BLK, STORE
+                dw      ZERO, SOURCE_ID, STORE
 
 Warm_Start:     dw      WARM
 Cold_Start:     dw      COLD      

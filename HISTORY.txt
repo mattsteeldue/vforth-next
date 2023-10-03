@@ -450,3 +450,7 @@ Improved a small demo to experiment AFX sound file format.
 After moving all strings to HEAP, the binary core now less than 7.5 KBytes.
 I'm thinking to port this Forth environment in a "dot" command like .forth 
 
+
+\ build 20231004
+First viable DOT-COMMAND version.
+Part of library must be revised to cope with a dot-command.

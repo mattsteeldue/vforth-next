@@ -25,7 +25,13 @@ CODE  BLEEP  ( n1 n2 -- )
     D5 C,                   \ push de
     C5 C,                   \ push bc
     D9 C,                   \  exx
-    CD C, 03B5 ,            \  call 03B5 ; standard ROM 
+
+    \ this is some kind of conditional compile.    
+    \ we're lucky dot-command ROM call can be done in one single op-code.
+    0 +ORIGIN 2000 - NOT 1 AND DF *   \ compile RST $18 if dot-command
+    0 +ORIGIN 2000 = NOT 1 AND CD * + \ compile CALL  if not dot-command
+       C, 03B5 ,            \  call 03B5 ; standard ROM 
+
     C1 C,                   \ pop bc
     D1 C,                   \ pop de
     DD C, E1 C,             \ pop ix
