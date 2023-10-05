@@ -86,6 +86,8 @@
                 ld      c, 7                // use 7 RAM Bank
                 rst     08
                 db      $94
+                
+                nextreg $53, $1C            // some calls reset MMU3 to $11 !
 
 //              ld      sp, (SP_Saved)
 //              push    ix
