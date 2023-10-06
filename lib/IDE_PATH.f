@@ -37,7 +37,9 @@ BASE @
 
 
 \ set current path, used in the form
-\   SETCD cccc
+\
+\     SETCD cccc
+\
 : SETCD ( -- ) 
     0 PATH_OP
 ;
@@ -45,21 +47,28 @@ BASE @
 
 \ get current path, uses PAD as result buffer
 \ used in the form
-\   GETCD .
+\
+\     GETCD .
+\
+\ Must give at least a single dot to mean the current directory
 : GETCD ( -- ) 
     1 PATH_OP
 ;
 
 
 \ create path, used in the form
-\   MAKEDIR cccc
+\
+\     MAKEDIR cccc
+\
 : MAKEDIR ( -- ) 
     2 PATH_OP
 ;
 
 
 \ remove path, used in the form
-\   REMOVEDIR cccc
+\
+\     REMOVEDIR cccc
+\
 : REMOVEDIR ( -- ) 
     3 PATH_OP
 ;
