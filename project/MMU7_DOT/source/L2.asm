@@ -263,15 +263,18 @@ Tools_vForth_Directory
                 db      "C:/tools/vForth/", $FF
 Filename_Ram7:  db      "C:/dot/vforth.bin",0
 
-Saved_MMU_Speed:
-                db      1,2,3,4,5,6,7
+Saved_Speed:
+                db      0
+Saved_MMU       db      2,3,4,5,6,7   // MMU2-MMU7
+
+Saved_Layer:
+                db      0           // graphics current mode
 
 //  ______________________________________________________________________ 
 WarmRoutine:
 ColdRoutine:
-                di
 //  ______________________________________________________________________ 
-//
+// 0.
                 pop     de                      // retrieve return to basic address
                 ld      (SP_Basic), sp
                 ld      sp, $4000               // safe area
@@ -306,11 +309,11 @@ End_Parameter:
                 ld      (Len_Filename), a
 Skip_Parameter:
 //  ______________________________________________________________________ 
-// prepare save-area address and hw register port
-                ld      hl, Saved_MMU_Speed     // save-area
+// 2. prepare save-area address and hw register port
+                ld      hl, Saved_Speed     // save-area
                 ld      bc, $243B               // hw-register port
 //  ______________________________________________________________________ 
-// 2.
+// 2.1
 // ask / read speed and MMU status
                 ld      a ,$07                  // read current speed 
                 call    Get_MMU_status
@@ -324,27 +327,28 @@ MMU_read_loop:
                 dec     e
                 jr      nz, MMU_read_loop
 //  ______________________________________________________________________ 
-// 3.
+// 2.2
 // save current LAYER status 
-                push    hl
+
                 ld      de, $01D5   // on success set carry-flag  
-                ld      c, 7
-                ld      a, 0
+                ld      c, 7        // necessary to call M_P3DOS
+                ld      a, 0        // query current status
                 rst     8
-                db      $94 // carry flag set on success !
-                pop     hl
-                ld      (hl), a     // store after MMUs
+                db      $94 // carry flag set on success 
+
+                ld      (Saved_Layer), a     // store after MMUs
 //  ______________________________________________________________________ 
-// 4.
+// 2.3
+                ld      hl, $6000
+                ld      de, $4000
+                call    Backup_Restore_MMU
+
+//  ______________________________________________________________________ 
+// 5.
 // set LAYER 1,2
                 exx
                 ld      bc, $0102
-                exx
-                ld      de, $01D5
-                ld      c, 7
-                ld      a, 1
-                rst     8
-                db      $94
+                call    Set_Layer
 
 //  ______________________________________________________________________ 
 // 6.
@@ -357,6 +361,12 @@ MMU_read_loop:
 //              defb    $89     ; m_getsetdrv
 
                 call    Set_Cur_Dir
+
+//  ______________________________________________________________________ 
+// 2.2
+// Reserve pages from OS.
+
+                call    Restore_Reserve_MMU     // multiple IDE_BANK  !
                 call    Set_forth_MMU
 
 //  ______________________________________________________________________ 
@@ -380,9 +390,9 @@ MMU_read_loop:
                 ld      bc, $1FFF
                 rst     8              
                 DEFB    $9D             ; f_read
-//              pop     af
-//              rst     8              
-//              DEFB    $9B             ; f_close
+                pop     af
+                rst     8              
+                DEFB    $9B             ; f_close
 
 //  ______________________________________________________________________ 
 // 9.
@@ -416,35 +426,61 @@ Set_Cur_Dir:
                 ld      a, 0
                 rst     8
                 db      $94 // carry flag set on success !
-                
+
+                ret
+
+//  ______________________________________________________________________ 
+// Routine, safe backup
+// INput: hl:$6000, de:$E000 for backup or viceversa for restore.
+Backup_Restore_MMU:
+                nextreg $52, $28        ;   MMU2  = $8000
+                ld      bc, $2000
+                ldir
+                ld      a, (Saved_MMU)
+                nextreg $52, a
                 ret
 
 //  ______________________________________________________________________ 
 // Routine 
 // set MMU7 to $20 and laod ram7.bin
 Set_forth_MMU:
-                nextreg $53, $1C         ;   MMU3  = 24576
-                nextreg $54, $1D         ;   MMU4
+        ////    nextreg $53, $28         ;   MMU3  = 24576
+                nextreg $54, $1D         ;   MMU4  = $8000
                 nextreg $55, $1E         ;   MMU5
                 nextreg $56, $1F         ;   MMU6
                 nextreg $57, $20         ;   MMU7
                 ret
 
 //  ______________________________________________________________________ 
-// Routine 
-// restore MMU7 to $20 and laod ram7.bin
-Set_MMU_Basic:
-                ld      hl, Saved_MMU_Speed + 1
-                ld      bc , $243B
+// Routine:
+// reserve MMU pages
+Restore_Reserve_MMU:
+                ld      l, $1D      // first page
+                ld      h, 8+3+1    // 8 HEAP, 3 MAIN, 1 BACKUP
+Reserve_MMU_Loop:                
+                ld      a, l            // pass page through a
+                exx
+                 // parameters:
+Deallocate_MMU:                 
+                 ld      hl, $0002      // L=2:reserve E', =3:deallocate, H=0:normal 8k page
+                 ld      e, a           // E' is bank-id
+                exx
+                push    hl
 
-                ld      a, $52
-                ld      e, 6
-MMU_basic_loop:
-                call    Put_MMU_status
-                dec     e
-                jr      nz, MMU_basic_loop
+                ld      c, 07           // page 7 for M_P3DOS
+                ld      a, 1
+                ld      de, $01BD  // IDE_BANK
+                rst     8
+                db      $94     // M_P3DOS
+
+                pop     hl
+                inc     l       // next page number
+                dec     h       // decrease counter.
+                jr      nz, Reserve_MMU_Loop
                 ret
+
 //  ______________________________________________________________________ 
+// Routine 
 // Input:  bc=$243B, a=reg, hl=array
 // Operation: set  hardware register  a  to value at  (hl)
 // Output: bc=$243B, a=a+1, hl=hl+1 
@@ -472,6 +508,20 @@ Get_MMU_status:
                 inc     hl
                 inc     a
                 ret
+
+//  ______________________________________________________________________ 
+// Routine
+// set LAYER B,C
+// Input: bc=$0102 for Layer 1,2
+Set_Layer:
+                exx
+                ld      de, $01D5
+                ld      c, 7
+                ld      a, 1
+                rst     8
+                db      $94
+                ret
+
 //  ______________________________________________________________________ 
 //
 // basic        --
@@ -481,24 +531,27 @@ Get_MMU_status:
 //              pop     bc                      // return  TOS  value to Basic
 
                 di
-                
+
                 ld      sp, $4000 - 4           // Carefully balanced from startup
 
-                ld      hl, Saved_MMU_Speed
+                // address 
+                ld      hl, Saved_Speed
                 ld      bc , $243B
 
-                // restore speed
+                // set speed
                 ld      a, $07
                 call    Put_MMU_status          
 
-                // restore MMU pages
+          //    inc     hl
+          //    inc     hl
+                // set MMU pages
                 ld      a, $52
                 ld      e, 6
 MMU_put_loop:                
                 call    Put_MMU_status
                 dec     e
                 jr      nz, MMU_put_loop
-
+//  ______________________________________________________________________ 
                 // restore layer ide mode
                 ld      a, (hl)
 
@@ -511,12 +564,20 @@ MMU_put_loop:
                 ld      a, b
                 and     3
                 ld      b, a
-                exx
-                ld      de, $01D5
-                ld      c, 7
-                ld      a, 1
-                rst     8
-                db      $94
+                call    Set_Layer
+
+//  ______________________________________________________________________ 
+// 
+                ld      hl, $4000
+                ld      de, $6000
+                call    Backup_Restore_MMU
+//  ______________________________________________________________________ 
+// 
+                // free 8k pages    
+                ld      a, 3
+                ld      (Deallocate_MMU+1), a
+                call    Restore_Reserve_MMU     // multiple IDE_BANK  !
+//  ______________________________________________________________________ 
 
                 // restore basic pointers
                 pop     hl                      // restore h'l'

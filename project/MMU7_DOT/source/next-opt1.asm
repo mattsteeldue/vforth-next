@@ -87,7 +87,8 @@
                 rst     08
                 db      $94
                 
-                nextreg $53, $1C            // some calls reset MMU3 to $11 !
+        ////    ld      a, (Saved_MMU + 1)
+        ////    nextreg $53, a            // some calls reset MMU3 to $11 !
 
 //              ld      sp, (SP_Saved)
 //              push    ix

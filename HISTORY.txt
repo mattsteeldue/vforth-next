@@ -454,3 +454,5 @@ I'm thinking to port this Forth environment in a "dot" command like .forth
 \ build 20231004
 First viable DOT-COMMAND version.
 Part of library must be revised to cope with a dot-command.
+Tested DEMO : chomp-chomp.f and BMP-DEMO.f
+Interrupts and Mouse needs more debug/testing.

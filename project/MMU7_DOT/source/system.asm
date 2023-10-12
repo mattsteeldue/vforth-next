@@ -19,6 +19,7 @@ LASTK           equ     $5C08                   // LASTK system variable
 BORDCR          equ     $5C48                   // BORDCR system variable
 FLAGS2          equ     $5C6A                   // for caps-lock
 
+TSTACK          equ     $5C00                   // TSTACK
 //  ______________________________________________________________________
 //
 // Flag constants 

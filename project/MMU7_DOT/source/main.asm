@@ -136,11 +136,11 @@ Heap_offset     defl     0
 //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
 //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file 
                 
-                SAVETAP "output/F16d.tap", CODE, "forth17d", ORIGIN, $2000
-                SAVETAP "output/F16e.tap", CODE, "forth17e", $E000, $2000
+        ////    SAVETAP "output/F16d.tap", CODE, "forth17d", ORIGIN, $2000
+        ////    SAVETAP "output/F16e.tap", CODE, "forth17e", $E000, $2000
 
-                SAVEBIN "output/vforth", ORIGIN, $2000
-                SAVEBIN "output/vforth.bin", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
+        ////    SAVEBIN "output/vforth", ORIGIN, $2000
+        ////    SAVEBIN "output/vforth.bin", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
 
                 SAVEBIN "output/vforth.1", ORIGIN, $2000
                 SAVEBIN "output/vforth.2", $E000, $2000 ;- save 2000h begin from E000h of RAM to file

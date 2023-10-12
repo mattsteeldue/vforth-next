@@ -48,11 +48,12 @@ CREATE LED-FN DECIMAL  80 ALLOT \ filename string
 1  VARIABLE LED-HOME  LED-HOME  !        \ first line to display
 
 
-\ Since 8Kpages #32-39 are used by HEAP, we can use #40-223
+\ Since 8Kpages #32-39 are used by HEAP, 
+\ and #40-47 are reserved, we can use #48-223
 \ for this Large-file EDitor
 : >>FAR ( row -- n a )
     \ given a row-number ret page+offset
-    rows/page /mod  [ DECIMAL ] 40 +
+    rows/page /mod  [ DECIMAL ] 48 +
     dup 223 >  if 40 error then  \ out-of-memory
     swap cols/row  * [ HEX ] E000 OR swap ;
 \

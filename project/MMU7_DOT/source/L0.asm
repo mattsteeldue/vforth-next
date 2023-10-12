@@ -6,7 +6,7 @@
 //  ______________________________________________________________________ 
 
 Cold_origin:
-                and     a
+                di      // and     a
                 jp      ColdRoutine
 Warm_origin:
                 scf
@@ -33,8 +33,8 @@ R0_origin:      dw      R0_system
 TIB_origin:     dw      TIB_system
 WIDTH_origin:   dw      31
 WARNING_origin: dw      1
-FENCE_origin:   dw      25446 // $6000 // **** Fence_Word
-DP_origin       dw      25446 // $6000 // ****Fence_Word
+FENCE_origin:   dw      $8000 // $8184 // 25446 // $6000 // **** Fence_Word
+DP_origin       dw      $8000 // $8184 // 25446 // $6000 // ****Fence_Word
 VOCLINK_origin: dw      Voclink_Ptr
                 dw      FIRST_system
                 dw      LIMIT_system
@@ -898,7 +898,7 @@ Key_MapTo:
                 push    ix  
                 ld      (SP_Saved), sp      // be sure to not to be paged out.
             //  ld      sp, Cold_origin - 5 // maybe $8000 in the future...
-                ld      sp,5BFFh            ; Use TSTACK system-variable   
+                ld      sp,TSTACK            ; dont use TSTACK system-variable   
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
 Cur_Wait:       
@@ -1047,7 +1047,7 @@ Key_NoCapsLock: ld      l, a
 //              push    de
 //              ld      (SP_Saved), sp
 //              ld      sp, Cold_origin - 5
-//              ld      sp,5BFFh            ; Use TSTACK system-variable   
+//              ld      sp,TSTACK             ; dont use TSTACK system-variable   
 //              push    ix
 //              call    $15E6                   // instead of 15E9
 //              pop     ix
@@ -1070,7 +1070,7 @@ Key_NoCapsLock: ld      l, a
                 ld      a, l
                 ld      (SP_Saved), sp
             //  ld      sp, Cold_origin - 5
-                ld      sp,5BFFh            ; Use TSTACK system-variable   
+                ld      sp,TSTACK            ; dont use TSTACK system-variable   
                 push    ix
                 //  call    $1601         
                 rst     $18   

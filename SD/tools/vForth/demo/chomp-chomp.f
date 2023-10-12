@@ -30,7 +30,7 @@ NEEDS .BRIGHT
 
 NEEDS .AT
 NEEDS .BORDER
-NEEDS .PERM
+\ NEEDS .PERM
 
 NEEDS SPEED!            \ Sinclair ZX Spectrum Next - Run up to 28 MHz
 NEEDS CHOOSE            \ Brodie's random numbers
@@ -1019,7 +1019,7 @@ needs .s
   30 emitc 8 emitc
   [ 3 ] LITERAL lives !
   0 .paper 0 .border 4 .ink
-  1 .bright .perm
+  1 .bright \ .perm
   interlude
   180. total 2!
   0.   score 2!
