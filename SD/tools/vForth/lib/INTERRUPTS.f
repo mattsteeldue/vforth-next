@@ -1,7 +1,7 @@
 \
 \ interrupts.f
 \
-.( ISR Handler ) 
+.( INTERRUPTS ) 
 \
 \ Used in the form:
 \
@@ -14,62 +14,88 @@
 \ that can be executed in background in a Interrupt-Driven way
 \
 
+\ MARKER TASK
+
 BASE @
 
-MARKER FORGET-INTERRUPTS
+\ ____________________________________________________________________
+
+\ inspect current Dictionary Pointer (DP) 
+\ and align it to page boundary, so that HERE gives $xy00
+HERE $00FF AND NEGATE $00FF AND ALLOT
+
+\ allot 257 bytes vector-table and name it with a constant pointer ISR-TABLE 
+HERE DECIMAL 257 ALLOT  CONSTANT ISR-TABLE 
+
+\ find the actual vector, we presume HERE is above $6300, or $8100
+\ so that the vector is something like $6363 or $8181
+HERE $FF00 AND DUP 8 RSHIFT + CONSTANT ISR-VECTOR    
+
+\ advance DP by 3 bytes beyond ISR-VECTOR
+\ to make room for a JP AAAA instruction to later jump to ISR-SUB body
+ISR-VECTOR HERE - 3 + ALLOT
+
+\ now there are about one hundred bytes between the vector-table and
+\ the isr-vector itself that can be used as temporary stack zone.
+\ temporary SP
+ISR-VECTOR 2- 
+    CONSTANT ISR-SP0
+\ temporary RP
+ISR-VECTOR DUP $00FF AND 3 5 */ -
+    CONSTANT ISR-RP0
+
+\ address used to save SP register during ISR
+VARIABLE ISR-SAVE-SP   
+
+\ fill the ISR-TABLE with bytes that points to ISR-VECTOR
+ISR-TABLE  DECIMAL 257  ISR-VECTOR $00FF AND  FILL
+
+\ put a JP op-code, the address will be set by ISR-SETUP
+$C3 ISR-VECTOR C!
 
 \ ____________________________________________________________________
 
-VOCABULARY INTERRUPTS IMMEDIATE
-
-INTERRUPTS DEFINITIONS 
-
-\ ____________________________________________________________________
-
-HEX 
-
+\ Low-level defs
 CODE  ISR-EI  ( -- )
+    HEX 
     FB C,                       \ ei
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
 CODE  ISR-DI  ( -- )
+    HEX 
     F3 C,                       \ di
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
 CODE  ISR-IM1  ( -- )
+    HEX 
     56ED ,                      \ im 1
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
 CODE  ISR-IM2  ( -- )
+    HEX 
     5EED ,                      \ im 2
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
 CODE ISR-SYNC  ( -- )
+    HEX 
     76 C,                       \ halt
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
 
 CODE  SETIREG  ( n -- )
+    HEX 
     E1 C,                       \ pop hl
     7D C,                       \ ld a,l
     47ED ,                      \ ld i,a
     DD C, E9 C, ( NEXT ) SMUDGE \ jp (ix)
 
-\ very low level definition
-
-\ ____________________________________________________________________
 
 
-HEX 6302 CONSTANT ISR-SAVE      \ address used to save SP register during ISR
-HEX 6200 CONSTANT ISR-TABLE     \ 257 bytes IM2 vector table 
-HEX 6363 CONSTANT ISR-VECTOR    \ new ISR address
-HEX 0038 CONSTANT ISR-HANDLER   \ standard ISR handler
-
-
+\ Very low level definition
 \ ____________________________________________________________________
 \
 \ return-from-interrupt low-level definition.
@@ -77,10 +103,11 @@ HEX 0038 CONSTANT ISR-HANDLER   \ standard ISR handler
 \ IY is not considered since, normally we do not alter it.
 \
 CODE  ISR-RET  ( -- )
+    HEX
+\   ED C, 91 C, 56 C, 1F C,     \ nextreg $56, $1F         ;   MMU6
+\   ED C, 91 C, 57 C, 20 C,     \ nextreg $57, $20         ;   MMU7
     \ SP
-    ED C, 7B C, ISR-SAVE ,      \ ld sp,(ISR-SAVE)
-    E1 C,                       \ pop hl
-    22 C, 30 +ORIGIN ,          \ ld (RP), hl
+    ED C, 7B C, ISR-SAVE-SP ,   \ ld sp,(ISR-SAVE-SP)
     C1 C, D1 C, E1 C,           \ pop bc, de, hl
     D9 C,                       \ exx
     C1 C, D1 C, E1 C,           \ pop bc, de, hl
@@ -92,14 +119,10 @@ SMUDGE
 
 \ ____________________________________________________________________
 
-FORTH DEFINITIONS 
-
 .( ISR-XT ) 
 
 \ return-from-isr xt
-CREATE ISR-XT  INTERRUPTS  ' ISR-RET  DUP , ,
-
-INTERRUPTS DEFINITIONS 
+CREATE ISR-XT  ' NOOP , ' ISR-RET ,
 
 \ ____________________________________________________________________
 \
@@ -107,6 +130,7 @@ INTERRUPTS DEFINITIONS
 \ the >BODY of this definition is called by CPU's interrupt vector
 \
 CODE  ISR-SUB  ( -- )
+    HEX
     FF C,                       \ rst 38h ( first fulfil standard interrupt )
     F3 C,                       \ di      ( then perform our task )
     DD C, E5 C,                 \ push ix
@@ -114,41 +138,26 @@ CODE  ISR-SUB  ( -- )
     E5 C, D5 C, C5 C,           \ push hl, de, bc
     D9 C,                       \ exx
     E5 C, D5 C, C5 C,           \ push hl, de, bc
-    \ RP
-    2A C, 30 +ORIGIN ,          \ ld hl,(RP)
-    E5 C,                       \ push hl
-    \
-    21 C, 6330 ,                \ ld hl,6330h
-    22 C, 30 +ORIGIN ,          \ ld (RP),hl
-    \ RP
-    EB C,                       \ ex de,hl
     \ SP
-    ED C, 73 C, ISR-SAVE ,      \ ld (ISR-SAVE),sp
-    21 C, -04 ,                 \ ld hl,-04
-    39 C, ( ADD HL,SP )         \ add hl,sp
-    F9 C, ( LD  SP,HL  )        \ ld sp,hl
-    \
+    ED C, 73 C, ISR-SAVE-SP ,   \ ld (ISR-SAVE-SP),sp
+    31 C, ISR-SP0 ,             \ ld sp, ISR-SP0
+    \ RP
+    11 C, ISR-RP0 ,             \ ld de, ISR-RP0
+    \ IP
     01 C, ISR-XT ,              \ ld bc, ISR-XT
-    \
+    \ NEXT
     DD C, 21 C,  (NEXT) ,       \ ld ix, (NEXT)  \ this is safer...
     DD C, E9 C, ( NEXT )        \ jp (ix)
-    \
 SMUDGE
 
 \ ____________________________________________________________________
 
-FORTH DEFINITIONS
-
 HEX
 
-.( ISR-ON )
+.( ISR-SETUP )
 
 \ enable interrupts to execute user's definition kept in ISR-XT 
-: ISR-ON  ( -- )
-    INTERRUPTS
-    ISR-DI
-    \ ISR-HANDLER ISR-TABLE ! 
-    
+: ISR-SETUP  ( -- )
     \ setup vector table
     ISR-VECTOR ISR-TABLE ! 
     ISR-TABLE  DUP 2+ 00FF CMOVE   
@@ -170,21 +179,17 @@ HEX
     \ %10000001 C4 REG! \ enable expansion bus INT and ULA interrupts
     \ %00000000 C5 REG! \ disable all CTC channel interrupts
     \ %00000000 C6 REG! \ disable UART interrupts
-    
-    ISR-TABLE 8 RSHIFT SETIREG 
-    ISR-IM2
-    ISR-EI
 ;
 
 \ ____________________________________________________________________
 
 .( ISR-OFF )
 
+HEX
+
 \ correctly disable interrupts
 : ISR-OFF  ( -- )
-    INTERRUPTS
     ISR-DI
-    ISR-HANDLER ISR-VECTOR 1+ !
     3F SETIREG 
     ISR-IM1
     ISR-EI
@@ -192,13 +197,20 @@ HEX
 
 \ ____________________________________________________________________
 
-FORTH DEFINITIONS
 
+.( ISR-ON )
 
-: NO-INTERRUPTS
-  ISR-OFF
-  FORGET-INTERRUPTS
+: ISR-ON
+    ISR-DI
+    [ ISR-TABLE 8 RSHIFT ] LITERAL SETIREG 
+    ISR-SETUP
+    ISR-IM2
+    ISR-EI
 ;
 
+\ ____________________________________________________________________
 
 BASE !
+
+: INTERRUPTS ;
+

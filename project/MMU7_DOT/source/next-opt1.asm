@@ -82,11 +82,12 @@
                 ex      de, hl              // de is entry address
 //              ld      (SP_Saved), sp
 //              ld      sp, Cold_origin - 5
-//              ld      sp,5BFFh            ; Use TSTACK system-variable 
+//              ld      sp, TSTACK          // Carefully balanced from startup
                 ld      c, 7                // use 7 RAM Bank
+                di
                 rst     08
                 db      $94
-                
+                ei
         ////    ld      a, (Saved_MMU + 1)
         ////    nextreg $53, a            // some calls reset MMU3 to $11 !
 

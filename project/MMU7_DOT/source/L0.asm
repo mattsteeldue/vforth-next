@@ -61,12 +61,12 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
-                db      120 - 9
-                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 36 
-                db      " Heap Vocabulary - build 2023-10-04 ", $0D  // 40
-                db      " MIT License ", 127                         // 17
-                db      " 1990-2023 Matteo Vitturi ", $0D               // 27
-                db      " "
+                // length include a leading space in each line
+                db      110 
+                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 32
+                db      " Heap Vocabulary - build 2023-10-14 ", $0D  // 36
+                db      " MIT License ", 127                         // 13
+                db      " 1990-2023 Matteo Vitturi "                 // 25
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -454,8 +454,9 @@ Case_Upper:
 //  ______________________________________________________________________ 
 
 MMU7_read:
-                ld      bc, $243B 
                 ld      a, 87
+NEXTREG_read:                
+                ld      bc, $243B 
                 out     (c), a
                 inc     b
                 in      a, (c)
@@ -755,12 +756,14 @@ Emitc_Ptr:
                 push    bc
                 push    de
                 push    ix
+                di
                 rst     $10
+                ei
                 pop     ix
                 pop     de
                 pop     bc
-                ld      a, 255            // max possible
-                ld      (SCR_CT), a
+//              ld      a, -1            // max possible
+//              ld      (SCR_CT), a
                 next
 
 //  ______________________________________________________________________ 
@@ -839,8 +842,10 @@ C_Emit_Bel:
                 ld      hl, $0200
                 push    ix                  // save Next Pointer
                 // call    $03B6               // bleep Standard-ROM routine
+                di
                 rst     $18
                 defw    $03B6 
+                ei
                 pop     ix                  // restore Next Pointer
                 pop     de
                 pop     bc                  // restore Instruction Pointer
@@ -898,7 +903,7 @@ Key_MapTo:
                 push    ix  
                 ld      (SP_Saved), sp      // be sure to not to be paged out.
             //  ld      sp, Cold_origin - 5 // maybe $8000 in the future...
-                ld      sp,TSTACK            ; dont use TSTACK system-variable   
+                ld      sp, TSTACK           // Carefully balanced from startup
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
 Cur_Wait:       
@@ -907,7 +912,6 @@ Cur_Wait:
                 //  call    $1601               // SELECT Standard-ROM Routine
                     rst     $18 
                     dw      $1601
-    
                     // software-flash: flips face every 320 ms
                     ld      a, $20              // Timing based
                     and     (iy + $3E)          // FRAMES (5C3A+3E)
@@ -922,7 +926,6 @@ Cur_Cursor:
                     rst     $10
                     ld      a, BACKSPACE_CHAR    // backspace            
                     rst     $10
-
                     bit     5, (iy + 1)         // FLAGS (5C3A+1)
                 jr      z, Cur_Wait
     
@@ -934,7 +937,6 @@ Cur_Cursor:
                 rst     $10
 
                 ld      sp, (SP_Saved)
-
                 pop     ix  
                 pop     de                  // Restore Return Stack Pointer
                 pop     bc                  // Restore Instruction Pointer
@@ -1047,9 +1049,11 @@ Key_NoCapsLock: ld      l, a
 //              push    de
 //              ld      (SP_Saved), sp
 //              ld      sp, Cold_origin - 5
-//              ld      sp,TSTACK             ; dont use TSTACK system-variable   
+//              ld      sp, TSTACK           // Carefully balanced from startup
 //              push    ix
+//              di
 //              call    $15E6                   // instead of 15E9
+//              ei
 //              pop     ix
 //              ld      sp, (SP_Saved)
 //              ld      l, a
@@ -1070,11 +1074,13 @@ Key_NoCapsLock: ld      l, a
                 ld      a, l
                 ld      (SP_Saved), sp
             //  ld      sp, Cold_origin - 5
-                ld      sp,TSTACK            ; dont use TSTACK system-variable   
+                ld      sp, TSTACK           // Carefully balanced from startup
                 push    ix
-                //  call    $1601         
+            //  call    $1601       
+                di  
                 rst     $18   
                 dw      $1601
+                ei
                 pop     ix
                 ld      sp, (SP_Saved)
                 pop     de

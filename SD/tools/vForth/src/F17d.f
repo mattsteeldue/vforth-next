@@ -3071,7 +3071,7 @@ DECIMAL
   52     user    csp       \ used to temporary store Stack-Pointer value
   54     user    r#        \ location of editing cursor
   56     user    hld       \ last character during a number conversion output
-  58     user    use       \ address of last used block
+  58     user    used      \ address of last used block
   60     user    prev      \ address of previous used block
   62     user    lp        \ Case Pointer...    
   64     user    place     \ number of digits after decimal point in output

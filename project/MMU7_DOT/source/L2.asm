@@ -308,21 +308,24 @@ End_Parameter:
                 ld      a, l
                 ld      (Len_Filename), a
 Skip_Parameter:
+
 //  ______________________________________________________________________ 
 // 2. prepare save-area address and hw register port
                 ld      hl, Saved_Speed     // save-area
-                ld      bc, $243B               // hw-register port
+//              ld      bc, $243B               // hw-register port
 //  ______________________________________________________________________ 
 // 2.1
 // ask / read speed and MMU status
                 ld      a ,$07                  // read current speed 
                 call    Get_MMU_status
-                ld      a, 3                    // set top speed
+                ld      d, 3                    // set top speed
                 or      d                       // reuse data just read
                 nextreg 07, a
-                ld      a, $52                  // MMU2-MMU7 ($52-$57)
+
                 ld      e, 6                    // loop limit
 MMU_read_loop:                
+                ld      a, $58                  // MMU2-MMU7 ($52-$57)
+                sub     e
                 call    Get_MMU_status
                 dec     e
                 jr      nz, MMU_read_loop
@@ -401,6 +404,12 @@ MMU_read_loop:
                 ld      ix, Next_Ptr            // Inner Interpreter Pointer
                 ld      de, (R0_origin)         // Return Stack Pointer
                 ld      bc, Cold_Start          // Instruction Pointer
+
+                ld      a, 26
+                rst     $10
+                xor     a
+                rst     $10
+
                 ei
 
             //  push    ix
@@ -500,13 +509,13 @@ Put_MMU_status:
 // Operation: get current value of hardware register  a  and store at (hl)
 // Output: bc=$243B, a=a+1, hl=hl+1 
 Get_MMU_status:
-                out     (c), a             
-                inc     b        // 253Bh
-                in      d ,(c)               
-                dec     b        // 243Bh
-                ld      (hl), d
+//              out     (c), a             
+//              inc     b        // 253Bh
+//              in      d ,(c)               
+//              dec     b        // 243Bh
+                call    NEXTREG_read
+                ld      (hl), a
                 inc     hl
-                inc     a
                 ret
 
 //  ______________________________________________________________________ 
@@ -520,6 +529,11 @@ Set_Layer:
                 ld      a, 1
                 rst     8
                 db      $94
+                // never stop scrolling: print chr$26;chr$0
+//              ld      a, 26
+//              rst     $10
+//              ld      a, 00
+//              rst     $10
                 ret
 
 //  ______________________________________________________________________ 

@@ -18,8 +18,9 @@ SCR_CT          equ     $5C8C                   // SCR-CT system variable
 LASTK           equ     $5C08                   // LASTK system variable
 BORDCR          equ     $5C48                   // BORDCR system variable
 FLAGS2          equ     $5C6A                   // for caps-lock
-
+RAMTOP          equ     $5CB2
 TSTACK          equ     $5C00                   // TSTACK
+// FSTACK          ecu     $4000 - 8
 //  ______________________________________________________________________
 //
 // Flag constants 
