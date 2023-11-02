@@ -459,8 +459,8 @@ Interrupts and Mouse needs more debug/testing.
 
 
 \ build 20231014
-Better working DOT-COMMAND version.
+Better working DOT-COMMAND version. Better DIR.
 Part of library must be revised to cope with a dot-command.
 Tested INTERRUPTS and MOUSE, and lib/mouse-tester.f
-
+and demo/fedora.f
 

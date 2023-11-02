@@ -3,6 +3,8 @@
 \
 .( DIR )
 
+NEEDS .PAD
+
 BASE @ DECIMAL
 
 : DIR ( -- cccc )
@@ -13,35 +15,24 @@ NEEDS ?ESCAPE
 
 \
 \ emit a date given a MSDOS format date number
-HEX
 : .FAT-DATE ( n -- )
-    ?dup if
-        <#  dup 1F and  0 # # 2D hold  2drop \ day
-            5 rshift
-            dup 0F and  0 # # 2D hold  2drop \ month
-            4 rshift
-            7BC + 0 # # # #  \ year
-         #> type
-    else 
-        0A spaces       
-    then 
+    <#  DUP $1F AND 1 MAX 0 # # [CHAR] - HOLD  2DROP \ day
+        5 RSHIFT
+        DUP $0F AND 1 MAX 12 MIN 0 # # [CHAR] - HOLD  2DROP \ month
+        4 RSHIFT
+        1980 + 0 # # # #  \ year
+     #> TYPE
 ;
 
 \
 \ emit a time given a MSDOS format time number
-HEX
 : .FAT-TIME ( n -- )
-    ?dup if
-        <# \ dup 1F and 2* 0 # # 3A hold  2drop  \ seconds
-            5 rshift  
-            dup 3F and    0 # # 3A hold  2drop  \ minutes
-            6 rshift
-            0 # #  \ hours
-         #> type
-    else  
-      \ 8 spaces     
-        5 spaces     
-    then 
+    <# \ DUP $1F AND 2* 59 MIN 0 # # [CHAR] : HOLD  2DROP  \ seconds
+        5 RSHIFT  
+        DUP $3F AND 59 MIN 0 # # [CHAR] : HOLD  2DROP  \ minutes
+        6 RSHIFT
+        0 # #  \ hours
+     #> TYPE
 ;
 \
 \ emit filename
@@ -51,59 +42,67 @@ HEX
     while 
         emitc 1+ 
     repeat  
-    dup pad - 30 >
-    if
-        CR
-    then
-    6 emit                        \ emit tab
 ;
 
 
-DECIMAL
+\ emit filename
+: SKIP-NAME ( a1 -- a2 )
+    BEGIN  
+        1+ 
+        DUP C@ 0=
+    UNTIL
+;
+
+
 \
 \ given a z-string address in PAD, emit the directory content
-: DIR-PAD  ( --  )
-    PAD
-    CR
-    BASE @ >R                           \ save current base
-    f_opendir 43 ?error >R              \ keep filehandle in R@
-    begin
-        ?escape if
+: DIR-FH  ( fh --  )
+    CR >R
+    BEGIN
+        ?ESCAPE IF
             0                           \ FALSE for the IF after WHILE
             -1                          \ TRUE  for the AND before WHILE
-        else
+        ELSE
             -1                          \ TRUE for the IF after WHILE
             HERE                        \ use HERE as temp area
             PAD                         \ wildcard ignored
-            R@  f_readdir  46 ?error    \ returns number of byte read
-        then
+            R@  F_READDIR 
+            46 ?ERROR
+        THEN
         ?TERMINAL NOT                   \ BREAK stops
         AND
-    while
-        if
-            HERE      DUP C@ >R         \ keep attribute byte
-            1+        .filename space
-            1+        DUP @  >R         \ keep time
-            cell+     DUP @             \ keep date
-            DECIMAL                   
-            .fat-date space space R>
-            .fat-time space space R>
-            16 AND if
-                [char] d emit
-            else
-                cell+ DUP 2@ swap           \ keep size
-                9 d.r 
-            then 
-            DROP
+    WHILE
+        IF
+            HERE                        \ a
+            1+ SKIP-NAME DUP >R         \ a+n
+            1+        DUP @  >R         \ a+n+1         R: time  
+            CELL+     DUP @  >R         \ a+n+3         R: time date
+            HERE C@ 16 AND IF           \ a+n+3 
+                ." d      " DROP
+            ELSE
+                CELL+ 2@ SWAP           \ d
+                DUP 16 < IF 
+                    7 D.R 
+                ELSE
+                    1024 UM/MOD NIP 0 
+                    5 D.R SPACE
+                    [CHAR] K EMIT
+                THEN
+            THEN 
+            SPACE DECIMAL                     
+            R> .FAT-DATE SPACE              
+            R> .FAT-TIME SPACE SPACE
+            R> 
+            HERE 1+ 
+            DO I C@ EMIT LOOP
             CR
-        then
-    repeat
-    R>  F_CLOSE DROP
-    R>  BASE !
+        THEN
+    REPEAT
+    R> 2DROP
 ;
 
 \
-: DIR-CCCC ( -- cccc )
+: DIR-PAD ( -- cccc )
     PAD C/L BLANK
     67 ALLOT                        \               
     0 C, HERE                       \ a1            -- now HERE is PAD
@@ -113,12 +112,17 @@ DECIMAL
     0 C,                            \ a1            -- append 0x00
     1- HERE OVER - OVER C!          \ a0            -- fix length byte
     [CHAR] : R> C!                  \ a0     R:     -- put : after C
-    HERE - 67 - ALLOT
-     DIR-PAD
+    HERE - 67 - ALLOT               
+    BASE @ >R                       \ save current base
+    .PAD
+    PAD F_OPENDIR 43 ?ERROR >R      \ keep filehandle in R@
+    R@  DIR-FH
+    R>  F_CLOSE DROP
+    R>  BASE !
 ;
 
 \ this allows FORGET DIR to remove this whole package
 
-' DIR-CCCC ' DIR >BODY !
+' DIR-PAD ' DIR >BODY !
 
 BASE !
