@@ -770,10 +770,11 @@ Emitc_Ptr:
 //
 // cr           --
 // send a CR via EMITC
-                New_Def CR, "CR", is_code, is_normal
-
-                ld      a, CR_CHAR
-                jr      Emitc_Ptr
+                Colon_Def CLS, "CR", is_normal
+                dw      LIT, 26, EMITC
+                dw      ZERO, EMITC
+                dw      LIT, 13, EMITC
+                dw      EXIT
 
 Emitc_Vec:    
                 dw      C_Emit_Printable  // comma
@@ -830,6 +831,7 @@ C_Emit_Not_Found:
 C_Emit_Printable:
                 ld      l, a
                 ld      h, 0
+C_Emit_exx_next:                
                 push    hl
                 exx
                 next          
@@ -854,14 +856,16 @@ C_Emit_Bel:
                 next
 
 C_Emit_Tab:     ld      hl, COMMA_CHAR
-                push    hl
-                exx
-                next
+                jr C_Emit_exx_next
+            //  push    hl
+            //  exx
+            //  next
 
 C_Emit_NL       ld      hl, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
-                push    hl
-                exx
-                next
+                jr C_Emit_exx_next
+            //  push    hl
+            //  exx
+            //  next
 
 //  ______________________________________________________________________ 
 

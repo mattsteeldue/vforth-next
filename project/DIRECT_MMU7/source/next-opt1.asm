@@ -75,7 +75,7 @@
                  pop     de                  // de' argument              //  n1 
                  ex      (sp), hl            // hl' argument and entry address in TOS
                 exx
-                pop     hl                  // entry address a
+                pop     hl                  // entry address a  
                 push    ix     
                 push    de
                 push    bc
@@ -83,10 +83,10 @@
 //              ld      (SP_Saved), sp
 //              ld      sp, Cold_origin - 5
                 ld      c, 7                // use 7 RAM Bank
-
+                di
                 rst     08
                 db      $94
-
+                ei
 //              ld      sp, (SP_Saved)
 //              push    ix
 //              pop     hl
@@ -117,7 +117,7 @@
 
                 New_Def BLK_FNAME,   "BLK-FNAME", Create_Ptr, is_normal  
                 db      14, "!Blocks-64.bin", 0
-                ds      24
+                ds      24     // so this buffer is 24+14+1=39
 
 //  ______________________________________________________________________ 
 //
@@ -179,4 +179,3 @@
 //  ______________________________________________________________________ 
 
 
- 

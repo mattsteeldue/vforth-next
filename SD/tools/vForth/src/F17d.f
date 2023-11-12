@@ -1639,7 +1639,7 @@ CODE f_fgetpos ( u -- d f )
 \ Read b bytes from file-handle u to address a
 \ Return the actual number n of bytes read 
 \ Return 0 on success, True flag on error
-CODE f_read ( a b u -- n f )
+CODE f_read ( a n u -- n f )
          EXX
          POP     HL|         \ file handle number
          LD      A'|     L|
@@ -1667,7 +1667,7 @@ HERE TO f_read_exit^
 .( F_WRITE )
 \ Write bytes currently stored at address a to file-handle u.
 \ Return the actual n bytes written and 0 on success, True flag on error.
-CODE f_write ( a b u -- n f )
+CODE f_write ( a n u -- n f )
          EXX
          POP     HL|         \ file handle number
          LD      A'|     L|

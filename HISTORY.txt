@@ -464,3 +464,11 @@ Part of library must be revised to cope with a dot-command.
 Tested INTERRUPTS and MOUSE, and lib/mouse-tester.f
 and demo/fedora.f
 
+
+\ build 20231112
+First proposal of ZAP definition to create standalone executable of a
+vForth game or program. The purpose is to create a Basic program that loads 
+a few binary memory images that contains the current state of the whole 
+vForth system that can be resumed later
+
+

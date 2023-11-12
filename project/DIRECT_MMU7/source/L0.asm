@@ -61,12 +61,12 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
-                db      120 - 9
-                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 36 
-                db      " Heap Vocabulary - build 2023-10-04 ", $0D  // 40
-                db      " MIT License ", 127                         // 17
+                db      113
+                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
+                db      " Heap Vocabulary - build 2023-11-12 ", $0D  // 37
+                db      " MIT License ", 127                         // 14
                 db      " 1990-2023 Matteo Vitturi ", $0D            // 27
-                db      " "
+                db      7,0
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -846,15 +846,17 @@ C_Emit_Bel:
                 push    hl
                 next
 
-C_Emit_Tab:     ld      hl, COMMA_CHAR
-                push    hl
-                exx
-                next
+C_Emit_Tab:     ld      a, COMMA_CHAR
+                jr      C_Emit_Printable
+            //  push    hl
+            //  exx
+            //  next
 
-C_Emit_NL       ld      hl, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
-                push    hl
-                exx
-                next
+C_Emit_NL       ld      a, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
+                jr      C_Emit_Printable
+            //  push    hl
+            //  exx
+            //  next
 
 //  ______________________________________________________________________ 
 

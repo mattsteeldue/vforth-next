@@ -51,7 +51,6 @@ CODE sync-vid HEX
 : c+! ( n a )
     tuck c@ + swap c! ;
 
-
 \ add n to double at address a
 : d+! ( n a )
   tuck 2@      \ a n d
@@ -1014,8 +1013,9 @@ needs .s
 
 
 : game
+  UDG_1 $5C7B ! \ UDG
   LAYER11 
-  [ 1 ] LITERAL SPEED! 
+  [ 2 ] LITERAL SPEED! 
   30 emitc 8 emitc
   [ 3 ] LITERAL lives !
   0 .paper 0 .border 4 .ink

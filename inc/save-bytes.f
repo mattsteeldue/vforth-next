@@ -23,7 +23,7 @@ DECIMAL
 \ it creates a new file, error if it already exists
 \ PAD content is volatile
 : SAVE-BYTES ( a n -- )
-    PAD DUP 10 - 06 F_OPEN      \ a n u f
+    PAD DUP 10 - %0110 F_OPEN   \ a n u f
     \ test for NextZXOS Open error
     41 ?ERROR                   \ a n u
     >R R@                       \ a n u     R: u    

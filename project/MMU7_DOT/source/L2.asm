@@ -231,6 +231,7 @@ Autoexec_Ptr:
 //
 // cold         --
                 Colon_Def COLD, "COLD", is_normal
+//              dw      NOOP, NOOP
                 dw      LIT, S0_origin          // [ hex $12 +origin ] Literal 
                 dw      LIT, USER_Pointer       // [ hex $3E +origin ] literal
                 dw      FETCH                   // @
@@ -405,6 +406,7 @@ MMU_read_loop:
                 ld      de, (R0_origin)         // Return Stack Pointer
                 ld      bc, Cold_Start          // Instruction Pointer
 
+                // never stop scrolling: print chr$26;chr$0
                 ld      a, 26
                 rst     $10
                 xor     a
@@ -442,7 +444,7 @@ Set_Cur_Dir:
 // Routine, safe backup
 // INput: hl:$6000, de:$E000 for backup or viceversa for restore.
 Backup_Restore_MMU:
-                nextreg $52, $28        ;   MMU2  = $8000
+                nextreg $52, $28        ;   MMU2  = $6000
                 ld      bc, $2000
                 ldir
                 ld      a, (Saved_MMU)
@@ -529,11 +531,6 @@ Set_Layer:
                 ld      a, 1
                 rst     8
                 db      $94
-                // never stop scrolling: print chr$26;chr$0
-//              ld      a, 26
-//              rst     $10
-//              ld      a, 00
-//              rst     $10
                 ret
 
 //  ______________________________________________________________________ 
