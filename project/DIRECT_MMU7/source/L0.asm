@@ -13,7 +13,7 @@ Warm_origin:
                 jp      WarmRoutine
 
 // +008
-SP_Basic:       dw      $D0E6               // These are bits with some "standard" meaning... 0101
+SP_Basic:       dw      $D0E4               // These are bits with some "standard" meaning... 0101
 
 // +00A                
                 dw      $0E00               
@@ -47,7 +47,7 @@ Underscore_Face:db      UNDERSCORE_CHAR     // Underscore  Cursor face
                 db      0
 
 // +02C
-SP_Saved:       dw      $0000               // Saved SP dufing NextOS call
+SP_Saved:       dw      $0000               // Saved SP during NextOS call
 
 // +02E
 USER_Pointer:   dw      USER_system
@@ -63,7 +63,7 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 db      113
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2023-11-12 ", $0D  // 37
+                db      " Heap Vocabulary - build 2023-11-19 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2023 Matteo Vitturi ", $0D            // 27
                 db      7,0
@@ -1433,7 +1433,7 @@ ZEqual_Skip:
 // increment by 2 top of stack
                 New_Def NOT_OP, "NOT", is_code, is_normal
             //  Behave  Zero_Equal
-                jp      Zero_Equal
+                jr      Zero_Equal
 
 //  ______________________________________________________________________ 
 //
@@ -1535,7 +1535,7 @@ Two_Plus:
 // cell+        a1 -- a2
 // increment by 2 top of stack
                 New_Def CELL_PLUS, "CELL+", is_code, is_normal
-                jp      Two_Plus
+                jr      Two_Plus
 
 //  ______________________________________________________________________ 
 //
@@ -2080,7 +2080,7 @@ Two_Mul_Ptr:
 // cells        n1 -- n2
 // decrement by 2 top of stack
                 New_Def CELLS, "CELLS", is_code, is_normal
-                jp      Two_Mul_Ptr
+                jr      Two_Mul_Ptr
 
 
 //  ______________________________________________________________________ 

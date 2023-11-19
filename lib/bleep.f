@@ -155,7 +155,7 @@ CREATE FREQ-TABLE
     12/MOD              \  note  octave
     SWAP CELLS          \  octave note*2
     FREQ-TABLE + @      \  octave freq
-    SWAP RSHIFT         \ find the correct octave frequency by halving
+    SWAP RSHIFT         \  find the correct octave frequency by n halving
 ;
 
 

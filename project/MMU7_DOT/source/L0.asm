@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      110 
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 32
-                db      " Heap Vocabulary - build 2023-10-14 ", $0D  // 36
+                db      " Heap Vocabulary - build 2023-11-19 ", $0D  // 36
                 db      " MIT License ", 127                         // 13
                 db      " 1990-2023 Matteo Vitturi "                 // 25
                 End_Heap
@@ -770,7 +770,7 @@ Emitc_Ptr:
 //
 // cr           --
 // send a CR via EMITC
-                Colon_Def CLS, "CR", is_normal
+                Colon_Def CR, "CR", is_normal
                 dw      LIT, 26, EMITC
                 dw      ZERO, EMITC
                 dw      LIT, 13, EMITC
@@ -831,7 +831,6 @@ C_Emit_Not_Found:
 C_Emit_Printable:
                 ld      l, a
                 ld      h, 0
-C_Emit_exx_next:                
                 push    hl
                 exx
                 next          
@@ -855,14 +854,14 @@ C_Emit_Bel:
                 push    hl
                 next
 
-C_Emit_Tab:     ld      hl, COMMA_CHAR
-                jr C_Emit_exx_next
+C_Emit_Tab:     ld      a, COMMA_CHAR
+                jr      C_Emit_Printable
             //  push    hl
             //  exx
             //  next
 
-C_Emit_NL       ld      hl, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
-                jr C_Emit_exx_next
+C_Emit_NL       ld      a, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
+                jr      C_Emit_Printable
             //  push    hl
             //  exx
             //  next
@@ -1450,7 +1449,7 @@ ZEqual_Skip:
 // increment by 2 top of stack
                 New_Def NOT_OP, "NOT", is_code, is_normal
             //  Behave  Zero_Equal
-                jp      Zero_Equal
+                jr      Zero_Equal
 
 //  ______________________________________________________________________ 
 //
@@ -1552,7 +1551,7 @@ Two_Plus:
 // cell+        a1 -- a2
 // increment by 2 top of stack
                 New_Def CELL_PLUS, "CELL+", is_code, is_normal
-                jp      Two_Plus
+                jr      Two_Plus
 
 //  ______________________________________________________________________ 
 //
@@ -2097,7 +2096,7 @@ Two_Mul_Ptr:
 // cells        n1 -- n2
 // decrement by 2 top of stack
                 New_Def CELLS, "CELLS", is_code, is_normal
-                jp      Two_Mul_Ptr
+                jr      Two_Mul_Ptr
 
 
 //  ______________________________________________________________________ 

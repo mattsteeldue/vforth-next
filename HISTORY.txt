@@ -472,3 +472,5 @@ a few binary memory images that contains the current state of the whole
 vForth system that can be resumed later
 
 
+\ build 20231119
+improved stability of dot-command disabling interrupts during I/O

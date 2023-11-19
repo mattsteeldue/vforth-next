@@ -223,7 +223,7 @@ Autoexec_Ptr:
                 Colon_Def WARM, "WARM", is_normal
                 dw      BLK_INIT                // blk-init
                 dw      SPLASH                  // splash
-                dw      LIT, 7, EMIT            // 7 emit
+            //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
                 dw      EXIT                    // exit
 
@@ -231,7 +231,7 @@ Autoexec_Ptr:
 //
 // cold         --
                 Colon_Def COLD, "COLD", is_normal
-//              dw      NOOP, NOOP
+                dw      NOOP, NOOP
                 dw      LIT, S0_origin          // [ hex $12 +origin ] Literal 
                 dw      LIT, USER_Pointer       // [ hex $3E +origin ] literal
                 dw      FETCH                   // @

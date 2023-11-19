@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20230809 ) CR
+.( build 20231112 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -167,6 +167,9 @@ DECIMAL
      0  VALUE     f_read_exit^  
      0  VALUE     f_open_exit^  
      0  VALUE     boolean_exit^  
+     0  VALUE     emptyb^
+     0  VALUE     twofind^
+     
 
 .( Psh2 Psh1 Next )
 
@@ -346,6 +349,7 @@ DECIMAL
 \
 .( Origin )
 
+HP@  U.
 HERE U. KEY
 \
 \ ______________________________________________________________________
@@ -642,10 +646,11 @@ CODE (?do)      ( lim ind -- )
         \ prepares return-stack-pointer
 
         \ EXDEHL
-        DECX    DE|          \ this is 1T faster than
-        DECX    DE|          \ ld de,-4 (10T)
-        DECX    DE|          \ add hl,de (15T)
-        DECX    DE|          \ since dec hl is 6T.
+      \ DECX    DE|          \ this is 1T faster than
+      \ DECX    DE|          \ ld de,-4 (10T)
+      \ DECX    DE|          \ add hl,de (15T)
+      \ DECX    DE|          \ since dec hl is 6T.
+        ADDDE,  -4 NN,
         PUSH    DE|
         \ EXDEHL
 
@@ -1270,10 +1275,11 @@ EMIT-2^ EMIT-A^ 04 +  !
 \ 09 tab        
 HERE    EMIT-A^ 06 +  ! 
         ASSEMBLER 
-        LDX     HL| 6 NN,
-        PUSH    HL|
-        EXX 
-        Next
+        LDN     A'| 6 N,
+        JR      EMIT-2^  HERE 1 +  - D, 
+\       PUSH    HL|
+\       EXX 
+\       Next
 \       C;
 
 \ 0D cr        
@@ -1282,10 +1288,11 @@ EMIT-2^ EMIT-A^ 08 +  !
 \ 0A nl --> cr
 HERE    EMIT-A^ 0A +  ! 
         ASSEMBLER 
-        LDX     HL| 0D NN,
-        PUSH    HL|
-        EXX 
-        Next
+        LDN     A'| 0D N,
+        JR      EMIT-2^  HERE 1 +  - D, 
+\       PUSH    HL|
+\       EXX 
+\       Next
 \       C;
 
 EMIT-2^ EMIT-A^ 0C +  !
@@ -1560,8 +1567,10 @@ CODE f_seek ( d u -- f )
         PUSH    BC|
          EXX
          LDX     IX|     0 NN,
+         DI
          RST     08|     HEX  9F  C,
 HERE TO f_seek_exit^       
+        EI
         POP     BC|
         POP     DE|
         POP     IX|
@@ -1580,6 +1589,7 @@ CODE f_close ( u -- f )
         PUSH    IX|
         PUSH    DE|
         PUSH    BC|
+        DI
         RST     08|   HEX  9B  C,
         JR      f_seek_exit^ BACK,
 \       POP     BC|
@@ -1600,6 +1610,7 @@ CODE f_sync ( u -- f )
         PUSH    IX|
         PUSH    DE|
         PUSH    BC|
+        DI
         RST     08|   HEX  9C  C,
         JR      f_seek_exit^ BACK,
 \       POP     BC|
@@ -1620,7 +1631,9 @@ CODE f_fgetpos ( u -- d f )
          PUSH    IX|
          PUSH    DE|
          PUSH    BC|
+         DI
          RST     08|     HEX  0A0  C,
+         EI
         EXX
         POP     BC|     \ Program Pointer to be kept in BC
         POP     DE|
@@ -1649,8 +1662,10 @@ CODE f_read ( a n u -- n f )
         PUSH    DE|
         PUSH    BC|
          EXX
+         DI
          RST     08|   HEX  9D  C,
 HERE TO f_read_exit^
+        EI
         EXX
         POP     BC|
         POP     DE|
@@ -1677,6 +1692,7 @@ CODE f_write ( a n u -- n f )
         PUSH    DE|
         PUSH    BC|
          EXX
+         DI
          RST     08|     HEX  9E  C,
         JR      f_read_exit^ BACK,
 \       EXX
@@ -1718,8 +1734,10 @@ CODE f_open ( a1 a2 b -- fh f )
         PUSH    BC|         \ this pushes original bc
          EXX
          LDN     A'|     CHAR  *  N,
+         DI
          RST     08|     HEX  9A  C,
 HERE TO f_open_exit^        
+         EI
          LD      E'|     A|
          LDN     D'|     0  N,
         JR      f_read_exit^ BACK,
@@ -1749,6 +1767,7 @@ CODE f_opendir ( a -- fh f )
         PUSH    BC|
         LDN     B'|   HEX 10   N,
         LDN     A'|   CHAR C   N,
+        DI
         RST     08|   HEX  A3  C,
         JR      f_open_exit^ BACK,
         C;
@@ -1769,6 +1788,7 @@ CODE f_readdir ( a1 a2 fh -- n f )
         PUSH    DE|
         PUSH    BC|
          EXX
+         DI
          RST     08|   HEX  A4  C,
          JR      f_open_exit^ BACK,
         C;
@@ -1995,7 +2015,7 @@ CODE xor ( n1 n2 -- n3 )
      \  PUSH    HL|
      \  EXX 
      \  Next
-     \  C;
+        C;
 
 
 \ 6486h
@@ -2159,9 +2179,11 @@ CODE 0= ( n -- f )
 CODE not  ( n -- f )         
          
         \ this way we will have a real duplicate of 0=
-        JP
-        ' 0=  \ >BODY  LATEST PFA CELL- ! 
-        AA,
+        JR  $F0  D,
+      \ JR  ' 0= HERE - 1-  D,
+      \ JR   $F0 D,
+      \ ' 0=  \ >BODY  LATEST PFA CELL- ! 
+      \ DISP,
         C;
 
 
@@ -2279,9 +2301,9 @@ CODE 2+ ( n1 -- n2 )
 CODE cell+ ( n1 -- n2 )
          
         \ this way we will have a real duplicate of 2+
-        JP
-        ' 2+  \ >BODY  LATEST PFA CELL- ! 
-        AA,
+        JR $F6 D,
+      \ ' 2+  \ >BODY  LATEST PFA CELL- ! 
+      \ DISP,
         C;
 
 
@@ -2851,9 +2873,11 @@ CODE rshift ( n1 u -- n2 )
 .( CELLS )
 CODE cells ( n2 -- n2 )
         \ this way we will have a real duplicate of 2*
-        JP
-        ' 2*  \ >BODY  LATEST PFA CELL- ! 
-        AA,
+        JR  $D5 D,
+      \ JR  ' 2* HERE - 1-  D,
+      \ ' 2* HERE - 1+ D,
+      \ ' 2*  \ >BODY  LATEST PFA CELL- ! 
+      \ AA,
         C;
 
 
@@ -4263,6 +4287,7 @@ CREATE pcdm hex    (   . . . .   )
             0=              \ cfa b 1 0 |  1
             If  
                 r@          \ addr
+                [ HERE CELL+ TO twofind^ ]
                 \ FORTH     \ addr voc
                 [ ' FORTH ] Literal >body cell+ cell+ @       ( *** )
                 (find)      \ cfa b 1   |  0 
@@ -4390,6 +4415,8 @@ CREATE pcdm hex    (   . . . .   )
       ] Literal ,
     ;code
 
+HERE ' pdom 1+ !
+HERE ' pcdm 1+ !
 
         Next
         C;
@@ -4635,6 +4662,7 @@ immediate
 \       While FORTH is the only vocabulary, VOC-LINK points to FORTH's PFA+6
 \       When ASSEMBLER is created, its PFA+6 points to FORTH's PFA+6, and so on
 
+    ' forth twofind^ !
 
 \ 7428h
 .( DEFINITIONS )
@@ -4703,6 +4731,8 @@ immediate
     \ .cpu
     [compile] forth 
     definitions
+    [compile] [
+    r0 @ rp!
     [ here TO autoexec^ ]
     noop
     quit
@@ -4723,7 +4753,7 @@ immediate
     [ here TO splash^ ]
     SPLASH                   \ ___ forward ___
 
-    [ decimal      7 ] Literal emit
+\   [ decimal      7 ] Literal emit
     
     abort
     ;
@@ -4734,6 +4764,7 @@ immediate
 \ 74C3h
 .( COLD )
 : cold  ( -- )
+    noop noop
     [ hex 12 +origin ] Literal    \ source for COLD start
     [ vars^          ] Literal @  
     [ decimal    6   ] Literal +    
@@ -4759,6 +4790,11 @@ immediate
 
 \   [ decimal      8 ] Literal     \ caps-lock on !
 \   [ hex       5C6A ] Literal c!  \ FLAGS2       !
+
+    [ HERE TO emptyb^ ]
+    noop
+    0 blk !
+    0 source-id !
     
     \ [ here TO xi/o^ ]      
     
@@ -4877,12 +4913,12 @@ CODE basic ( n -- )
 \ 75CFh
 .( M* )
 \ multiply two integer giving a double
-: m*  ( n1 n2 -- d )
-    2dup xor >r
-    abs swap
-    abs um*
-    r> d+-
-    ;
+: m*  ( n1 n2 -- d ) 
+    2dup xor >r 
+    abs swap 
+    abs um* 
+    r> d+- 
+    ; 
 
 
 \ 75EAh
@@ -5148,9 +5184,9 @@ CODE m_p3dos ( n1 n2 n3 n4 a -- n5 n6 n7 n8  f )
 \       LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
 \       LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
         LDN     C'|    7   N,              \ use 7 RAM bank
-        
+        DI
         RST     08|    HEX 094  C,
-
+        EI
 \       LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
 \       PUSH    IX|
 \       POP     HL|
@@ -5287,6 +5323,7 @@ decimal #SEC constant #sec
     first @ limit @ over - erase
     ;
 
+    ' empty-buffers emptyb^ !
 
 \ 79f1h
 .( BUFFER )
@@ -5467,6 +5504,15 @@ decimal
     bl
     word count over + 0 swap !
     pad 1 f_open [ 43 ] Literal ?error
+;
+
+
+.( USE )
+: use 
+    open<
+    blk-fh @
+    f_close drop
+    blk-fh !
 ;
 
 
@@ -5887,7 +5933,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal 13 here ," Heap Vocabulary - build 20230809" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20231112" -1 allot ]
 \    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
 \    [ decimal 13 c, c! c! c! ] 
     ;
@@ -6481,7 +6527,7 @@ RENAME   source-id      SOURCE-ID
 RENAME   place          PLACE
 RENAME   lp             LP   
 RENAME   prev           PREV 
-RENAME   use            USE  
+RENAME   used           USED 
 RENAME   hld            HLD  
 RENAME   r#             R#   
 RENAME   csp            CSP  

@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 //  v-Forth 1.7 NextZXOS version 
-//  build 20231112
+//  build 20231119
 // 
 //  Direct-Threaded version.
 // 
@@ -65,8 +65,8 @@ DEBUGGING       equ     0
 
                 if ( -1 == DEBUGGING ) 
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
-ORIGIN          equ     $9B21   -$80             // for binary comparison with single compilation
-Heap_Ptr        defl    $1F80                       // HP before compilation
+ORIGIN          equ     $9B75   -$80                   // for binary comparison with single compilation
+Heap_Ptr        defl    $1FF0 - $68                    // HP before compilation
 Heap_offset     defl    $2000
 
                 endif

@@ -6,7 +6,7 @@
 // Registers:
 //
 //      BC: Instruction Pointer
-//      DE: 
+//      DE: Return Stack Pointer
 //      HL: W register
 //      SP: Calc stack Pointer
 //      IX: Inner-Interpreter Address

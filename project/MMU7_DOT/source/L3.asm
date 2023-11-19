@@ -736,7 +736,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20231112", 13  // 33
+//              db      "Heap Vocabulary - build 20231119", 13  // 33
 //              db      "1990-2023 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
@@ -748,8 +748,6 @@ Index_Leave:
                 dw      LIT, Splash_Ptr
                 dw      FAR
                 dw      COUNT, TYPE
-            //  dw      LIT, 26, EMITC
-            //  dw      ZERO, EMITC
                 dw      EXIT
 
 //  ______________________________________________________________________ 
@@ -771,12 +769,6 @@ Index_Leave:
                 dw      LIT, Autoexec_Ptr
                 dw      STORE
                 dw      LOAD
-
-//              dw      NEEDS_FN, ONE, F_OPEN
-//              dw      LIT, 43, QERROR
-//              dw      DUP, F_INCLUDE
-//              dw      F_CLOSE, DROP
-
                 dw      QUIT
                 dw      EXIT
                 
