@@ -10,8 +10,17 @@
 
 DECIMAL
 
-CR 7 REG@  3 AND  35   SWAP LSHIFT 0
-<# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
+\ display CPU speed 3.5, 7.0, 14.0 or 28.0 
+CR 7 REG@  3 AND  35    \ speed expressed in 100kHz
+SWAP LSHIFT             \ multiply by two n times.
+0 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz Z80n CPU Speed." CR
+
+\ display Core Version
+14 REG@ 1 REG@ DUP 4 RSHIFT SWAP 15 AND SWAP
+." Core Version " . 8 EMITC
+0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE . CR
+
+\ display memory available
 SP@ PAD  - U. ." bytes free in Dictionary." CR
  -1 HP @ - U. ." bytes free in Heap." CR
 CR

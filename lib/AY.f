@@ -3,7 +3,6 @@
 \
 \ .( AY definitions )
 
-NEEDS BINARY            \ base 2
 NEEDS SPLIT             \ split an integer into two bytes, low, high.
 
 BASE @
@@ -13,7 +12,7 @@ MARKER NO-AY
 \
 \ Turbo Sound Next Control Register
 \
-HEX 0FFFD  CONSTANT AY-register-port
+$FFFD  CONSTANT AY-register-port
 \
 \ when bit 7 is 1:
 \   7   1
@@ -42,7 +41,7 @@ HEX 0FFFD  CONSTANT AY-register-port
 \
 \ Sound Chip Register Write
 \
-    0BFFD  CONSTANT AY-data-port
+    $BFFD  CONSTANT AY-data-port
 
 \ 
 \ Peripheal 2 Register 
@@ -116,30 +115,30 @@ VARIABLE  AY
 
 \ silence current AY
 : SHH
-    [ HEX ]  0FF 07 AY!
+    [ HEX ]  $FF 07 AY!
 ;
 
 
 \ general enabling 
 : ENABLE-TURBOSOUND
     \ setup mapping of chip channels to stereo channels
-    [ HEX    ] 8 REG@
-    [ BINARY ] 00000010 OR  \ enable Turbosound
-    [ HEX    ] 8 REG!
+    8 REG@
+    %00000010 OR  \ enable Turbosound
+    8 REG!
 ;
 
 
 : ENABLE-MONO
-    [ HEX    ] 9 REG@
-    [ BINARY ] 11100000 OR  \ enable Mono for A,B and C
-    [ HEX    ] 9 REG!
+    9 REG@
+    %11100000 OR  \ enable Mono for A,B and C
+    9 REG!
 ;
 
 
 : DISABLE-MONO
-    [ HEX    ] 9 REG@
-    [ BINARY ] 00011111 AND \ disable Mono for A,B and C
-    [ HEX    ] 9 REG!
+    9 REG@
+    %00011111 AND \ disable Mono for A,B and C
+    9 REG!
 ;
 
 
@@ -150,10 +149,10 @@ VARIABLE  AY
 ;
 
 
-\ BINARY 11111101 \ enable left+right audio, select AY1
-\ HEX FFFD P!
-\ BINARY 00010010 HEX 08 REG! \ Use ABC, enable internal spkr
-\ BINARY 11100000 HEX 09 REG! \ Enable mono for AY1-3
+\ %11111101 \ enable left+right audio, select AY1
+\ $FFFD P!
+\ %00010010     08 REG! \ Use ABC, enable internal spkr
+\ %11100000     09 REG! \ Enable mono for AY1-3
 
 
 BASE !
