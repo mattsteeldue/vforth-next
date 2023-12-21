@@ -98,10 +98,10 @@ needs .ink
 \ to display and populate ARY
 : set-block ( q -- )
     case
-        0 of   7 red -   7 grn -  endof
-        1 of   8 red +   7 grn -  endof
-        2 of   8 red +   8 grn +  endof
-        3 of   7 red -   8 grn +  endof
+        0 of     red       grn    endof
+        1 of  15 red -     grn    endof
+        2 of  15 red -  15 grn -  endof
+        3 of     red    15 grn -  endof
     endcase
     3 + to y
     3 + to x
@@ -112,15 +112,15 @@ needs .ink
 \
 \ display contour numeric frame
 : draw-frame ( -- )
-  GRN 0= if
-    KRED .ink
-    10 RED - 1 .at RED 1 .R  10 RED - 20 .at RED 1 .R
-    11 RED + 1 .at RED 1 .R  11 RED + 20 .at RED 1 .R
-  endif
-  RED 0= if
-    KGRN .ink
-    20 y .at GRN 1 .R   1 y .at GRN 1 .R
-  endif
+    GRN 0= if
+        KRED .ink
+        03 RED + 1 .at RED 1 .R  03 RED + 20 .at RED 1 .R
+        18 RED - 1 .at RED 1 .R  18 RED - 20 .at RED 1 .R
+    endif
+    RED 0= if
+        KGRN .ink
+        20 y .at GRN 1 .R   1 y .at GRN 1 .R
+    endif
 ;
 
 \

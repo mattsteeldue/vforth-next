@@ -28,7 +28,7 @@ BASE @
 \  n2 = de register parameter value
 \  n3 = bc register parameter value
 \  n4 =  a register parameter value
-\   a = routine address in ROM 3
+\  addr = routine address in ROM 3
 
 \   hl de bc  a  addr           f     a  bc  de hl
 

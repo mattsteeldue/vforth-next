@@ -31,9 +31,7 @@ DECIMAL
 NEEDS SHOW-PROGRESS  NEEDS INVV     NEEDS TRUV
 NEEDS CASE           NEEDS LINE
 
-DECIMAL
-
-CREATE LED-FN DECIMAL  80 ALLOT \ filename string
+CREATE LED-FN 80 ALLOT \ filename string
 
 0 variable LED-FH      LED-FH !   \ filehandle of open file
 
@@ -41,28 +39,67 @@ CREATE LED-FN DECIMAL  80 ALLOT \ filename string
   8 1024 *   COLS/ROW / CONSTANT ROWS/PAGE   \ rows per 8K
        512   COLS/ROW / CONSTANT LED-CHARSIZE
 
+ 48 constant FIRST-8K-PAGE
+223 constant LAST-8K-PAGE
+
 1  VARIABLE LED-LN    LED-LN    !        \ line number
 1  VARIABLE LED-MAX   LED-MAX   !        \ max line number
 0  VARIABLE LED-ROW   LED-ROW   !
 0  VARIABLE LED-COL   LED-COL   !
 1  VARIABLE LED-HOME  LED-HOME  !        \ first line to display
 
+create 8k-page-map 22 allot
+       8k-page-map 22 erase
+
+\ given a page number, compute address inside 8k-page-map and bit-mask
+: calc-bit-byte ( n -- bitmap address )
+    FIRST-8K-PAGE -             \  offset
+    dup  3 rshift               \  n    byte
+    swap 7 and 1                \  byte nbit   1
+    swap lshift                 \  byte bitmask
+    swap                        \  bitmask byte 
+    8k-page-map +               \  bitmask address
+;
+
+\ ask NEXTZXOS for 8k-page n
+\ keep track of previous requests in bitmap-array 8k-page-map
+: alloc-8k-page ( n -- )
+    dup calc-bit-byte           \ n bitmap address
+    c@ and 0=                   \ n f
+    if                          \ n  
+        \ ask NextZXOS for this page (again)
+        2 OVER 0 0              \ n 2 n 0 0
+        $01BD  M_P3DOS          \ n x x x x f
+        40 ?error               \ out-of-memory  
+        2DROP  2DROP            \ n
+        \ set bit in map
+        dup calc-bit-byte       \ n bitmap address
+        +!                      \ n
+    then
+    drop
+;
+
+
+.( .)
 
 \ Since 8Kpages #32-39 are used by HEAP, 
-\ and #40-47 are reserved, we can use #48-223
-\ for this Large-file EDitor
-: >>FAR ( row -- n a )
-    \ given a row-number ret page+offset
-    rows/page /mod  [ DECIMAL ] 48 +
-    dup 223 >  if 40 error then  \ out-of-memory
-    swap cols/row  * [ HEX ] E000 OR swap ;
+\ let's leave #40-47 reserved for other purposes, 
+\ we can use #48-223 for this Large-file EDitor
+: >>FAR ( row -- a n )
+    \ given a row-number ret page (n) and offset (a)
+    rows/page /mod  FIRST-8K-PAGE +
+    dup LAST-8K-PAGE >  if 40 error then  \ out-of-memory
+    swap cols/row * $E000 OR swap 
+    dup alloc-8k-page
+;
+
 \
 \ Row-ADdress, prepare MMU7 and return address of row
 : LED-RAD  ( row -- a )
     >>FAR MMU7! ;
 
 : LED-CLOSE
-    led-fh @ f_close [ DECIMAL ]
+    led-fh @ f_close 
     0 led-fh !
     42 ?error
 ;
@@ -70,7 +107,7 @@ CREATE LED-FN DECIMAL  80 ALLOT \ filename string
 \ assumes to read page np from filehandle LED-FH
 \ returns actual characters read. 0 means EOF
 \ row is stored in 8K-pages RAM 40-223
-decimal
+
 
 : LED-RD1  ( np -- b )
     1 block   \ use block 1 as special buffer  \ np a a
@@ -83,16 +120,18 @@ decimal
 \ n.b. trailing spaces are always removed
 : LED-WR1  ( np -- )
     led-rad COLS/ROW -TRAILING                      \ a n
-    2DUP  + [ HEX ] 0A  SWAP C!                     \ a n
-    2DUP 1+ LED-FH @ F_WRITE [ decimal ] 47 ?ERROR  \ a n n
-    DROP  + [ HEX ] 20  SWAP C!                     \
+    2DUP  +        $0A  SWAP C!                     \ a n
+    2DUP 1+ LED-FH @ F_WRITE             47 ?ERROR  \ a n n
+    DROP  +        $20  SWAP C!                     \
 ;
 
 \ __________________________________________________________________________
 
+.( .)
+
 \ accept text from source to be used as filename and keep it in LED-FN counted
 \ z-string
-DECIMAL
+
 : LED-FILE ( -- cccc )
     bl word dup 1+ c@ 
     if
@@ -105,7 +144,7 @@ DECIMAL
 ;
 
 \ open file and load to RAM
-DECIMAL
+
 : LED-OPEN  ( -- )
     led-fn 1+ pad 1
     f_open 43 ?error
@@ -115,7 +154,7 @@ DECIMAL
 
 \ load filename specified in LED-FH
 \ Filehandle must be already open for read
-DECIMAL
+
 : LED-READ ( -- )
     begin
         led-ln @  show-progress
@@ -134,8 +173,8 @@ DECIMAL
 
 \ save current filename
 : LED-SAVE ( -- )
-    led-fn 1+ pad [ hex 0C 02 + ] LITERAL
-    f_open [ decimal ] 41 ?error
+    led-fn 1+ pad [    $0C 02 + ] LITERAL
+    f_open             41 ?error
     led-fh  !
     LED-MAX @ 1+ 1 ?DO
         I show-progress
@@ -147,7 +186,7 @@ DECIMAL
 
 \ __________________________________________________________________________
 
-DECIMAL
+.( .)
 
 : LED-LINE ( n -- a )     \ address of current screen line n
     LED-HOME @ + LED-RAD ;
@@ -231,6 +270,7 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 : CURC@ ( -- c )    \ fetch chr from current screen position
     ADDRC  C@ ;
 
+.( .)
 
 : EDIT-FRAME ( -- )
     0 19 AT-XY
@@ -273,20 +313,21 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 : RIGHTC NCOL @ 80 < IF  1  ELSE  DOWNC -80 THEN NCOL +! ;
 
 : BYTE ( -- b ) \ accept two hex digit as a byte
-    KEYB DUP EMIT [ HEX ] 10 DIGIT DROP 4 LSHIFT
-    KEYB DUP EMIT         10 DIGIT DROP + ; DECIMAL
-HEX
+    KEYB DUP EMIT        $10 DIGIT DROP 4 LSHIFT
+    KEYB DUP EMIT        $10 DIGIT DROP + ; 
 
-: DONEC             8F 28 +ORIGIN C!    \ reset cursor face
-                    5F 2A +ORIGIN C! ;  \ reset cursor face
 
-: INITC   CURC@ BL MAX 28 +ORIGIN C!    \ change cursor face
-                    8F 2A +ORIGIN C! ;
-DECIMAL
+: DONEC           $8F $28 +ORIGIN C!    \ reset cursor face
+                  $5F $2A +ORIGIN C! ;  \ reset cursor face
+
+: INITC   CURC@ BL MAX $28 +ORIGIN C!    \ change cursor face
+                  $8F $2A +ORIGIN C! ;
 
 : REFRESH                           \ refresh current line
     NROW @ 0 TO-SCR AT-XY COLS/ROW  spaces
     NROW @ 0 TO-SCR AT-XY NROW @ LED-line COLS/ROW type ;
+
+.( .)
 
 : CMD    ( c -- )   \ handle EDIT key options
     6 21 AT-XY DONEC KEYB UPPER BL MAX DUP EMIT CASE
