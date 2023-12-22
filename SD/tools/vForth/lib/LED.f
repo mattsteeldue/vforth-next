@@ -156,6 +156,7 @@ create 8k-page-map 22 allot
 \ Filehandle must be already open for read
 
 : LED-READ ( -- )
+    1 LED-RAD b/buf erase 
     begin
         led-ln @  show-progress
         1 led-ln +!
