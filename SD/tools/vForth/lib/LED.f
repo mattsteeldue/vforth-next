@@ -22,6 +22,8 @@ BASE @
 
 DECIMAL
 
+MARKER THIS-LED
+
 : LED ( -- cccc )
     NOOP
 ;
@@ -40,7 +42,12 @@ CREATE LED-FN 80 ALLOT \ filename string
        512   COLS/ROW / CONSTANT LED-CHARSIZE
 
  48 constant FIRST-8K-PAGE
-223 constant LAST-8K-PAGE
+ 
+\ ask NextZXOS how many pages are available in total (minus one)
+\ and assign to constant LAST-8K-PAGE
+0 0 0 0 $01BD  M_P3DOS  
+44 ?error    \ NextZXOS DOS call error
+1-  constant LAST-8K-PAGE   2drop drop            
 
 1  VARIABLE LED-LN    LED-LN    !        \ line number
 1  VARIABLE LED-MAX   LED-MAX   !        \ max line number
@@ -67,7 +74,7 @@ create 8k-page-map 22 allot
     dup calc-bit-byte           \ n bitmap address
     c@ and 0=                   \ n f
     if                          \ n  
-        \ ask NextZXOS for this page (again)
+        \ ask NextZXOS for this page 
         2 OVER 0 0              \ n 2 n 0 0
         $01BD  M_P3DOS          \ n x x x x f
         40 ?error               \ out-of-memory  
@@ -79,6 +86,17 @@ create 8k-page-map 22 allot
     drop
 ;
 
+: LED-FREE ( -- )
+    LAST-8K-PAGE FIRST-8K-PAGE do
+        i calc-bit-byte             \ bitmap address
+        c@ and if
+        \ ask NextZXOS for this page 
+            3 OVER 0 0              \ 3 n 0 0
+            $01BD  M_P3DOS          \ x x x x f
+            44 ?error 2DROP 2DROP          
+        then
+    loop
+;
 
 .( .)
 
@@ -112,7 +130,7 @@ create 8k-page-map 22 allot
 : LED-RD1  ( np -- b )
     1 block   \ use block 1 as special buffer  \ np a a
     dup b/buf 2- led-fh @ f_getline >R         \ np a     \ b
-    swap led-rad COLS/ROW 2dup blank           \ a a1 n1
+    swap LED-RAD COLS/ROW 2dup blank           \ a a1 n1
     cmove R>                                   \ b
 ;
 
@@ -156,6 +174,7 @@ create 8k-page-map 22 allot
 \ Filehandle must be already open for read
 
 : LED-READ ( -- )
+    LED-FREE
     1 LED-RAD b/buf erase 
     begin
         led-ln @  show-progress
@@ -387,6 +406,12 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 \ this allows you to forget all this package.
 
 ' LED-CCCC ' LED >BODY !
+
+: FORGET-LED
+    LED-FREE
+    THIS-LED
+;
+
 
 BASE !
 

@@ -143,7 +143,7 @@ VARIABLE DIR-GAP
             THEN
         2 +LOOP
         IF LEAVE THEN   \ leave outer loop if flag is true
-        I 8 AND IF [CHAR] . EMIT 8 EMITC THEN \ flashing dot
+        I show-progress \ 8 AND IF [CHAR] . EMIT 8 EMITC THEN \ flashing dot
     LOOP                       \ uses flag-sorted
 ;
 
