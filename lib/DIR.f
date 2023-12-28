@@ -69,6 +69,8 @@ VARIABLE DIR-SAVE-DP \ DP value berore DIR
 VARIABLE DIR-BYTES 0 ,  
 VARIABLE DIR-GAP
 
+.( .)
+
 \
 \ emit one line for current directory entry.
 \ Usually a lies in heap zone.
@@ -146,6 +148,8 @@ VARIABLE DIR-GAP
         I show-progress \ 8 AND IF [CHAR] . EMIT 8 EMITC THEN \ flashing dot
     LOOP                       \ uses flag-sorted
 ;
+
+.( .)
 
 \ accept the following text (without quotes) as the path to be examined
 \ this path-name is termporarily kept in PAD

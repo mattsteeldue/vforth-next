@@ -33,7 +33,8 @@ DECIMAL
 
 : UNLINK ( -- )
     BL WORD COUNT       \  a  n
-    OVER + 0 SWAP !     \  a  
+    OVER +              \  a  a+n
+    0 SWAP C!           \  a  
     F_UNLINK 44 ?ERROR
 ;
 

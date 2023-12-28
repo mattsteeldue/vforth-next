@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      110 
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 32
-                db      " Heap Vocabulary - build 2023-11-19 ", $0D  // 36
+                db      " Heap Vocabulary - build 2023-12-28 ", $0D  // 36
                 db      " MIT License ", 127                         // 13
                 db      " 1990-2023 Matteo Vitturi "                 // 25
                 End_Heap

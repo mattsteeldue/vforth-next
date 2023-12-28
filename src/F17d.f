@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20231112 ) CR
+.( build 20231119 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -76,8 +76,20 @@ CASEON      \ we must be in Case-sensitive option to compile this file.
 \ At second run, it forces DP to re-start at a lower-address such as the 
 \ following. (N.B. an open microdrive channel requires 627 bytes)
 HEX
-: SET-DP-TO-ORG
+
+: CONDITION  ( -- f )
     0 +ORIGIN 08000 U< 0=
+;
+
+: TRUNCATE-HEAP 
+    CONDITION
+    IF 
+        0 ' LIT 2- @ FAR 2- ! 
+    THEN
+;
+
+: SET-DP-TO-ORG
+    CONDITION
     IF
         \ 6100 \ 24832 \ = origin of v1.2. it allows 1 microdrive channel
         \ 6400 \ 25600 \ = origin of v1.413. it allows 2 microdrive channels
@@ -86,13 +98,10 @@ HEX
         \ 6A00 \ 27136 \ = room for 3 buffers below ORIGIN
         \ 8000 \ 32768 \ = final
         DP !
-        0002 HP !
-    ELSE
-        1FF0 HP !
-      \ ." riposizionato a 2002 (press a key)" CR KEY
+        2 FAR COUNT + 
+        HP !
     THEN
     ;
-
 
 \ _________________
 \
@@ -327,6 +336,8 @@ DECIMAL
     IMMEDIATE
 
 
+HP@  U.
+HERE U. KEY
 
 \ ______________________________________________________________________
 \ \ 
@@ -6701,7 +6712,10 @@ CASEOFF
 
 \ this cuts LFA so dictionary starts with "lit"
 \ 0 ' LIT          2- ! 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
-  0 ' LIT 2- @ FAR 2- ! 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
+  HP@ 026 +ORIGIN !
+\ 0 ' LIT 2- @ FAR 2- ! 
+\ TRUNCATE-HEAP       \ 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
+
 \
 \ Origin area.
 \

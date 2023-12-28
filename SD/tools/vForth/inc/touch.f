@@ -8,9 +8,9 @@
 \
 : TOUCH ( -- cccc )
     BL WORD COUNT       \  a  n
-    OVER + DUP 1+       \  a  n+a  n+a+1
-    0 SWAP !            \  a  n+a
-    [ 8 3 + ] LITERAL   \  a  n+a  b
+    OVER +              \  a  a+n  
+    0 OVER C! 1+        \  a  a+n+1
+    [ 8 3 + ] LITERAL   \  a  a+n+1  b  (open r/w existing or create file)
     F_OPEN DROP
     F_CLOSE DROP
 ;

@@ -474,3 +474,10 @@ vForth system that can be resumed later
 
 \ build 20231119
 improved stability of dot-command disabling interrupts during I/O
+
+
+\ build 20231228
+introducing new OS oriented definitions:  CD, PWD, TOUCH, UNLINK.
+Improved DIR definition: now output is sorted and can be paused using [EDIT].
+Improved LED: now RAM pages are politely asked from OS.
+
