@@ -31,6 +31,7 @@ NEEDS <>
 NEEDS COMPARE
 NEEDS POSTPONE
 NEEDS CHAR+
+NEEDS DEPTH
 
 : S= \ ( addr1 c1 addr2 c2 -- t/f )  \ Compare two strings.
     COMPARE 0=

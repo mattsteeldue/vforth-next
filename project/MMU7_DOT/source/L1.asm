@@ -1328,10 +1328,9 @@ CNumber_While_end:                              // repeat
                 dw      ZBRANCH
                 dw      CPrefix_Endif_0 - $   
                 dw          ONE_PLUS            //      1+
-                dw          LIT, 16 
-                dw          BASE, STORE         //      16 base !
+                dw          HEX 
 CPrefix_Endif_0:                                // endif
-                dw      R_TO                    // r>
+                dw      R_OP                    // r@
                 dw      LIT, "%", EQUALS        // [char] $ =
                                                 // if
                 dw      ZBRANCH
@@ -1340,6 +1339,14 @@ CPrefix_Endif_0:                                // endif
                 dw          TWO                 
                 dw          BASE, STORE         //      2 base !
 CPrefix_Endif_1:                                // endif
+                dw      R_TO                    // r>
+                dw      LIT, "#", EQUALS        // [char] $ =
+                                                // if
+                dw      ZBRANCH
+                dw      CPrefix_Endif_2 - $   
+                dw          ONE_PLUS            //      1+
+                dw          DECIMAL 
+CPrefix_Endif_2:                                // endif
                 dw      EXIT
 
 //  ______________________________________________________________________ 
@@ -1356,9 +1363,12 @@ CPrefix_Endif_1:                                // endif
                 Colon_Def NUMBER,  "NUMBER", is_normal
                 dw      ZERO, ZERO              // 0 0
                 dw      ROT                     // rot
-                dw      CSGN, TO_R              // (sgn) >r
+
                 dw      BASE, FETCH, TO_R       // base @ >r  // ***
                 dw      CPREFIX                 // (prefix)   // ***
+
+                dw      CSGN, TO_R              // (sgn) >r
+
                 dw      NEG_ONE, DPL, STORE     // -1 dpl !
                 dw      CNUMBER                 // (number)
 Number_Begin:                                   // begin
@@ -1385,13 +1395,13 @@ Number_While_end:                               // repeat
 
                 dw      CFETCH, BL              // c@ bl
                 dw      SUBTRACT, ZERO, QERROR  // - 0 ?error
-                dw      R_TO, BASE, STORE       // r> base !  // ***
                 dw      R_TO                    // r>
                                                 // if
                 dw      ZBRANCH
                 dw      Number_Endif_2 - $
                 dw          DMINUS              //      dminus
 Number_Endif_2:                                 // endif
+                dw      R_TO, BASE, STORE       // r> base !  // ***
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 

@@ -29,11 +29,7 @@ T{ GE6 -> 123 }T
 T{ : GE7 GE2 GE5 ; -> }T
 T{ GE7 -> 124 }T
 
-
-
-: GE8  S" : GE9 678 ; " EVALUATE ; 
-
-\ The following row doesn't work --> bad definition end.
-\ GE8 
-\ T{ GE9 -> 678 }T
+: GE8 S" : GE9 678 ;" EVALUATE ; 
+T{ GE8 -> }T
+T{ GE9 -> 678 }T
 

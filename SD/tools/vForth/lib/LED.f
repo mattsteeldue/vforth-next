@@ -17,6 +17,8 @@
 \
 \   LED-FILE cccc       set LED-FN to cccc, useful to rename file on save.
 \
+\ To correctly free any allocated 8k page, you need to use FORGET-LED
+\ instead of normal FORGET LED
 
 BASE @
 
@@ -86,14 +88,19 @@ create 8k-page-map 22 allot
     drop
 ;
 
+
+: LED-FREE1 ( n -- )
+    3 SWAP 0 0              \ 3 n n 0 0
+    $01BD  M_P3DOS          \ x x x x f
+    44 ?error 2DROP 2DROP          
+;
+
+
 : LED-FREE ( -- )
     LAST-8K-PAGE FIRST-8K-PAGE do
         i calc-bit-byte             \ bitmap address
-        c@ and if
-        \ ask NextZXOS for this page 
-            3 OVER 0 0              \ 3 n 0 0
-            $01BD  M_P3DOS          \ x x x x f
-            44 ?error 2DROP 2DROP          
+        c@ and if 
+            I LED-FREE1
         then
     loop
 ;

@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 //  v-Forth 1.7 NextZXOS version 
-//  build 20231228
+//  build 20240101
 // 
 //  Direct-Threaded version.
 // 
@@ -16,7 +16,7 @@
 //  provided that the copyright notice is kept.  
 //  ______________________________________________________________________
 // 
-//  by Matteo Vitturi, 1990-2023
+//  by Matteo Vitturi, 1990-2024
 // 
 //  https://sites.google.com/view/vforth/vforth15-next
 //  https://www.oocities.org/matteo_vitturi/english/index.htm

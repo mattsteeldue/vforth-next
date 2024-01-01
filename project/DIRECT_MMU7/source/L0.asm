@@ -61,11 +61,12 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
+                // length include a leading space in each line
                 db      113
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2023-12-28 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-01-01 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
-                db      " 1990-2023 Matteo Vitturi ", $0D            // 27
+                db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 db      7,0
                 End_Heap
 

@@ -481,3 +481,8 @@ introducing new OS oriented definitions:  CD, PWD, TOUCH, UNLINK.
 Improved DIR definition: now output is sorted and can be paused using [EDIT].
 Improved LED: now RAM pages are politely asked from OS.
 
+\ build 20240101
+fixed version of EVALUATE that copes with nested calls.
+dot-version argument is used as auto-start filename.
+introducing support for decimal prefix, such as #128 or #-30.
+Fixed some minor issues.

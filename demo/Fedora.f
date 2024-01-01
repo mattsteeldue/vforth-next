@@ -81,3 +81,5 @@ CREATE RR 642 ALLOT
         ?terminal if leave then
     -2 +LOOP
 ;
+
+CLS FEDORA

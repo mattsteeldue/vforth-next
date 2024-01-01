@@ -18,7 +18,9 @@ SCR_CT          equ     $5C8C                   // SCR-CT system variable
 LASTK           equ     $5C08                   // LASTK system variable
 BORDCR          equ     $5C48                   // BORDCR system variable
 FLAGS2          equ     $5C6A                   // for caps-lock
-
+RAMTOP          equ     $5CB2
+TSTACK          equ     $5C00                   // TSTACK
+// FSTACK          ecu     $4000 - 8
 //  ______________________________________________________________________
 //
 // Flag constants 
@@ -184,7 +186,7 @@ Constant_Def    macro   label, namec, constant_value
 // this allow creation of "variables" which content is  of any length
 Variable_Def    macro   label, namec, initial_value
                 New_Def  label, namec, Variable_Ptr, is_normal
-                dw      initial_value // ?
+                dw      initial_value
                 endm
 
 //  ______________________________________________________________________

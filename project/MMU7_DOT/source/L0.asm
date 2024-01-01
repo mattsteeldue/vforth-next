@@ -63,10 +63,10 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 // length include a leading space in each line
                 db      110 
-                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 32
-                db      " Heap Vocabulary - build 2023-12-28 ", $0D  // 36
-                db      " MIT License ", 127                         // 13
-                db      " 1990-2023 Matteo Vitturi "                 // 25
+                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33
+                db      " Heap Vocabulary - build 2024-01-01 ", $0D  // 37
+                db      " MIT License ", 127                         // 14
+                db      " 1990-2023 Matteo Vitturi "                 // 26
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -915,6 +915,7 @@ Cur_Wait:
                 //  call    $1601               // SELECT Standard-ROM Routine
                     rst     $18 
                     dw      $1601
+
                     // software-flash: flips face every 320 ms
                     ld      a, $20              // Timing based
                     and     (iy + $3E)          // FRAMES (5C3A+3E)
@@ -940,6 +941,7 @@ Cur_Cursor:
                 rst     $10
 
                 ld      sp, (SP_Saved)
+
                 pop     ix  
                 pop     de                  // Restore Return Stack Pointer
                 pop     bc                  // Restore Instruction Pointer

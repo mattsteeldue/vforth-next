@@ -175,13 +175,13 @@ Flush_Do:                                       // do
                 dw      TO_R                    // >r               ( a  m  )     \  fh
                 dw      TUCK                    // tuck             ( m a m )
                 dw      R_OP, F_FGETPOS         // r f_fgetpos      ( m a m d f ) 
-                dw      LIT, 44, QERROR         // 44 ?error        ( m a m d )     
+                dw      LIT, 34, QERROR         // 44 ?error        ( m a m d )     
                 
                 dw      TWO_SWAP, OVER          // 2swap over       ( m d a m )
                 dw      ONE_PLUS, SWAP          // 1+ swap          ( m d a a+1 m )
 
                 dw      R_OP, F_READ            // r f_read         ( m d a n f ) 
-                dw      LIT, 46, QERROR         // 46 ?error        ( m d a n )  
+                dw      LIT, 35, QERROR         // 46 ?error        ( m d a n )  
                                                 // if ( at least 1 chr was read )  \  fh
                 dw      ZBRANCH
                 dw      FGetline_Else - $
@@ -196,7 +196,7 @@ Flush_Do:                                       // do
                 dw          TWO_SWAP, R_TO      //      2swap r>         ( m a n d n )    \ fh
                 dw          ZERO, DPLUS         //      0 d+             ( m a n d+n )
                 dw          R_TO, F_SEEK        //      r> f_seek        ( m a n f )    
-                dw          LIT, 45, QERROR     //      45 ?error        ( m a n )
+                dw          LIT, 36, QERROR     //      45 ?error        ( m a n )
                                                 // else                
                 dw      BRANCH
                 dw      FGetline_Endif - $
@@ -226,6 +226,7 @@ FGetline_Endif:                                 // endif
                 dw      TO_IN, FETCH, TO_R      // >in @ >r
                 dw      SOURCE_ID, FETCH, TO_R  // source-id @ >r
                 dw      R_OP                    // r
+                dw      ZGREATER                // 0>  (filehandle)
                                                 // if
                 dw      ZBRANCH
                 dw      FInclude_Else_1 - $
@@ -261,12 +262,14 @@ FInclude_Begin:                                 // begin
                 dw      BRANCH
                 dw      FInclude_Begin - $
 FInclude_Repeat:                                // repeat
+                //  close current file
                 dw      SOURCE_ID, FETCH        // source-id @
-                dw      ZERO, SOURCE_ID, STORE  // 0 source-id !
                 dw      F_CLOSE                 // f_close
                 dw      LIT, 42, QERROR         // 42 ?error
+
                 dw      R_TO, R_TO, R_TO        // r> r> r>
                 dw      DUP, SOURCE_ID, STORE   // dup source-id !
+                dw      ZGREATER                // 0>
                                                 // if
                 dw      ZBRANCH
                 dw      FInclude_Else_2 - $
@@ -314,8 +317,7 @@ FInclude_Endif_2:                               // endif
 // Include the following filename
                 Colon_Def INCLUDE, "INCLUDE", is_normal
                 dw      OPEN_FH                 // open 
-                dw      DUP, F_INCLUDE          // dup f_include
-                dw      F_CLOSE, DROP           // f_close drop
+                dw      F_INCLUDE               //  f_include
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -329,6 +331,7 @@ FInclude_Endif_2:                               // endif
                 ds      35                      // 32 + .f + 0x00 = len 35
 // temp complete path+filename
                 New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
+Param:          db      "c:/tools/vforth/lib/autoexec.f", 0
                 ds      40
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
@@ -736,8 +739,8 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20231119", 13  // 33
-//              db      "1990-2023 Matteo Vitturi", 13        // 25
+//              db      "Heap Vocabulary - build 20240101", 13  // 33
+//              db      "1990-2024 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
 //  ______________________________________________________________________ 
@@ -764,12 +767,16 @@ Index_Leave:
 // this word is called the first time the Forth system boot to
 // load Screen# 1. Once called it patches itself to prevent furhter runs.
                 Colon_Def AUTOEXEC, "AUTOEXEC", is_normal
-                dw      LIT, 11
-                dw      LIT, NOOP
-                dw      LIT, Autoexec_Ptr
-                dw      STORE
-                dw      LOAD
+Autoexec_Self:                
+                dw      LIT, Param
+                dw      PAD, ONE
+                dw      F_OPEN
+                dw      DROP    
+                dw      F_INCLUDE
                 dw      QUIT
+                dw      LIT, QUIT
+                dw      LIT, Autoexec_Self
+                dw      STORE
                 dw      EXIT
                 
 
@@ -1005,7 +1012,6 @@ Backslash_Endif_1:
                 New_Def BLK_FNAME,   "BLK-FNAME", Create_Ptr, is_normal  
 Len_Filename:   db      30
 Blk_filename:   db      "c:/tools/vforth/!Blocks-64.bin", 0
-                ds      32
 
 Fence_Word:
 //  ______________________________________________________________________ 

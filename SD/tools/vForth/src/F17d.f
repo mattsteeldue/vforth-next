@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20231119 ) CR
+.( build 20240101 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -10,7 +10,7 @@
 \ provided that this copyright notice is kept.  
 \ ______________________________________________________________________ 
 \
-\ by Matteo Vitturi, 1990-2023
+\ by Matteo Vitturi, 1990-2024
 \
 \ https://sites.google.com/view/vforth/vforth15-next
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -4229,12 +4229,13 @@ CODE fill ( a n c -- )
 \ recognize $ prefix for hex numbers at next character in current string a1.
 \ address is incremented if $ was found 
 : (prefix) ( a1 -- a2 )
-    dup 1+ c@
-    dup >r
-    [ CHAR $ ] Literal = If 1+ [ decimal 16 ] Literal base ! Then
+    dup 1+ c@           \ a1 a2 c
+    dup >r              
+    [ CHAR $ ] Literal = If 1+ hex Then
+    r@
+    [ CHAR % ] Literal = If 1+ 2 base ! Then
     r>
-    [ CHAR % ] Literal = If 1+                      2 base ! Then
-\      [ CHAR # ] Literal = If 1+ [ decimal 10 ] Literal base ! Then
+    [ CHAR # ] Literal = If 1+ decimal Then
 ;
 
 ( *** )
@@ -4251,8 +4252,8 @@ CREATE pcdm hex    (   . . . .   )
 : number  ( a -- d )
     0 0 rot                 \ d a
 
-    (sgn) >r            
-    base @ >r (prefix)    \ save base
+    base @ >r (prefix)      \ save base
+    (sgn)  >r            
 
     -1 dpl !
     (number)                \ d a
@@ -4270,8 +4271,8 @@ CREATE pcdm hex    (   . . . .   )
 
     c@ bl - 0 ?error
 
-    r> base !
     r> If dnegate Then
+    r> base !
     ;
 
 
@@ -5415,11 +5416,11 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 decimal
 : f_getline ( a m fh -- n )
     >r tuck                                     \ m a m         R: fh
-    r@ f_fgetpos [ 44 ] Literal ?error          \ m a m  d
+    r@ f_fgetpos [ 35 ] Literal ?error          \ m a m  d
     2swap                                       \ m  d  a m
     over 1+                                     \ m  d  a m a+1
     swap                                        \ m  d  a a+1 m 
-    r@ f_read [ 46 ] Literal ?error             \ m  d  a k 
+    r@ f_read [ 35 ] Literal ?error             \ m  d  a k 
     If \ at least 1 chr was read                \ m  d  a k
         [ 10 ] Literal enclose                  \ m  d  a n1 b n3
         drop nip swap                           \ m  d  b a 
@@ -5430,7 +5431,7 @@ decimal
         dup >r                                  \ m  d  a n       R: fh n
         2swap r>                                \ m a n  d   n    R: fh
         0 d+                                    \ m a n d+n
-        r> f_seek [ 45 ] Literal ?error         \ m a n
+        r> f_seek [ 36 ] Literal ?error         \ m a n
     Else                                        \ m  d  a
         r> 2swap                                \ m a fh  d 
         2drop drop                              \ m a 
@@ -5457,9 +5458,10 @@ decimal
     >in @ >r  
     source-id @ >r 
 
-    \ if SOURCE-ID was non zero (i.e. this is a recursed F_INCLUDE)
+    \ if SOURCE-ID was >zero (i.e. this is a recursed F_INCLUDE)
     \ try to save its position and close the file-handle.
     r@ 
+    0>
     If 
         r@ f_fgetpos [ 44 ] Literal ?error 
         \ must rewind to the beginning of the current line
@@ -5488,7 +5490,6 @@ decimal
 
     \ close current file
     source-id @  
-    0 source-id !  
     f_close [ 42 ] Literal ?error
 
     \ restore previous Handle-position
@@ -5496,8 +5497,11 @@ decimal
     \ restore SOURCE-ID
     r>   
     dup source-id !
+    0>
     If 
-        source-id @ f_seek [ 43 ] Literal ?error 
+        source-id @ 
+        f_seek 
+        [ 43 ] Literal error 
     Else 
         2drop       \ ignore 0 0 fake handle-position.
     Then
@@ -5532,8 +5536,7 @@ decimal
 decimal
 : include  ( -- cccc )
     open<
-    dup f_include
-    f_close drop
+    f_include
 ;
 
 
@@ -5944,8 +5947,8 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal 13 here ," Heap Vocabulary - build 20231112" -1 allot ]
-\    [ decimal 13 here ," 1990-2023 Matteo Vitturi" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20240101" -1 allot ]
+\    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal 13 c, c! c! c! ] 
     ;
 

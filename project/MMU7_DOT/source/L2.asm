@@ -213,7 +213,6 @@ Quit_Endif:                                     //      else
 
 Autoexec_Ptr:                
                 dw      AUTOEXEC                // autoexec, patched to noop
-            //  dw      NOOP
                 dw      QUIT                   // quit
                 dw      EXIT                    // ;
 
@@ -222,7 +221,7 @@ Autoexec_Ptr:
 // warm         --
                 Colon_Def WARM, "WARM", is_normal
                 dw      BLK_INIT                // blk-init
-                dw      SPLASH                  // splash
+                dw      NOOP                    // splash
             //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
                 dw      EXIT                    // exit
@@ -286,12 +285,12 @@ ColdRoutine:
 
 //  ______________________________________________________________________ 
 // 1.
-// Accepts one parameter from Basic as the filename to USE for blocks.
+// Accepts one parameter from Basic as the filename to load
                 ld      a, h
                 or      l
                 jr      z, Skip_Parameter
 
-                ld      de, Blk_filename
+                ld      de, Param
                 ld      bc, 0
 Parameter_Loop:
                 ld      a, (hl)           
@@ -302,12 +301,9 @@ Parameter_Loop:
                 ldi
                 jr      Parameter_Loop
 End_Parameter:  
+                // append 0x00
                 xor     a
                 ld      (de), a
-                ld      hl, 0
-                sbc     hl, bc
-                ld      a, l
-                ld      (Len_Filename), a
 Skip_Parameter:
 
 //  ______________________________________________________________________ 

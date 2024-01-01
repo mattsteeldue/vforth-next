@@ -39,8 +39,9 @@ MARKER FORGET-TASK
   UPPER
   [ CHAR N ] LITERAL
   = IF 
-   ." ok " DROP 
-   FORGET-TASK QUIT
+   ." ok " 
+   FORGET-TASK 
+   QUIT
   ELSE
    FORGET-TASK
  THEN ;

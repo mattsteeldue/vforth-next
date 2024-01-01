@@ -8,16 +8,19 @@ NEEDS EDITOR
 BASE @ DECIMAL
 
 \
-\ Set content of current Screen to blanks and stores two nulls in the first
-\ two character position
+\ Set content of current Screen to blanks and stores a nul in the first
+\ character position
 \
-: WIPE ( -- )
-    0 SCR @ B/SCR * DUP B/SCR OVER + SWAP
-    DO
-        I BLOCK B/BUF BLANK
-        UPDATE
-    LOOP
-    BLOCK !
+: WIPE ( -- )    
+    0                       \ c 
+    SCR @ B/SCR *           \ c n
+    DUP B/SCR OVER + SWAP   \ c n n+2 n
+    DO                      \ c n 
+        I BLOCK             \ c n a
+        B/BUF BLANK         \ c n
+        UPDATE              \ c n
+    LOOP                    \ c n
+    BLOCK C!                 
 ;
 
 BASE !

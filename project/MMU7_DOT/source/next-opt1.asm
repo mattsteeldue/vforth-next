@@ -75,7 +75,7 @@
                  pop     de                  // de' argument              //  n1 
                  ex      (sp), hl            // hl' argument and entry address in TOS
                 exx
-                pop     hl                  // entry address a
+                pop     hl                  // entry address a  
                 push    ix     
                 push    de
                 push    bc
@@ -117,6 +117,7 @@
 //  ______________________________________________________________________ 
 //
 // blk-fh
+// MOVED AT THE END.
 //              Variable_Def BLK_FH,   "BLK-FH",   1
 // 
 //              New_Def BLK_FNAME,   "BLK-FNAME", Create_Ptr, is_normal  
