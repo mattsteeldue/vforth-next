@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 1990-2023 Matteo Vitturi
+Copyright (c) 1990-2024 Matteo Vitturi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

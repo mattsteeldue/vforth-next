@@ -331,8 +331,8 @@ FInclude_Endif_2:                               // endif
                 ds      35                      // 32 + .f + 0x00 = len 35
 // temp complete path+filename
                 New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
-Param:          db      "c:/tools/vforth/lib/autoexec.f", 0
-                ds      40
+Param:          db      "c:/tools/vforth/lib/autoexec-dot.f", 0
+                ds      30
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
                 db      4, "inc/", 0
@@ -739,7 +739,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20240101", 13  // 33
+//              db      "Heap Vocabulary - build 20240108", 13  // 33
 //              db      "1990-2024 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 

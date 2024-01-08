@@ -1,6 +1,10 @@
 \
 \ ^escape.f
 \
+\ for ?escape.f 
+\
+\ check for [EDIT] keypress
+\
 .( .)
 \
 \

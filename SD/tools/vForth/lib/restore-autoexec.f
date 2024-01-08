@@ -4,12 +4,12 @@
 \    ##  USE WITH CARE  ##
 
 
-\ First check there is NOOP 
-' ABORT >BODY 9 CELLS + @
+\ First check if there is a NOOP in the nth position of ABORT
+' ABORT >BODY 13 CELLS + @
 ' NOOP - 14 ?ERROR
 
-\ Then restore AUTOEXEC
+\ Then restore AUTOEXEC in-place
 ' AUTOEXEC
-' ABORT >BODY 9 CELLS + !
+' ABORT >BODY 13 CELLS + !
 
 

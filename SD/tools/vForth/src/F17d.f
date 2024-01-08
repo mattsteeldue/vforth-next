@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240101 ) CR
+.( build 20240107 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -5475,11 +5475,11 @@ decimal
 
     \ read text from file using  block #1 as a temporary buffer.
     Begin
-        1 block 
-        b/buf 2dup blank 
-        swap 1+ 
-        swap cell-
-        source-id @ 
+        1 block                 \ a
+        b/buf 2dup blank        \ a n
+        swap 1+                 \ n a+1
+        swap cell-              \ a+1 n-2
+        source-id @                 
         f_getline     \ a source text line can be up to 510 characters
       \ ?terminal not and
       \ cr 1 block over type  \ during code-debugging phase

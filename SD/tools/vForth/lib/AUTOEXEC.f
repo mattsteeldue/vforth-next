@@ -57,6 +57,7 @@ CR \ ." Loading the following utilities:" CR
 
 NEEDS    REMOUNT  \  Remount utility
 NEEDS    WHERE    \  Line Editor
+NEEDS    .S       \  Stack viewer
 NEEDS    EDIT     \  Full Screen Editor
 NEEDS    DUMP     
 NEEDS    HEAP     \  Heap Memory Management
@@ -71,3 +72,5 @@ NEEDS    SEE      \  Decompiler / Inspector
 
 11 SCR !
 ." ok" CR
+
+QUIT

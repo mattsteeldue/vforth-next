@@ -32,10 +32,17 @@ SMUDGE
 DECIMAL
 
 : UNLINK ( -- )
-    BL WORD COUNT       \  a  n
-    OVER +              \  a  a+n
-    0 SWAP C!           \  a  
-    F_UNLINK 44 ?ERROR
+    BL WORD COUNT 2DUP  \  a n a n
+    OVER +              \  a n a a+n
+    0 SWAP C!           \  a n a
+    F_UNLINK            \  a n f
+    IF 
+        43 MESSAGE CR     
+        ." Perhaps you meant c:" 
+        TYPE SPACE
+    ELSE
+        2DROP
+    THEN
 ;
 
 BASE !
