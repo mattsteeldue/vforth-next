@@ -490,5 +490,8 @@ Fixed some minor issues.
 
 
 \ build 20240108
-introducing -?EXECUTE for simple conditional execution.
+introducing -?EXECUTE for simple conditional execution (Rob Probin suggestion).
 introducing "load-a-matic" technique via 20 LOAD on Screens #20-#25.
+introducing SCREEN-TO-FILE and SCREEN-FROM-FILE for import/export of
+Screens, so yo can use .sync to move small files instead of the whole
+binary file !Blocks-64.bin
