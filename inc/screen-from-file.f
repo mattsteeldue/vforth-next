@@ -8,6 +8,7 @@ needs LINE   needs J
     1 block c/l 1+  2dup blank
     J  f_getline drop
     1 block I LINE c/l cmove
+    update
   loop
   R> f_close
 ;

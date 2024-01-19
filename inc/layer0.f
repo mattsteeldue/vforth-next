@@ -1,6 +1,8 @@
 \
 \ layer0.f
 \
+\ ULA legacy
+\
 .( LAYER0 )
 \
 \ Layer 0 – Standard Spectrum (ULA) mode, 256 w x 192 h pixels, 8 colours

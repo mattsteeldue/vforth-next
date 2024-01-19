@@ -208,7 +208,7 @@ F_Read_Exit:
                  rst     $08     
                  db      $9A
 F_Open_Exit:                
-                 ei
+//               ei                         // removed because is repeated in f_read_exit
                  ld      e, a                // return the handle-number
                  ld      d, 0
                 jr F_Read_Exit

@@ -1580,7 +1580,7 @@ CODE f_seek ( d u -- f )
          LDX     IX|     0 NN,
          DI
          RST     08|     HEX  9F  C,
-HERE TO f_seek_exit^       
+HERE TO f_seek_exit^
         EI
         POP     BC|
         POP     DE|
@@ -1603,6 +1603,7 @@ CODE f_close ( u -- f )
         DI
         RST     08|   HEX  9B  C,
         JR      f_seek_exit^ BACK,
+\       EI
 \       POP     BC|
 \       POP     DE|
 \       POP     IX|
@@ -1624,6 +1625,7 @@ CODE f_sync ( u -- f )
         DI
         RST     08|   HEX  9C  C,
         JR      f_seek_exit^ BACK,
+\       EI        
 \       POP     BC|
 \       POP     DE|
 \       POP     IX|
@@ -1706,6 +1708,7 @@ CODE f_write ( a n u -- n f )
          DI
          RST     08|     HEX  9E  C,
         JR      f_read_exit^ BACK,
+\       EI
 \       EXX
 \       POP     BC|
 \       POP     DE|
@@ -1747,8 +1750,8 @@ CODE f_open ( a1 a2 b -- fh f )
          LDN     A'|     CHAR  *  N,
          DI
          RST     08|     HEX  9A  C,
-HERE TO f_open_exit^        
-         EI
+HERE TO f_open_exit^ 
+\        EI                 \ removed because is repeated in f_read_exit^
          LD      E'|     A|
          LDN     D'|     0  N,
         JR      f_read_exit^ BACK,
@@ -1781,6 +1784,20 @@ CODE f_opendir ( a -- fh f )
         DI
         RST     08|   HEX  A3  C,
         JR      f_open_exit^ BACK,
+\        EI                 \ removed because is repeated in f_read_exit^
+\        LD      E'|     A|
+\        LDN     D'|     0  N,
+\       JR      f_read_exit^ BACK,
+\       EXX        
+\       POP     BC|
+\       POP     DE|
+\       POP     IX|
+\        EXX        
+\        SBCHL   HL|
+\        PUSH    DE|
+\        PUSH    HL|
+\       EXX
+\       Next
         C;
         
 
@@ -1802,6 +1819,20 @@ CODE f_readdir ( a1 a2 fh -- n f )
          DI
          RST     08|   HEX  A4  C,
          JR      f_open_exit^ BACK,
+\        EI                 \ removed because is repeated in f_read_exit^
+\        LD      E'|     A|
+\        LDN     D'|     0  N,
+\       JR      f_read_exit^ BACK,
+\       EXX        
+\       POP     BC|
+\       POP     DE|
+\       POP     IX|
+\        EXX        
+\        SBCHL   HL|
+\        PUSH    DE|
+\        PUSH    HL|
+\       EXX
+\       Next
         C;
         
 

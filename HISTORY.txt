@@ -490,8 +490,14 @@ Fixed some minor issues.
 
 
 \ build 20240108
-introducing -?EXECUTE for simple conditional execution (Rob Probin suggestion).
+introducing -?EXECUTE for simple conditional execution (Rob Probin's suggestion)
 introducing "load-a-matic" technique via 20 LOAD on Screens #20-#25.
 introducing SCREEN-TO-FILE and SCREEN-FROM-FILE for import/export of
-Screens, so yo can use .sync to move small files instead of the whole
-binary file !Blocks-64.bin
+Screens, so you can use Jari Komppa .sync utility to move a single piece around
+instead of the whole binary file !Blocks-64.bin (that would take many minutes).
+
+
+\ build 20240119
+introducing F_GETFREE to ask the OS for disk free space.
+Then now, AUTOEXEC shows disk free space.
+

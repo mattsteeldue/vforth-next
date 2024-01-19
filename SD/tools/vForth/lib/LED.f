@@ -24,8 +24,6 @@ BASE @
 
 DECIMAL
 
-MARKER THIS-LED
-
 : LED ( -- cccc )
     NOOP
 ;
@@ -77,27 +75,37 @@ create 8k-page-map 22 allot
     c@ and 0=                   \ n f
     if                          \ n  
         \ ask NextZXOS for this page 
-        2 OVER 0 0              \ n 2 n 0 0
+        2 OVER 0 0 0            \ n 2 n 0 0 0
         $01BD  M_P3DOS          \ n x x x x f
-        40 ?error               \ out-of-memory  
-        2DROP  2DROP            \ n
+        >R 2DROP  2DROP R>      \ n f
+        if 
+        \   ." 8k page " dup .  \ n
+        \   40 error            \ out-of-memory  
+        then
+
         \ set bit in map
-        dup calc-bit-byte       \ n bitmap address
-        +!                      \ n
+        dup calc-bit-byte   \ n bitmap address
+        +!                  \ n
     then
     drop
 ;
 
 
-: LED-FREE1 ( n -- )
-    3 SWAP 0 0              \ 3 n n 0 0
-    $01BD  M_P3DOS          \ x x x x f
-    44 ?error 2DROP 2DROP          
+: LED-FREE1 ( n -- )        \  hl de bc a
+    3 OVER 0 0 0            \ n 3  n  0 0
+    $01BD  M_P3DOS          \ n x x x x f
+    >R 2DROP  2DROP R>      \ n f
+    if
+        ." 8k page " dup .  \ n
+    \   44 error 
+    then
+    drop
 ;
 
 
 : LED-FREE ( -- )
-    LAST-8K-PAGE FIRST-8K-PAGE do
+    LAST-8K-PAGE FIRST-8K-PAGE 
+    do
         i calc-bit-byte             \ bitmap address
         c@ and if 
             I LED-FREE1
@@ -115,7 +123,7 @@ create 8k-page-map 22 allot
     rows/page /mod  FIRST-8K-PAGE +
     dup LAST-8K-PAGE >  if 40 error then  \ out-of-memory
     swap cols/row * $E000 OR swap 
-    dup alloc-8k-page
+    \ dup alloc-8k-page
 ;
 
 \
@@ -132,7 +140,7 @@ create 8k-page-map 22 allot
 \ assumes to read page np from filehandle LED-FH
 \ returns actual characters read. 0 means EOF
 \ row is stored in 8K-pages RAM 40-223
-
+decimal
 
 : LED-RD1  ( np -- b )
     1 block   \ use block 1 as special buffer  \ np a a
@@ -181,7 +189,7 @@ create 8k-page-map 22 allot
 \ Filehandle must be already open for read
 
 : LED-READ ( -- )
-    LED-FREE
+\   LED-FREE
     1 LED-RAD b/buf erase 
     begin
         led-ln @  show-progress
@@ -414,10 +422,10 @@ DECIMAL   0 VARIABLE NROW    NROW !     \ current row
 
 ' LED-CCCC ' LED >BODY !
 
-: FORGET-LED
-    LED-FREE
-    THIS-LED
-;
+\ : FORGET-LED
+\   LED-FREE
+\     THIS-LED
+\ ;
 
 
 BASE !

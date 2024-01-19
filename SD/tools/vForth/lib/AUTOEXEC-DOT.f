@@ -3,15 +3,18 @@
 \
 
 \ This is executed at startup by DOT-version.
-
 ." Now loading autoexec-dot.f" CR
 
-\ Set blue-yellow color
+MARKER FORGET-TASK
+NEEDS F_GETFREE
+
+\ Set black-yellow color
 DECIMAL
+
 0 26 EMITC EMITC       \ non stop scroll
         0  67 REG!     \ Palette Control (ULA first)
        25  64 REG!     \ Palette Index Select (blue paper)
-%00000001  65 REG!     \ Palette Data (darker)
+%00000000  65 REG!     \ Palette Data (darker)
        14  64 REG!     \ Palette Index Select (yellow ink)
 %11111001  65 REG!     \ Palette Data (lighter)
 1 17 EMITC EMITC       \ Paper 1 (blue)
@@ -32,30 +35,50 @@ SWAP LSHIFT             \ multiply by two n times.
 \ display memory available
 SP@ PAD  - U. ." bytes free in Dictionary." CR
  -1 HP @ - U. ." bytes free in Heap." CR
-CR
+
+
+\ display free space on default drive
+\ d is the number of 512-bytes block free on drive
+: .FREE-SIZE ( d f -- )
+    [CHAR] * F_GETFREE          \ d f
+    NOT IF
+        ?dup if
+            dup 29 > if     nip 3 /        0   [char] G
+                     else   200 um/mod nip 0   [char] M  then
+        else
+            5 um* over 9995 swap u<
+                     if    1024 um/mod nip 0   [char] M
+                     else                      [char] K  then
+        then >R
+        <# # [char] . hold #s #> type space R> emit
+      
+        ." bytes free on default drive." CR
+    THEN
+;
+.FREE-SIZE 
+
 
 \ we do not have conditional iterpreting, but we can emulate small task
 \ wisely using MARKER called as the last-word of a definition
 
-MARKER FORGET-TASK
-
 : ASK-Y/N ( -- )
 \ ask Y/n to continue loading 
-  ." Autoexec asks: "
-  ." Do you wish to load scr# 11 ? (Y/n) "
-  CURS
-  KEY DUP EMIT
-  UPPER
-  [ CHAR N ] LITERAL
-  = IF 
-   ." ok " 
-   FORGET-TASK 
-   QUIT
-  ELSE
-   FORGET-TASK
- THEN ;
+     ." Autoexec asks: "
+     ." Do you wish to load utilities ? (Y/n) "
+     CURS
+     KEY DUP EMIT
+     UPPER
+     [ CHAR N ] LITERAL
+     = IF 
+         ." ok " 
+         FORGET-TASK 
+         QUIT
+     ELSE
+         FORGET-TASK
+    THEN 
+;
 
-ASK-Y/N \ to continue loading 
+CR ASK-Y/N \ to continue loading 
 
 \
 \  NextZXOS version
