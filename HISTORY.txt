@@ -501,3 +501,35 @@ instead of the whole binary file !Blocks-64.bin (that would take many minutes).
 introducing F_GETFREE to ask the OS for disk free space.
 Then now, AUTOEXEC shows disk free space.
 
+
+\ build 20240127
+RPI0 experimental tool available within vForth system to interact with the
+Raspberry Pi Zero accelerator available inside the ZX Spectrum Next. 
+Once loaded, you can type RPI0 to start a two-way communication stream turning 
+your machine in a simple terminal connected with the accelerator via UART.
+The rationale is as follows. 
+A main loop continuously polls the keyboard and the RPi0 UART, then any key 
+pressed is immediately transmitted, any byte read from RPi0 UART is immediately 
+sent to screen (which is notoriously slow).
+[ENTER] key has a peculiar behavior such that once “0x0D” is transmitted to 
+ RPi0, up to 8192 bytes are “fast read” from UART and - only then - slowly sent 
+ to screen from a buffer allowing long output without loss.
+Other keys works as follows:
+[BREAK] quit to prompt
+[TRUE VIDEO] transmits 0x04, EOT or ^D that normally produces a “normal exit” 
+from whatever you where in.
+[INV VIDEO] transmits 0x05, EOT or ^E
+[CAPS LOCK] toggles caps lock and sends nothing.
+[EDIT] transmits 0x07, BEL or ^G
+[DELETE] transmits 0x08, BS or ^H and it is the normal back-space key.
+[LEFT] transmits 0x08, BS or ^H same as [DELETE]
+[RIGHT] transmits 0x09, LF or ^I
+[DOWN] transmits 0x0A, BS or ^J
+[UP] transmits 0x0B, VT or ^K
+[EXTENDED] transmits 0x0E, S0 or ^N
+[GRAPH] transmits 0x0F, SI or ^O
+[<>] transmits 0x18, CAN or ^X that helps to emulate CTRL-X key-press.
+[<=] transmits 0x1A, SUB or ^Z that helps to emulate CTRL-Z key-press.
+[AT] transmits 0x1B ESC or ^[ that helps to emulate escape sequences
+[>=] transmits 0x03, ETX or ^C that helps to emulate CTRL-C key-press.
+Remaining ASCII characters ~ | \ [ ] { } are produced via SYMBOL-SHIFT as usual.

@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240107 ) CR
+.( build 20240119 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -1342,9 +1342,9 @@ HERE TO KEY-1^
 \ _________________
 
 HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
-    06   C,   \ 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-    0C   C,   \  9: SYMBOL+E   same as SHIFT-0 [BACKSPACE]
-    07   C,   \  8: SYMBOL+Q   same as SHIFT-1 [EDIT]
+    18   C,   \ 10: SYMBOL+W   ^X
+    03   C,   \  9: SYMBOL+E   ^C
+    1A   C,   \  8: SYMBOL+Q   ^Z
     7F   C,   \  7: SYMBOL+I   (C) copyright symbol
     5D   C,   \  6: SYMBOL+U   ]
     5B   C,   \  5: SYMBOL+Y   [
@@ -1415,7 +1415,20 @@ CODE curs ( -- )
         C;
 
 
-CODE key ( -- )
+( KEY polls LASTK )
+\ [TRUE VIDEO]  -->  4
+\ [INV VIDEO]   -->  5
+\ [CAPS-LOCK]   -->  6 
+\ [EDIT]        -->  7
+\ [CURSOR LEFT] -->  8
+\ [CURSOR RIHGT]-->  9
+\ [CURSOR DOWN] --> 10
+\ [CURSOR UP]   --> 11
+\ [DELETE]      --> 12
+\ [ENTER]       --> 13
+\ [EXTENDED]    --> 14
+\ [GRAPHICS]    --> 15
+CODE key ( -- c )
         PUSH    BC|
 
         HERE  \ BEGIN, 
@@ -5532,7 +5545,7 @@ decimal
     If 
         source-id @ 
         f_seek 
-        [ 43 ] Literal error 
+        [ 43 ] Literal ?error 
     Else 
         2drop       \ ignore 0 0 fake handle-position.
     Then
@@ -5978,7 +5991,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal 13 here ," Heap Vocabulary - build 20240101" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20240117" -1 allot ]
 \    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal 13 c, c! c! c! ] 
     ;

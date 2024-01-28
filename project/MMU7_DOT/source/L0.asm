@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      110 
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33
-                db      " Heap Vocabulary - build 2024-01-19 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-01-27 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2023 Matteo Vitturi "                 // 26
                 End_Heap
@@ -881,9 +881,9 @@ Key_Table:
                 db      $C8                 //  9: >=    --> same as SHIFT-0 [BACKSPACE]
                 db      $C9                 // 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
 Key_MapTo:
-                db      $06                 // 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2 
-                db      $0C                 //  9: same as SHIFT-0 [BACKSPACE]
-                db      $07                 //  8: same as SHIFT-1 [EDIT]
+                db      $18                 // 10: ^X
+                db      $03                 //  9: ^C
+                db      $1A                 //  8: ^Z
                 db      $7F                 //  7: SYMBOL+I : (C) copyright symbol
                 db      $5D                 //  6: SYMBOL+U : ]
                 db      $5B                 //  5: SYMBOL+Y : [

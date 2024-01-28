@@ -1,9 +1,9 @@
 |SLD.data.version|1
-C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|93||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
-C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|63||0|-1|1|D|DEBUGGING
-C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|63||0|-1|1|L|,DEBUGGING,,+equ,+used
-C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|86||0|-1|8192|D|ORIGIN
-C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|86||0|-1|8192|L|,ORIGIN,,+equ,+used
+C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|111||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
+C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|81||0|-1|1|D|DEBUGGING
+C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|81||0|-1|1|L|,DEBUGGING,,+equ,+used
+C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|104||0|-1|8192|D|ORIGIN
+C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm|104||0|-1|8192|L|,ORIGIN,,+equ,+used
 C:\Zx\CSpect\Projects\vForth17_DOT/source/system.asm|17||0|-1|23692|D|SCR_CT
 C:\Zx\CSpect\Projects\vForth17_DOT/source/system.asm|17||0|-1|23692|L|,SCR_CT,,+equ
 C:\Zx\CSpect\Projects\vForth17_DOT/source/system.asm|18||0|-1|23560|D|LASTK

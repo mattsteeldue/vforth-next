@@ -2,6 +2,28 @@
 \ term0.dot.f
 \
 
+\ This tool starts a bi-directional communication stream with the 
+\ Raspberry Pi-Zero accelerator.
+\
+\ [BREAK] quits to Basic with L BREAK into program.
+\ [TRUE VIDEO] produces EOT or ^D  (0x04) that normally produces a 
+\ 'normal exit' from whatever you where in.
+\ [DELETE] produces BS or ^H (0x08) and it is the normal back-space key.
+\ [<=] produces ETX or ^Z (0x1A) that helps to emulate CTRL-Z key-press.
+\ [<>] produces ETX or ^X (0x18) that helps to emulate CTRL-X key-press.
+\ [>=] produces ETX or ^C (0x03) that helps to emulate CTRL-C key-press.
+\ remaining ascii  ~ | \ [ ] { }  are produced via SYMBOL-SHIFT 
+\
+\ The rationale is as follows. The main loop continuosly polls the keyboard 
+\ and polls PI0 UART.
+\ Any key pressed is immediately transmitted, any byte read from PI0 is 
+\ immediately sent to screen, which is notoriously slow.
+\ [ENTER] key has a peculiar behavior and, once 0x0D is transmitted to PI0, 
+\ up to 8000 bytes are "fast read" from UART and - only then - slowly sent 
+\ to screen. This allows collecting long output from PI0, but only after you 
+\ hit [ENTER].
+
+
 NEEDS ASSEMBLER
 NEEDS VALUE
 NEEDS TO
@@ -10,6 +32,7 @@ NEEDS SAVE-BYTES
 NEEDS UART-CONST
 NEEDS PAD"
 
+\ marker for fast forget-load
 MARKER REDO
 
 DECIMAL
@@ -20,19 +43,19 @@ DECIMAL
 
 \ compile the value as per pre-scalar 14 bits
 : COMP-PRE-SCALAR ( clock -- bh bl )
-    [ DECIMAL ] 1152
+    #1152
     M/                          \ prescalar = sysclock / baudrate
-    DUP [ HEX ] 7F AND C,       \ first byte to be sent to port
-    7 RSHIFT  [ HEX ] 80 OR C,  \ second byte to be sent to port
+    DUP $7F AND C,              \ first byte to be sent to port
+    7 RSHIFT  $80 OR C,         \ second byte to be sent to port
 ;
 
 
-HEX
-8f8c value CURSOR-FACE
-0000 value SYS-CLK-ARY
-0000 value TKB1
-0000 value TKB2
-0000 value ESCAPE
+
+$8f8c value CURSOR-FACE
+$0000 value SYS-CLK-ARY
+$0000 value TKB1
+$0000 value TKB2
+$0000 value ESCAPE
 
 
 : RETURN
@@ -50,18 +73,18 @@ code ORG ASSEMBLER
 
 
 : REL   ( a1 -- a2 )
-    ['] ORG - [ hex ] 2000 +
+    ['] ORG - $2000 +
 \   NOOP
 ;
 
 
 : BUFF-ADDR
-     [ HEX ] 3000
-\    ['] ORG   [ hex ] 1000 +
+     $3000
+\    ['] ORG   $1000 +
 ;
 
 here REL to CURSOR-FACE
-hex 8F8C ,
+$8F8C ,
 
 here REL to ESCAPE
 0 ,
@@ -79,17 +102,17 @@ DECIMAL \ values are divided by 100 to better handle them
   27.0000  COMP-PRE-SCALAR   \ Digital           27 MHz
 
 
-HEX   \ map special Symbol-Shift Keys
+\ map special Symbol-Shift Keys
 HERE REL TO TKB1
-\ stop not step to then and or
-E2 C, C3 C, CD C, CC C, CB C, C5 C, C5 C, 0C C, C7 C, C9 C, C8 C,
-
+\ STOP   NOT    STEP   TO     THEN   AND    OR     delete <=     <>     >= 
+  $E2 C, $C3 C, $CD C, $CC C, $CB C, $C6 C, $C5 C, $0C C, $C7 C, $C9 C, $C8 C,
 HERE REL TO TKB2
-\  ~    |   \   {  }    [   ]
-7E C, 7C C, 5C C, 7B C, 7D C, 5B C, 5D C, 08 C, 1A C, 18 C, 03 C,
+\ ~      |      \      {      }      [      ]      bs     ^Z     ^X     ^C 
+  $7E C, $7C C, $5C C, $7B C, $7D C, $5B C, $5D C, $08 C, $1A C, $18 C, $03 C,
 
 
 \ _________________________________________________________
+
 
 .( PI0-SELECT ** )
 CODE PI0-SELECT ( -- )
@@ -99,12 +122,12 @@ CODE PI0-SELECT ( -- )
 
         \ select PI-ZERO UART control port
         ldx     bc|     UART-CT-PORT NN,
-        ldn     a'|     hex 40 N,
+        ldn     a'|     $40 N,
         out(c)  a'|
 
         \ read reg to get video timings
-        ldx     bc|     hex 243B NN,
-        ldn     a'|     hex 11 N,
+        ldx     bc|     $3243B NN,
+        ldn     a'|     $11 N,
         out(c)  a'|
         inc     b'|
         in(c)   l'|
@@ -125,7 +148,7 @@ CODE PI0-SELECT ( -- )
         out(c)  a'|
 
         \ PI Pheripeal enable
-        nextreg  hex A0 P, 30 N,
+        nextreg  $A0 P, $30 N,
         \
         exx
 
@@ -139,9 +162,11 @@ CODE PI0-SELECT ( -- )
 
 .( TERM0-INIT ** )
 CODE TERM0-INIT   ( -- )
+        \ set zero to LASTK system variable (5C08)
         ldx     hl|     LASTK NN,
         ldn  (hl)'|   0  N,
-        ldx     hl|     HEX 5C6A NN,
+        \ unshift caps-lock
+        ldx     hl|     $5C6A NN,
         ldn  (hl)'|   0  N,
 
         RETURN
@@ -154,9 +179,10 @@ CODE TERM0-INIT   ( -- )
 
 \ does the same in uart wait byte
 .( ?BREAK ** )
+\ check for BREAK key --> then CF is reset
 CODE ?BREAK ( -- f )
         EXX
-        LDX     BC|     HEX 7FFE NN,
+        LDX     BC|     $7FFE NN,
         IN(C)   A'|
         LD      B'|     C|  \ FEFE
         IN(C)   C'|
@@ -175,11 +201,12 @@ CODE ?BREAK ( -- f )
 
 \ _________________________________________________________
 
-.( CURSOR ** )
-CODE CURSOR ( -- )
+.( SHOW-CURSOR ** )
+\ based on FRAMES, decides which cursor face is now displayed
+CODE SHOW-CURSOR ( -- )
         ldx     de|     CURSOR-FACE  NN,
-        ldx     hl|     hex 5C78   NN,  \ FRAMES
-        ldn     a'|   HEX 10 N,
+        ldx     hl|     $5C78   NN,  \ FRAMES
+        ldn     a'|   $10 N,
         anda  (hl)|
         jrf     z'|   HOLDPLACE
             incx    de|
@@ -197,8 +224,9 @@ CODE CURSOR ( -- )
 
 \ _________________________________________________________
 
-.( KEYB ** )
-CODE KEYB ( -- c )
+.( GET-KEYB ** )
+\ this relies on standard interrupt keyboard service
+CODE GET-KEYB ( -- c )
         ldx     hl|     LASTK NN,
         ldn     d'|  0  N,
         ld      e'|  (hl)|
@@ -208,7 +236,7 @@ CODE KEYB ( -- c )
             ldn  (hl)'|  0  N,
         HERE DISP,
 
-        RETURN
+        RETURN      \ c is retured in A
 
         push    de|
         next
@@ -225,7 +253,7 @@ CODE MAP-KEYB ( c -- c )
 \ \     ld      a'|     l|
 
         ldx     hl|     TKB1 NN,
-        ldx     bc|     DECIMAL 11   NN,
+        ldx     bc|     11   NN,
         ld      d'|     b|
         ld      e'|     c|
         cpir
@@ -244,7 +272,7 @@ CODE MAP-KEYB ( c -- c )
         \ handle caps-lock
         cpn    6   N,
         jrf    nz'|     HOLDPLACE
-            ldx     hl|    HEX 5C6A    NN,
+            ldx     hl|    $5C6A    NN,
             ld      a'|  (hl)|
             xorn     8  N,
             ld    (hl)|    a'|
@@ -285,12 +313,12 @@ HERE
 
 \ _________________________________________________________
 
-\ Accept from I/O  up to n bytes and store them at a.
+\ Accept from I/O  up to n1 bytes and store them at a.
 \ At 115.200 Bauds bit duration is 8.68  micro-seconds
 \ a 512 bytes-buffer is filled in about 4.4 ms
 \ The 512 bytes burst-read takes 61.952 T-states
 \ plus enter-exit time that at 28 MHz is about 3.4 ms
-\ so we drain the buffer faster than it fills up.
+\ so we should drain the buffer faster than it fills up.
 \ Timeout (see DE) is set at about 100 ms
 \
 .( UART-RX-BURST ** )
@@ -313,7 +341,8 @@ CODE UART-RX-BURST ( a n1 -- n2 )
         ora      e|                                         \  4
         jrf     z'|  HOLDPLACE        \ bailout      a1 a2  \  7  / 12
 
-        ldx     bc|     hex 7FFE NN,                        \ 10
+        \ ?BREAK
+        ldx     bc|     $7FFE NN,                           \ 10
         in(c)   a'|         \ pressed key ZEROes bit-0      \ 12
         ld      b'|     c|  \ so that BC is $FEFE           \  4
         in(c)   c'|         \ pressed key ZEROes bit-0      \ 12
@@ -343,11 +372,10 @@ CODE UART-RX-BURST ( a n1 -- n2 )
         ldx     de|    SHORT-TIMEOUT   NN,                  \ 10
         jrf    nz'|  3 PICK BACK,     \ back to a1          \ 10
                                                         \    185
-    HERE DISP,    \ a4 resolved here
-    HERE DISP,    \ a3 resolved here
-    HERE DISP,    \ a2 bailout resolved
-
-        DROP      \ a1 discarded
+    HERE DISP,    \ holdplace a4 resolved here   
+    HERE DISP,    \ holdplace a3 resolved here   
+    HERE DISP,    \ holdplace a2 bailout resolved
+        DROP      \ a1 is then discarded         
 
         exX
         SBCHL   DE|
@@ -437,30 +465,30 @@ CODE CHUNK-EMIT ( a n -- )
                 HERE DISP,
             jr   HOLDPLACE  SWAP HERE DISP, \ ELSE,
                 ld      a'|   (hl)|
-                cpn     HEX 0A  N,              \ LF is ignored
+                cpn     $0A  N,                  \ LF is ignored
                 jrf     z'|     HOLDPLACE
-                    cpn     HEX 0D  N,          \ CR is interpreted
+                    cpn     $0D  N,              \ CR is interpreted
                     jrf    nz'|     HOLDPLACE
-                        ldn     a'|   HEX 20  N,    \ clear cursor
+                        ldn     a'|   $20  N,    \ clear cursor
                         rst     10|
-                        ldn     a'|   HEX 0D  N,    \ clear cursor
+                        ldn     a'|   $0D  N,    \ clear cursor
                         rst     10|
                         ld      a'|   (hl)|
                     HERE DISP,
-                    cpn     HEX 08  N,          \ CR is interpreted
+                    cpn     $08  N,          \ CR is interpreted
                     jrf    nz'|     HOLDPLACE
-                        ldn     a'|   HEX 20  N,    \ clear cursor
+                        ldn     a'|   $20  N,    \ clear cursor
                         rst     10|
-                        ldn     a'|   HEX 08  N,    \ clear cursor
+                        ldn     a'|   $08  N,    \ clear cursor
                         rst     10|
-                        ldn     a'|   HEX 08  N,    \ clear cursor
+                        ldn     a'|   $08  N,    \ clear cursor
                         rst     10|
                         ld      a'|   (hl)|
                     HERE DISP,
-                    cpn     HEX 1B  N,          \ escape
+                    cpn     $1B  N,          \ escape
                     jrf     z'|     HOLDPLACE
-                        andn    hex  7F  N,     \ not-escape
-                        cpn     HEX 20  N,          \ BL
+                        andn    $7F  N,     \ not-escape
+                        cpn     $20  N,          \ BL
                         jrf    cy'|     HOLDPLACE   \ printable
                             rst     10|
                         HERE DISP,
@@ -486,28 +514,81 @@ CODE CHUNK-EMIT ( a n -- )
 
 \ _________________________________________________________
 
-HEX
+.( ACCEPT-PARAM ** )
+\ must be the first call
+CODE ACCEPT-PARAM   ( -- )
+
+        \ Accepts one parameter from Basic as the filename to load
+        ld      a'|     h|
+        ora      l|
+        jrf     z'|     HOLDPLACE \ Skip_Parameter
+
+            ldx     de| BUFF-ADDR NN, \ Param
+            ldx     bc| 0 NN,
+    
+            HERE \ Parameter_Loop:
+                ld      a'|  (hl)|
+                cpn     char : N,
+                jrf     z'|  HOLDPLACE \ End_Parameter
+                cpn     $0D    N,
+                jrF     z'|  HOLDPLACE \ End_Parameter
+
+                ldi
+
+            jr    BACK, \ Parameter_Loop
+            \ End_Parameter:  
+            HERE DISP,
+            HERE DISP,
+            
+            \ // append 0x00
+            xora     a|
+            ld(x)a  de|
+
+            exdehl
+            ldx     de|  BUFF-ADDR  NN, 
+            sbchl   de|
+            ldx     de|  BUFF-ADDR  NN, 
+            exdehl
+            CALL    ' CHUNK-EMIT REL AA,   ( a:HL n:DE -- )
+    
+        \ Skip_Parameter:
+        HERE DISP,
+
+        RETURN
+
+        next
+        c;
+
+\ _________________________________________________________
+
 .( MAIN ** )
 CODE MAIN
-        CALL    ' PI0-SELECT  REL  AA,     ( -- )
-        CALL    ' TERM0-INIT  REL  AA,     ( -- )
+      \ CALL    ' ACCEPT-PARAM REL  AA,     ( -- )
+        CALL    ' PI0-SELECT   REL  AA,     ( -- )
+        CALL    ' TERM0-INIT   REL  AA,     ( -- )
+
         HERE
-            CALL    ' CURSOR   REL     AA,     ( -- )
-            CALL    ' KEYB     REL     AA,     ( -- c:A )
+            CALL    ' SHOW-CURSOR   REL     AA,     ( -- )
+            CALL    ' GET-KEYB REL     AA,     ( -- c:A )
             ora      a|
+            \ manage key when non zero
             jrf     z'|   HOLDPLACE
+                \ manage ENTER key
                 CALL    ' MAP-KEYB  REL    AA,     ( c -- c )
-                cpn     HEX 0D  N,
+                cpn     $0D  N,
                 jrf    nz'|     HOLDPLACE
                     CALL    ' UART-TX-BYTE REL AA,  ( b:A -- )
                     LDX     DE|    CHUNK-TO-READ  NN,
+                    \ collect reply as fast as possible
                     CALL    ' UART-RX-BURST REL AA, ( a:HL n1:DE -- n2:DE )
                     LDX     HL|  BUFF-ADDR  NN,
                     CALL    ' CHUNK-EMIT REL AA, ( a:HL n:DE -- )
                 jr   HOLDPLACE  SWAP HERE DISP, \ ELSE,
+                \ manage any other key
                     CALL    ' UART-TX-BYTE REL AA,  ( b:A -- )
                 HERE DISP,
             HERE DISP,
+            \ check if a byte is ready from Pi0
             CALL    ' ?UART-BYTE-READY REL AA,  ( -- f:A )
             ora      a|
             jrf     z'|   HOLDPLACE
@@ -517,8 +598,18 @@ CODE MAIN
                 LDX     DE|    1  NN,
                 CALL    ' CHUNK-EMIT REL AA,   ( a:HL n:DE -- )
             HERE DISP,
+            \ check for BREAK to quit to basic
             CALL    ' ?BREAK  REL  AA,      ( -- f:CF )
         jrf  cy'|  BACK,
+
+        \ wait for BREAK to be released before quitting to basic.
+        \ to avoid an "L BREAK into program" error
+        HERE
+            CALL    ' ?BREAK  REL  AA,          ( -- f:CF )
+            jrf  nc'|  BACK,
+
+        xora     a|
+        
         RETURN
         next
         c;
@@ -533,12 +624,9 @@ CODE MAIN
 
 \ _________________________________________________________
 \
-  PAD" term0"
+\ UNLINK /dot/term0
+  PAD" /dot/term0"
   ' Org Here over -  \  start-addres & length
-  save-bytes
+  SAVE-BYTES
 \
 \ _________________________________________________________
-
-DECIMAL
-
-

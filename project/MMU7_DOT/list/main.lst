@@ -6,119 +6,137 @@
    5  0000              //
    6  0000              //  v-Forth 1.7 NextZXOS version
    7  0000              //  DOT-command version
-   8  0000              //  build 20240119
+   8  0000              //  build 20240127
    9  0000              //
   10  0000              //  Direct-Threaded version.
   11  0000              //
   12  0000              //  NextZXOS version
   13  0000              //  ______________________________________________________________________
   14  0000              //
-  15  0000              //  This work is available as-is with no whatsoever warranty.
-  16  0000              //  Copying, modifying and distributing this software is allowed
-  17  0000              //  provided that the copyright notice is kept.
-  18  0000              //  ______________________________________________________________________
-  19  0000              //
-  20  0000              //  by Matteo Vitturi, 1990-2024
-  21  0000              //
-  22  0000              //  https://sites.google.com/view/vforth/vforth15-next
-  23  0000              //  https://www.oocities.org/matteo_vitturi/english/index.htm
-  24  0000              //
-  25  0000              //  This is the complete compiler for v.Forth for SINCLAIR ZX Spectrum Next.
-  26  0000              //  Each line of this source list mustn't exceed 80 bytes.
-  27  0000              //  Z80N (ZX Spectrum Next) extension is available.
+  15  0000              // MIT License
+  16  0000              //
+  17  0000              // Copyright (c) 1990-2024 Matteo Vitturi
+  18  0000              //
+  19  0000              // Permission is hereby granted, free of charge, to any person obtaining a copy
+  20  0000              // of this software and associated documentation files (the "Software"), to deal
+  21  0000              // in the Software without restriction, including without limitation the rights
+  22  0000              // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  23  0000              // copies of the Software, and to permit persons to whom the Software is
+  24  0000              // furnished to do so, subject to the following conditions:
+  25  0000              //
+  26  0000              // The above copyright notice and this permission notice shall be included in all
+  27  0000              // copies or substantial portions of the Software.
   28  0000              //
-  29  0000              //  This list has been tested using the following configuration:
-  30  0000              //      - CSpect emulator V.2.12.30
-  31  0000              //  ______________________________________________________________________
-  32  0000              //
-  33  0000              //  Z80 Registers usage map
-  34  0000              //
-  35  0000              //  AF
-  36  0000              //  BC - Instruction Pointer: should be preserved during ROM/OS calls
-  37  0000              //  DE - Return Stack Pointer: should be preserved during ROM/OS calls
-  38  0000              //  HL - Working
+  29  0000              // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  30  0000              // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  31  0000              // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  32  0000              // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  33  0000              // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  34  0000              // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  35  0000              // SOFTWARE.
+  36  0000              //  ______________________________________________________________________
+  37  0000              //
+  38  0000              //  by Matteo Vitturi, 1990-2024
   39  0000              //
-  40  0000              //  AF'- Sometime used for backup purpose
-  41  0000              //  BC'- Not used
-  42  0000              //  DE'- Not used
-  43  0000              //  HL'- Not used
-  44  0000              //
-  45  0000              //  SP - Calculator Stack Pointer
-  46  0000              //  IX - Inner interpreter "next" address pointer. This way jp (ix) is 2T-state faster than JP next
-  47  0000              //  IY - (ZX System: must be preserved to interact with standard ROM)
-  48  0000              //
+  40  0000              //  https://sites.google.com/view/vforth/vforth15-next
+  41  0000              //  https://www.oocities.org/matteo_vitturi/english/index.htm
+  42  0000              //
+  43  0000              //  This is the complete compiler for v.Forth for SINCLAIR ZX Spectrum Next.
+  44  0000              //  Each line of this source list mustn't exceed 80 bytes.
+  45  0000              //  Z80N (ZX Spectrum Next) extension is available.
+  46  0000              //
+  47  0000              //  This list has been tested using the following configuration:
+  48  0000              //      - CSpect emulator V.2.12.30
   49  0000              //  ______________________________________________________________________
   50  0000              //
-  51  0000              //  _________________
+  51  0000              //  Z80 Registers usage map
   52  0000              //
-  53  0000              //  FORTH DEFINITIONS
-  54  0000              //  _________________
-  55  0000
-  56  0000                              OPT     --zxnext
-  57  0000              //  ______________________________________________________________________
-  58  0000              //
-  59  0000              // this controls some debugging code in L0.asm
-  60  0000              //  0 for final binary release.
-  61  0000              //  1 for debugging with Visual Studio Code and DeZog
-  62  0000              // -1 for for binary comparison with Forth generated code.
-  63  0000              DEBUGGING       equ     1   // .dot
-  64  0000              //
-  65  0000              //  ______________________________________________________________________
-  66  0000
-  67  0000                              if ( -1 == DEBUGGING )
-  68  0000 ~            // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
-  69  0000 ~            ORIGIN          equ     $9B21   -$80             // for binary comparison with single compilation
-  70  0000 ~            Heap_Ptr        defl    $1F80                       // HP before compilation
-  71  0000 ~            Heap_offset     defl    $2000
-  72  0000 ~
-  73  0000                              endif
-  74  0000              //  ______________________________________________________________________
-  75  0000
-  76  0000                              if (  0 == DEBUGGING )
-  77  0000 ~            ORIGIN          equ     $6366                   // binary and Tape
-  78  0000 ~            // ORIGIN          equ     $9A93                // binary and Tape
-  79  0000 ~            Heap_Ptr        defl    $0002
-  80  0000 ~            Heap_offset     defl     0
-  81  0000 ~
-  82  0000                              endif
+  53  0000              //  AF
+  54  0000              //  BC - Instruction Pointer: should be preserved during ROM/OS calls
+  55  0000              //  DE - Return Stack Pointer: should be preserved during ROM/OS calls
+  56  0000              //  HL - Working
+  57  0000              //
+  58  0000              //  AF'- Sometime used for backup purpose
+  59  0000              //  BC'- Not used
+  60  0000              //  DE'- Not used
+  61  0000              //  HL'- Not used
+  62  0000              //
+  63  0000              //  SP - Calculator Stack Pointer
+  64  0000              //  IX - Inner interpreter "next" address pointer. This way jp (ix) is 2T-state faster than JP next
+  65  0000              //  IY - (ZX System: must be preserved to interact with standard ROM)
+  66  0000              //
+  67  0000              //  ______________________________________________________________________
+  68  0000              //
+  69  0000              //  _________________
+  70  0000              //
+  71  0000              //  FORTH DEFINITIONS
+  72  0000              //  _________________
+  73  0000
+  74  0000                              OPT     --zxnext
+  75  0000              //  ______________________________________________________________________
+  76  0000              //
+  77  0000              // this controls some debugging code in L0.asm
+  78  0000              //  0 for final binary release.
+  79  0000              //  1 for debugging with Visual Studio Code and DeZog
+  80  0000              // -1 for for binary comparison with Forth generated code.
+  81  0000              DEBUGGING       equ     1   // .dot
+  82  0000              //
   83  0000              //  ______________________________________________________________________
   84  0000
-  85  0000                              if (  1 == DEBUGGING )
-  86  0000              ORIGIN          equ     $2000                   // for .dot
-  87  0000              Heap_Ptr        defl    $0002
-  88  0000              Heap_offset     defl     0
-  89  0000
-  90  0000                              endif
-  91  0000              //  ______________________________________________________________________
-  92  0000
-  93  0000                              DEVICE  ZXSPECTRUMNEXT
-  94  0000
-  95  0000                              ORG     ORIGIN
-  96  2000
-  97  2000                              if ( -1 == DEBUGGING )
-  98  2000 ~                            ds 128                            // for binary comparison
-  99  2000                              endif
- 100  2000
- 101  2000              //  ______________________________________________________________________
- 102  2000              //
- 103  2000              //  Naming convention for Label vs Forth correspondance
- 104  2000              //  Forth words are named as they are named for real with some exception to avoid assembler syntax errors.
- 105  2000              //    - Leading "0" is converted into "Z_"
- 106  2000              //    - Leading "(" is converted into "C_", closing bracket is omitted
- 107  2000              //    - Leading numbers are converted in letters: ONE_  TWO_ etc.
- 108  2000              //    - Question mark "?" is converted into "Q" or omitted if needed / useful.
- 109  2000              //    - Plus sign "+" is converted in _PLUS or ADD_ depending.
- 110  2000              //    - Minus sign "-" in L (for Line), MINUS or SUBTRACT depending
- 111  2000              //    - Greater-Than sign ">" in _GREATER or TO_ depending
- 112  2000              //    - Equal sign "=" is converted in EQUAL
- 113  2000              //    - Less-Than sign "<" in _LESS or FROM_ (or TO_ again) depending
- 114  2000              //    - Asterisk sign "*" is converted in _MUL or STAR
- 115  2000              //    - Slash "/" is converted in _DIV or omitted if it is clear what it means
- 116  2000              //    - Exclamation mark "!" is converted in STORE
- 117  2000              //    - At-Sign "@" is converted in FETCH
- 118  2000              //    - Words that collide with Assembler are normally suffixed with "_OP"
- 119  2000
- 120  2000                              include "system.asm"
+  85  0000                              if ( -1 == DEBUGGING )
+  86  0000 ~            // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
+  87  0000 ~            ORIGIN          equ     $9B21   -$80             // for binary comparison with single compilation
+  88  0000 ~            Heap_Ptr        defl    $1F80                       // HP before compilation
+  89  0000 ~            Heap_offset     defl    $2000
+  90  0000 ~
+  91  0000                              endif
+  92  0000              //  ______________________________________________________________________
+  93  0000
+  94  0000                              if (  0 == DEBUGGING )
+  95  0000 ~            ORIGIN          equ     $6366                   // binary and Tape
+  96  0000 ~            // ORIGIN          equ     $9A93                // binary and Tape
+  97  0000 ~            Heap_Ptr        defl    $0002
+  98  0000 ~            Heap_offset     defl     0
+  99  0000 ~
+ 100  0000                              endif
+ 101  0000              //  ______________________________________________________________________
+ 102  0000
+ 103  0000                              if (  1 == DEBUGGING )
+ 104  0000              ORIGIN          equ     $2000                   // for .dot
+ 105  0000              Heap_Ptr        defl    $0002
+ 106  0000              Heap_offset     defl     0
+ 107  0000
+ 108  0000                              endif
+ 109  0000              //  ______________________________________________________________________
+ 110  0000
+ 111  0000                              DEVICE  ZXSPECTRUMNEXT
+ 112  0000
+ 113  0000                              ORG     ORIGIN
+ 114  2000
+ 115  2000                              if ( -1 == DEBUGGING )
+ 116  2000 ~                            ds 128                            // for binary comparison
+ 117  2000                              endif
+ 118  2000
+ 119  2000              //  ______________________________________________________________________
+ 120  2000              //
+ 121  2000              //  Naming convention for Label vs Forth correspondance
+ 122  2000              //  Forth words are named as they are named for real with some exception to avoid assembler syntax errors.
+ 123  2000              //    - Leading "0" is converted into "Z_"
+ 124  2000              //    - Leading "(" is converted into "C_", closing bracket is omitted
+ 125  2000              //    - Leading numbers are converted in letters: ONE_  TWO_ etc.
+ 126  2000              //    - Question mark "?" is converted into "Q" or omitted if needed / useful.
+ 127  2000              //    - Plus sign "+" is converted in _PLUS or ADD_ depending.
+ 128  2000              //    - Minus sign "-" in L (for Line), MINUS or SUBTRACT depending
+ 129  2000              //    - Greater-Than sign ">" in _GREATER or TO_ depending
+ 130  2000              //    - Equal sign "=" is converted in EQUAL
+ 131  2000              //    - Less-Than sign "<" in _LESS or FROM_ (or TO_ again) depending
+ 132  2000              //    - Asterisk sign "*" is converted in _MUL or STAR
+ 133  2000              //    - Slash "/" is converted in _DIV or omitted if it is clear what it means
+ 134  2000              //    - Exclamation mark "!" is converted in STORE
+ 135  2000              //    - At-Sign "@" is converted in FETCH
+ 136  2000              //    - Words that collide with Assembler are normally suffixed with "_OP"
+ 137  2000
+ 138  2000                              include "system.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/system.asm
    1+ 2000              //  ______________________________________________________________________
    2+ 2000              //
@@ -358,7 +376,7 @@
  236+ 2000              LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
  237+ 2000
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/system.asm
- 121  2000                              include "L0.asm"
+ 139  2000                              include "L0.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/L0.asm
    1+ 2000              //  ______________________________________________________________________
    2+ 2000              //
@@ -437,7 +455,7 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2024-01-19 ", $0D  // 37
+  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2024-01-27 ", $0D  // 37
   67+ E028 70 20 56 6F
   67+ E02C 63 61 62 75
   67+ E030 6C 61 72 79
@@ -445,7 +463,7 @@
   67+ E038 75 69 6C 64
   67+ E03C 20 32 30 32
   67+ E040 34 2D 30 31
-  67+ E044 2D 31 39 20
+  67+ E044 2D 32 37 20
   67+ E048 0D
   68+ E049 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E04D 20 4C 69 63
@@ -2373,9 +2391,9 @@
  881+ 22CD C8                           db      $C8                 //  9: >=    --> same as SHIFT-0 [BACKSPACE]
  882+ 22CE C9                           db      $C9                 // 10: <>    --> SYMBOL+W is the same as CAPS (toggle) SHIFT+2
  883+ 22CF              Key_MapTo:
- 884+ 22CF 06                           db      $06                 // 10: SYMBOL+W is the same as CAPS (toggle) SHIFT+2
- 885+ 22D0 0C                           db      $0C                 //  9: same as SHIFT-0 [BACKSPACE]
- 886+ 22D1 07                           db      $07                 //  8: same as SHIFT-1 [EDIT]
+ 884+ 22CF 18                           db      $18                 // 10: ^X
+ 885+ 22D0 03                           db      $03                 //  9: ^C
+ 886+ 22D1 1A                           db      $1A                 //  8: ^Z
  887+ 22D2 7F                           db      $7F                 //  7: SYMBOL+I : (C) copyright symbol
  888+ 22D3 5D                           db      $5D                 //  6: SYMBOL+U : ]
  889+ 22D4 5B                           db      $5B                 //  5: SYMBOL+Y : [
@@ -7277,7 +7295,7 @@
 2104+ 26DD              //  ______________________________________________________________________
 2105+ 26DD
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/L0.asm
- 122  26DD                              include "L1.asm"
+ 140  26DD                              include "L1.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/L1.asm
    1+ 26DD              //  ______________________________________________________________________
    2+ 26DD              //
@@ -16118,7 +16136,7 @@
 1658+ 3199
 1659+ 3199
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/L1.asm
- 123  3199                              include "L2.asm"
+ 141  3199                              include "L2.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/L2.asm
    1+ 3199              //  ______________________________________________________________________
    2+ 3199              //
@@ -18430,7 +18448,7 @@
  851+ 35CE              //  ______________________________________________________________________
  852+ 35CE
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/L2.asm
- 124  35CE                              include "next-opt1.asm"
+ 142  35CE                              include "next-opt1.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/next-opt1.asm
    1+ 35CE              //  ______________________________________________________________________
    2+ 35CE              //
@@ -19033,7 +19051,7 @@
  197+ 3699
  198+ 3699
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/next-opt1.asm
- 125  3699                              include "L3.asm"
+ 143  3699                              include "L3.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_DOT/source/L3.asm
    1+ 3699              //  ______________________________________________________________________
    2+ 3699              //
@@ -23499,31 +23517,31 @@
 1020+ 3FAE 00           Here_Dictionary db      0
 1021+ 3FAF
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/L3.asm
- 126  3FAF
- 127  3FAF              // now we save the compiled file so we can either run it or debug it
- 128  3FAF                              SAVENEX OPEN "output/main.nex", ORIGIN
- 129  3FAF                              SAVENEX CORE 3, 0, 0                                // Next core 3.0.0 required as minimum
- 130  3FAF                              SAVENEX CFG  0
- 131  3FAF                              SAVENEX BANK 2, 0
- 132  3FAF                              SAVENEX AUTO
- 133  3FAF                              SAVENEX CLOSE
- 134  3FAF
- 135  3FAF              //              PAGE 7 ;set 7 page to current slot
- 136  3FAF              //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
- 137  3FAF              //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file
- 138  3FAF
- 139  3FAF                      ////    SAVETAP "output/F16d.tap", CODE, "forth17d", ORIGIN, $2000
- 140  3FAF                      ////    SAVETAP "output/F16e.tap", CODE, "forth17e", $E000, $2000
- 141  3FAF
- 142  3FAF                      ////    SAVEBIN "output/vforth", ORIGIN, $2000
- 143  3FAF                      ////    SAVEBIN "output/vforth.bin", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
  144  3FAF
- 145  3FAF                              SAVEBIN "output/vforth.1", ORIGIN, $2000
- 146  3FAF                              SAVEBIN "output/vforth.2", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
- 147  3FAF
- 148  3FAF                              // To run must copy vforth and vforth.bin to /dot directory
- 149  3FAF                              // then start with
- 150  3FAF                              //      .vforth
- 151  3FAF
- 152  3FAF                              END
+ 145  3FAF              // now we save the compiled file so we can either run it or debug it
+ 146  3FAF                              SAVENEX OPEN "output/main.nex", ORIGIN
+ 147  3FAF                              SAVENEX CORE 3, 0, 0                                // Next core 3.0.0 required as minimum
+ 148  3FAF                              SAVENEX CFG  0
+ 149  3FAF                              SAVENEX BANK 2, 0
+ 150  3FAF                              SAVENEX AUTO
+ 151  3FAF                              SAVENEX CLOSE
+ 152  3FAF
+ 153  3FAF              //              PAGE 7 ;set 7 page to current slot
+ 154  3FAF              //              SAVEBIN "ram7.bin",$C000,$4000 ;- save 4000h begin from C000h of RAM to file
+ 155  3FAF              //              SAVEBIN "output/ram2.bin", $8000, 9800 ;- save 3000h begin from 8000h of RAM to file
+ 156  3FAF
+ 157  3FAF                      ////    SAVETAP "output/F16d.tap", CODE, "forth17d", ORIGIN, $2000
+ 158  3FAF                      ////    SAVETAP "output/F16e.tap", CODE, "forth17e", $E000, $2000
+ 159  3FAF
+ 160  3FAF                      ////    SAVEBIN "output/vforth", ORIGIN, $2000
+ 161  3FAF                      ////    SAVEBIN "output/vforth.bin", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
+ 162  3FAF
+ 163  3FAF                              SAVEBIN "output/vforth.1", ORIGIN, $2000
+ 164  3FAF                              SAVEBIN "output/vforth.2", $E000, $2000 ;- save 2000h begin from E000h of RAM to file
+ 165  3FAF
+ 166  3FAF                              // To run must copy vforth and vforth.bin to /dot directory
+ 167  3FAF                              // then start with
+ 168  3FAF                              //      .vforth
+ 169  3FAF
+ 170  3FAF                              END
 # file closed: C:\Zx\CSpect\Projects\vForth17_DOT/source/main.asm
