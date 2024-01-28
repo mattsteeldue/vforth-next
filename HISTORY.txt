@@ -135,7 +135,7 @@ Documentation upgraded and revised.
 
 \ build 20201115
 Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way. The bug is in (LOOP) definition that does a JP C instead of a JP M.
-Changed   STRING"   into   ,"    Ã  la  Forth Inc. style.
+Changed   STRING"   into   ,"    ÃƒÂ  la  Forth Inc. style.
 Re-introduced  PICK  INVV  TRUV, but plan to move them in include directory.
 Introducing a new  Full Screen Editor  that can be loaded from library.
 Attached block-system file  !Blocks64.bin  has become integral part of this Forth system, since many features come along with it.
@@ -247,7 +247,7 @@ IM2 Vector Table is placed at $6200-6300 and Interrupt Routine will be at $6363 
 \ build 20210719
 Introduced INTERRUPT vocabulary to hold  IM 2  Interrupt Service Routine (ISR)
 ISR tested to move a couple of sprite (Screen # 412 and  https://www.youtube.com/watch?v=gRZfHnZ7eDQ )
-Fixed character "£" as invalid "NEXTZXOS Filename Character".
+Fixed character "Â£" as invalid "NEXTZXOS Filename Character".
 Introducing EDITOR vocabulay to collect some EDITOR words.
 
 
@@ -511,12 +511,12 @@ The rationale is as follows.
 A main loop continuously polls the keyboard and the RPi0 UART, then any key 
 pressed is immediately transmitted, any byte read from RPi0 UART is immediately 
 sent to screen (which is notoriously slow).
-[ENTER] key has a peculiar behavior such that once “0x0D” is transmitted to 
- RPi0, up to 8192 bytes are “fast read” from UART and - only then - slowly sent 
+[ENTER] key has a peculiar behavior such that once "0x0D" is transmitted to 
+ RPi0, up to 8192 bytes are "fast read" from UART and - only then - slowly sent 
  to screen from a buffer allowing long output without loss.
 Other keys works as follows:
 [BREAK] quit to prompt
-[TRUE VIDEO] transmits 0x04, EOT or ^D that normally produces a “normal exit” 
+[TRUE VIDEO] transmits 0x04, EOT or ^D that normally produces a Â“normal exitÂ” 
 from whatever you where in.
 [INV VIDEO] transmits 0x05, EOT or ^E
 [CAPS LOCK] toggles caps lock and sends nothing.
