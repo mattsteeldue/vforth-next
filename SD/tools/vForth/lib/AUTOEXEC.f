@@ -6,7 +6,6 @@
 \ Display System Info
 
 MARKER FORGET-TASK
-NEEDS F_GETFREE
 
 \ Set black-yellow color
 DECIMAL
@@ -14,10 +13,11 @@ DECIMAL
 0 26 EMITC EMITC       \ non stop scroll
         0  67 REG!     \ Palette Control (ULA first)
        25  64 REG!     \ Palette Index Select (blue paper)
-%00000000  65 REG!     \ Palette Data (darker)
+%00000001  65 REG!     \ Palette Data (darker)
        14  64 REG!     \ Palette Index Select (yellow ink)
 %11111001  65 REG!     \ Palette Data (lighter)
 1 17 EMITC EMITC       \ Paper 1 (blue)
+
 
 \ Display splash-screen
 SPLASH
@@ -32,6 +32,8 @@ SWAP LSHIFT             \ multiply by two n times.
 ." Core Version " . 8 EMITC
 0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE . CR
 
+NEEDS .FREE-SIZE 
+
 \ display memory available
 SP@ PAD  - U. ." bytes free in Dictionary." CR
  -1 HP @ - U. ." bytes free in Heap." CR
@@ -39,28 +41,11 @@ SP@ PAD  - U. ." bytes free in Dictionary." CR
 
 \ display free space on default drive
 \ d is the number of 512-bytes block free on drive
-: .FREE-SIZE ( d f -- )
-    [CHAR] * F_GETFREE          \ d f
-    NOT IF
-        ?dup if
-            dup 29 > if     nip 3 /        0   [char] G
-                     else   200 um/mod nip 0   [char] M  then
-        else
-            5 um* over 9995 swap u<
-                     if    1024 um/mod nip 0   [char] M
-                     else                      [char] K  then
-        then >R
-        <# # [char] . hold #s #> type space R> emit
-      
-        ." bytes free on default drive." CR
-    THEN
-;
 .FREE-SIZE 
 
 
 \ we do not have conditional iterpreting, but we can emulate small task
 \ wisely using MARKER called as the last-word of a definition
-
 : ASK-Y/N ( -- )
 \ ask Y/n to continue loading 
      ." Autoexec asks: "

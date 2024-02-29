@@ -24,7 +24,7 @@ HEX
     D9 C,           \ Exx
     E1 C,           \ pop     hl|                   \ a: dest address
                     \ 
-                    \ \ save forth status
+                    \ save forth status
     DD C, E5 C,     \ push    ix|
     D5 C,           \ push    de|
     C5 C,           \ push    bc|
@@ -32,7 +32,7 @@ HEX
     ED C, 5B C,     \ ldx()   de|     UART-1ST-TIMEOUT  AA,
     UART-1ST-TIMEOUT ,
                     \ 
-                    \ \ wait for a char ready until timeout expires   
+                    \ wait for a char ready until timeout expires   
                     \ HERE                              \              a1
     00 C,           \ nop                                                 \  4                    
     1B C,           \ decx    de|                   \ check timeout       \  6
@@ -40,23 +40,23 @@ HEX
     B3 C,           \ ora      e|                                         \  4
     28 C, 27 C,     \ jrf     z'|  HOLDPLACE        \ bailout      a1 a2  \  7  
                     \ 
-                    \ \ check for ?BREAK
+                    \ check for ?BREAK
     01 C, 7FFE ,    \ ldx     bc|     $7FFE NN,                           \ 10
     ED C, 78 C,     \ in(c)   a'|         \ pressed key ZEROes bit-0      \ 12
     41 C,           \ ld      b'|     c|  \ so that BC is $FEFE           \  4
     ED C, 48 C,     \ in(c)   c'|         \ pressed key ZEROes bit-0      \ 12
     B1 C,           \ ora      c|         \ merge the two bit-0           \  4
-    1F C,           \ rra                 \ CF is reset if both keys are pre  ssed
+    1F C,           \ rra                 \ CF is reset if both keys are pressed
     30 C, 1B C,     \ jrf    nc'|  HOLDPLACE        \           a1 a2 a3  \  7
                     \ 
-                    \ \ check for byte ready from Uart
+                    \ check for byte ready from Uart
     01 C,           \ ldx     bc|  UART-TX-PORT  NN,  \ 133Bh             \ 10
     UART-TX-PORT ,
     ED C, 78 C,     \ in(c)   a'|                   \ bit 0 bc is 133Bh   \ 12
     1F C,           \ rra                           \ non-zero when ready \  4
     30 C, E6 C,     \ jrf    nc'|  2 PICK BACK,     \ back to a1          \ 12  
                     \ 
-                    \ \ accept a char to (hl). 0x00 ends loop immediately
+                    \ accept a char to (hl). 0x00 ends loop immediately
     04 C,           \ inc     b'|                   \ RX port 143Bh       \  4
     ED C, 78 C,     \ in(c)   a'|                                         \ 12
     77 C,           \ ld   (hl)'|     a|                                  \  7
@@ -70,10 +70,10 @@ HEX
     B3 C,           \ ORA      E|                   \ check for zero      \  4
     D9 C,           \ Exx                                                 \  4
                     \ 
-    ED C, B5 C,     \ ldx()   de|    UART-2ND-TIMEOUT   AA,                   \ 20
+    ED C, B5 C,     \ ldx()   de|    UART-2ND-TIMEOUT   AA,               \ 20
     UART-2ND-TIMEOUT ,
     20 C, D3 C,     \ jrf    nz'|  3 PICK BACK,     \ back to a1          \ 10
-                    \                                                 \    204 total
+                    \                                            \ total   204 
                     \ HERE DISP,    \ holdplace a4 resolved here   
                     \ HERE DISP,    \ holdplace a3 resolved here   
                     \ HERE DISP,    \ holdplace a2 bailout resolved
@@ -82,7 +82,7 @@ HEX
     D9 C,           \ exX
     ED C, 52 C,     \ SBCHL   DE|
                     \ 
-                    \ \ save forth status
+                    \ restore forth status
     C1 C,           \ pop     bc|
     D1 C,           \ pop     de|
     DD C, E1 C,     \ pop     ix|

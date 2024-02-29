@@ -29,7 +29,7 @@ NEEDS VALUE
 NEEDS TO
 NEEDS PICK
 NEEDS SAVE-BYTES
-NEEDS UART-CONST
+NEEDS UART-SYS
 NEEDS PAD"
 
 \ marker for fast forget-load
@@ -126,7 +126,7 @@ CODE PI0-SELECT ( -- )
         out(c)  a'|
 
         \ read reg to get video timings
-        ldx     bc|     $3243B NN,
+        ldx     bc|     $243B NN,
         ldn     a'|     $11 N,
         out(c)  a'|
         inc     b'|

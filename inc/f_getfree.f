@@ -1,8 +1,6 @@
 \
 \ f_getfree.f
 \
-.( F_GETFREE )
-\
 
 BASE @
 
@@ -10,7 +8,7 @@ BASE @
 \ return free space on drive
 \ return 0 on success, True flag on error
 ( F_GETFREE  via RST 08 hook code test )
-code F_GETFREE ( drive -- d ) \ Get free space on drive.
+code F_GETFREE ( b -- d f )     \ Get free space on drive.
 
     HEX 
     E1 C,               \  pop   hl|

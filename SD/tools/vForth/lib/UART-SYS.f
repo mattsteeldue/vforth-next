@@ -22,13 +22,14 @@ $153B CONSTANT UART-CT-PORT
 
 \ Uart burst-read timeout and chunk-length
 \ The inner part of burst-read routine takes 112 T-States, this means that
-\ to have 1 millisecond of tiemout you have to specify 250.
-\ Timeout for the first byte is set at 200 ms == 50000.
-\ This means we expect RPi0 to reply within 200 ms to any command we issue.
+\ to have 1 millisecond timemout you have to specify 250.
+\ Timeout for the first byte is set at 250 ms == 62500.
 \ Timeouts for the next bytes is set at 40 ms == 10000.
+\ This means we expect RPi0 to reply within 250 ms to any command we issue
+\ and any subsequent delay greater than 40 ms ends output collection.
 \
 VARIABLE UART-1ST-TIMEOUT    50000 UART-1ST-TIMEOUT !
-VARIABLE UART-2ND-TIMEOUT    10000 UART-2ND-TIMEOUT  !
+VARIABLE UART-2ND-TIMEOUT     5000 UART-2ND-TIMEOUT !
 VARIABLE UART-CHUNK-LEN       8192 UART-CHUNK-LEN !
 
 \ address at MMU7 usually 8k-page #1 is free for use
@@ -36,9 +37,8 @@ VARIABLE UART-CHUNK-LEN       8192 UART-CHUNK-LEN !
 $E000 CONSTANT UART-BUFF
 
 \ keep current escape-sequence status
-\
-VARIABLE UART-ESCAPE-STATUS      0 UART-ESCAPE-STATUS !
+VARIABLE UART-ESCAPE-STATUS 
 
-\ two bytes representing the two states of a flashing cursor
-\
-VARIABLE UART-CURSOR-FACE    $8F8C UART-CURSOR-FACE   !
+\ two bytes representing two characters, i.e. the state of a flashing cursor
+VARIABLE UART-CURSOR-FACE    
+VARIABLE UART-CURSOR-PHASE   $20 UART-CURSOR-PHASE !

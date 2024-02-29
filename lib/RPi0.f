@@ -1,20 +1,43 @@
 ( UART Raspberry PI Zero library )
 \
 \ This source provides semantics to talk with Raspberry PI Zero via UART.
+\ RPI0 does the following:
+\ 1. Select RPi0's hardware UART and set Baudrate 115.200
+\ 2. Send a few EOT just as if we're unsure about RPi0 status
+\ 3. Wait for SUP> prompt.
 \
 \ _________________________________________________________
 
 \ NEEDS ASSEMBLER
+NEEDS UART-SYS
+NEEDS UART-RX-BURST
 NEEDS MS
 NEEDS INVV
 NEEDS TRUV
-NEEDS LAYER12
-NEEDS UART-SYS
-NEEDS UART-RX-BURST
 
 MARKER REDO
 
 : BELL 7 EMIT 7 EMIT 7 EMIT 7 EMIT 7 EMIT 7 EMIT ;
+
+\ _________________________________________________________
+\
+\ map for special Symbol-Shift Keys
+\ some keys are encoded by Forth's KEY (e.g. $0C or $06)
+CREATE RPI0-TKB1
+\ STOP   NOT    STEP   TO     THEN   AND    OR     AT     delete <=     <>     >= 
+  $E2 C, $C3 C, $CD C, $CC C, $CB C, $C6 C, $C5 C, $AC C, $0C C, $C7 C, $C9 C, $C8 C,
+
+CREATE RPI0-TKB2
+\ ~      |      \      {      }      [      ]      ^[     bs     ^Z     ^X     ^C 
+  $7E C, $7C C, $5C C, $7B C, $7D C, $5B C, $5D C, $1B C, $08 C, $1A C, $18 C, $03 C,
+
+\ _________________________________________________________
+
+\ map above listed char-code.
+\ should handle Caps-Lock key too.
+: MAP-KEYB ( c -- c )
+    >R RPI0-TKB2 RPI0-TKB1 #12 R> (MAP)
+;
 
 \ _________________________________________________________
 
@@ -23,7 +46,6 @@ MARKER REDO
 \ These are double precision integers you can read with 2@
 \ N.B. Using 115200 baud, integer precision is coarse enough to allow
 \ values to be divided by 100 to be able to better handle them later
-
 CREATE UART-SYS-CLOCK
 DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
         28.5714   , ,   \ VGA setting 1     28.571.429 Hz
@@ -39,7 +61,6 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ compute actual clock speed depending on video mode
 \ ask the hardware NextREG 17 (11h) and return a double precision integer
 \ expressed in MHz/100
-\
 : UART-VIDEO-TIMING  ( -- d )
     $11 REG@ 7 AND              \ Video timing register: 0-7
     2* 2* UART-SYS-CLOCK + 2@    \ fetch from array above
@@ -48,7 +69,6 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ _________________________________________________________
 
 \ compute prescalar to be used with UART-SET-PRESCALAR
-\
 : UART-BAUD-PRESCALAR ( d -- n )
     #100 M/             \ divide BAUD by 100 to able to handle it
     UART-VIDEO-TIMING   \ get actual system clock speed / 100
@@ -59,7 +79,6 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 
 \ send 14-bits-prescalar to UART receive port
 \ prescalar = sysclock / baudrate
-\
 : UART-SET-PRESCALAR ( n -- )
     DUP
     $7F AND UART-RX-PORT P!     \ send low 7 bits of 14 bits
@@ -69,30 +88,30 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 
 \ _________________________________________________________
 \
+\ Set UART baud rate.
 \ usage is: 115200. UART-SET-BAUDRATE
-\
 : UART-SET-BAUDRATE ( d -- )
     UART-BAUD-PRESCALAR
     UART-SET-PRESCALAR
 ;
 
-.( .)
 \ _________________________________________________________
 \
 \ Select Raspberry PI Zero UART and set Baudrate d
-
 : RPI0-SELECT  ( d -- )
     3 7 REG!              \ go max speed (28 MHz)
     $40 UART-CT-PORT P!   \ select PI Zero UART control port
     UART-SET-BAUDRATE     \ uses double integer param
-    $30 $A0 REG!          \ PI Pheripeal enable
+    $30 $A0 REG!          \ PI Peripheal enable
 \   $91 $A2 REG!          \ PI I2S Audio control
 ;
 
+.( .)
+
 \ _________________________________________________________
 \
+\ Check if UART is busy sending a byte.
 \ non-zero when transmitter is busy sending a byte
-
 : ?UART-BUSY-TX ( -- f )
     UART-TX-PORT P@   \ UART TX port
     02 AND            \ bit is set when busy
@@ -103,7 +122,6 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ There is no transmit buffer so program must make sure the
 \ last transmission is complete before sending another byte
 \ Wait until transmission is possible or Break is pressed.
-\ 
 : UART-TX-BYTE ( b -- )
     BEGIN
         ?UART-BUSY-TX NOT  
@@ -115,10 +133,126 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 
 \
 \ _________________________________________________________
+\
+\ End Of Transmission ^D
+: UART-SEND-EOT ( -- )      
+    04 UART-TX-BYTE
+;
+\
+\ _________________________________________________________
+\
+\ End of TeXt ^C
+: UART-SEND-ETX ( -- )      
+    03 UART-TX-BYTE
+;
+\ _________________________________________________________
+\
+\ CR
+: UART-SEND-CR ( -- )      
+    $0D UART-TX-BYTE
+;
+\ _________________________________________________________
+\
+\ LF
+: UART-SEND-LF ( -- )      
+    $0A UART-TX-BYTE
+;
+\
+\ _________________________________________________________
+\
+\ Send a string of text to RPi0 
+: UART-SEND-TEXT ( a n -- ) 
+    BOUNDS
+    ?DO
+        I C@ UART-TX-BYTE
+    LOOP
+;
 
-\ type with filter char from PI0
+\ _________________________________________________________
+\
+\ Check if UART has received a byte
+\ true flag when byte ready, false elsewhere
+: ?UART-BYTE-READY  ( -- f )  
+    UART-TX-PORT  P@ 
+    01 AND
+;
+
+\ _________________________________________________________
+\
+\ accept a byte if available, 0x00 if no byte is available.
+: UART-RX-BYTE  ( -- b | 0 )     
+    UART-RX-PORT  P@
+;
+
+\ _________________________________________________________
+\
+\ wait for a specific byte or Break key to bailout
+\ usually this will quit to Forth prompt also
+: UART-WAIT-B  ( b -- )     
+    BEGIN                   \ b
+        UART-RX-BYTE OVER = \ b f
+        ?TERMINAL OR        \ b f
+    UNTIL DROP              \
+;
+
+\ _________________________________________________________
+\
+\ wait for a specific string "SUP> "
+\ to synchronize things
+: UART-WAIT-PROMPT  ( -- )
+  [CHAR] S UART-WAIT-B
+  [CHAR] U UART-WAIT-B
+  [CHAR] P UART-WAIT-B
+  [CHAR] > UART-WAIT-B
+        BL UART-WAIT-B
+;
+
+\ _________________________________________________________
+\
+\ wait for a byte with timeout expressed in ms
+: UART-RX-TIMEOUT ( n -- c | 0 )
+    0 SWAP                      \ 0 n
+    1+ 0                        \ 0 n+1 0
+    DO                          \ 0
+        ?UART-BYTE-READY IF     \ 0
+            UART-RX-BYTE        \ 0 b
+            SWAP DROP           \   b
+            LEAVE               \   b
+        THEN                    \ 0
+        1 ms                    \      minimum delay
+    LOOP                        \ 0
+;
+
 .( .)
 
+\ _________________________________________________________
+\
+\ based on FRAMES, decides which cursor face is now displayed
+: UART-SHOW-CURSOR ( -- )
+    UART-FLAGS2 C@ 
+    8 AND
+    IF 
+        $8F5F UART-CURSOR-FACE !
+    ELSE
+        $8F8C UART-CURSOR-FACE !
+    THEN  
+    UART-CURSOR-FACE
+    UART-FRAMES C@ $10 AND IF 1+ THEN
+    C@ EMITC 8 EMITC
+;
+
+\ _________________________________________________________
+
+\ this relies on standard interrupt keyboard service
+: UART-GET-KEYB ( -- c )
+    UART-LASTK C@
+    DUP IF 0 UART-LASTK C! THEN
+;
+
+\
+\ _________________________________________________________
+
+\ type a character from RPi0, using some ansi-escape filtering
 : C-EMIT ( c -- )
     UART-ESCAPE-STATUS @ 
     IF  \ within escape sequence
@@ -143,7 +277,9 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
     THEN \ escape
 ; 
 
-
+\ _________________________________________________________
+\
+\ emit a string previously received from RPi0
 : CHUNK-EMIT ( a n -- )
     BOUNDS
     ?DO
@@ -151,147 +287,40 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
     LOOP
 ;
 
-\
 \ _________________________________________________________
 \
-.( .)
-\ Utilities
-\
-: UART-SEND-EOT ( -- )      \ End Of Transmission ^D
-    04 UART-TX-BYTE
-;
-\
-: UART-SEND-ETX ( -- )      \ End of TeXt ^C
-    03 UART-TX-BYTE
-;
 
-\ _________________________________________________________
-\
-: ?UART-BYTE-READY  ( -- f )  \ true flag when byte ready, false elsewhere
-    UART-TX-PORT  P@ 
-    01 AND
-;
-
-\ _________________________________________________________
-
-: UART-RX-BYTE  ( -- b | 0 )     \ accept a byte if available
-    UART-RX-PORT  P@
-;
-
-\ _________________________________________________________
-\
-: UART-WAIT ( b -- )        \ wait for a specific byte or Break key
-    BEGIN                   \ b
-        UART-RX-BYTE OVER = \ b f
-        ?TERMINAL OR        \ b f
-    UNTIL DROP              \
-;
-
-\ _________________________________________________________
-\
-\ wait for a byte with timeout in ms
-\
-: UART-RX-TIMEOUT ( n -- c | 0 )
-  0 SWAP                      \ 0 n
-  1+ 0                        \ 0 n+1 0
-  DO                          \ 0
-    ?UART-BYTE-READY IF       \ 0
-      UART-RX-BYTE            \ 0 b
-      SWAP DROP               \   b
-      LEAVE                   \   b
-    THEN                     \ 0
-    1 ms                      \      minimum delay
-  LOOP                        \ 0
-;
-
-\ _________________________________________________________
-\
-\ simple wait for a specific string "SUP> "
-\
-: UART-WAIT-PROMPT  ( -- )
-  [CHAR] S UART-WAIT
-  [CHAR] U UART-WAIT
-  [CHAR] P UART-WAIT
-  [CHAR] > UART-WAIT
-        BL UART-WAIT
-;
-
-\ _________________________________________________________
-\
-\ map for special Symbol-Shift Keys
-\ some keys are endoded by Forth's KEY (e.g. $0C)
-CREATE RPI0-TKB1
-\ STOP   NOT    STEP   TO     THEN   AND    OR     AT     delete <=     <>     >= 
-  $E2 C, $C3 C, $CD C, $CC C, $CB C, $C6 C, $C5 C, $AC C, $0C C, $C7 C, $C9 C, $C8 C,
-
-CREATE RPI0-TKB2
-\ ~      |      \      {      }      [      ]      ^[     bs     ^Z     ^X     ^C 
-  $7E C, $7C C, $5C C, $7B C, $7D C, $5B C, $5D C, $1B C, $08 C, $1A C, $18 C, $03 C,
-
-\ _________________________________________________________
-
-\ map above listed char-code.
-\ should handle Caps-Lock key too.
-: MAP-KEYB ( c -- c )
-    \ first handle caps-lock event
-    DUP 6 = IF 
-        UART-FLAGS2 8 TOGGLE 
-        $8F5F UART-CURSOR-FACE !
-        DROP 0
-    THEN  
-    >R RPI0-TKB2 RPI0-TKB1 12 R> (MAP)
-;
-
-\ _________________________________________________________
-
-\ based on FRAMES, decides which cursor face is now displayed
-.( .)
-
-: UART-SHOW-CURSOR ( -- )
-    UART-CURSOR-FACE
-    UART-FRAMES C@ $10 AND IF 1+ THEN
-    C@ EMITC 8 EMITC
-;
-
-\ _________________________________________________________
-
-\ this relies on standard interrupt keyboard service
-: UART-GET-KEYB ( -- c )
-    UART-LASTK C@
-    DUP IF 0 UART-LASTK C! THEN
-;
+VARIABLE UART-FORTH-BUF 
+VARIABLE UART-FORTH-PTR 
+VARIABLE UART-FORTH-CNT 
+VARIABLE UART-FORTH-FLG
 
 \ _________________________________________________________
 \
 \ Terminal basic initialization 
-.( .)
 : TERM-INIT   ( -- )
+    1 BLOCK  UART-FORTH-BUF !
+    1 BLOCK  UART-FORTH-PTR !
+    0 UART-FORTH-CNT !
+    0 UART-FORTH-FLG !
     0 UART-LASTK C! 
     0 UART-FLAGS2 C! 
     $0D UART-TX-BYTE
-    LAYER12
-    6 $1E EMITC EMITC  \ narrow font 85 char per row.
-    1  17 EMITC EMITC
+\   6 $1E EMITC EMITC  \ narrow font 85 char per row.
+    1  17 EMITC EMITC   \ paper "blue"
 ;
 
 \ _________________________________________________________
 \
+\ Session is done, set normal font 64 char per font
 : TERM-DONE
-    8 $1E EMITC EMITC  \ normal font 64 char per font
+    8 $1E EMITC EMITC  
 ;
-\ _________________________________________________________
-\
 
-VARIABLE UART-FORTH-PTR 
-1 BLOCK  UART-FORTH-PTR !
-VARIABLE UART-FORTH-CNT 
-0 BLOCK  UART-FORTH-CNT !
-VARIABLE UART-FORTH-FLG
-       0 UART-FORTH-FLG !
+.( .)
 
 \ _________________________________________________________
 \
-
 : FORTH-CMD ( c -- )
     \ collecting chrs for Forth directive ?            
     UART-FORTH-FLG @ 
@@ -307,8 +336,11 @@ VARIABLE UART-FORTH-FLG
             DUP 08 = 
             IF
                 \ backspace
-                -1   UART-FORTH-PTR +!
-                -1   UART-FORTH-CNT +!
+                UART-FORTH-BUF < UART-FORTH-PTR 
+                IF
+                    -1   UART-FORTH-PTR +!
+                    -1   UART-FORTH-CNT +!
+                THEN    
                 DROP 
             ELSE
                 \ accumulate 
@@ -334,8 +366,8 @@ VARIABLE UART-FORTH-FLG
 
 \ _________________________________________________________
 \
-
 : TERM ( -- )
+    0 UART-ESCAPE-STATUS !
     BEGIN
         UART-SHOW-CURSOR 
         UART-GET-KEYB
@@ -366,13 +398,19 @@ VARIABLE UART-FORTH-FLG
 
 \ _________________________________________________________
 \
-DECIMAL
+: RPI0-INIT ( -- )
+    #115.200 RPI0-SELECT
+;
+
+\ _________________________________________________________
+\
 : RPI0 ( -- )
-    115.200 RPI0-SELECT
+    RPI0-INIT
     UART-SEND-ETX
     UART-SEND-EOT
-    UART-WAIT-PROMPT
+\   UART-WAIT-PROMPT
     TERM-INIT
     TERM
     TERM-DONE
 ;
+

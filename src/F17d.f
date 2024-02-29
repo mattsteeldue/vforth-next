@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240119 ) CR
+.( build 20240127 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -68,6 +68,7 @@ NEEDS VALUE
 NEEDS TO
 NEEDS ASSEMBLER
 
+
 CASEON      \ we must be in Case-sensitive option to compile this file.
 0 WARNING ! \ avoid verbose messaging
 
@@ -98,7 +99,7 @@ HEX
         \ 6A00 \ 27136 \ = room for 3 buffers below ORIGIN
         \ 8000 \ 32768 \ = final
         DP !
-        2 FAR COUNT + 
+          2 FAR C@ 3 +
         HP !
     THEN
     ;
@@ -336,9 +337,6 @@ DECIMAL
     IMMEDIATE
 
 
-HP@  U.
-HERE U. KEY
-
 \ ______________________________________________________________________
 \ \ 
 \ HERE     U.
@@ -360,8 +358,6 @@ HERE U. KEY
 \
 .( Origin )
 
-HP@  U.
-HERE U. KEY
 \
 \ ______________________________________________________________________
 
@@ -4344,7 +4340,7 @@ CREATE pcdm hex    (   . . . .   )
             If  
                 r@          \ addr
                 [ HERE CELL+ TO twofind^ ]
-                \ FORTH     \ addr voc
+                \ [COMPILE] FORTH     \ addr voc
                 [ ' FORTH ] Literal >body cell+ cell+ @       ( *** )
                 (find)      \ cfa b 1   |  0 
             Then   
@@ -5991,7 +5987,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal 13 here ," Heap Vocabulary - build 20240117" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20240127" -1 allot ]
 \    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal 13 c, c! c! c! ] 
     ;
@@ -6330,17 +6326,27 @@ decimal
 
 \ ______________________________________________________________________ 
 
-\ patch for fence and latest
 
+\ final patch ;code 
+\ we don't want this if we keep assembler in lower memory...
+\ ' noop asm^ !
 
+\ copy latest from previous FORTH to new forth vocabulary definition
+' forth >body 4 + @ hex u.  \ display previous value
+' FORTH >body 4 + @
+' forth >body 4 + !
+forth definitions
+
+\ final patch latest and fence
+\ final set up startup and cold data.
 here        fence !   
-here        hex 01C +origin !  \ FENCE
 current @ @ hex 00C +origin !  \ LATEST word used in COLD start
+here        hex 01C +origin !  \ FENCE
 here        hex 01E +origin !  \ set cold-DP
 voc-link @  hex 020 +origin !  \ set cold-VOC-LINK
-' noop asm^ !
+hp@         hex 026 +origin !  \ set cold-HP
 
-forth definitions
+
 
 \ ______________________________________________________________________ 
 
@@ -6741,8 +6747,6 @@ RENAME   (loop)         (LOOP)
 RENAME   execute        EXECUTE
 RENAME   lit            LIT
 
-\ QUIT
-
 \ ______________________________________________________________________ 
 
 SPLASH \ Return to Splash screen
@@ -6752,16 +6756,19 @@ DECIMAL
 1 WARNING !
 CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 50" CR CR
 CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
-
 CASEOFF
 
 \ ______________________________________________________________________ 
 
 \ this cuts LFA so dictionary starts with "lit"
-\ 0 ' LIT          2- ! 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
-  HP@ 026 +ORIGIN !
-\ 0 ' LIT 2- @ FAR 2- ! 
-\ TRUNCATE-HEAP       \ 0 +ORIGIN SOURCE-ID @ F_CLOSE DROP BASIC
+\ 0 ' LIT     >BODY LFA ! 
+\ 0 ' INVERT  >BODY LFA ! 
+
+QUIT 
+
+\ close current file just in time on the very last executable row...
+0 +origin \ SOURCE-ID @ F_CLOSE DROP BASIC
+
 
 \
 \ Origin area.

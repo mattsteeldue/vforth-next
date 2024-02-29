@@ -511,8 +511,8 @@ The rationale is as follows.
 A main loop continuously polls the keyboard and the RPi0 UART, then any key 
 pressed is immediately transmitted, any byte read from RPi0 UART is immediately 
 sent to screen (which is notoriously slow).
-[ENTER] key has a peculiar behavior such that once “0x0D” is transmitted to 
- RPi0, up to 8192 bytes are “fast read” from UART and - only then - slowly sent 
+[ENTER] key has a peculiar behavior such that once "0x0D" is transmitted to 
+ RPi0, up to 8192 bytes are "fast read" from UART and - only then - slowly sent 
  to screen from a buffer allowing long output without loss.
 Other keys works as follows:
 [BREAK] quit to prompt
@@ -533,3 +533,8 @@ from whatever you where in.
 [AT] transmits 0x1B ESC or ^[ that helps to emulate escape sequences
 [>=] transmits 0x03, ETX or ^C that helps to emulate CTRL-C key-press.
 Remaining ASCII characters ~ | \ [ ] { } are produced via SYMBOL-SHIFT as usual.
+
+
+\ build 20240229
+Improvement on RPI0 introducing  ASK  definition to make RPi0 perform a script.
+Succeeded in recompile v-Forth 1.7 in itself again using src/F17e.f source.
