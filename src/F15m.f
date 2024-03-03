@@ -2,16 +2,31 @@
 \
 .( v-Forth 1.52 MDR/MGT version ) CR
 .( build 20230321 ) CR 
-\
-\ ZX Microdrive version + MGT DISCiPLE version
+.( ZX Microdrive version + MGT DISCiPLE version ) CR
 \ ______________________________________________________________________
 \
-\ This work is available as-is with no whatsoever warranty.
-\ Copying, modifying and distributing this software is allowed 
-\ provided that this copyright notice is kept.  
+\ MIT License
+\ 
+\ Copyright (c) 1990-2024 Matteo Vitturi
+\ 
+\ Permission is hereby granted, free of charge, to any person obtaining a copy
+\ of this software and associated documentation files (the "Software"), to deal
+\ in the Software without restriction, including without limitation the rights
+\ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+\ copies of the Software, and to permit persons to whom the Software is
+\ furnished to do so, subject to the following conditions:
+\ 
+\ The above copyright notice and this permission notice shall be included in all
+\ copies or substantial portions of the Software.
+\ 
+\ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+\ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+\ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+\ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+\ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+\ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+\ SOFTWARE.
 \ ______________________________________________________________________
-\
-\ by Matteo Vitturi, 1990-2023
 \
 \ https://sites.google.com/view/vforth/vforth1413
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
@@ -130,11 +145,11 @@ DECIMAL
      0  VALUE     lit~          \ some CFA
         \ at the *end*, zero has to be put at   lit~ - 2 
         \ to cut-off older dictionary :       0 lit~   2  -  !
-     0  VALUE     branch~       \ CFA of BRANCH
-     0  VALUE     0branch~      \ CFA of 0BRANCH
-     0  VALUE     (loop)~       \ CFA of (LOOP)
-     0  VALUE     (do)~         \ CFA of (DO)
-     0  VALUE     (?do)~        \ CFA of (?DO)
+\    0  VALUE     branch~       \ CFA of BRANCH
+\    0  VALUE     0branch~      \ CFA of 0BRANCH
+\    0  VALUE     (loop)~       \ CFA of (LOOP)
+\    0  VALUE     (do)~         \ CFA of (DO)
+\    0  VALUE     (?do)~        \ CFA of (?DO)
      0  VALUE     msg1^         \ patch of ERROR
      0  VALUE     msg2^         \ patch of CODE/MCOD (CREATE)
      0  VALUE     enter^        \ resolved within : definition.
@@ -179,152 +194,6 @@ DECIMAL
     rp#^ @ !
     2 rp#^ +!
     ;
-
- 
-\ ______________________________________________________________________
-\
-\  These words are immediate words used to compile forward definitions 
-\  relying on some pointers defined above.
-\  We use a peculiar notation with First Capital Letter.
-\  At the end of this listing, there is an all-lowercase version.
-\ _________________
-
-.( LITERAL , DLITERAL )
-\
-: Literal   ( n -- )
-    STATE @
-    IF
-        \ COMPILE LIT ,
-        lit~ , ,
-    THEN
-    ; 
-    IMMEDIATE
-
-: Dliteral   ( d -- )
-    STATE @
-    IF
-        SWAP
-        [COMPILE] Literal
-        [COMPILE] Literal
-    THEN
-    ; 
-    IMMEDIATE
-    
-.( IF ... THEN )
-.( IF ... ELSE ... THEN )
-\ 
-: If    (   -- a 2 ) \ compile-time
-        ( f --     ) \ run-time   
-    ?COMP 
-    0branch~ ,     \ COMPILE 0BRANCH
-    HERE 0 , 
-    2 
-    ; 
-    IMMEDIATE
-    
-: Then ( a 2 -- ) \ compile-time
-        (     -- ) \ run-time    
-    ?COMP
-    2 ?PAIRS  
-    HERE OVER - SWAP ! 
-    ; 
-    IMMEDIATE
-    
-\ : Endif ( a 2 -- ) \ compile-time 
-\        (     -- )  \ run-time
-\     [COMPILE] Then 
-\     ; 
-\     IMMEDIATE
-
-: Else ( a1 2 -- a2 2 ) \ compile-time    
-       (      --      ) \ run-time
-    ?COMP
-    2 ?PAIRS  
-    branch~ ,  \ COMPILE BRANCH
-    HERE 0 , 
-    SWAP 2 [COMPILE] Then \ Then
-    2 
-    ; 
-    IMMEDIATE
-
-.( Loops structure words )
-\ BEGIN ...   AGAIN
-\ BEGIN ... f UNTIL
-\ BEGIN ... f WHILE ... REPEAT
-\ 
-: Begin     ( -- a 1 ) \ compile-time  
-            ( --     ) \ run-time
-    ?COMP 
-    HERE 
-    1 
-    ; 
-    IMMEDIATE
-    
-: Again     ( a 1 -- ) \ compile-time
-            (     -- ) \ run-time
-    ?COMP
-    1 ?PAIRS 
-    branch~ , \ COMPILE BRANCH
-    BACK 
-    ; 
-    IMMEDIATE
-    
-: Until     ( a 1 -- ) \ compile-time
-            (   f -- ) \ run-time
-    ?COMP
-    1 ?PAIRS
-    0branch~ , \ COMPILE 0BRANCH
-    BACK 
-    ; 
-    IMMEDIATE
-    
-: While     ( a1 1 -- a1 1 a2 4 ) \ compile-time
-            (    f -- ) \ run-time
-    [COMPILE] If 2+
-    ; 
-    IMMEDIATE
-    
-: Repeat    ( a1 1 a2 4 -- ) \ compile-time
-            (           -- ) \ run-time
-    2SWAP
-    [COMPILE] Again
-    2 - 
-    [COMPILE] Then \ Then
-    ; 
-    IMMEDIATE
-
-
-.( DO ... LOOP )
-\
-: Do        (     -- a 3 ) \ compile-time
-            ( n m --     ) \ run-time
-    ?COMP 
-    (do)~ ,
-    CSP @ !CSP
-    HERE 3
-    ; 
-    IMMEDIATE
-
-: Loop      ( a 3 -- ) \ compile-time    
-            (     -- ) \ run-time
-    3 ?PAIRS 
-    ?COMP 
-    (loop)~ , 
-    ?DO- 
-    ; 
-    IMMEDIATE
-
-: ?Do       (     -- a 3 ) \ compile-time
-            ( n m --     ) \ run-time
-    ?COMP 
-    (?do)~ ,
-    CSP @ !CSP
-    HERE 0 , 0
-    HERE 3
-    ; 
-    IMMEDIATE
-
-
 
 \ ______________________________________________________________________
 \ \ 
@@ -471,7 +340,10 @@ CODE lit ( -- n )
         Next
         C;
 
-        ' lit TO lit~
+\       ' lit TO lit~
+\ let's patch the previous definition of LITERAL so that it will compile the
+\ new definition of LIT. We use RENAME to be sure to not 
+        ' lit  ' LITERAL >BODY 5 CELLS + !
 
 
 \ 6144h
@@ -558,7 +430,8 @@ CODE (loop)    ( -- )
         JR      loop^  HERE 1 + - D,
         C;
 
-        ' (loop) TO (loop)~
+      \ ' (loop) TO (loop)~
+        ' (loop)  ' LOOP  >BODY 3 CELLS + !
 
 
 \ 6153h
@@ -582,7 +455,9 @@ CODE branch ( -- )
         Next
         C;
         
-        ' branch TO branch~
+      \ ' branch TO branch~
+        ' branch  ' ELSE  >BODY 4 CELLS + !
+        ' branch  ' AGAIN >BODY 4 CELLS + !
 
         branch^  branch^^  1+ -  branch^^ C!
 
@@ -603,7 +478,9 @@ CODE 0branch ( f -- )
         Next
         C;
         
-        ' 0branch TO 0branch~
+      \ ' 0branch TO 0branch~
+        ' 0branch   ' IF    >BODY 1 CELLS + !
+        ' 0branch   ' UNTIL >BODY 4 CELLS + !
 
 
 CODE (leave) ( -- )
@@ -676,7 +553,8 @@ CODE (?do)      ( lim ind -- )
         Next
         C;
 
-        ' (?do) TO (?do)~
+      \ ' (?do) TO (?do)~
+        ' (?do)  ' ?DO >BODY 1 CELLS + !
 
 
 \ 61CAh
@@ -691,7 +569,25 @@ CODE (do) ( lim ind -- )
         JR      do^  HERE 1 +  - D, 
         C;
 
-        ' (do) TO (do)~
+      \ ' (do) TO (do)~
+        ' (do)    ' DO >BODY 1 CELLS + !
+
+        RENAME      LITERAL   Literal
+        RENAME      DLITERAL  Dliteral
+        
+        RENAME      IF        If
+        RENAME      THEN      Then
+        RENAME      ELSE      Else
+        
+        RENAME      BEGIN     Begin
+        RENAME      AGAIN     Again
+        RENAME      UNTIL     Until
+        RENAME      WHILE     While
+        RENAME      REPEAT    Repeat
+        
+        RENAME      DO        Do
+        RENAME      LOOP      Loop
+        RENAME      ?DO       ?Do
 
 
 \ 61E9h

@@ -175,7 +175,7 @@ Flush_Do:                                       // do
                 dw      TO_R                    // >r               ( a  m  )     \  fh
                 dw      TUCK                    // tuck             ( m a m )
                 dw      R_OP, F_FGETPOS         // r f_fgetpos      ( m a m d f ) 
-                dw      LIT, 34, QERROR         // 44 ?error        ( m a m d )     
+                dw      LIT, 35, QERROR         // 44 ?error        ( m a m d )     
                 
                 dw      TWO_SWAP, OVER          // 2swap over       ( m d a m )
                 dw      ONE_PLUS, SWAP          // 1+ swap          ( m d a a+1 m )

@@ -1,16 +1,16 @@
 File: c:\Zx\forth\F15\tools\vForth\!Blocks-64.bin
-Created: Sun Jan 28 19:59:31 2024
+Created: Sun Mar  3 13:17:44 2024
 
 See index at end of file.
 
-\ v-Forth 1.7 - NextZXOS version - build 2024-01-27
-\ MIT License (c) 1990-2023 Matteo Vitturi
+\ v-Forth 1.7 - NextZXOS version - build 2024-02-29
+\ MIT License (c) 1990-2024 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement
 \ or at Forth prompt use NEEDS VIEW and then VIEW LICENSE.md
+\
 \ This file provides persistency for BLOCK-Screen system.
 \ The first 512 bytes of this file aren't used by BLOCK system
-\ instead they're used by F_GETLINE primitive.
-\
+\ they're used by F_GETLINE primitive instead.
 
 
 
@@ -182,7 +182,7 @@ Scr# 10
   2   ." or [BREAK] to stop compile." CR
   3   key
   4 \
-  5 \ include src/f17d.f
+  5   include src/f17e.f
   6 
   7 
   8 
@@ -203,7 +203,7 @@ Scr# 11
   5   0 26 EMITC EMITC       \ non stop scroll
   6           0  67 REG!     \ Palette Control (ULA first)
   7          25  64 REG!     \ Palette Index Select (blue paper)
-  8   %00000000  65 REG!     \ Palette Data (darker)
+  8   %00000001  65 REG!     \ Palette Data (darker)
   9          14  64 REG!     \ Palette Index Select (yellow ink)
  10   %11111001  65 REG!     \ Palette Data (lighter)
  11   1 17 EMITC EMITC       \ Paper 1 (blue)
@@ -331,6 +331,25 @@ Scr# 26
   7 \ make autoexec to load Screen #20 at next startup
   8 \ instead of usual Screen #11
   9   #11 ' autoexec >body 1 cells + !
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 35 
+  0 
+  1 
+SUP> python temp.py
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
  10 
  11 
  12 
@@ -1911,10 +1930,10 @@ Scr# 187
   3 \
   4 \ ##  USE WITH CARE  ##
   5 \
-  6 ' ABORT >BODY 9 CELLS + @
+  6 ' ABORT >BODY 13 CELLS + @
   7 ' NOOP - 14 ?ERROR
   8 ' AUTOEXEC
-  9 ' ABORT >BODY 9 CELLS + !
+  9 ' ABORT >BODY 13 CELLS + !
  10 DECIMAL 14 EMITC
  11 BYE
  12 \
@@ -8260,7 +8279,7 @@ Scr# 667
 
 Scr# 668 
   0 ( Chomp.f )
-  1 CR CR CR
+  1 0 26 emitc emitc  CR CR CR
   2 needs TRUV needs INVV
   3 TRUV  .( Use: )
   4 INVV  .(  GAME )  CR
@@ -15270,6 +15289,24 @@ Scr# 4009
  14 
  15 
 
+Scr# 4646 
+  0 ( reply )
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 6989 
   0 ( new SPLASH with string on Heap )
   1 needs HEAP  needs PAD"  needs POINTER
@@ -19194,130 +19231,22 @@ Scr# 10311
  14 
  15 
 
-Scr# 12000 
-  0 ( 12000 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 12001 
-  0 ( 12001 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 12002 
-  0 ( 12002 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 12003 
-  0 ( 12003 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 12004 
-  0 ( 12004 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 12005 
-  0 ( 12004 )
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
 Scr# 16000 
   0 ( porting page 1 to blocks )
-  1 hex
-  2 : porting>
-  3   10 0 do i .
-  4     E000 i b/buf * +   1 mmu7!
-  5     7D02 i + block     b/buf cmove update flush
-  6   loop
-  7 ;
-  8 : <porting
-  9   20 mmu7!
- 10   10 0 do i .
- 11     7D02 i + block     20 mmu7!
- 12     E000 i b/buf * +   b/buf cmove
- 13   loop
- 14 ; decimal
+  1 : porting>
+  2   $10 0 do i .
+  3     $E000 i b/buf * +   1 mmu7!
+  4     $7D02 i + block     b/buf cmove update flush
+  5   loop
+  6 ;
+  7 : <porting
+  8   $20 mmu7!
+  9   $10 0 do i .
+ 10     $7D02 i + block     $20 mmu7!
+ 11     $E000 i b/buf * +   b/buf cmove
+ 12   loop
+ 13 ; decimal
+ 14 
  15 
 
 
@@ -19341,6 +19270,7 @@ Index:
    24 ( LOADG )
    25 ( LOADG )
    26 ( restore default )
+   35 
   100 .( Assembler. Use NEEDS ASSEMBLER instead )
   101 .( Z80 Assembler. ) CR
   102 ( Z80 Utility - Sys depend )
@@ -20163,6 +20093,7 @@ Restarting Supervisor
  4007 xxxxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxx xxx x xxxxx xxxxxxxxx xx
  4008 xxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxx x xxx xxxxx xxxxxxxxxxxx
  4009 xxxxx xxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xx
+ 4646 ( reply )
  6989 ( new SPLASH with string on Heap )
  8990 ( PRESENTATION )
  8991 ( PRESENTATION )
@@ -20381,10 +20312,4 @@ Restarting Supervisor
 10309 ( MMU7 banking study )
 10310 ( MMU7 banking study )
 10311 ( MMU7 banking study )
-12000 ( 12000 )
-12001 ( 12001 )
-12002 ( 12002 )
-12003 ( 12003 )
-12004 ( 12004 )
-12005 ( 12004 )
 16000 ( porting page 1 to blocks )

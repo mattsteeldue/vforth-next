@@ -1351,10 +1351,11 @@ CPrefix_Endif_2:                                // endif
 
 //  ______________________________________________________________________ 
 
-                New_Def PDOM,   "PDOM", Create_Ptr, is_normal  
+PDOM_PTR:
+//              New_Def PDOM,   "PDOM", Create_Ptr, is_normal  
                 db ',/-:'
-
-                New_Def PCDM,   "PCDM", Create_Ptr, is_normal  
+PCDM_PTR:
+//              New_Def PCDM,   "PCDM", Create_Ptr, is_normal  
                 db '....' 
 
 //  ______________________________________________________________________ 
@@ -1374,7 +1375,10 @@ CPrefix_Endif_2:                                // endif
 Number_Begin:                                   // begin
                 dw        DUP, CFETCH             // dup c@
                 dw        TO_R                    // >r
-                dw        PCDM, PDOM, LIT, 4      // pcdm pdom 4
+            //  dw        PCDM, PDOM              //  pcdm pdom
+                dw        LIT, PCDM_PTR           //                
+                dw        LIT, PDOM_PTR           //                
+                dw        LIT, 4                  //  4             
                 dw        R_TO                    // r>
                 dw        C_MAP                   // (map)
                 dw        ZERO, SWAP              // 0 swap

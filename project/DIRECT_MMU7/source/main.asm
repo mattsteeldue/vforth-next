@@ -85,8 +85,6 @@ DEBUGGING       equ     0
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
 ORIGIN          equ     $6366   -$80                   // for binary comparison with single compilation
 Heap_Ptr        defl    $0002              // HP before compilation
-// Heap_Ptr        defl -114              // HP before compilation
-// Heap_Ptr        defl    9              // HP before compilation
 Heap_offset     defl    0                // given by compilation 
 
                 endif

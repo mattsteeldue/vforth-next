@@ -331,6 +331,7 @@ FInclude_Endif_2:                               // endif
                 ds      35                      // 32 + .f + 0x00 = len 35
 // temp complete path+filename
                 New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
+
                 ds      40
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  

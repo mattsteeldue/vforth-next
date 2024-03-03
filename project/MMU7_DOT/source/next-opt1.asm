@@ -175,7 +175,7 @@
                 dw  ZBRANCH
                 dw  Blk_Init_Endif - $
 
-                dw  LIT, $FFCF
+                dw  LIT, $FFCF                  // PATCH op-code RST $08, $FF
                 dw  LIT, Exit_with_error
                 dw  STORE
 

@@ -716,9 +716,9 @@ CODE upper ( c1 -- c2 )
 \ be called having alternate registers active, to preserve BC and DE.
     ASSEMBLER
     HERE TO mmu7@^
+        LDN     A'| DECIMAL 87 N,
         \ read current MMU7 paging status
         LDX     BC| HEX 243B NN, 
-        LDN     A'| DECIMAL 87 N,
         OUT(C)  A'|
         INC     B'|
         IN(C)   A'|
