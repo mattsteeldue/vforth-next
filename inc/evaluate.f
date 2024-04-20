@@ -18,23 +18,23 @@ DECIMAL
 
 : EVALUATE ( a u -- )
 
-    \ .s  ." >>> blk " BLK ? ." >in " >in ? ." src " source-id ?
+\ \ .s  ." #1 blk " BLK ? ." >in " >in ? ." src " source-id ?
 
     >IN @ >R                        \ a u       - R: in
     BLK @ >R                        \ a u       - R: in blk
 
     \ source-id is -1 during EVALUATE: we are in nested evaluation ! 
     SOURCE-ID @ 0< IF               \ a u  
-        \ ." : I was evaluating " SOURCE-P @ far 16 type 
+\ \     ." : I was evaluating " SOURCE-P @ far 16 type 
         \ save previous EVALUATE status
         SOURCE-L @ >R               \ a u       - R: in blk len
         SOURCE-P @ >R               \ a u       - R: in blk len hp
     ELSE 
         \ source-id is >0 during an F_INCLUDE 
         \ save current position (including current >IN)
-        \ ." : I was loading " 
+\ \     ." : I was loading" 
         SOURCE-ID @ IF
-            \ ." ...from file !! " 
+\ \         ."  from file" 
             SOURCE-ID @ F_FGETPOS   \ a u d f
             [ 36 ] LITERAL ?ERROR   \ a u d
             \ but must rewind to the beginning of the current line
@@ -50,7 +50,7 @@ DECIMAL
     MMU7@ <FAR                      \ a u hp
     SOURCE-P !                      \ a u
 
-    \ .s  ." >>> going to <" over 15 type ." >" cr
+\ \ .s  ." #2 going to >" 2dup type ." <" 
 
     \ emulate EVALUATE via LOAD from BLOCK #1 which belongs to no Screen at all
     \ move string to block #1 and interpret 
@@ -63,7 +63,7 @@ DECIMAL
     0    >IN        ! 
     INTERPRET
 
-    \ .s  ." ||| blk " BLK ? ." >in " >in ? ." src " source-id ?
+\ \ .s  ." #3 blk " BLK ? ." >in " >in ? ." src " source-id ?
 
     \ at return, retrieve source
     R> SOURCE-ID !                  \           - R: in blk d
@@ -89,7 +89,7 @@ DECIMAL
     R> BLK !                        \           - R: in 
     R> >IN !                        \           - R:
 
-    \ .s   ." <<< blk " BLK ? ." >in " >in ? ." src " source-id ?
+\ \ .s   ." #4 blk " BLK ? ." >in " >in ? ." src " source-id ?
 ; 
 
 BASE !

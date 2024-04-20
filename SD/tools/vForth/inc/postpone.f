@@ -7,7 +7,7 @@
     ?COMP
     -FIND
     0= 0 ?ERROR
-    192 < IF 
+    $C0 < IF 
         COMPILE COMPILE 
     THEN
     COMPILE, 

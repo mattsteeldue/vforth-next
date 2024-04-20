@@ -22,14 +22,20 @@ T{ GE3 EVALUATE ->     }T
 T{ GE4          -> 345 }T
 
 ( TEST EVALUATE IN COMPILE STATE )
-\
-T{ : GE6 GE1 GE5 ; -> }T 
+
+\ *** N.B. nested EVALUATE still has bug ***
+
+T{ : GE6 GE1 GE5 
+; -> }T  
 T{ GE6 -> 123 }T
 
-T{ : GE7 GE2 GE5 ; -> }T
+T{ : GE7 GE2 GE5 
+; -> }T
 T{ GE7 -> 124 }T
 
+\ custom test...
 : GE8 S" : GE9 678 ;" EVALUATE ; 
 T{ GE8 -> }T
 T{ GE9 -> 678 }T
+
 

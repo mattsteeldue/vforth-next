@@ -276,7 +276,7 @@ TESTING \ F.3.13 Dictionary
     INCLUDE  test/state.f
 
     INCLUDE  test/[compile].f  
-\   INCLUDE  test/compile,.f   *** q not found ***
+\   INCLUDE  test/compile,.f   *** q Can't be executed ***
 \   INCLUDE  test/compile.f    *** TO TO ***
 
 
@@ -411,10 +411,18 @@ TESTING \ F.3.22 Input
 
 TESTING \ F.3.23 Dictionary Search Rules 
 
+\ The final test in this suite is included with F.6.1.0450 : and tests the 
+\ search order of the dictionary. It asserts that a definition that uses its 
+\ own name in the definition is not recursive but rather refers to the previous
+\ definition of the word.
+
     \ INCLUDE  test/_.f               \ already done
+    T{ : GDX     123 ; -> }T    \ First defintion
+    T{ : GDX GDX 234 ; -> }T    \ Second defintion
+    T{ GDX -> 123 234 }T
 
 
-\ TESTING \ other
+\ TESTING \ Other not used
 
 \   NEEDS BUFFER:
 \   NEEDS ACTION-OF

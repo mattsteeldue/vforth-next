@@ -48,21 +48,21 @@ DECIMAL
 CODE FOP 
     HEX
     E1 C,           \ POP     HL|     
-    3A C, HERE 0 ,  \ LDA()   HERE 0 AA,   
-    F5 C,           \ PUSH    AF|
+\   3A C, HERE 0 ,  \ LDA()   HERE 0 AA,   
+\   F5 C,           \ PUSH    AF|
     C5 C,           \ PUSH    BC|
     D5 C,           \ PUSH    DE|
     7D C,           \ LD      A'|    L|
     32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   
     EF C,           \ RST     28|
     HERE SWAP !     \         HERE SWAP !  *THIS BYTE IS FIXED*
-    HERE SWAP !     \         HERE SWAP !  
+\   HERE SWAP !     \         HERE SWAP !  
 \   HERE
     38 C,           \         HEX 38 C, \ this location is patched each time
     38 C,           \         HEX 38 C, \ end of calculation
     D1 C,           \ POP     DE|
     C1 C,           \ POP     BC|
-    F1 C,           \ POP     AF
+\   F1 C,           \ POP     AF
 \   32 C, HERE 0 ,  \ LD()A   HERE 0 AA,   
     DD C, E9 C,     \ NEXT
     SMUDGE          \ C;

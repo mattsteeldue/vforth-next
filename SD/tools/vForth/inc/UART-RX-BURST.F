@@ -7,7 +7,7 @@ NEEDS UART-SYS
 \ _________________________________________________________
 \
 \ Accept from UART up to n1 bytes and store them at address a.
-\ At 115.200 Bauds bit duration is 8.68  microseconds
+\ At 115.200 Baud, one bit duration is 8.68  microseconds
 \ a 512 bytes-buffer is filled in about 4.4 ms
 \ A 512 bytes burst-read takes 200 T per byte (102400)
 \ plus enter-exit time that at 28 MHz is about 3.7 ms

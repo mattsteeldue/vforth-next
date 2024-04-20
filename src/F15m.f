@@ -2338,11 +2338,11 @@ CODE lshift ( n1 u -- n2 )
         POP     DE|
         POP     HL|
         LD      A'|    E|
-        ORA      A|
+        ORA      D|
         JRF     Z'| HOLDPLACE
             HERE
                 ADDHL   HL|
-                DEC     A'|
+                DECX    DE|
             JRF    NZ'| HOLDPLACE SWAP DISP,
         HERE DISP, \ THEN,
         PUSH    HL|
@@ -2939,7 +2939,6 @@ CODE -dup ( n -- 0 | n n )
 
 .( COMPILE, )
 : compile, ( xt -- )
-    ?comp 
     ,
     ;
 
@@ -5821,7 +5820,7 @@ CASEOFF
 \                   #RP@
 \ F8E0              #R0 @
 \ F8E0-F930         #        User variables area (about 50 entries)
-\ F94C      FIRST   First buffer.
+\ F1C3      FIRST   First buffer.
 \ FF58      LIMIT   End of forth (UDG)
 \ FFFF      P_RAMT  Phisical ram-top
 \

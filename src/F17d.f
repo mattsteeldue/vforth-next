@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240127 ) CR
+.( build 20240404 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -757,7 +757,8 @@ CODE digit ( c n -- u 1  |  0 )
             CPA      L|        \ compare with base
             JRF    NC'| HOLDPLACE \ if less than base, good
                 LD      E'|    A|
-                LDX     HL|    1 NN,
+            \   LDX     HL|    1 NN,
+                SBCHL   HL
                 PUSH    DE|
                 PUSH    HL|
                 EXX 
@@ -765,7 +766,8 @@ CODE digit ( c n -- u 1  |  0 )
 
             HERE DISP, \ THEN,
         HERE DISP, HERE DISP, \ THEN, THEN, \ ... (!!) 
-        LDX     HL| 0 NN,
+    \   LDX     HL| 0 NN,
+        SUBHL   HL
         PUSH    HL|
         EXX 
         Next
@@ -2502,13 +2504,13 @@ CODE dup ( n -- n n )
 \ Rotates the 3 top values of stack by picking the 3rd in access-order
 \ and putting it on top. The other two are shifted down one place.
 CODE rot ( n1 n2 n3  -- n2 n3 n1 )
-        EXX 
-        POP     DE|  \ n3
+\       EXX 
+        POP     AF|  \ n3
         POP     HL|  \ n2
         EX(SP)HL     \ n1 <-> n2
-        PUSH    DE|  \ n3, n2
+        PUSH    AF|  \ n3, n2
         PUSH    HL|
-        EXX 
+\       EXX 
         Next
         C;
 
@@ -2517,13 +2519,13 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
 \ Rotates the 3 top values of stack by picking the 1st in access-order
 \ and putting back to 3rd place. The other two are shifted down one place.
 CODE -rot ( n1 n2 n3  -- n3 n1 n2 )
-        EXX 
+\       EXX 
         POP     HL|  \ n3
-        POP     DE|  \ n2
+        POP     AF|  \ n2
         EX(SP)HL     \ n1 <-> n3
         PUSH    HL|  \ n1
-        PUSH    DE|  \ n2
-        EXX 
+        PUSH    AF|  \ n2
+\       EXX 
         Next
         C;
 
@@ -2796,11 +2798,10 @@ CODE 2@ ( a -- d )
         INCX    HL|
         LD      D'| (HL)|
         INCX    HL|
-        LD      A'| (HL)|
+        LD      C'| (HL)|
         INCX    HL|
-        LD      H'| (HL)|
-        LD      L'|    A|
-        PUSH    HL|
+        LD      B'| (HL)|
+        PUSH    BC|
         PUSH    DE|
         EXX 
         Next
@@ -3242,9 +3243,10 @@ CODE u< ( u1 u2 -- f )
         EXX
         POP     DE|
         POP     HL|
+HERE        
         ANDA     A|
-        SBCHL   DE|
-        SBCHL   HL|
+        SBCHL   DE|     \ set carry-flag if n1 < n2 (unsigned)
+        SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
         PUSH    HL|
         EXX
         Next
@@ -3256,20 +3258,25 @@ CODE u< ( u1 u2 -- f )
 \ true (-1) if n1 is less than n2
 CODE <  ( n1 n2 -- f )
         EXX
+        POP     HL|     \ pop in reverse order because of ex de,hl
         POP     DE|
-        POP     HL|
-        LD      A'|   H|
-        XORN    HEX 80   N,  DECIMAL
-        LD      H'|   A|
-        LD      A'|   D|
-        XORN    HEX 80   N,  DECIMAL
-        LD      D'|   A|
-        SBCHL   DE|     \ set carry-flag if n1 < n2
-        SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
-        PUSH    HL|
-        EXX
-        Next
-        C;
+        LDX     BC|  $8000 NN,
+        ADDHL   BC      \ shift everything up $8000
+        EXDEHL          \ and compare as unsigned.
+        ADDHL   BC
+        JR      BACK,
+\       LD      A'|   H|
+\       XORN    HEX 80   N,  DECIMAL
+\       LD      H'|   A|
+\       LD      A'|   D|
+\       XORN    HEX 80   N,  DECIMAL
+\       LD      D'|   A|
+\       SBCHL   DE|     \ set carry-flag if n1 < n2
+\       SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
+\       PUSH    HL|
+\       EXX
+\       Next
+\       C;
         
 
 
@@ -3473,7 +3480,7 @@ CODE <far ( a n -- ha )
 
 
 \ heap correction: given an LFA check if it's a real address or a heap-pointer
-\ address <= 4000h -- except 0000h -- are interpreted as heap-pointers 
+\ address <= 6000h -- except 0000h -- are interpreted as heap-pointers 
 \ and converted to heap address updating MMU7 via FAR
 : ?>heap ( a | hp -- a | ha )
     dup             \ a a   |  hp hp
@@ -3672,7 +3679,6 @@ HEX 1F80 constant page-watermark
 
 .( COMPILE, )
 : compile, ( xt -- )
-    ?comp 
     ,
     ;
 
@@ -5987,7 +5993,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 87 here ," v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal 13 here ," Heap Vocabulary - build 20240127" -1 allot ]
+\    [ decimal 13 here ," Heap Vocabulary - build 20240404" -1 allot ]
 \    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal 13 c, c! c! c! ] 
     ;

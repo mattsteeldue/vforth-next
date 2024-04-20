@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240229 ) CR
+.( build 20240404 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -482,12 +482,12 @@ CODE 0branch ( f -- )
 
 
 CODE (leave) ( -- )
-        EXDEHL
+      \ EXDEHL
 
         LDN     A'|  4  N,   \ UNLOOP index & limit from Return Stack      
-        ADDHL,A
+        ADDDE,A
 
-        EXDEHL        
+      \ EXDEHL        
       \ JP      branch^  AA, \ jump out of loop
         JR      branch^  HERE 1 + - D,
         Next
@@ -647,7 +647,8 @@ CODE digit ( c n -- u 1  |  0 )
             CPA      L|        \ compare with base
             JRF    NC'| HOLDPLACE \ if less than base, good
                 LD      E'|    A|
-                LDX     HL|    1 NN,
+            \   LDX     HL|    1 NN,
+                SBCHL   HL|
                 PUSH    DE|
                 PUSH    HL|
                 EXX 
@@ -2282,9 +2283,10 @@ CODE 2- ( n1 -- n2 )
 \ change the sign of number
 CODE negate ( n1 -- n2 )
         EXX
-        LDX     HL|    0 NN,
         POP     DE|
-        ORA      A|
+        XORA     A|
+        LD      H'|    A|
+        LD      L'|    A|
         SBCHL   DE|
         PUSH    HL|
         EXX
@@ -2392,13 +2394,13 @@ CODE dup ( n -- n n )
 \ Rotates the 3 top values of stack by picking the 3rd in access-order
 \ and putting it on top. The other two are shifted down one place.
 CODE rot ( n1 n2 n3  -- n2 n3 n1 )
-        EXX 
-        POP     DE|  \ n3
+\       EXX 
+        POP     AF|  \ n3
         POP     HL|  \ n2
         EX(SP)HL     \ n1 <-> n2
-        PUSH    DE|  \ n3, n2
+        PUSH    AF|  \ n3, n2
         PUSH    HL|
-        EXX 
+\       EXX 
         Next
         C;
 
@@ -2407,13 +2409,13 @@ CODE rot ( n1 n2 n3  -- n2 n3 n1 )
 \ Rotates the 3 top values of stack by picking the 1st in access-order
 \ and putting back to 3rd place. The other two are shifted down one place.
 CODE -rot ( n1 n2 n3  -- n3 n1 n2 )
-        EXX 
+\       EXX 
         POP     HL|  \ n3
-        POP     DE|  \ n2
+        POP     AF|  \ n2
         EX(SP)HL     \ n1 <-> n3
         PUSH    HL|  \ n1
-        PUSH    DE|  \ n2
-        EXX 
+        PUSH    AF|  \ n2
+\       EXX 
         Next
         C;
 
@@ -2478,17 +2480,16 @@ CODE pick ( n -- v )
 \ .( 2OVER )
 CODE 2over ( d1 d2 -- d1 d2 d1 )
         EXX 
-        LDX     HL| 0007 NN,
-        ADDHL   SP|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        PUSH    DE|
-        DECX    HL|
-        LD      D'| (HL)|
-        DECX    HL|
-        LD      E'| (HL)|
-        PUSH    DE|
+        POP     HL|     \ 10
+        POP     DE|     \ 10
+        POP     BC|     \ 10
+        POP     AF|     \ 10
+        PUSH    AF|     \ 11
+        PUSH    BC|     \ 11
+        PUSH    DE|     \ 11
+        PUSH    HL|     \ 11
+        PUSH    AF|     \ 11
+        PUSH    BC|     \ 11
         EXX 
         Next
         C;
@@ -2686,11 +2687,10 @@ CODE 2@ ( a -- d )
         INCX    HL|
         LD      D'| (HL)|
         INCX    HL|
-        LD      A'| (HL)|
+        LD      C'| (HL)|
         INCX    HL|
-        LD      H'| (HL)|
-        LD      L'|    A|
-        PUSH    HL|
+        LD      B'| (HL)|
+        PUSH    BC|
         PUSH    DE|
         EXX 
         Next
@@ -2747,8 +2747,8 @@ CODE p! ( b p -- )
          
         EXX
         POP     BC|
-        POP     HL|
-        OUT(C)  L'|
+        POP     DE|
+        OUT(C)  E'|
         EXX
         Next
         C;
@@ -2758,7 +2758,7 @@ CODE p! ( b p -- )
 .( 2* )
 \ doubles the number at top of stack 
 CODE 2* ( n1 -- n2 )
-         
+HERE    \ later used by CELLS
         POP     HL|
         ADDHL   HL|
         PUSH    HL|
@@ -2814,7 +2814,8 @@ CODE rshift ( n1 u -- n2 )
 .( CELLS )
 CODE cells ( n2 -- n2 )
         \ this way we will have a real duplicate of 2*
-        JR  $D5 D,
+        JR BACK,
+      \ JR  $D5 D,
       \ JR  ' 2* HERE - 1-  D,
       \ ' 2* HERE - 1+ D,
       \ ' 2*  \ >BODY  LATEST PFA CELL- ! 
@@ -2915,10 +2916,12 @@ CODE noop ( -- )
 
         POP     HL|
         LD      A'| (HL)|
+
     \   LDX     HL| vars^ @ NN,
         LDHL()  vars^ AA,       \ this is more dynamic...
         ADDHL,A
         PUSH    HL|
+
         Next
         C;
 
@@ -3132,9 +3135,10 @@ CODE u< ( u1 u2 -- f )
         EXX
         POP     DE|
         POP     HL|
+HERE \ used by <       
         ANDA     A|
-        SBCHL   DE|
-        SBCHL   HL|
+        SBCHL   DE|     \ set carry-flag if n1 < n2 (unsigned)
+        SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
         PUSH    HL|
         EXX
         Next
@@ -3146,20 +3150,29 @@ CODE u< ( u1 u2 -- f )
 \ true (-1) if n1 is less than n2
 CODE <  ( n1 n2 -- f )
         EXX
+        POP     HL|     \ pop in reverse order because of ex de,hl
         POP     DE|
-        POP     HL|
-        LD      A'|   H|
-        XORN    HEX 80   N,  DECIMAL
-        LD      H'|   A|
-        LD      A'|   D|
-        XORN    HEX 80   N,  DECIMAL
-        LD      D'|   A|
-        SBCHL   DE|     \ set carry-flag if n1 < n2
-        SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
-        PUSH    HL|
-        EXX
-        Next
+        LDX     BC|  $8000 NN,
+        ADDHL   BC|     \ shift everything up $8000
+        EXDEHL          \ and compare as unsigned.
+        ADDHL   BC|
+        JR      BACK,
         C;
+\       EXX
+\       POP     DE|
+\       POP     HL|
+\       LD      A'|   H|
+\       XORN    HEX 80   N,  DECIMAL
+\       LD      H'|   A|
+\       LD      A'|   D|
+\       XORN    HEX 80   N,  DECIMAL
+\       LD      D'|   A|
+\       SBCHL   DE|     \ set carry-flag if n1 < n2
+\       SBCHL   HL|     \ HL is zero or -1 depending on carry-flag
+\       PUSH    HL|
+\       EXX
+\       Next
+\       C;
         
 
 
@@ -3356,14 +3369,14 @@ CODE <far ( a n -- ha )
 : ?heap_ptr  ( n -- f )
     dup                 \ n n
     If                  \ n
-        [ HEX 6000 ] Literal 
+        [ HEX 6300 ] Literal 
         u<              \ f
     Then               
 ;
 
 
 \ heap correction: given an LFA check if it's a real address or a heap-pointer
-\ address <= 4000h -- except 0000h -- are interpreted as heap-pointers 
+\ address <= 6300h -- except 0000h -- are interpreted as heap-pointers 
 \ and converted to heap address updating MMU7 via FAR
 : ?>heap ( a | hp -- a | ha )
     dup             \ a a   |  hp hp
@@ -3562,7 +3575,6 @@ HEX 1F80 constant page-watermark
 
 .( COMPILE, )
 : compile, ( xt -- )
-    ?comp 
     ,
     ;
 
@@ -4224,7 +4236,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
     If  
         r@          \ addr
         \ latest    \ addr voc
-        current @ @
+        current @ @ \ equivalent to latest
         (find)      \ cfa b 1   |  0 
 
             ?dup            \ cfa b 1 1 |  0
@@ -5742,7 +5754,9 @@ decimal
 : d.r    ( d n -- )
     >r
     tuck dabs 
-    <# #s rot sign #> 
+    <# #s 
+    rot 
+    sign #> 
     r>
     over - spaces
     type
@@ -5876,7 +5890,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-02-29" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-04-04" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 

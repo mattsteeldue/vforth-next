@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      113
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2024-02-29 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-04-20 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 db      7,0
@@ -225,7 +225,7 @@ Loop_Endif:
 
                 New_Def BRANCH, "BRANCH", is_code, is_normal
 Branch_Ptr:                
-                ld      a, (bc)
+                ld      a, (bc)    
                 ld      l, a
                 inc     bc
                 ld      a, (bc)
@@ -259,12 +259,12 @@ ZBranch_Ptr:
 // compiled by LEAVE
 // this forces to exit from loop and jump past
                 New_Def C_LEAVE, "(LEAVE)", is_code, is_normal
-                ex      de, hl
+                // ex      de, hl
                 // *** ldhlrp
                 ld      a, 4
-                add     hl, a
+                add     de, a
                 // *** ldrphl
-                ex      de, hl
+                // ex      de, hl
                 jr      Branch_Ptr       // perform branch consuming following cell
                 next
 
@@ -296,7 +296,7 @@ Do_Ptr:
                 // dec     de
                 // dec     de
                 // dec     de
-                add     de, -4
+                add     de, -4              // cannot use LD A,-4 and ADD DE,A !
                 push    de                  // pass it to h'l'
                 // *** ex      de, hl
                 // *** ldrphl 
@@ -327,7 +327,7 @@ Do_Ptr:
 // this is a simpler version of (?DO)
                 New_Def C_DO, "(DO)", is_code, is_normal
                 dec     bc                  // prepare IP beforehand 
-                dec     bc                  // to balance the two final inc bc in (?do)
+                dec     bc                  // to balance the two final 2 inc bc in (?do)
                 jr      Do_Ptr
 
 //  ______________________________________________________________________ 
@@ -392,7 +392,8 @@ Digit_Decimal:
                 cp      l                   // compare with base
                 jr      nc, Digit_Fail      // fail when greater than base
                     ld      e, a                // digit is returned as second from TOS
-                    ld      hl, 1
+                //  ld      hl, -1
+                    sbc     hl, hl
                     push    de
                     push    hl
                     exx
@@ -464,6 +465,7 @@ MMU7_read:
 
 //  ______________________________________________________________________ 
 
+// given an HP-pointer in input, turn it into page + offset
 TO_FAR_rout:
                 ld      a, h
                 ex      af, af
@@ -1570,9 +1572,10 @@ CellMinus:
 // change the sign of number
                 New_Def MINUS, "NEGATE", is_code, is_normal
                 exx
-                ld      hl, 0               // subtract from 0
                 pop     de
-                or      a
+                xor     a
+                ld      h, a
+                ld      l, a
                 sbc     hl, de
                 push    hl
                 exx
@@ -1669,13 +1672,13 @@ CellMinus:
 // Rotates the 3 top values of stack by picking the 3rd in access-order
 // and putting it on top. The other two are shifted down one place.
                 New_Def ROT, "ROT", is_code, is_normal
-                exx
-                pop     de                  // < n3
+            //  exx
+                pop     af                  // < n3
                 pop     hl                  // < n2
                 ex      (sp),hl             // > n2 < n1 
-                push    de                  // > n3
+                push    af                  // > n3
                 push    hl                  // copy n1 to TOS
-                exx
+            //  exx
                 next
 
 //  ______________________________________________________________________ 
@@ -1684,13 +1687,13 @@ CellMinus:
 // Rotates the 3 top values of stack by picking the 1st in access-order
 // and putting back to 3rd place. The other two are shifted down one place.
                 New_Def DASH_ROT, "-ROT", is_code, is_normal
-                exx
+            //  exx
                 pop     hl                  // < n3
-                pop     de                  // < n2
+                pop     af                  // < n2
                 ex      (sp),hl             // > n3 < n1
                 push    hl                  // > n1
-                push    de                  // copy n3 to TOS
-                exx
+                push    af                  // copy n3 to TOS
+            //  exx
                 next
 
 //  ______________________________________________________________________ 
@@ -1749,17 +1752,16 @@ CellMinus:
 // copy the second double of stack and put on top.
                 New_Def TWO_OVER, "2OVER", is_code, is_normal
                 exx
-                ld      hl, 7
-                add     hl, sp
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)             // d1-L
-                push    de
-                dec     hl
-                ld      d, (hl)
-                dec     hl
-                ld      e, (hl)             // d1-H
-                push    de
+                pop     hl      // 10
+                pop     de      // 10
+                pop     bc      // 10
+                pop     af      // 10
+                push    af      // 11
+                push    bc      // 11
+                push    de      // 11
+                push    hl      // 11
+                push    af      // 11
+                push    bc      // 11
                 exx
                 next
 
@@ -1966,11 +1968,10 @@ CellMinus:
                 inc     hl
                 ld      d, (hl)             // high-byte
                 inc     hl
-                ld      a, (hl)             // low-byte
+                ld      c, (hl)             // low-byte
                 inc     hl
-                ld      h, (hl)             // high-byte
-                ld      l, a
-                push    hl
+                ld      b, (hl)             // high-byte
+                push    bc
                 push    de
                 exx
                 next

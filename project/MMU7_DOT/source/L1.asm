@@ -269,6 +269,7 @@ User_Ptr:
                 exx
                 pop     de
                 pop     hl
+Unsigned_Less_Exit:  
                 and     a
                 sbc     hl, de
                 sbc     hl, hl
@@ -282,20 +283,19 @@ User_Ptr:
 // less-than
                 New_Def LESS, "<", is_code, is_normal
                 exx
-                pop     de
                 pop     hl
-                ld      a, h
-                xor     $80
-                ld      h, a
-                ld      a, d
-                xor     $80
-                ld      d, a
+                pop     de
+                ld      bc, $8000
+                add     hl, bc
+                ex      de, hl
+                add     hl, bc
+                jr      Unsigned_Less_Exit
 //              and     a
-                sbc     hl, de
-                sbc     hl, hl
-                push    hl
-                exx
-                next
+//              sbc     hl, de
+//              sbc     hl, hl
+//              push    hl
+//              exx
+//              next
 
 //  ______________________________________________________________________ 
 //
@@ -455,7 +455,7 @@ Traverse_Begin:                                 // begin
 // reverse of >FAR: encodes a FAR address compressing
 // to bits 765 of H, lower bits of HL address offset from E000h
                 New_Def FROM_FAR, "<FAR", is_code, is_normal
-                pop     hl                  // page number in e
+                pop     hl                  // page number in l
                 ld      a, l
                 and     07
                 rrca
@@ -474,7 +474,8 @@ Traverse_Begin:                                 // begin
 //  ______________________________________________________________________ 
 //
 // ?IN_MMU7        a -- f
-// query current page in MMU7 8K-RAM : 0 and 223
+// check if address lies on MMU7
+// tf is passed address is on MMU7
                 Colon_Def QMMU7, "?IN_MMU7", is_normal
                 dw      DUP
                 dw      LIT, $E000
@@ -485,7 +486,9 @@ Traverse_Begin:                                 // begin
 //  ______________________________________________________________________ 
 //
 // far          hp -- ha
-// query current page in MMU7 8K-RAM : 0 and 223
+// Convert an "heap-pointer address" (ha) into a real address (a)
+// between E000h and FFFFh and fit the correct 8K page on MMU7
+// An "ha" uses the 3 msb as page-number and the lower bits as offset at E000.
                 Colon_Def FAR, "FAR", is_normal
                 dw      TO_FAR
                 dw      MMU7_STORE
@@ -494,12 +497,14 @@ Traverse_Begin:                                 // begin
 //  ______________________________________________________________________ 
 //
 // ?HEAP_PTR       n -- n f
-// query current page in MMU7 8K-RAM : 0 and 223
+// check if it's a non-zero heap-pointer or less than $6300
+// tf if passed argument is an hp
+// ff if passed argument isn't hp
                 Colon_Def QHEAPP, "?HEAP_PTR", is_normal
                 dw      DUP
                 dw      ZBRANCH
                 dw      QHeap_Skip - $
-                dw          LIT, $6000
+                dw          LIT, $6300
                 dw          ULESS
 QHeap_Skip:                                          // endif
                 dw      EXIT                        // ;
@@ -507,7 +512,9 @@ QHeap_Skip:                                          // endif
 //  ______________________________________________________________________ 
 //
 // ?>heap       n1 -- n2
-// query current page in MMU7 8K-RAM : 0 and 223
+// heap correction: given an LFA check if it's a real address or a heap-pointer
+// address <= 6300h -- except 0000h -- are interpreted as heap-pointers 
+// and converted to heap address updating MMU7 via FAR
                 Colon_Def QTOHEAP, "?>HEAP", is_normal
                 dw      DUP
                 dw      QHEAPP
@@ -527,7 +534,7 @@ Q2Heap_Skip:                                          // endif
 //  ______________________________________________________________________ 
 //
 // page-watermark   -- n
-// number of buffers available. must be the difference between LIMIT and FIRST divided by 516
+// how much a 8K page can be filled..
                 Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1F80  
 
 //  ______________________________________________________________________ 
@@ -726,7 +733,7 @@ QError_Endif:                                   // endif
 // compile,     --
 // compiles the following word
                 Colon_Def COMPILE_XT, "COMPILE,", is_normal
-                dw      QCOMP                   // ?comp
+//              dw      QCOMP                   // ?comp
                 dw      COMMA                   // ,
                 dw      EXIT                    // ;
 

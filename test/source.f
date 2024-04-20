@@ -17,12 +17,14 @@ TESTING F.6.1.2216 - SOURCE
 \ the string itself must be copied into a non-volatile area before INTERPRET
 \ begins interpretation.
 
-: GS1 S" SOURCE" 2DUP EVALUATE >R SWAP >R = R> R> = ;
+: GS1 S" SOURCE" 2DUP EVALUATE
+>R SWAP >R = R> R> = ;
 
-T{ GS1 -> <TRUE> <TRUE> }T
+T{ GS1 
+-> <TRUE> <TRUE> }T
 
 : GS4 SOURCE >IN ! DROP ;
 
 T{ GS4 123 456 
-    -> }T
+-> }T
 

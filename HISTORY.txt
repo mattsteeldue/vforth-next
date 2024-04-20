@@ -516,7 +516,7 @@ sent to screen (which is notoriously slow).
  to screen from a buffer allowing long output without loss.
 Other keys works as follows:
 [BREAK] quit to prompt
-[TRUE VIDEO] transmits 0x04, EOT or ^D that normally produces a normal exit 
+[TRUE VIDEO] transmits 0x04, EOT or ^D that normally produces a normal exit
 from whatever you where in.
 [INV VIDEO] transmits 0x05, EOT or ^E
 [CAPS LOCK] toggles caps lock and sends nothing.
@@ -538,3 +538,8 @@ Remaining ASCII characters ~ | \ [ ] { } are produced via SYMBOL-SHIFT as usual.
 \ build 20240229
 Improvement on RPI0 introducing  ASK  definition to make RPi0 perform a script.
 Succeeded in recompile v-Forth 1.7 in itself again using src/F17e.f source.
+
+
+\ build 20240420
+Shorter binary, squeezed some 22 bytes. Hadn't much time lately. 
+

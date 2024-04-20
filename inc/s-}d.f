@@ -5,8 +5,7 @@
 \
 \ Convert a number to double precision.
 \
-CREATE S->D ( n -- d )
-    
-    ' S>D  >BODY
-    ' S->D   !
+: S->D ( n -- d )
+    S>D
+;
 
