@@ -3,9 +3,11 @@
 \
 
 \ needs assembler
+needs unlink
 needs save-bytes
 needs pad"
 
+marker redo
 
 variable org
 
@@ -26,7 +28,7 @@ code helloworld
             23 C,               \ incx    hl|
             18 C, F9 C,         \ jr    Back,  \ back to the closest Here
             
-      \ Here  1+  dot-relative
+    \ Here  1+  dot-relative
             ," Hello, World!"   \ swap !
         
             \ c;

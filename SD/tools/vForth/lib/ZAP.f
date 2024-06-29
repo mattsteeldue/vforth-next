@@ -8,7 +8,7 @@
 \ for standalone execution of without vForth itself.
 
 \ Usage:
-\ NEEDS ZAP name
+\ ZAP filename
 
 \ Example:
 \ INCLUDE DEMO/CHOMP-CHOMP.F
@@ -154,7 +154,6 @@ CREATE S-HEAP-3 ," -heap3.bin"
     SAVE-USER
     SAVE-HEAP
 ;
-
 
 
 BASE !

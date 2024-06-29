@@ -1,9 +1,9 @@
 File: c:\Zx\forth\F15\tools\vForth\!Blocks-64.bin
-Created: Sun Mar  3 13:17:44 2024
+Created: Sat Jun 29 23:49:00 2024
 
 See index at end of file.
 
-\ v-Forth 1.7 - NextZXOS version - build 2024-02-29
+\ v-Forth 1.7 - NextZXOS version - build 2024-06-16
 \ MIT License (c) 1990-2024 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement
 \ or at Forth prompt use NEEDS VIEW and then VIEW LICENSE.md
@@ -48,7 +48,7 @@ Scr# 2
  12 
  13 
  14 
- 15 
+ 15 msg# -17
 
 Scr# 3 
   0 ( Error messages    from -15 to -1  )
@@ -178,11 +178,11 @@ Scr# 9
 
 Scr# 10 
   0 .( AUX )
-  1   ." Press any key to continue" CR
-  2   ." or [BREAK] to stop compile." CR
-  3   key
-  4 \
-  5   include src/f17e.f
+  1 \ include demo/savebank.dot.f
+  2 
+  3 
+  4 
+  5 
   6 
   7 
   8 
@@ -1549,23 +1549,23 @@ Scr# 166
   0 ( Assembler example - White noise Egghead 3 )
   1 NEEDS ASSEMBLER DECIMAL
   2 CODE WHITE-NOISE  ( -- )
-  3      exx                        \ save registers
-  4 HERE calL 0000 AA,
-  5      exx  NEXT
+  3      di exx               \ preserve registers
+  4 HERE call 0000 AA,
+  5      exx ei  NEXT
   6 \ subroutine
-  7 HERE SWAP 1+ !  \ patch CALL 0000 here above
+  7 HERE SWAP 1+ !            \ patch CALL 0000 here above
   8      ldn  e'|  250  N,
-  9      ldx  hl|  300 NN,        \ start pointer in ROM
+  9      ldx  hl|  300 NN,    \ start pointer in ROM
  10 HERE push de|
  11      ldn  b'|   32  N,
- 12 HERE push bc|                 \ main loop
+ 12 HERE push bc|             \ main loop
  13      ld   a'| (hl)|
  14      incx hl|
  15 -->
 
 Scr# 167 
   0 ( Assembler example - White noise Egghead 3 )
-  1      andn 248 N,    \ black border
+  1      andn 248 N,         \ black border
   2      outa 254 P,         \ send to speaker
   3      ld   a'|   e|
   4      cpl
@@ -2877,6 +2877,24 @@ Scr# 239
  14 ; DECIMAL
  15 
 
+Scr# 240 
+  0 ( test )
+  1 marker redo
+  2 code test
+  3 push  sp|
+  4 addhl af|
+  5 nop
+  6 c;
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 241 
   0 \ Leo Brodie - Starting Forth - Square
   1 0 variable board 7 allot           board !
@@ -3421,7 +3439,7 @@ Scr# 275
   0 ( Eratostenes )
   1 8000 constant ablock
   2 : initialize
-  3   40 ablock + ablock do
+  3   62 ablock + ablock do
   4     i block update b/buf blank
   5   loop ;
   6 : apos ( n -- a )    \ address of
@@ -3438,14 +3456,14 @@ Scr# 275
 Scr# 276 
   0 ( Eratostenes )
   1 : sieve ( n -- )
-  2   100 2 do
-  3     i apos c@ bl = if
-  4       i 10001 exclude
-  5     then
-  6   loop
-  7 ;
-  8 \
-  9 \
+  2   [char] x 0 apos 2dup c! 1+ c!
+  3   150 2 do
+  4     i apos c@ bl = if
+  5       i 32400 exclude
+  6       [char] . emit
+  7     then
+  8   loop
+  9 ;
  10 \
  11 \
  12 \
@@ -5379,6 +5397,24 @@ Scr# 394
  14 
  15 
 
+Scr# 395 
+  0 ( SPRITE structure )
+  1 : t
+  2   #17 MMU7!
+  3   $FFFF $E000
+  4   do i $80 dump
+  5   key drop
+  6   $80 +loop
+  7 ;
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 398 
   0 ( looking for AT position in LAYERs )
   1 \ search memory for a specific xt for debug purposes
@@ -7125,6 +7161,150 @@ Scr# 569
  14 
  15 
 
+Scr# 580 
+  0 ( TEST )
+  1 NEEDS SAVE-BYTES
+  2 \ Given an address, compute the relative address from $2000
+  3 : DOT-RELATIVE ( a1 -- a2 )
+  4   HERE SWAP - [ HEX ] 2000 + \
+  5 ; DECIMAL
+  6 0 VARIABLE FH       FH !
+  7 \ accept volatile filename at PAD
+  8 : FILENAME" ( -- )  \
+  9   [CHAR] " WORD COUNT    \ a+1 n
+ 10   TUCK OVER + 0          \ n a+1 a+n+1 0
+ 11   SWAP !                 \ n a+1
+ 12   PAD ROT 1+             \ a+1 pad n+1
+ 13   CMOVE ;
+ 14 -->
+ 15 
+
+Scr# 581 
+  0 ( DOT example  .var )
+  1 needs Assembler
+  2 create Org Assembler
+  3         ldhl()     #23627 AA,      \ VARS
+  4   Here  ld    a'|   (hl)|
+  5         cpn  $80 N,
+  6         retf   z|
+  7         jrf  nc'|  holdplace
+  8         cpn  $20 N,
+  9         jrf  cy'|  holdplace
+ 10         rst   10|
+ 11         incx  hl|
+ 12 here disp, here disp,
+ 13         jr    Back,
+ 14 -->
+ 15 
+
+Scr# 590 
+  0 ( Product routine for 12:4 fixed point )
+  1 needs assembler
+  2 \
+  3 code vars
+  4 \
+  5   exx
+  6   pop   de|
+  7   pop   hl|
+  8 -->
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 591 
+  0 ( Product routine for 12:4 fixed point )
+  1 -->
+  2 \
+  3   bit    7|   h|
+  4   jrf   z'|   holdplace
+  5   bit    7|   d|
+  6   jrf   z'|   holdplace
+  7 \
+  8 -->
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 592 
+  0 ( Product routine for 12:4 fixed point )
+  1 \ unsigned * unsigned
+  2   ld    b'|   l|
+  3   ld    c'|   e|
+  4   ld    e'|   l|
+  5   ld    l'|   d|
+  6   push  hl|
+  7   ld    l'|   c|
+  8   mul               \ Xx
+  9   exdehl
+ 10   mul               \ Ww
+ 11   addhl de|
+ 12 \
+ 13 -->
+ 14 
+ 15 
+
+Scr# 593 
+  0 ( Product routine for 12:4 fixed point )
+  1 \
+  2   ld    e'|   c|
+  3   ld    d'|   b|
+  4   mul
+  5   ldn   b'|   4 N,
+  6   bsrade,b
+  7   exdehl
+  8   bslade,b
+  9   addhl de|
+ 10   pop   de|
+ 11   mul
+ 12   ldn   b'| #12 N,
+ 13   bslade,b
+ 14 -->
+ 15 
+
+Scr# 594 
+  0 ( Product routine for 12:4 fixed point )
+  1 \
+  2   ld    e'|   c|
+  3   ld    d'|   b|
+  4   mul
+  5   ldn   b'|   4 N,
+  6   bsrade,b
+  7   exdehl
+  8   bslade,b
+  9   addhl de|
+ 10   pop   de|
+ 11   mul
+ 12   ldn   b'| #12 N,
+ 13   bslade,b
+ 14 -->
+ 15 
+
+Scr# 595 
+  0 ( Product routine for 12:4 fixed point )
+  1 \
+  2   addhl de|
+  3   push  hl|
+  4   exx
+  5   jpix
+  6 C;
+  7 \
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 598 
   0 \ kempston test
   1  marker task
@@ -8369,7 +8549,7 @@ Scr# 700
 
 Scr# 701 
   0 \ HEAP colon-definition: 128K dictionary space.
-  1 H-: ( cccc -- )
+  1 : skip ( n -- )
   2   [COMPILE] :
   3   ;CODE
   4   \ get current MMU7 page
@@ -10476,6 +10656,96 @@ Scr# 893
   8   exx
   9   next
  10   c;
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 895 
+  0 ( RPI0 wrapper )
+  1 needs RPi0
+  2 : this ( -- a n )
+  3   >in @ >R   -2 >in +!  [compile] \
+  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
+  7   blk @ if  blk @ block  else  tib @  then  R> + swap ;
+  8 : send ( a1 n1 a2 n2 -- n3 )
+  9   2dup      uart-send-text  uart-wait-for
+ 10             uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
+ 12 : ask  pad 1024 this send ;
+ 13 : sh  here 1024 this send drop ;
+ 14 
+ 15 
+
+Scr# 896 
+  0 ( RPI0 wrapper )
+  1 needs RPi0
+  2 : ask  ( -- n )
+  3   >in @ >R   -2 >in +!  [compile] \
+  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
+  7   blk @ if  blk @ block  else  tib @  then  R> + swap
+  8 \
+  9   2dup      uart-send-text  uart-wait-for
+ 10   pad 100   uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
+ 12 : sh ( -- )
+ 13   ask drop ;
+ 14 
+ 15 
+
+Scr# 897 
+  0 ( RPI0 wrapper )
+  1   needs s"  needs ask  needs sh
+  2 \ RPi0-init
+  3 \ uart-wait-prompt
+  4   sh   echo 'print 2**300' > temp.py
+  5   ask  python temp.py
+  6   pad swap type
+  7 \
+  8 : test
+  9   here 200
+ 10   s"  python -c 'print 2**400'  "
+ 11   send here swap type
+ 12 ;
+ 13 
+ 14 
+ 15 
+
+Scr# 898 
+  0 ( RPI0 wrapper )
+  1 \ RPi0-init
+  2 
+  3 \ uart-wait-prompt
+  4   sh   echo 'print 2**300' > temp.py
+  5   ask  python temp.py
+  6   pad swap type
+  7 \
+  8   ask  python -c 'print 2**400'
+  9   pad swap type
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 899 
+  0 ( Example for THIS definition )
+  1  ASK  echo $BASH_VERSION
+  2  CR  PAD SWAP TYPE CR
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
  11 
  12 
  13 
@@ -15109,8 +15379,152 @@ Scr# 3918
  14 
  15 
 
+Scr# 3968 
+  0 x     xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx
+  1 x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xx
+  2 x x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x
+  3 xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx
+  4 x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xx
+  5 x x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x
+  6 xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx
+  7 x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xx
+  8 x     x xxx x x xxxxxxx x x xxx x x x xxx xxx x xxx x x x xxx x
+  9 xxx xxx x x x xxx x x xxxxx x xxx xxx x x x xxx x x x xxxxx x x
+ 10 xxxxx x x xxx x x xxxxx xxx x xxx x x x xxx xxxxx xxx x x x xxx
+ 11 x x xxxxx x x x xxx x x x xxx x xxx xxx x x x xxxxx x x xxxxx x
+ 12 x xxx xxx x xxx x x xxxxx x xxx xxx x x x xxx xxx xxxxx x x x xx
+ 13 x x x x xxx x x x xxx x x x xxxxx xxx xxx x x x xxx xxx x xxxxx
+ 14 x x xxx x xxx xxx x x xxxxx x x xxxxx x x x xxx xxx x xxx x x x
+ 15 xxx x x x xxxxx x x xxx x x x xxx xxxxx xxx x x x xxx x xxx xxxx
+
+Scr# 3969 
+  0 x     x x x x xxx x x x xxx x x x x xxx x x x x x xxx x x xxx x
+  1 x x x x x x xxx xxx x x x x x x x x x xxx x x x x x x x x x xxx
+  2 xxx x x x x x x x xxx x x xxx x x x x x xxx x x x x xxx x x x xx
+  3 x x x x x x x xxx x xxx x x x x x x x x xxxxx x x x x x x x x x
+  4 xxxxx x x x x x x x x xxx x xxx x x x x x x xxx x x x xxx x x x
+  5 x xxx x x x x x xxx x x xxx x x x x x x x xxx xxx x x x x x x x
+  6 x x xxx x x x x x x x x x xxx xxx x x x x x x x xxx x x xxx x x
+  7 x x x xxx x x x x xxx x x x xxx x x x x x x xxx x xxx x x x x x
+  8 x     xxxxx x x x x x x x x x xxxxx x x x x x x x x xxx x xxx x
+  9 x x x x x xxx x x x xxx x x x x xxx x x x x x xxx x x xxx x x x
+ 10 x x x x xxx xxx x x x x x x x x x xxx x x x x x x x x x xxx xxx
+ 11 x x x x x x x xxx x x xxx x x x x x xxx x x x x xxx x x x xxx x
+ 12 x x x x x xxx x xxx x x x x x x x x xxxxx x x x x x x x x x xxxx
+ 13 x x x x x x x x x xxx x xxx x x x x x x xxx x x x xxx x x x x xx
+ 14 x x x x x x xxx x x xxx x x x x x x x xxx xxx x x x x x x x x x
+ 15 xxx x x x x x x x x x xxx xxx x x x x x x x xxx x x xxx x x x x
+
+Scr# 3970 
+  0 x
+  1                                             x
+  2 
+  3                                     x
+  4 
+  5                             x
+  6 
+  7                     x
+  8 
+  9             x                               x
+ 10 
+ 11     x                               x
+ 12                                                             x
+ 13                             x
+ 14                                                     x
+ 15                     x
+
+Scr# 3971 
+  0      x            x            x            x            x
+  1       x     x      x            x            x            x
+  2        x            x            x  x         x            x
+  3     x   x            x            x            x            x
+  4          x            x     x      x            x           xx
+  5           x            x            x            x            x
+  6            x        x   x            x            x x          x
+  7             x            x            x            x
+  8             x                               x
+  9 
+ 10     x                               x
+ 11                                                             x
+ 12                             x
+ 13                                                     x
+ 14                     x
+ 15                                             x
+
+Scr# 3972 
+  0             x
+  1                                     x
+  2     x
+  3                             x                               x
+  4 
+  5                     x                               x
+  6 
+  7             x                               x
+  8 
+  9     x                               x
+ 10                                                             x
+ 11                             x
+ 12                                                     x
+ 13                     x
+ 14                                             x
+ 15             x
+
+Scr# 3973 
+  0 
+  1     x
+  2                                                             x
+  3 
+  4                                                     x
+  5 
+  6                                             x
+  7 
+  8 x
+  9                                                             x
+ 10 
+ 11                                                     x
+ 12 
+ 13                                             x
+ 14 
+ 15                                     x
+
+Scr# 3974 
+  0 x
+  1                             x                               x
+  2 
+  3                     x                               x
+  4 
+  5             x                               x
+  6 
+  7     x                               x
+  8                                                             x
+  9                             x
+ 10                                                     x
+ 11                     x
+ 12                                             x
+ 13             x
+ 14                                     x
+ 15     x
+
+Scr# 3975 
+  0                             x                               x
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 4000 
-  0     x x xxx x xxx x xxx xxxxx x xxxxx xxx x xxx xxxxx xxxxx x xx
+  0 xx  x x xxx x xxx x xxx xxxxx x xxxxx xxx x xxx xxxxx xxxxx x xx
   1 xxx xxx x xxxxx xxx xxxxx xxxxxxx xxx x xxx x xxx xxxxxxxxxxxxx
   2 xxx xxxxx x xxxxxxxxx x xxxxx xxxxx xxx xxxxx xxxxx x xxxxxxxxx
   3 x xxx x xxxxxxxxxxx xxxxxxxxxxx xxx x xxx xxxxx x xxxxxxxxx xxxx
@@ -15284,10 +15698,406 @@ Scr# 4009
   9 xxxxxxxxxxx xxxxxxx xxxxx xxxxxxxxxxx xxx xxxxx xxxxxxxxxxx xxxx
  10 x x xxxxxxxxxxx xxxxxxxxxxx xxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxx
  11 xxx xxxxx x xxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxx
- 12 xxxxxxxxxxxxxxxxx
- 13 
- 14 
- 15 
+ 12 xxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxx
+ 13 xxxxxxxxxxxxx xxxxx x xxxxxxxxx xxxxxxxxxxx x xxxxx xxx xxxxxxx
+ 14 xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxxxxx xxxxxxx xxx xxxxx xxxxxx
+ 15 x xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxx
+
+Scr# 4010 
+  0 xxx xxx xxxxx xxxxx xxxxxxx xxx x xxxxxxxxxxxxxxx xxxxxxxxxxx x
+  1 xxxxxxxxx xxxxxxx xxxxxxxxx x xxx xxxxx xxxxxxxxxxxxx xxxxxxxxxx
+  2 x xxxxxxxxxxxxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xx
+  3 x xxxxxxxxxxxxxxxxxxx xxx x xxx xxxxxxxxxxxxx xxxxxxxxx xxxxxxxx
+  4 xxx x xxxxxxxxxxx xxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx
+  5 xxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxx xxx xxxxx xxxxx xxxxxxxxxx
+  6 xxx xxx xxxxxxx xxxxxxxxxxx xxxxx xxxxx xxx xxxxxxxxxxxxxxxxxxx
+  7 xxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxx xxx xxxxx xxxxxxxxxxxx
+  8 x xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxx
+  9 xxxxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxx xxxxx x xxxxx xxxxxxxxxxxx
+ 10 xxx xxxxx x xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxx
+ 11 xxxxx xxxxxxx xxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxx xxxxxxxxx xxxx
+ 12 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxx x
+ 13 xxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxx xxx x xxxxxxxxxxx xxxx
+ 14 xxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxx x xxx xxxxxxxxxxxxxxxxxxx xx
+ 15 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxxx xxxxx xxx xx
+
+Scr# 4011 
+  0 xxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxxx
+  1 x xxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxx
+  2 x xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxx xxxxxxxx
+  3 xxxxxxxxxxx xxx xxxxxxxxxxx xxxxx x xxxxx xxxxx xxxxxxxxxxxxxxx
+  4 xxxxxxx xxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxx
+  5 xxx xxxxx xxx xxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxx xxxxxxxxxxxxxx
+  6 xxxxxxxxx xxxxxxxxxxxxxxxxxxx xxx xxxxxxx xxxxxxxxx x xxxxxxxxxx
+  7 xxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  8 x x xxx xxxxx xxxxxxxxxxx xxxxx xxxxx xxxxxxx xxxxx xxx x xxxxx
+  9 xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxx
+ 10 xxxxx xxxxxxxxxxxxx xxx xxxxx xxxxx x xxxxxxxxxxx xxxxx xxxxxxxx
+ 11 x x xxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxxx
+ 12 xxxxx xxx x xxxxx xxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxx
+ 13 x xxx xxxxx x xxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxx xx
+ 14 x x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxxx
+ 15 xxx xxxxxxxxxxx x xxxxxxxxx x xxxxxxxxx xxxxx xxxxxxx xxx xxxxxx
+
+Scr# 4012 
+  0 x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxx xxxx
+  1 xxxxxxxxxxxxxxxxxxxxx xxx x xxxxxxxxxxx xxxxxxxxx xxxxxxx xxx xx
+  2 xxxxx xxxxxxxxxxx xxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxx xxxxx
+  3 xxxxxxx xxx xxxxx xxxxx xxxxxxx xxxxx xxxxxxxxx xxxxxxxxxxx x xx
+  4 xxx xxxxx xxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxx xxxxxxxxxxx xxxxxx
+  5 xxx x xxxxx xxxxxxxxxxxxxxxxx xxx xxxxx xxxxx xxxxx xxxxxxxxxxx
+  6 xxxxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxxxxxx xxxxxxx xxxxxxxxxxxxxx
+  7 xxx xxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx
+  8 xxxxxxxxx xxxxxxxxxxx x xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxx
+  9 xxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxx xxx xxxxx x xxx xxxx
+ 10 xxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxx xxxxx xxxxx xxx xxxxxxxx
+ 11 xxxxxxxxx x xxx x xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxx xxxxxx
+ 12 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxx xxxxx xxxxxxxxxx
+ 13 x xxxxx xxxxxxxxxxxxxxxxxxx xxx xxxxxxx xxx xxxxxxx xxxxx xxxxx
+ 14 xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxx xxxxxxxxxxx xxxxxx
+ 15 x xxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxx xx
+
+Scr# 4013 
+  0 x xxxxxxxxxxxxx xxx xxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxx
+  1 xxxxx xxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxx xxx xxxxxxxxxxxxxxxxxx
+  2 x xxxxxxxxx xxxxx xxxxx xxxxx xxxxxxx xxxxxxxxx xxxxxxxxxxx xxxx
+  3 xxxxxxxxx xxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx
+  4 xxxxxxxxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxx xxxxx xxxxxxx xxxx
+  5 x xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxx xxx x xx
+  6 x xxxxxxxxxxx x xxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x
+  7 xxx xxxxxxxxxxxxxxxxx xxxxxxx xxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxx
+  8 xxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxx xxx x xxx xxxx
+  9 xxxxxxxxxxxxx x xxx xxxxx xxxxxxx xxxxxxxxx x xxxxxxxxxxxxxxxxxx
+ 10 xxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxx x xxxx
+ 11 xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxxxxxxx
+ 12 x x xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 13 xxxxx xxx xxxxx xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx
+ 14 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxxxxxxxxxxxxxxxx
+ 15 xxxxxxxxx xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxxx x xxx xxxxxxxx
+
+Scr# 4014 
+  0 xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxx
+  1 x xxxxx xxx xxxxxxx xxx xxxxxxx xxxxx xxxxxxxxx x xxxxxxxxxxx xx
+  2 xxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxx
+  3 xxxxx xxx xxxxx xxxxx x xxxxx xxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx
+  4 x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx x xxx xxxxx xxxxxxxxxxxxx xx
+  5 x xxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxx xx
+  6 xxx xxxxxxx xxxxx xxx xxxxx xxxxx xxxxx xxxxxxx xxx xxxxxxx xxx
+  7 xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxx xxxxx xxx xxxxxxxxxxx xxxx
+  8 xxx xxxxxxxxxxxxxxx x xxxxxxxxx xxxxxxx xxx xxxxx xxxxxxxxxxxxxx
+  9 xxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxx xxx xxxxx xxxxxxxxxxx xxxxxx
+ 10 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxxxx xxxxxxxx
+ 11 xxxxxxxxxxxxx xxxxxxx xxxxxxxxxxx xxx xxxxx xxxxxxx xxxxxxxxx xx
+ 12 xxx xxxxxxxxxxxxx xxxxxxxxx xxxxx x xxxxxxxxx xxxxxxxxxxx xxxxxx
+ 13 xxxxx xxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xxxx
+ 14 x xxxxxxx xxxxxxxxxxxxxxxxx xxx xxxxx x xxxxx xxxxxxxxx x xxxxxx
+ 15 xxx xxxxxxx xxxxx xxxxx xxxxxxxxx x xxxxxxxxxxxxxxxxx xxxxxxxxx
+
+Scr# 4015 
+  0 x xxxxxxxxxxx xxx xxxxx xxxxxxx xxxxxxxxx xxxxxxxxxxx xxxxxxxxxx
+  1 xxx xxxxxxxxxxx xxx xxxxxxx xxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxx
+  2 xxxxx xxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxx
+  3 xxxxxxx xxxxxxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxxxx xxxxx xxxxxxxx
+  4 xxx xxxxxxxxx xxxxxxxxxxx x xxx x xxxxxxxxxxx xxxxx xxx xxxxxxx
+  5 xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxx x xxx x xxxx
+  6 xxxxx xxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxx xxx xxxxx xxxxx xxxx
+  7 x xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxx
+  8 xxxxx xxx xxxxx x xxxxxxxxxxx xxxxx xxxxx xxxxx xxx xxxxxxxxxxxx
+  9 x xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxxxx xxxxxxxx
+ 10 x xxxxx xxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxx x
+ 11 xxx x xxx xxxxxxxxxxxxx xxx xxxxx xxxxx xxxxxxx xxxxxxxxxxxxxxx
+ 12 xxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxx x xx
+ 13 x xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxx x xxxxxxxxxxxxxxxxx xxx xx
+ 14 xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx
+ 15 xxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxxxxxx x xxxxx xxxxxxxxxxx xx
+
+Scr# 4016 
+  0 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxx xxxxx xxxxx xxxxxxxxxxxxx
+  1 xxx x xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxx xxxxxxxxxxxxxxxxxx
+  2 xxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxx xxxxx xx
+  3 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxx xxxxxxxxxxx x xxxxxx
+  4 xxxxxxxxx x xxxxx xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx x xxxxx xxx
+  5 xxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxx xxx xxxx
+  6 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx x
+  7 xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxx xxx xxxxx xxxxxx
+  8 xxxxx x xxxxxxxxxxxxxxxxx xxxxx xxx xxxxx xxxxx xxxxxxxxxxxxxxxx
+  9 xxx xxxxxxxxxxxxxxx x xxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xx
+ 10 xxx x xxx xxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx
+ 11 xxxxx xxxxx xxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 12 xxxxxxx xxxxxxx xxxxxxxxxxxxxxx xxxxx x xxxxxxxxxxx xxx x xxxxxx
+ 13 xxxxxxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxx
+ 14 xxxxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxx xxx xxxxx xxxxx xxxxxxx xx
+ 15 xxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxx x xxx xxxxxxx xxxxxx
+
+Scr# 4017 
+  0 xxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxx
+  1 xxxxx xxxxx xxxxx x xxxxx xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxx
+  2 xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxx xxxxx x xxxxxxxxxxxxxxx x
+  3 xxxxxxxxx xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxx
+  4 xxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxx
+  5 x xxxxxxx xxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x
+  6 xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxxx xxxx
+  7 xxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx xxxxx x xxxxxxxx
+  8 x x xxxxx xxxxxxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxx xxx xx
+  9 xxx x xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxx
+ 10 x xxxxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxx
+ 11 xxxxxxx x xxxxx xxx x xxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxx xxxxxx
+ 12 xxxxx xxxxxxxxx xxxxxxx xxxxxxxxxxx xxxxx xxxxx xxxxx xxx xxxxxx
+ 13 xxxxxxxxxxx x xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxx xx
+ 14 xxx xxx x xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxx
+ 15 xxx xxxxxxx xxxxxxxxxxxxxxxxx xxx xxxxxxxxxxx xxxxxxxxxxxxx xxxx
+
+Scr# 4018 
+  0 x xxxxx xxx xxxxxxx xxxxx xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xx
+  1 xxxxxxx xxxxxxxxxxxxx xxx x xxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxxx
+  2 xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxx
+  3 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx xxxxxxxx
+  4 xxx xxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xx
+  5 xxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxx xxxxx xxxxxxxxxxxx
+  6 xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxx
+  7 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxx x xxx x xxxxxxxxxxxxxxxxxxxxxxxx
+  8 xxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxx
+  9 x xxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xx
+ 10 x xxxxx x xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 11 xxx x xxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxx
+ 12 xxxxxxx xxx x xxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxx xxxx
+ 13 xxx xxxxx xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxxx xxxxxxxx
+ 14 xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxx xxx
+ 15 xxxxxxxxxxx xxxxxxxxxxxxx xxx x xxx x xxx xxxxxxx xxxxx xxxxxxxx
+
+Scr# 4019 
+  0 x xxxxx xxxxx x xxxxx xxxxx xxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxx
+  1 xxxxxxxxxxx xxxxxxxxx x xxxxxxxxx xxxxx xxxxxxxxxxx xxxxx xxxxx
+  2 xxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  3 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxx x xxxxxxxxx xx
+  4 xxxxx xxxxxxxxx xxxxxxxxxxx xxxxxxxxxxx x xxxxx xxx xxxxxxxxxxxx
+  5 x xxxxxxxxxxxxxxx xxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxx
+  6 x x xxxxxxxxx xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxxx
+  7 xxxxxxxxx xxxxx xxxxxxx xxxxxxxxx xxxxxxxxxxx xxxxxxxxxxx x xxxx
+  8 xxxxx xxxxx xxxxxxxxxxx x xxx xxxxxxxxxxxxx xxxxxxxxx x xxxxx xx
+  9 xxxxxxxxxxxxxxx xxx xxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxxx
+ 10 xxxxx xxxxx xxxxx xxx xxxxx xxxxx xxxxxxxxxxxxx xxx x xxxxxxxxxx
+ 11 x xxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxx
+ 12 xxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx
+ 13 xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxx xxxxx xxxx
+ 14 x xxx x xxxxxxxxx xxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxx xxx xxxx
+ 15 xxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx x
+
+Scr# 4020 
+  0 xxx xxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxx
+  1 xxxxx x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxx
+  2 xxx xxxxxxxxxxxxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxx xxxxxxxx
+  3 xxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxxx xxxx
+  4 xxxxxxx xxx x xxx xxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxx
+  5 xxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxx xxxxxx
+  6 xxxxxxxxx xxxxx xxxxxxx xxxxxxxxx x xxx xxxxxxxxxxxxxxxxx xxxxxx
+  7 x xxxxxxxxx xxxxxxx xxxxxxxxxxx xxx xxxxxxxxxxxxxxxxx x xxxxxxxx
+  8 xxxxxxxxx xxxxxxxxx x xxx x xxx xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxx
+  9 xxx x xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxx
+ 10 x xxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxx xxxxx xxxxx xxxxxxxxx xxxx
+ 11 xxx xxx x xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxx
+ 12 xxxxxxxxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 13 x xxx x xxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 14 x x xxx xxxxxxx xxxxx xxx xxxxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxxx
+ 15 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxx x xxxxx xxx
+
+Scr# 4021 
+  0 xxxxxxxxxxxxx xxx x xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxx xxxx
+  1 x xxxxxxx xxxxxxxxx x xxxxxxxxx x xxxxxxxxx x xxx xxxxxxxxxxxxxx
+  2 xxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxx
+  3 xxxxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxxx xxxxx xx
+  4 xxxxxxx xxxxx xxxxxxxxxxxxx xxxxxxxxxxx xxx xxxxxxxxxxxxx xxx xx
+  5 xxxxxxxxxxxxxxx x xxxxxxxxx xxxxxxx xxx xxxxxxx xxxxxxxxx xxxxxx
+  6 xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxxxxx
+  7 xxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxx xx
+  8 xxxxxxxxxxx xxx xxxxx x xxxxxxxxxxx xxxxxxxxxxx xxx xxxxx xxxxx
+  9 xxxxxxxxxxx x xxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxx xxx xxxxxxxxxx
+ 10 xxx xxxxx xxx x xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxx xxxxxxxxxxxxxx
+ 11 xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxx
+ 12 x xxx x xxx xxxxxxx xxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 13 xxxxxxx xxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxxxxxx xxxxx xx
+ 14 xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxx xxxxxxxxxx
+ 15 xxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxx
+
+Scr# 4022 
+  0 xxx xxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxx xxx x xxxxxxxxxxxxxxxxxx
+  1 xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxxxxxxxxxxx x xxx xxxxxxx xxxx
+  2 xxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx xxxxx x xxxxxxxxx xxxxxxx xx
+  3 x xxxxx xxxxxxxxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxx xxxxx
+  4 xxx xxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  5 xxxxx xxxxx x xxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxx
+  6 xxxxxxxxx xxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxx xx
+  7 xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx xxxxx xxx xxxxx x xxxxxxxxx
+  8 x xxxxxxxxxxx xxx x xxx xxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxx xxxx
+  9 xxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxx
+ 10 xxxxx xxxxxxxxxxxxxxx xxxxxxx xxx x xxxxx xxxxxxxxxxxxxxxxx xxxx
+ 11 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx x xx
+ 12 x xxxxxxxxxxxxx xxxxxxxxx xxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxx xx
+ 13 xxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxx
+ 14 xxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 15 xxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxxxxx xx
+
+Scr# 4023 
+  0 xxxxx xxx x xxx xxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxx xxxxxx
+  1 xxxxxxx xxx x xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxx xx
+  2 xxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx x
+  3 xxx xxxxx xxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxx
+  4 xxxxx xxxxx xxxxxxx xxx x xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xx
+  5 x xxxxx xxxxxxx xxxxx xxxxx xxxxxxxxx x xxxxx xxxxxxxxxxx xxxxxx
+  6 xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxx xxxxxxxxxxx xxxxxx
+  7 x xxxxx xxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxx xx
+  8 xxxxxxx xxxxx xxxxx xxxxxxx xxxxx xxxxx xxx x xxx xxxxxxx xxxxxx
+  9 xxxxx xxx xxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxx
+ 10 xxxxx xxxxx xxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxx xxx xxxx
+ 11 xxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xx
+ 12 xxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx x xxxxx xxxx
+ 13 xxxxxxx xxxxxxxxxxxxxxx xxxxx xxxxx x xxxxxxxxxxxxxxxxx xxx xxxx
+ 14 xxxxxxxxxxxxxxxxxxxxx xxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xx
+ 15 xxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxx xxxx
+
+Scr# 4024 
+  0 xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxx
+  1 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxx xxxxxxx xxxxx xxxxxx
+  2 xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxx
+  3 xxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxxxxxx xxxxxxxxxx
+  4 xxxxxxxxx xxxxx xxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxx
+  5 xxxxxxxxxxx xxxxxxxxx x xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxx
+  6 xxxxxxx xxx xxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx
+  7 xxxxxxx x xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx
+  8 xxxxxxxxx xxxxxxxxxxxxx xxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxx xxxx
+  9 x xxxxxxxxx xxxxx x xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxx
+ 10 xxx xxxxxxxxx xxxxxxx xxxxx xxx xxxxx xxxxxxx xxxxxxxxxxxxxxxxxx
+ 11 xxxxxxxxxxxxxxxxxxxxx x xxx x xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxx
+ 12 xxxxx xxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxx
+ 13 x x xxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxx xxxxx xxx xxxxx xxxxx x
+ 14 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxx
+ 15 x xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx x xxx xxxxx xxxxxxxxxx
+
+Scr# 4025 
+  0 x x xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxxxxxxxxxx xxxxxx
+  1 xxx xxxxx xxxxx xxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxx
+  2 xxxxx xxxxxxx xxxxx xxxxxxxxxxx xxx xxxxxxx xxxxxxxxxxxxxxxxxxxx
+  3 x xxxxx x xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxx
+  4 xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxx xxxxx
+  5 xxxxxxxxxxx x xxxxx xxx xxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xx
+  6 xxxxxxxxxxxxx x xxx xxxxxxxxxxxxx xxx xxxxxxx xxxxxxxxxxx xxxxxx
+  7 xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxxxxx xxx
+  8 x xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxxx xxxx
+  9 x xxxxx xxxxx xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xx
+ 10 xxxxxxxxx x xxxxxxxxx x xxx xxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxx
+ 11 xxxxx xxxxxxx xxx xxxxxxxxxxxxxxxxx xxxxxxx xxxxxxxxx xxxxxxxxxx
+ 12 xxx xxxxxxxxxxxxxxx xxxxx xxxxx xxxxxxx xxxxxxxxx xxxxx xxxxxxx
+ 13 xxxxx xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxx
+ 14 x xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xx
+ 15 x xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxx
+
+Scr# 4026 
+  0 xxx xxxxx xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx x xxx
+  1 xxxxx xxxxx x xxxxxxxxx x xxx xxxxx xxxxx x xxxxx xxxxxxxxxxxxxx
+  2 xxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xx
+  3 xxxxx xxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxx
+  4 x xxxxxxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxx
+  5 xxx xxx x xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxx
+  6 xxx xxxxx xxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxx x xxxxx xxxx
+  7 x xxx xxxxxxxxxxxxx xxxxxxxxxxx xxx x xxxxxxxxxxxxxxxxx xxxxxxxx
+  8 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xx
+  9 xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxx xxxx
+ 10 xxxxxxx xxxxx xxx x xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 11 x xxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxx
+ 12 xxxxx xxxxxxxxx x xxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxxxxxx xxxxxx
+ 13 x xxxxxxxxxxxxxxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx
+ 14 xxxxxxx x xxxxxxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx x
+ 15 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx
+
+Scr# 4027 
+  0 xxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx x xxxxx xxx xxxxxxxxxx
+  1 xxxxxxxxxxxxxxxxxxxxx xxx x xxx xxxxx x xxxxxxxxxxx xxx xxxxx xx
+  2 xxx xxxxxxxxxxx x xxxxx xxx xxxxx xxxxxxx xxxxx xxx xxxxxxxxxxxx
+  3 xxxxxxx xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx xx
+  4 xxxxxxxxxxxxx x xxxxxxxxxxxxxxxxxxxxx x xxx xxxxx xxxxxxx xxxxx
+  5 xxxxxxxxxxxxxxx xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxx xxxxxxx xxx
+  6 xxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxx
+  7 x x xxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxx
+  8 xxx xxxxxxxxxxxxxxxxx x xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxx xxxx
+  9 xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx x xxx xxxx
+ 10 x xxxxxxx xxxxxxxxx x xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx x
+ 11 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxx x xxxx
+ 12 xxxxxxxxxxxxx xxx xxxxx xxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxxx xx
+ 13 xxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxxxx xxx xx
+ 14 xxx x xxxxxxxxx xxxxxxxxxxx x xxxxx xxxxxxxxxxx xxxxx xxxxx xxx
+ 15 xxxxxxxxxxx x xxxxx xxx xxxxxxxxxxx xxxxx xxxxxxx xxx x xxxxx xx
+
+Scr# 4028 
+  0 xxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxx xxxxx xxxxxx
+  1 xxxxxxxxxxxxxxx x xxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxx xxxxxx
+  2 xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxx
+  3 xxx xxx xxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxx xxxxxxxxxxxxxxxxx
+  4 xxxxx xxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxx
+  5 xxxxxxxxxxxxxxxxx xxxxxxx xxx x xxx xxxxx xxxxxxxxxxxxxxxxxxxxxx
+  6 xxx xxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxx
+  7 xxx xxxxxxx xxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxx xxxxx xxxxx xxxx
+  8 xxxxxxx xxxxxxxxx xxxxx x xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx xxxx
+  9 xxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxx xxxxx xxxxxxx
+ 10 xxxxxxxxxxxxxxx xxxxx xxxxx xxxxxxx xxxxxxxxxxxxxxx xxxxxxxxxxxx
+ 11 xxxxxxx xxx x xxxxxxxxx x xxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxx xx
+ 12 xxx xxxxxxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx xxxxxxxxxxxxxxxxx xx
+ 13 xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 14 x xxx xxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xx
+ 15 x xxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx x xxxxxxxxxxx xxxxxxxxxxxx
+
+Scr# 4029 
+  0 xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx
+  1 x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxx xxxx
+  2 xxxxxxxxx xxx xxxxxxxxxxxxx xxxxxxxxxxx xxx xxxxx xxxxx x xxxxxx
+  3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxx xxxx
+  4 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx x xx
+  5 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxx
+  6 xxxxxxxxx x xxxxx xxxxx xxxxx xxx xxxxx xxxxxxxxxxxxx xxx x xxxx
+  7 xxxxxxxxxxxxxxxxx xxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxx xxxxx xxxx
+  8 xxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxx x
+  9 xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxx xxxxx xxxxx xxx xxxxxxxxxxxx
+ 10 xxxxx xxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx x xxxxxxxx
+ 11 xxx xxxxxxxxxxxxxxxxxxxxxxx xxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 12 xxx x xxxxxxxxxxxxxxxxxxxxx x xxx xxxxxxxxxxx xxxxxxx xxxxxxxxxx
+ 13 x xxxxxxxxx xxxxxxxxxxxxx xxx x xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 14 x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxx xxxxx xxxxxx
+ 15 xxxxx xxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxx xxxxx xxx xxxxx xxxxxx
+
+Scr# 4030 
+  0 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxx xx
+  1 xxxxxxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxx xxxxxxxxx x xxxxxx
+  2 xxx x xxxxx xxxxxxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  3 xxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxx
+  4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx
+  5 xxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxx
+  6 xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxx xxxxxxxx
+  7 xxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx
+  8 xxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  9 xxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxx xx
+ 10 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 11 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx
+ 12 x xxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxx
+ 13 xxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 14 xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxx
+ 15 xxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxx xx
+
+Scr# 4031 
+  0 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxx
+  2 x xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  3 xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxx
+  4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxx
+  5 xxxxxxxxxxxxx xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxx
+  6 xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx
+  7 xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxx
+  8 x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxx
+  9 xxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxxxxx
+ 10 xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxx xxxx
+ 11 x xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xx
+ 12 xxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxx
+ 13 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 14 xxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxx
+ 15 xxxxxxxxx xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxx
 
 Scr# 4646 
   0 ( reply )
@@ -15306,6 +16116,42 @@ Scr# 4646
  13 
  14 
  15 
+
+Scr# 6475 
+  0 ( solid circle )
+  1 needs graphics
+  2 marker task
+  3 : solid-circle-eight
+  4   cx sx xy-ratio + cy sy +
+  5   cx sx xy-ratio - cy sy - draw-line
+  6 \ cx sx xy-ratio - cy sy + plot
+  7 \ cx sx xy-ratio + cy sy - plot
+  8 \ cx sy xy-ratio + cy sx + plot
+  9 \ cx sy xy-ratio - cy sx + plot
+ 10 \ cx sy xy-ratio + cy sx - plot
+ 11 \ cx sy xy-ratio - cy sx - plot
+ 12 ;
+ 13 -->
+ 14 
+ 15 
+
+Scr# 6476 
+  0 : solid-circle ( x y r -- )
+  1   0 to sx  to sy  to cy  to cx
+  2   sy if
+  3     3 sy 2* - to diff
+  4     solid-circle-eight
+  5     begin
+  6       1 +to sx  diff 0<  if
+  7         sx      2* 2*  6 + +to  diff
+  8       else
+  9         sx sy - 2* 2* 10 + +to  diff -1 +to sy
+ 10       then
+ 11       solid-circle-eight
+ 12     sy sx < until
+ 13   else
+ 14     cx cy plot
+ 15   then ;
 
 Scr# 6989 
   0 ( new SPLASH with string on Heap )
@@ -18691,6 +19537,42 @@ Scr# 10177
  14 
  15 
 
+Scr# 10178 
+  0 ( D2* )
+  1 code D2* ( d1 -- d2 )
+  2   exx
+  3   pop    de|
+  4   pop    hl|
+  5   addhl  hl|
+  6   push   hl|
+  7   exdehl
+  8   adchl  hl|
+  9   push   hl|
+ 10   exx
+ 11   jpix
+ 12 c;
+ 13 
+ 14 
+ 15 
+
+Scr# 10179 
+  0 ( D2/ )
+  1 code D2/ ( d1 -- d2 )
+  2   exx
+  3   pop    hl|
+  4   pop    de|
+  5   sra     h|
+  6   rr      l|
+  7   push   hl|
+  8   exdehl
+  9   rr      h|
+ 10   rr      l|
+ 11   push   hl|
+ 12   exx
+ 13   jpix
+ 14 c;
+ 15 
+
 Scr# 10180 
   0 ( LARGE LETTER-F )
   1 : STAR   42 EMIT ;
@@ -19231,6 +20113,60 @@ Scr# 10311
  14 
  15 
 
+Scr# 15360 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 x    xx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xx
+  9 xxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx
+ 10 xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxx
+ 11 x xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xx
+ 12 xxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx
+ 13 xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxx
+ 14 x xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xx
+ 15 xxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx
+
+Scr# 15361 
+  0 x     x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  1 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  2 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  3 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  4 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  5 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  6 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  7 x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 15362 
+  0 x             x          x          x          x          x
+  1      x          x          x          x     x    x          x
+  2        x          x          x          x          x          x
+  3          x          x          x    x     x          x
+  4 x          x          x          x          x          x
+  5   x          x          x   x      x          x          x
+  6     x          x          x          x          x          x
+  7       x          x  x       x          x          x          x
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
 Scr# 16000 
   0 ( porting page 1 to blocks )
   1 : porting>
@@ -19411,6 +20347,7 @@ Index:
   237 code s*/  ( b1 b2 b3 -- b4 := b1 * b2 / b3 )
   238 \ s*/
   239 ( Example - Rainbow effects )
+  240 ( test )
   241 \ Leo Brodie - Starting Forth - Square
   242 ( Example - CUBES )
   243 ( Example - CUBES )
@@ -19550,6 +20487,7 @@ Index:
   392 ( REMOUNT via IDE_MOUNT    $01d2 )
   393 ( IDE_TOKENISE $01d8 )
   394 ( IDE_TOKENISER )
+  395 ( SPRITE structure )
   398 ( looking for AT position in LAYERs )
   399 ( Sprite definition )
   400 ( Sprite struct definition )
@@ -19647,6 +20585,14 @@ Index:
   567 ( test SOURCE )
   568 ( testing  test/source.f )
   569 ( SOURCE )
+  580 ( TEST )
+  581 ( DOT example  .var )
+  590 ( Product routine for 12:4 fixed point )
+  591 ( Product routine for 12:4 fixed point )
+  592 ( Product routine for 12:4 fixed point )
+  593 ( Product routine for 12:4 fixed point )
+  594 ( Product routine for 12:4 fixed point )
+  595 ( Product routine for 12:4 fixed point )
   598 \ kempston test
   599 \ kempston test
   600 .( Chomp.f )
@@ -19836,6 +20782,11 @@ Restarting Supervisor
   881 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   892 ( trim routine )
   893 ( trim routine )
+  895 ( RPI0 wrapper )
+  896 ( RPI0 wrapper )
+  897 ( RPI0 wrapper )
+  898 ( RPI0 wrapper )
+  899 ( Example for THIS definition )
   900 ( UART Raspberry PI Zero )
   901 ( UART Raspberry PI Zero - setup )
   902 ( UART Raspberry PI Zero - setup )
@@ -20083,7 +21034,15 @@ Restarting Supervisor
  3333 ( disk free )              needs f_getfree
  3916 RS loading error.
  3918     CR DECIMAL U. HEX U.
- 4000     x x xxx x xxx x xxx xxxxx x xxxxx xxx x xxx xxxxx xxxxx x xx
+ 3968 x     xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx x xxx
+ 3969 x     x x x x xxx x x x xxx x x x x xxx x x x x x xxx x x xxx x
+ 3970 x
+ 3971     x            x            x            x            x
+ 3972            x
+ 3973 
+ 3974 x
+ 3975                            x                               x
+ 4000 xx  x x xxx x xxx x xxx xxxxx x xxxxx xxx x xxx xxxxx xxxxx x xx
  4001 xxxxxxx x xxxxx xxxxxxxxx x xxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxx
  4002 xxxxx xxxxxxxxx xxxxx xxxxxxxxxxx x xxx x xxxxxxxxx xxxxxxxxxxx
  4003 xxxxxxx xxx xxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxxxxxxx
@@ -20093,7 +21052,31 @@ Restarting Supervisor
  4007 xxxxxxxxx xxxxxxxxx xxxxx xxxxxxxxxxxxx xxx x xxxxx xxxxxxxxx xx
  4008 xxxxxxxxxxxxxxxxx xxxxxxxxx x xxxxxxxxx x xxx xxxxx xxxxxxxxxxxx
  4009 xxxxx xxxxx xxxxxxxxxxx x xxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxx xx
+ 4010 xxx xxx xxxxx xxxxx xxxxxxx xxx x xxxxxxxxxxxxxxx xxxxxxxxxxx x
+ 4011 xxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxxx
+ 4012 x xxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxx xxx xxxx
+ 4013 x xxxxxxxxxxxxx xxx xxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxx
+ 4014 xxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx x xxxxxxxxxx
+ 4015 x xxxxxxxxxxx xxx xxxxx xxxxxxx xxxxxxxxx xxxxxxxxxxx xxxxxxxxxx
+ 4016 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxx xxxxx xxxxx xxxxxxxxxxxxx
+ 4017 xxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxx
+ 4018 x xxxxx xxx xxxxxxx xxxxx xxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxx xx
+ 4019 x xxxxx xxxxx x xxxxx xxxxx xxxxx xxxxxxxxxxx xxxxx xxxxxxxxxxxx
+ 4020 xxx xxxxxxxxxxxxxxxxxxxxxxx x xxxxxxxxxxx xxxxxxxxxxx xxxxxxxxx
+ 4021 xxxxxxxxxxxxx xxx x xxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxx x xxx xxxx
+ 4022 xxx xxxxxxxxx x xxxxx xxxxxxxxxxxxxxxxx xxx x xxxxxxxxxxxxxxxxxx
+ 4023 xxxxx xxx x xxx xxxxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxx xxxxxx
+ 4024 xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxxxx xxxxxxxx
+ 4025 x x xxxxx xxxxxxxxxxx xxxxxxxxxxx xxxxx xxx xxxxxxxxxxxxx xxxxxx
+ 4026 xxx xxxxx xxxxxxx xxxxx xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxx x xxx
+ 4027 xxxxx xxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx x xxxxx xxx xxxxxxxxxx
+ 4028 xxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxx xxxxxxxxxxx xxxxx xxxxxx
+ 4029 xxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxxxxxxxxxx xxxxxxxxxxx xxxxx
+ 4030 xxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxx xxxxxxxxx xxxxxxx xx
+ 4031 xxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
  4646 ( reply )
+ 6475 ( solid circle )
+ 6476 : solid-circle ( x y r -- )
  6989 ( new SPLASH with string on Heap )
  8990 ( PRESENTATION )
  8991 ( PRESENTATION )
@@ -20282,6 +21265,8 @@ Restarting Supervisor
 10175 ( U/ )
 10176 ( DSQRT )
 10177 ( DSQRT )
+10178 ( D2* )
+10179 ( D2/ )
 10180 ( LARGE LETTER-F )
 10202 ( DAA )
 10211 \ S" ( strings )
@@ -20312,4 +21297,7 @@ Restarting Supervisor
 10309 ( MMU7 banking study )
 10310 ( MMU7 banking study )
 10311 ( MMU7 banking study )
+15360 
+15361 x     x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+15362 x             x          x          x          x          x
 16000 ( porting page 1 to blocks )

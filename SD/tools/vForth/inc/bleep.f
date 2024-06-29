@@ -1,6 +1,11 @@
 \
 \ bleep.f
-\
+\    . 
+\   / \ 
+\  / ! \ 
+\  WARNING 
+\ THIS FILE IS DUPLICATED IN DIRECTORY ../lib
+\ YOU CAN SAFELY REMOVE THIS FILE FROM ../inc
 
 .( BLEEP ) 
 
@@ -17,13 +22,24 @@ NEEDS SPEED!
 \   n2 = sec / Hz 
 HEX
 CODE  BLEEP  ( n1 n2 -- )
-    E1 C,                   \ pop hl    ; ms / Hz
-    D1 C,                   \ pop de    ; ( 3.5M / Hz - 241 ) / 8 
-    C5 C,                   \ push bc
+    D9 C,                   \  exx
+    E1 C,                   \  pop hl    ; ms / Hz
+    D1 C,                   \  pop de    ; ( 3.5M / Hz - 241 ) / 8 
+    D9 C,                   \ exx
     DD C, E5 C,             \ push ix
-    CD C, 03B5 ,            \ call 03B5 ; standard ROM 
-    DD C, E1 C,             \ pop ix
+    D5 C,                   \ push de
+    C5 C,                   \ push bc
+    D9 C,                   \  exx
+
+    \ this is some kind of conditional compile.    
+    \ we're lucky dot-command ROM call can be done in one single op-code.
+    0 +ORIGIN 2000 - NOT 1 AND DF *   \ compile RST $18 if dot-command
+    0 +ORIGIN 2000 = NOT 1 AND CD * + \ compile CALL  if not dot-command
+       C, 03B5 ,            \  call 03B5 ; standard ROM 
+
     C1 C,                   \ pop bc
+    D1 C,                   \ pop de
+    DD C, E1 C,             \ pop ix
     DD C, E9 C, ( NEXT )    \ jp (ix)
 SMUDGE 
 
@@ -52,23 +68,28 @@ DECIMAL
 \ simple 8-bits "12 /MOD" 
 HEX
 CODE  12/MOD    ( n --  note  octave )
-    E1 C,                   \ pop hl    
-    AF C,                   \ xor a
-    67 C,                   \ ld  h,a     
-    5F C,                   \ ld  e,a   ;   quotient
-    7D C,                   \ ld  a,l   ;   dividend
-    16 C, 0C C,             \ ld  d, 0C ;   divisor
-                            \ LABEL:
-    1C C,                   \ inc e        
-    92 C,                   \ sub d     
-    30 C, -4 C,             \ jr  nc, LABEL
+    D9 C,                   \  exx
     
-    82 C,                   \ add a,d
-    1D C,                   \ dec e     
-    54 C,                   \ ld  d,h   ;   zero on high byte
-    6F C,                   \ ld  l,a   ;   remainder
-    E5 C,                   \ push hl   ;   note <-- remainder
-    D5 C,                   \ push de   ;   octave <-- quotient
+    E1 C,                   \  pop hl    
+    AF C,                   \  xor a
+    67 C,                   \  ld  h,a     
+    5F C,                   \  ld  e,a   ;   quotient
+    7D C,                   \  ld  a,l   ;   dividend
+    16 C, 0C C,             \  ld  d, 0C ;   divisor
+
+                            \ LABEL:
+    1C C,                   \  inc e        
+    92 C,                   \  sub d     
+    30 C, -4 C,             \  jr  nc, LABEL
+    
+    82 C,                   \  add a,d
+    1D C,                   \  dec e     
+    54 C,                   \  ld  d,h   ;   zero on high byte
+    6F C,                   \  ld  l,a   ;   remainder
+    E5 C,                   \  push hl   ;   note <-- remainder
+    D5 C,                   \  push de   ;   octave <-- quotient
+
+    D9 C,                   \ exx
     DD C, E9 C, ( NEXT )    \ jp (ix)
 SMUDGE 
 
@@ -139,7 +160,7 @@ CREATE FREQ-TABLE
     12/MOD              \  note  octave
     SWAP CELLS          \  octave note*2
     FREQ-TABLE + @      \  octave freq
-    SWAP RSHIFT         \ find the correct octave frequency by halving
+    SWAP RSHIFT         \  find the correct octave frequency by n halving
 ;
 
 

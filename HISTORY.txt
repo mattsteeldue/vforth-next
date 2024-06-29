@@ -543,3 +543,9 @@ Succeeded in recompile v-Forth 1.7 in itself again using src/F17e.f source.
 \ build 20240420
 Shorter binary, squeezed some 22 bytes. Hadn't much time lately. 
 
+
+\ build 20240616
+Documentation for RPi0 definition and a couple of examples of use of new
+definitions ASK, SEND and THIS to easily interact with RPi0's Bash Shell
+New proposal for ZAP and ZAP" definitions to create standalone executable.
+

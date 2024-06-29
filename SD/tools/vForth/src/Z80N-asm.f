@@ -51,7 +51,7 @@
 \ 
 \ Z80N extensions are all ED-prefixed, so I followed the same path
 \ introducing some new COMMAER to enforce a better syntax check.
-\    REG,       used by NEXTREG and NEXTREGA 
+\    P,         also used by NEXTREG and NEXTREGA 
 \    LH,        used by PUSHN that strangely needs hi-lo bytes swapped
 
 NEEDS INVERT        \   : INVERT -1 XOR ;
@@ -223,21 +223,21 @@ IS-A IS-COMMA : COMMAER
 
 \ Screen# 114 
 ( Assembler Z80 )
-: 1FAMILY, 0 DO DUP >R T@   R> 1PI OVER + LOOP   DROP DROP ;
-: 2FAMILY, 0 DO DUP >R T@   R> 2PI OVER + LOOP   DROP DROP ;
-: 3FAMILY, 0 DO DUP >R T@   R> 3PI OVER + LOOP   DROP DROP ;
-: XFAMILY| 0 DO DUP >R T@   R> XFI OVER + LOOP   DROP DROP ;
+: 1FAMILY,  0 DO DUP >R T@  R> 1PI  OVER + LOOP  DROP DROP ;
+: 2FAMILY,  0 DO DUP >R T@  R> 2PI  OVER + LOOP  DROP DROP ;
+: 3FAMILY,  0 DO DUP >R T@  R> 3PI  OVER + LOOP  DROP DROP ;
+: XFAMILY|  0 DO DUP >R T@  R> XFI  OVER + LOOP  DROP DROP ;
 : XFAMILY|R 0 DO DUP >R T@  R> XFIR OVER + LOOP  DROP DROP ; 
 
 \ Screen# 115 
 ( Assembler Z80 )
-: CBFAMILY, 0 DO DUP >R T@   R> CBPI OVER + LOOP  DROP DROP ;
-: EDFAMILY, 0 DO DUP >R T@   R> EDPI OVER + LOOP  DROP DROP ;
+: CBFAMILY, 0 DO DUP >R T@  R> CBPI OVER + LOOP  DROP DROP ;
+: EDFAMILY, 0 DO DUP >R T@  R> EDPI OVER + LOOP  DROP DROP ;
 
 \ Screen# 116 
 ( Assembler Z80 )
-: DDFAMILY, 0 DO DUP >R T@   R> DDPI OVER + LOOP  DROP DROP ;
-: FDFAMILY, 0 DO DUP >R T@   R> FDPI OVER + LOOP  DROP DROP ;
+: DDFAMILY, 0 DO DUP >R T@  R> DDPI OVER + LOOP  DROP DROP ;
+: FDFAMILY, 0 DO DUP >R T@  R> FDPI OVER + LOOP  DROP DROP ;
 
 \ Screen# 120 
 .( Z80 definitions. ) CR
@@ -245,11 +245,11 @@ IS-A IS-COMMA : COMMAER
 ASSEMBLER DEFINITIONS HEX
 TOOLS-ASM
 
-0 1 0 800       ' C,   COMMAER N,
-0 0 CELL+ 0 200 '  ,   COMMAER NN,
-0 0 CELL+ 0 400 '  ,   COMMAER AA,
-0 1 0 100       ' C,   COMMAER P,
-0 1 0 1000      ' C,   COMMAER D,
+0 1       0 0800    ' C,   COMMAER N,
+0 0 CELL+ 0 0200    '  ,   COMMAER NN,
+0 0 CELL+ 0 0400    '  ,   COMMAER AA,
+0 1       0 0100    ' C,   COMMAER P,
+0 1       0 1000    ' C,   COMMAER D,
 
 
 
@@ -435,7 +435,7 @@ HEX
 00 09 1 FDFAMILY,   ADDIY
 \
 00 0400 00 T!
-08 22 2 DDFAMILY,   LD()IX LDIX()
+08 22 2 DDFAMILY,   LD()IX  LDIX()
 08 22 2 FDFAMILY,   LD()IY  LDIY()
 
 \ ADDIX IX|  ADDIX SP|
@@ -446,8 +446,8 @@ HEX
 \ Screen# 134 
 ( IX IY )
 : I)          
-  HERE 1 - C@
-  HERE 2 - C@ 
+  HERE 1- C@
+  HERE 2- C@ 
   CB - IF
     -1 ALLOT SWAP C, C,
   ELSE
@@ -472,16 +472,16 @@ TOOLS-ASM
 ( IX IY )
 HEX
 : )|
-  HERE 1 - C@
-  HERE 2 - C@
+  HERE 1-  C@
+  HERE 2-  C@
   CB = IF 
     SWAP 
   THEN
-  HERE 1 - C! C, 
+  HERE 1- C! C, 
 ;
 \
 : IXY| ( n -- )
-  DUP HERE 2 - 
+  DUP HERE 2- 
   C@ - IF
     HERE 1- C@ -1 ALLOT SWAP C, C,
   THEN 
@@ -518,8 +518,8 @@ TOOLS-ASM
 \ LDIXL A|
 
 00 00 07 T!
-08 60 2   DDFAMILY, LDIXH LDIXL
-08 60 2   FDFAMILY, LDIYH LDIYL
+08 60 2   DDFAMILY,  LDIXH  LDIXL
+08 60 2   FDFAMILY,  LDIYH  LDIYL
 
 
 \ Screen# 138 
@@ -557,7 +557,7 @@ ASSEMBLER DEFINITIONS HEX
 \ : LDRP,HL LD()X HL| 30 +ORIGIN AA, ;
 \
 : HOLDPLACE HERE 0 D, ;
-: DISP,     OVER -  1 - SWAP C! ;
+: DISP,     OVER -  1- SWAP C! ;
 : BACK,     HOLDPLACE SWAP DISP, ;
 \
 : | ;
@@ -578,7 +578,7 @@ ASSEMBLER DEFINITIONS HEX
 
 TOOLS-ASM
 
-0 1 0 4000 ' FLIP, COMMAER  LH,
+0 1 0 4000 ' FLIP, COMMAER LH,
 \
 00 0900 00 91 EDPI          NEXTREG
 \  NEXTREG reg P, n N,

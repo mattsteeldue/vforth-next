@@ -1,12 +1,16 @@
 \ Z80-TEST.f
 
-: TASK ;
+NEEDS ASSEMBLER
 
--5  VALUE   d 
- 3  VALUE   n
- 7  VALUE  nn
- 8  VALUE  aa
-44  VALUE   r 
+MARKER REDO
+
+CASEON      \ too many lowercase redefinition, let's go case sensitive.
+
+-5  CONSTANT   d 
+ 3  CONSTANT   n
+ 7  CONSTANT  nn
+ 8  CONSTANT  aa
+44  CONSTANT   r 
 
 ASSEMBLER 
 
@@ -131,19 +135,19 @@ CODE Z80-TESTER
     LDN        r'|    n    N,
     LDD
     LDDR
-    LDDRX
-    LDDX
+    LDDRX                    \ Next extension
+    LDDX                     \ Next extension
     LDI
     LDIR
-    LDIRX
-    LDIX
-    LDPIRX
-    LDWS
-    MIRRORA
-    MUL
+    LDIRX                    \ Next extension
+    LDIX                     \ Next extension
+    LDPIRX                   \ Next extension
+    LDWS                     \ Next extension
+    MIRRORA                  \ Next extension
+    MUL                      \ Next extension
     NEG
-    NEXTREGA   r  P,
-    NEXTREG    r  P,  n  N,  
+    NEXTREGA   r  P,         \ Next extension
+    NEXTREG    r  P,  n  N,  \ Next extension
     NOP
     ORA       (HL)|
     ORA   (IY+ d )|
@@ -156,9 +160,9 @@ CODE Z80-TESTER
     OUTA         n    P, 
     OUTD
     OUTI
-    OUTINB
-    PIXELAD
-    PIXELDN
+    OUTINB                   \ Next extension
+    PIXELAD                  \ Next extension
+    PIXELDN                  \ Next extension
     POP         AF|
     POP         rr|
     POP         IX|
@@ -229,12 +233,17 @@ CODE Z80-TESTER
     SUBA  (IY+ d )|
     SUBN         n   N,
     SUBA         r|
-    SWAPNIB
-    TESTN        n   N,
+    SWAPNIB                  \ Next extension
+    TESTN        n   N,      \ Next extension
     XORA      (HL)|
     XORA  (IY+ d )|
     XORN         n   N,
     XORA         r|
 C;  
 
-QUIT
+CASEOFF
+
+HERE DUP ' Z80-TESTER - 
+NEEDS CHECKSUM
+CHECKSUM . 
+#97 . CR

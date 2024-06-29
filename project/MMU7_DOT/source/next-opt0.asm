@@ -22,15 +22,14 @@
                 push    bc                  // save Instruction Pointer           
                  exx 
                  ld      hl, 0 // ix, 0
-                 di
                  rst     $08     
                  db      $9F
 F_Seek_Exit:                
-                ei
                 pop     bc                  // restore Instruction Pointer
                 pop     de
                 pop     ix
                 sbc     hl, hl              // to get 0 or -1
+
                 psh1
 
 //  ______________________________________________________________________ 
@@ -46,11 +45,9 @@ F_Seek_Exit:
                 push    ix
                 push    de
                 push    bc                  // Save Instruction pointer
-                di
                 rst     $08     
                 db      $9B
                 jr      F_Seek_Exit
-//              ei
 //              pop     de                
 //              pop     bc
 //              pop     ix
@@ -69,11 +66,9 @@ F_Seek_Exit:
                 push    ix
                 push    de
                 push    bc
-                di
                 rst     $08     
                 db      $9C
                 jr      F_Seek_Exit
-//              ei
 //              pop     de
 //              pop     bc
 //              pop     ix
@@ -91,10 +86,8 @@ F_Seek_Exit:
                  push    ix                  
                  push    de
                  push    bc
-                 di
                  rst     $08   
                  db      $A0
-                 ei
                 exx
                 pop     bc                  // IP
                 pop     de                  // Return Stack Pointer
@@ -109,7 +102,7 @@ F_Seek_Exit:
  
 //  ______________________________________________________________________ 
 //
-// f_read       a n u -- n f
+// f_read       a b u -- n f
 // Read b bytes from file-handle u to address a
 // Return the actual number n of bytes read 
 // Return 0 on success, True flag on error
@@ -125,11 +118,9 @@ F_Seek_Exit:
                 push    de                  // Save Return Stack pointer
                 push    bc                  // Save Instruction pointer 
                  exx
-                 di
                  rst     $08     
                  db      $9D
 F_Read_Exit:                
-                ei
                 exx
                 pop     bc                  // Restore Instruction pointer 
                 pop     de                  // Restore Return Stack pointer
@@ -143,7 +134,7 @@ F_Read_Exit:
 
 //  ______________________________________________________________________ 
 //
-// f_write      a n u -- n f
+// f_write      a b u -- n f
 // Write bytes currently stored at address a to file-handle u.
 // Return the actual n bytes written and 0 on success, True flag on error.
                 New_Def F_WRITE, "F_WRITE", is_code, is_normal
@@ -158,11 +149,9 @@ F_Read_Exit:
                 push    de                  // Save Return Stack pointer
                 push    bc                  // Save Instruction pointer 
                  exx
-                 di
                  rst     $08     
                  db      $9E
                  jr F_Read_Exit
-//                ei
 //                exx
 //                pop     de                  // Restore Return Stack pointer
 //                pop     bc                  // Restore Instruction pointer 
@@ -204,11 +193,9 @@ F_Read_Exit:
                 push    bc                  // Save Instruction pointer 
                  exx 
                  ld      a, "*"
-                 di
                  rst     $08     
                  db      $9A
 F_Open_Exit:                
-//               ei                         // removed because is repeated in f_read_exit
                  ld      e, a                // return the handle-number
                  ld      d, 0
                 jr F_Read_Exit
@@ -231,7 +218,6 @@ F_Open_Exit:
                 push    bc                  // Save Instruction pointer
                 ld      b, $10              // file-mode
                 ld      a, "C"
-                di
                 rst     $08     
                 db      $A3
                 jr      F_Open_Exit
@@ -253,9 +239,7 @@ F_Open_Exit:
                 push    de                  // Save Return Stack pointer
                 push    bc                  // Save Instruction pointer
                  exx
-                 di
                  rst     $08     
                  db      $A4
                  jr      F_Open_Exit
-
 

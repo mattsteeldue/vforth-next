@@ -214,7 +214,7 @@ Quit_Endif:                                     //      else
 Autoexec_Ptr:                
                 dw      AUTOEXEC                // autoexec, patched to noop
                 dw      QUIT                    // quit
-                dw      EXIT                    // ;
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
@@ -224,7 +224,7 @@ Autoexec_Ptr:
                 dw      SPLASH                  // splash
             //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
-                dw      EXIT                    // exit
+            //  dw      EXIT                    // exit
 
 //  ______________________________________________________________________ 
 //
@@ -254,13 +254,12 @@ Autoexec_Ptr:
 
 Warm_Start:     dw      WARM
 Cold_Start:     dw      COLD      
-                dw      EXIT        
+//              dw      EXIT        
 
 //  ______________________________________________________________________ 
 WarmRoutine:
 ColdRoutine:
-                ld      ix, Next_Ptr            // Inner Interpreter Pointer
-
+                // First, save Basic's status: H'L' and SP
                 exx
                 push    hl                      // save Basic's return address
                 exx
@@ -269,9 +268,8 @@ ColdRoutine:
                 // pre-set the four main 16-bit registers
                 ld      sp, (S0_origin)         // Calculator Stack Pointer
                 ld      hl, (R0_origin)         // Return Stack Pointer
-                // ld      de, (R0_origin)         // Return Stack Pointer
-                ldrphl
                 ex      de, hl
+                ld      ix, Next_Ptr            // Inner Interpreter Pointer
                 ld      bc, Warm_Start          // Instruction Pointer
 
                 jr      c, Warm_Skip

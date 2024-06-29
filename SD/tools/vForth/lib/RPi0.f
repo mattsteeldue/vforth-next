@@ -99,6 +99,8 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \
 \ Select Raspberry PI Zero UART and set Baudrate d
 : RPI0-SELECT  ( d -- )
+    UART-CT-PORT P@ 
+    $80 AND #24 ?ERROR
     3 7 REG!              \ go max speed (28 MHz)
     $40 UART-CT-PORT P!   \ select PI Zero UART control port
     UART-SET-BAUDRATE     \ uses double integer param
@@ -197,14 +199,36 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 
 \ _________________________________________________________
 \
+\ wait CR-LF
+: UART-WAIT-CR-LF ( -- )      
+    $0D UART-WAIT-B
+    $0A UART-WAIT-B
+;
+
+\ _________________________________________________________
+\
+\ wait for a specific string given at address a length n
+: UART-WAIT-FOR  ( a n -- )
+    BOUNDS
+    ?DO
+        I C@ UART-WAIT-B
+    LOOP
+;
+
+\ _________________________________________________________
+\
 \ wait for a specific string "SUP> "
+
+CREATE SUP>-STR ," SUP>"
+
 \ to synchronize things
 : UART-WAIT-PROMPT  ( -- )
-  [CHAR] S UART-WAIT-B
-  [CHAR] U UART-WAIT-B
-  [CHAR] P UART-WAIT-B
-  [CHAR] > UART-WAIT-B
-        BL UART-WAIT-B
+    SUP>-STR COUNT UART-WAIT-FOR
+\   [CHAR] S UART-WAIT-B
+\   [CHAR] U UART-WAIT-B
+\   [CHAR] P UART-WAIT-B
+\   [CHAR] > UART-WAIT-B
+\         BL UART-WAIT-B
 ;
 
 \ _________________________________________________________
@@ -294,6 +318,7 @@ VARIABLE UART-FORTH-BUF
 VARIABLE UART-FORTH-PTR 
 VARIABLE UART-FORTH-CNT 
 VARIABLE UART-FORTH-FLG
+VARIABLE UART-META          1 UART-META !
 
 \ _________________________________________________________
 \
@@ -353,8 +378,9 @@ VARIABLE UART-FORTH-FLG
             THEN
         THEN
     ELSE
-        \ # marks collection start
+        \ # marks collection start if UART-META is enabled
         [CHAR] # =
+        UART-META @ AND
         IF
             1 UART-FORTH-FLG ! 
             0 UART-FORTH-CNT !
@@ -367,6 +393,7 @@ VARIABLE UART-FORTH-FLG
 \ _________________________________________________________
 \
 : TERM ( -- )
+    TERM-INIT
     0 UART-ESCAPE-STATUS !
     BEGIN
         UART-SHOW-CURSOR 
@@ -394,6 +421,7 @@ VARIABLE UART-FORTH-FLG
           \ TRUV 
         THEN
     ?TERMINAL UNTIL 
+    TERM-DONE
 ; 
 
 \ _________________________________________________________
@@ -409,8 +437,8 @@ VARIABLE UART-FORTH-FLG
     UART-SEND-ETX
     UART-SEND-EOT
 \   UART-WAIT-PROMPT
-    TERM-INIT
     TERM
-    TERM-DONE
+    
 ;
 
+RPI0-INIT

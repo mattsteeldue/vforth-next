@@ -20,11 +20,11 @@ HEX
         C5 C,           \  push bc
         3E C, 43 C,     \  ld   a, "C"
         F3 C,           \  di
-        CF C, AD C,     \  rst  8
+        CF C, AD C,     \  rst  8  #AD
+        FB C,           \  ei
         C1 C,           \  pop  bc
         D1 C,           \  pop  de
         DD C, E1 C,     \  pop  ix
-        FB C,           \  ei
         ED C, 62 C,     \  sbc  hl,hl
         E5 C,           \  push hl
         DD C, E9 C,     \  jp (ix)

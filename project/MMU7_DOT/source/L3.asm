@@ -264,6 +264,7 @@ FInclude_Begin:                                 // begin
 FInclude_Repeat:                                // repeat
                 //  close current file
                 dw      SOURCE_ID, FETCH        // source-id @
+           //   dw      ZERO, SOURCE_ID, STORE  // 0 source-id !
                 dw      F_CLOSE                 // f_close
                 dw      LIT, 42, QERROR         // 42 ?error
 
@@ -316,8 +317,10 @@ FInclude_Endif_2:                               // endif
 // include      -- cccc
 // Include the following filename
                 Colon_Def INCLUDE, "INCLUDE", is_normal
-                dw      OPEN_FH                 // open 
+                dw      OPEN_FH                 // open<
                 dw      F_INCLUDE               //  f_include
+            //  dw      DUP, F_INCLUDE          // dup f_include
+            //  dw      F_CLOSE, DROP           // f_close drop
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -331,7 +334,7 @@ FInclude_Endif_2:                               // endif
                 ds      35                      // 32 + .f + 0x00 = len 35
 // temp complete path+filename
                 New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
-Param:          db      "c:/tools/vforth/lib/autoexec-dot.f", 0
+Param:          db      "c:/tools/vforth/lib/autoexec.f", 0
                 ds      30
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
@@ -778,6 +781,22 @@ Autoexec_Self:
                 dw      LIT, Autoexec_Self
                 dw      STORE
                 dw      EXIT
+
+
+
+//              dw      LIT, 11
+//              dw      LIT, NOOP
+//              dw      LIT, Autoexec_Ptr
+//              dw      STORE
+//              dw      LOAD
+//
+//              dw      NEEDS_FN, ONE, F_OPEN
+//              dw      LIT, 43, QERROR
+//              dw      DUP, F_INCLUDE
+//              dw      F_CLOSE, DROP
+
+//              dw      QUIT
+//              dw      EXIT
                 
 
 //  ______________________________________________________________________ 
@@ -1012,6 +1031,7 @@ Backslash_Endif_1:
                 New_Def BLK_FNAME,   "BLK-FNAME", Create_Ptr, is_normal  
 Len_Filename:   db      30
 Blk_filename:   db      "c:/tools/vforth/!Blocks-64.bin", 0
+                ds      32
 
 Fence_Word:
 //  ______________________________________________________________________ 

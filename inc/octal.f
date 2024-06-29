@@ -4,5 +4,5 @@
 .( OCTAL )
 \
 : OCTAL ( -- )
-    8 BASE !
+    $08 BASE !
 ;

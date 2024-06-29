@@ -46,8 +46,7 @@ MARKER TESTING-DONE
     NEEDS TESTING
 
 
-\ Save base value
-BASE    @ HEX \ all test needs base 16.
+HEX \ all test needs base 16.
 
 CR
 
@@ -433,6 +432,6 @@ TESTING \ F.3.23 Dictionary Search Rules
 \   INCLUDE  test/save-input.f
     
 ( end of test session )
-BASE !
+DECIMAL
 
 TESTING-DONE

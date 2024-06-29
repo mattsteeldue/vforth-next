@@ -4,7 +4,7 @@
 //  ______________________________________________________________________ 
 // 
 //  v-Forth 1.7 NextZXOS version 
-//  build 20240420
+//  build 20240616
 // 
 //  Direct-Threaded version.
 // 
@@ -142,10 +142,11 @@ Heap_offset     defl     0
                 include "L3.asm"
 
 // now we save the compiled file so we can either run it or debug it
-                SAVENEX OPEN "output/main.nex", ORIGIN
+                SAVENEX OPEN "output/forth17.nex", ORIGIN, S0_system
                 SAVENEX CORE 3, 0, 0                                // Next core 3.0.0 required as minimum
-                SAVENEX CFG  0
-                SAVENEX BANK 2, 0
+                SAVENEX CFG  7, 0
+                SAVENEX BANK 5,2,0,1,16
+//              SAVENEX BANK 5,2,0,1,3,4,6,7, 16,17,18,19
                 SAVENEX AUTO
                 SAVENEX CLOSE 
 

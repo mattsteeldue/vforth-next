@@ -304,12 +304,12 @@ FInclude_Endif_2:                               // endif
 //
 // use          -- cccc
 // Include the following filename
-                Colon_Def USE, "USE", is_normal
-                dw      OPEN_FH                 // open<
-                dw      BLK_FH, FETCH           // blk-fh @
-                dw      F_CLOSE, DROP           // f_close drop
-                dw      BLK_FH, STORE           // blk-fh !
-                dw      EXIT                    // ;
+//              Colon_Def USE, "USE", is_normal
+//              dw      OPEN_FH                 // open<
+//              dw      BLK_FH, FETCH           // blk-fh @
+//              dw      F_CLOSE, DROP           // f_close drop
+//              dw      BLK_FH, STORE           // blk-fh !
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
@@ -739,7 +739,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20240420", 13  // 33
+//              db      "Heap Vocabulary - build 20240616", 13  // 33
 //              db      "1990-2024 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
@@ -981,22 +981,25 @@ CDoBack_While:
 // \
                 Colon_Def BACKSLASH, "\\", is_immediate  // this is a single back-slash
                 dw      BLK, FETCH
+                dw      ONE_SUBTRACT // BLOCK 1 is used as temp-line in INCLUDE file
                 dw      ZBRANCH
                 dw      Backslash_Else_1 - $
-                dw          BLK, FETCH, ONE, GREATER  // BLOCK 1 is used as temp-line in INCLUDE file
+
+                dw          BLK, FETCH
                 dw          ZBRANCH
                 dw          Backslash_Else_2 - $
-                dw              TO_IN, FETCH, CL, MOD, CL
+
+                dw              TO_IN, FETCH, CL, ONE_SUBTRACT, AND_OP, CL
                 dw              SWAP, SUBTRACT, TO_IN, PLUSSTORE
                 dw          BRANCH
                 dw          Backslash_Endif_2 - $
 Backslash_Else_2:
-                dw              BBUF, CELL_MINUS, TO_IN, STORE
+                dw              ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, CSTORE
 Backslash_Endif_2:
                 dw      BRANCH
                 dw      Backslash_Endif_1 - $
 Backslash_Else_1:
-                dw          ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, STORE
+                dw              BBUF, CELL_MINUS, TO_IN, STORE
 Backslash_Endif_1:
                 dw      EXIT
 

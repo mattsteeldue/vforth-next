@@ -9,7 +9,7 @@ NEEDS UART-SYS
 \ Accept from UART up to n1 bytes and store them at address a.
 \ At 115.200 Baud, one bit duration is 8.68  microseconds
 \ a 512 bytes-buffer is filled in about 4.4 ms
-\ A 512 bytes burst-read takes 200 T per byte (102400)
+\ A 512 bytes burst-read takes 200 T per byte (102400 T in total)
 \ plus enter-exit time that at 28 MHz is about 3.7 ms
 \ so we should keep draining the buffer faster than it fills up.
 \ Timeout (see DE) is set at about 100 ms
@@ -31,10 +31,9 @@ HEX
                     \ 
     ED C, 5B C,     \ ldx()   de|     UART-1ST-TIMEOUT  AA,
     UART-1ST-TIMEOUT ,
-                    \ 
                     \ wait for a char ready until timeout expires   
                     \ HERE                              \              a1
-    00 C,           \ nop                                                 \  4                    
+  \ 00 C,           \ nop                                                 \  4 
     1B C,           \ decx    de|                   \ check timeout       \  6
     7A C,           \ ld      a'|     d|                                  \  4
     B3 C,           \ ora      e|                                         \  4

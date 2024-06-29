@@ -2394,9 +2394,10 @@ CODE 2- ( n1 -- n2 )
 \ change the sign of number
 CODE negate ( n1 -- n2 )
         EXX
-        LDX     HL|    0 NN,
         POP     DE|
-        ORA      A|
+        XORA     A|
+        LD      H'|    A|
+        LD      L'|    A|
         SBCHL   DE|
         PUSH    HL|
         EXX
@@ -4875,8 +4876,6 @@ here warm^ ! \ patch
 
         ASSEMBLER 
 
-        LDX     IX|    (next)   NN, 
-
         EXX
         PUSH    HL|                   \ saves HL' (of Basic)
         EXX
@@ -4890,6 +4889,8 @@ here warm^ ! \ patch
         LDHL()  hex  14 +origin AA, \ forth's RP
         LD()HL  hex 030 +origin AA,
         EXDEHL
+
+        LDX     IX|    (next)   NN, 
 
         LDX     BC|    y^    NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,
@@ -6295,16 +6296,16 @@ decimal
 .( \ )
 \ the following text is interpreted as a comment until end-of-line
 : \ 
-    blk @ 
+    blk @ 1- \ BLOCK 1 is used as temp-line in INCLUDE file.
     If
-        blk @ 1 >  \ BLOCK 1 is used as temp-line in INCLUDE file.
+        blk @ 
         If
-            >in @ c/l mod c/l swap - >in +!
+            >in @ c/l 1- and c/l swap - >in +!
         Else
-            b/buf cell- >in !
+            0 tib @ >in @ + c!
         Then
     Else
-        0 tib @ >in @ + !
+        b/buf >in !
     Then
     ;
     immediate

@@ -1,11 +1,16 @@
 \
 \ echo.dot.f
+\ 
+\ dot command example
+\ .echo simply echoes back 
 \
 
 needs assembler
+needs unlink
 needs save-bytes
 needs pad"
 
+marker redo
 
 variable org
 
@@ -14,24 +19,27 @@ code echo
 
         ld      a'|    h|
         ora      l|
+        ldn     a'|  2 N,
+        scf
         retf     z|
   Here    
         ld      a'| (hl)|
         ora      a|
         retf     z|
-        cpn         decimal 13 N,
+        cpn     $0D   N,
         retf     z|
-        cpn         char    :  N,
+        cpn    char : N,
         retf     z|
         incx    hl|
         rst     10|
         jr    Back,  \ to the closest Here
         
-        c;
+    c;
 
 decimal
 
-pad" echo"  
-Org @ Here over -  \  start-addres & length
+unlink c:/dot/echo
+  pad" c:/dot/echo"  
+org @ Here over -  \ find start-address & code length
 save-bytes
 

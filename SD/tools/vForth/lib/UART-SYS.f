@@ -6,9 +6,10 @@
 \ constants and variable useful to customize
 \ _________________________________________________________
 \
-\ system variables
+
 CREATE UART-SYS
 
+\ system variables alias
 \ 
 $5C08 CONSTANT UART-LASTK 
 $5C78 CONSTANT UART-FRAMES
@@ -23,8 +24,8 @@ $153B CONSTANT UART-CT-PORT
 \ Uart burst-read timeout and chunk-length
 \ The inner part of burst-read routine takes 112 T-States, this means that
 \ to have 1 millisecond timemout you have to specify 250.
-\ Timeout for the first byte is set at 250 ms == 62500.
-\ Timeouts for the next bytes is set at 40 ms == 10000.
+\ Timeout for the first byte is set at 200 ms == 50000.
+\ Timeouts for the next bytes is set at 20 ms ==  5000.
 \ This means we expect RPi0 to reply within 250 ms to any command we issue
 \ and any subsequent delay greater than 40 ms ends output collection.
 \

@@ -11,7 +11,7 @@ NEEDS UART-SYS
 \ Accept from I/O  up to n1 bytes and store them at address a.
 \ At 115.200 Bauds bit duration is 8.68  microseconds
 \ a 512 bytes-buffer is filled in about 4.4 ms
-\ A 512 bytes burst-read takes 200 T per byte (102400)
+\ A 512 bytes burst-read takes 200 T per byte (102400 T in total)
 \ plus enter-exit time that at 28 MHz is ABOUT 3.7 ms
 \ so we should keep draining the buffer faster than it fills up.
 \ Timeout (see DE) is set at about 100 ms
@@ -35,7 +35,7 @@ CODE UART-RX-BURST ( a n1 -- n2 )
 
     \ wait for a char ready until timeout expires   
     HERE                              \              a1
-        nop                                                 \  4
+    \   nop                                                 \  4
         decx    de|                   \ check timeout       \  6
         ld      a'|     d|                                  \  4
         ora      e|                                         \  4

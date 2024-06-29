@@ -2,7 +2,8 @@
 \ }ZPAD.f
 \
 \ runtime portion of PAD". See PAD~.f
-\ this definition ports a string+length into a z-string to PAD
+\ this definition ports a string+length into a z-string to PAD 
+\ i.e. zero-terminated string without leading length byte
 : >ZPAD  ( a n -- )
     PAD 255 BLANK           \ a    n
     >R                      \ a             R: n

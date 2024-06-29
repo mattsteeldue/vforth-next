@@ -222,6 +222,7 @@ Autoexec_Ptr:
                 Colon_Def WARM, "WARM", is_normal
                 dw      BLK_INIT                // blk-init
                 dw      NOOP                    // splash
+            //  dw      SPLASH                  // splash
             //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
                 dw      EXIT                    // exit
@@ -304,6 +305,10 @@ End_Parameter:
                 // append 0x00
                 xor     a
                 ld      (de), a
+            //  ld      hl, 0
+            //  sbc     hl, bc
+            //  ld      a, l
+            //  ld      (Len_Filename), a
 Skip_Parameter:
 
 //  ______________________________________________________________________ 
