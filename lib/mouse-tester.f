@@ -10,22 +10,37 @@ NEEDS .AT
 
 BASE @
 
+variable LAST-CONSUMED-EVENT
+
 : MOUSE-SHOW ( n1 n2 -- )
-    2dup .at 
-    ." raw   " mouse-rx @ . mouse-ry @ . mouse-rs @ . 7 spaces cr
-    2dup swap 1+ swap .at
-    ." delta " mouse-dx @ . mouse-dy @ . mouse-ds @ . 7 spaces cr
-    2dup swap 2+ swap .at
-    ." coord " mouse-x @ .  mouse-y  @ . mouse-s  @ . 7 spaces cr
+    2dup               .at 
+    ." raw   " mouse-rx @   .  mouse-ry @ 5 .R mouse-rs @ 5 .R 10 spaces cr
+    2dup swap 1+  swap .at
+    ." delta " mouse-dx @ 5 .R mouse-dy @ 5 .R mouse-ds @ 5 .R 10 spaces cr
+    2dup swap 2+  swap .at
+    ." coord " mouse-x @  5 .R mouse-y  @ 5 .R mouse-s  @ 5 .R 10 spaces cr
          swap 3 + swap .at
     ." LASTK " $5C08 C@ .
-    mouse
-    dup 1 and if ." ---------- right down " then
-    dup 4 and if ." ---------- right up   " then
-    dup 2 and if ." ---------- left  down " then
-    dup 8 and if ." ---------- left  up   " then
-    dup if  ISR-SYNC ISR-SYNC  then
-    0=        if ." no event " then
+    
+    MOUSE \ consume event
+    
+    ?DUP 
+    if
+        dup LAST-CONSUMED-EVENT !
+    then
+
+    LAST-CONSUMED-EVENT @    
+
+    dup $0001 and if ." right button click-down  " then
+    dup $0002 and if ." left  button click-down  " then
+    dup $0004 and if ." wheel button click-down  " then
+    dup $0010 and if ." wheel forward direction  " then
+    dup $0100 and if ." right button click-up    " then
+    dup $0200 and if ." left  button click-up    " then
+    dup $0400 and if ." wheel button click-up    " then
+    dup $1000 and if ." wheel backward direction " then
+        0=        if ." no event                 " then
+    ."                   "
 ;
 
 
@@ -42,7 +57,6 @@ decimal
           10 of mouse-x @  2+  mouse-x ! endof
     endcase
 ;
-
 
 : MOUSE-TESTER 
     BEGIN

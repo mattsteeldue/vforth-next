@@ -548,4 +548,4 @@ Shorter binary, squeezed some 22 bytes. Hadn't much time lately.
 Documentation for RPi0 definition and a couple of examples of use of new
 definitions ASK, SEND and THIS to easily interact with RPi0's Bash Shell
 New proposal for ZAP and ZAP" definitions to create standalone executable.
-
+Improved lib/mouse-tester.f and MOUSE documentation.

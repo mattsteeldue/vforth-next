@@ -143,7 +143,12 @@ DECIMAL
 ;
 
 \ this definition reads the mouse ports and determines the values of
-\ the three variables mouse-rx, mouse-ry, mouse-rs
+\ the three variables mouse-rx, mouse-ry, mouse-rs (event-bits)
+\ Event bits are:
+\ +/-   1 : right button   click down/up
+\ +/-   2 : left button    click down/up
+\ +/-   4 : wheel button   click down/up
+\ +/-  16 : wheel rotation direction down/up
 HEX
 : MOUSE-READ ( -- ) 
     0FFDF P@  FLIP  mouse-rx !  \ Kempston mouse Y (vertical) * 256
@@ -179,13 +184,9 @@ DECIMAL
     then
     
     \ update mouse button-events  
-    \ +/-   1 : right button
-    \ +/-   2 : left button
-    \ +/-   4 : wheel button
-    \ +/-  16 : wheel rotation
     mouse-ds @ ?dup 
     if
-        dup 0< if abs flip then 
+        dup 0< if abs flip then \ negative events are stored *256
         mouse-s @ 
         or 
         mouse-s !
@@ -211,14 +212,14 @@ DECIMAL
 
 
 \ return the current status of mouse
-\ s :    1  right button click-down event
-\   :    2  left  button click-down event
-\   :    4  wheel button click-down event
-\   :   16  wheel up direction      event
-\   :  256  right button click-up   event
-\   :  512  left  button click-up   event
-\   : 1024  wheel button click-up   event
-\   : 4096  wheel down direction    event
+\ s : $0001  right button click-down event
+\   : $0002  left  button click-down event
+\   : $0004  wheel button click-down event
+\   : $0010  wheel up direction      event
+\   : $0100  right button click-up   event
+\   : $0200  left  button click-up   event
+\   : $0400  wheel button click-up   event
+\   : $1000  wheel down direction    event
 .( MOUSE )
 
 : MOUSE
