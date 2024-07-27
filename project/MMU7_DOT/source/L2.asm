@@ -213,19 +213,18 @@ Quit_Endif:                                     //      else
 
 Autoexec_Ptr:                
                 dw      AUTOEXEC                // autoexec, patched to noop
-                dw      QUIT                   // quit
-                dw      EXIT                    // ;
+                dw      QUIT                    // quit
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
 // warm         --
                 Colon_Def WARM, "WARM", is_normal
                 dw      BLK_INIT                // blk-init
-                dw      NOOP                    // splash
             //  dw      SPLASH                  // splash
             //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
-                dw      EXIT                    // exit
+            //  dw      EXIT                    // exit
 
 //  ______________________________________________________________________ 
 //
@@ -253,9 +252,12 @@ Autoexec_Ptr:
                 dw      ZERO, BLK, STORE
                 dw      ZERO, SOURCE_ID, STORE
 
+                dw      LIT, 26, EMITC    // unlimited scroll
+                dw      ZERO, EMITC       
+
 Warm_Start:     dw      WARM
 Cold_Start:     dw      COLD      
-                dw      EXIT        
+//              dw      EXIT        
 
 
 //  ______________________________________________________________________ 
@@ -339,11 +341,17 @@ MMU_read_loop:
                 ld      c, 7        // necessary to call M_P3DOS
                 ld      a, 0        // query current status
                 rst     8
-                db      $94 // carry flag set on success 
+                db      $94         // carry flag set on success 
 
                 ld      (Saved_Layer), a     // store after MMUs
 //  ______________________________________________________________________ 
 // 2.3
+// Reserve from OS twelve pages from $1D upward.
+                call    Restore_Reserve_MMU     // multiple IDE_BANK  !
+                
+//  ______________________________________________________________________ 
+// 2.4
+// Backup MMU2 content to page $28
                 ld      hl, $6000
                 ld      de, $4000
                 call    Backup_Restore_MMU
@@ -368,10 +376,8 @@ MMU_read_loop:
                 call    Set_Cur_Dir
 
 //  ______________________________________________________________________ 
-// 2.2
-// Reserve pages from OS.
-
-                call    Restore_Reserve_MMU     // multiple IDE_BANK  !
+// 6.1
+// Setup MMU for Forth system (set MMU3-MMU7 to $20-$1C)
                 call    Set_forth_MMU
 
 //  ______________________________________________________________________ 
@@ -379,17 +385,6 @@ MMU_read_loop:
 // Get current handle via M_GETHANDLE and load ram
                 rst     8              
                 DEFB    $8d             ; M_GETHANDLE  
-
-//  ______________________________________________________________________ 
-// 8.
-// set MMU3-MMU7 to $20-$1C abd load ram7.bin
-
-//              ld      hl, Filename_Ram7   ; because we are within a dot command
-//              ld      b, $01          ; $01 request read access   
-//              ld      a, $2A          ; '*'     
-//              rst     8              
-//              DEFB    $9A             ; f_open  
-
                 push    af
                 ld      hl, $E000
                 ld      bc, $1FFF
@@ -400,7 +395,7 @@ MMU_read_loop:
                 DEFB    $9B             ; f_close
 
 //  ______________________________________________________________________ 
-// 9.
+// 8.
 // pre-set the four main 16-bit registers
                 ld      sp, (S0_origin)         // Calculator Stack Pointer
                 ld      ix, Next_Ptr            // Inner Interpreter Pointer
@@ -437,7 +432,7 @@ Set_Cur_Dir:
                 ld      c, 7
                 ld      a, 0
                 rst     8
-                db      $94 // carry flag set on success !
+                db      $94     // carry flag set on success !
 
                 ret
 

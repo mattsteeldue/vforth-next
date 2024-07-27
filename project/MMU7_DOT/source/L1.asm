@@ -504,7 +504,7 @@ Traverse_Begin:                                 // begin
                 dw      DUP
                 dw      ZBRANCH
                 dw      QHeap_Skip - $
-                dw          LIT, $6000
+                dw          LIT, $6300
                 dw          ULESS
 QHeap_Skip:                                          // endif
                 dw      EXIT                        // ;
@@ -1371,10 +1371,10 @@ PCDM_PTR:
                 Colon_Def NUMBER,  "NUMBER", is_normal
                 dw      ZERO, ZERO              // 0 0
                 dw      ROT                     // rot
-            //  dw      CSGN, TO_R              // (sgn) >r
+
                 dw      BASE, FETCH, TO_R       // base @ >r  // ***
                 dw      CPREFIX                 // (prefix)   // ***
-            //  dw      NEG_ONE, DPL, STORE     // -1 dpl !
+
                 dw      CSGN, TO_R              // (sgn) >r
 
                 dw      NEG_ONE, DPL, STORE     // -1 dpl !
@@ -1406,7 +1406,6 @@ Number_While_end:                               // repeat
 
                 dw      CFETCH, BL              // c@ bl
                 dw      SUBTRACT, ZERO, QERROR  // - 0 ?error
-            //  dw      R_TO, BASE, STORE       // r> base !  // ***
                 dw      R_TO                    // r>
                                                 // if
                 dw      ZBRANCH

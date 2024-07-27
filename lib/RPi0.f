@@ -283,7 +283,7 @@ CREATE SUP>-STR ," SUP>"
         DUP [CHAR] m = IF 0 UART-ESCAPE-STATUS ! THEN
             [CHAR] K = IF 0 UART-ESCAPE-STATUS ! THEN
     ELSE  
-        0 UART-ESCAPE-STATUS !
+\       0 UART-ESCAPE-STATUS !
         DUP $0A - 
         IF
             DUP $0D = IF SPACE CR THEN
@@ -332,7 +332,7 @@ VARIABLE UART-META          1 UART-META !
     0 UART-FLAGS2 C! 
     $0D UART-TX-BYTE
 \   6 $1E EMITC EMITC  \ narrow font 85 char per row.
-    1  17 EMITC EMITC   \ paper "blue"
+    7  17 EMITC EMITC   \ paper 7 "white" , 1 "blue"
 ;
 
 \ _________________________________________________________

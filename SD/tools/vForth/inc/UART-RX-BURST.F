@@ -30,7 +30,7 @@ HEX
     C5 C,           \ push    bc|
                     \ 
     ED C, 5B C,     \ ldx()   de|     UART-1ST-TIMEOUT  AA,
-    UART-1ST-TIMEOUT ,
+     UART-1ST-TIMEOUT ,
                     \ wait for a char ready until timeout expires   
                     \ HERE                              \              a1
   \ 00 C,           \ nop                                                 \  4 
@@ -50,7 +50,7 @@ HEX
                     \ 
                     \ check for byte ready from Uart
     01 C,           \ ldx     bc|  UART-TX-PORT  NN,  \ 133Bh             \ 10
-    UART-TX-PORT ,
+     UART-TX-PORT ,
     ED C, 78 C,     \ in(c)   a'|                   \ bit 0 bc is 133Bh   \ 12
     1F C,           \ rra                           \ non-zero when ready \  4
     30 C, E6 C,     \ jrf    nc'|  2 PICK BACK,     \ back to a1          \ 12  
@@ -70,7 +70,7 @@ HEX
     D9 C,           \ Exx                                                 \  4
                     \ 
     ED C, B5 C,     \ ldx()   de|    UART-2ND-TIMEOUT   AA,               \ 20
-    UART-2ND-TIMEOUT ,
+     UART-2ND-TIMEOUT ,
     20 C, D3 C,     \ jrf    nz'|  3 PICK BACK,     \ back to a1          \ 10
                     \                                            \ total   204 
                     \ HERE DISP,    \ holdplace a4 resolved here   
@@ -90,5 +90,7 @@ HEX
     FB C,           \ ei
                     \ 
     DD C, E9 C,     \ next
+
+FORTH  
 SMUDGE              \ C;
 

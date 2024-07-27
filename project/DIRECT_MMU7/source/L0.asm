@@ -13,7 +13,7 @@ Warm_origin:
                 jp      WarmRoutine
 
 // +008
-SP_Basic:       dw      $D0E4               // These are bits with some "standard" meaning... 0101
+SP_Basic:       dw      $0101               // These are bits with some "standard" meaning... 0101
 
 // +00A                
                 dw      $0E00               

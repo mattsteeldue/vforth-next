@@ -64,9 +64,9 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      110 
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33
-                db      " Heap Vocabulary - build 2024-04-20 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-06-16 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
-                db      " 1990-2023 Matteo Vitturi "                 // 26
+                db      " 1990-2024 Matteo Vitturi "                 // 26
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -764,8 +764,8 @@ Emitc_Ptr:
                 pop     ix
                 pop     de
                 pop     bc
-//              ld      a, -1            // max possible
-//              ld      (SCR_CT), a
+                ld      a, 255            // max possible
+                ld      (SCR_CT), a
                 next
 
 //  ______________________________________________________________________ 
@@ -773,10 +773,9 @@ Emitc_Ptr:
 // cr           --
 // send a CR via EMITC
                 Colon_Def CR, "CR", is_normal
-                dw      LIT, 26, EMITC
-                dw      ZERO, EMITC
-                dw      LIT, 13, EMITC
-                dw      EXIT
+
+                ld      a, CR_CHAR
+                jr      Emitc_Ptr
 
 Emitc_Vec:    
                 dw      C_Emit_Printable  // comma

@@ -78,25 +78,25 @@
   77  0000              //  0 for final binary release.
   78  0000              //  1 for debugging with Visual Studio Code and DeZog
   79  0000              // -1 for for binary comparison with Forth generated code.
-  80  0000              DEBUGGING       equ     0
+  80  0000              DEBUGGING       equ     -1
   81  0000              //
   82  0000              //  ______________________________________________________________________
   83  0000
   84  0000                              if ( -1 == DEBUGGING )
-  85  0000 ~            // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
-  86  0000 ~            ORIGIN          equ     $6366   -$80                   // for binary comparison with single compilation
-  87  0000 ~            Heap_Ptr        defl    $0002              // HP before compilation
-  88  0000 ~            Heap_offset     defl    0                // given by compilation
-  89  0000 ~
+  85  0000              // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
+  86  0000              ORIGIN          equ     $6366   -$80                   // for binary comparison with single compilation
+  87  0000              Heap_Ptr        defl    $0002              // HP before compilation
+  88  0000              Heap_offset     defl    0                // given by compilation
+  89  0000
   90  0000                              endif
   91  0000              //  ______________________________________________________________________
   92  0000
   93  0000                              if (  0 == DEBUGGING )
-  94  0000              ORIGIN          equ     $6366                   // binary and Tape
-  95  0000              // ORIGIN          equ     $9A93                // binary and Tape
-  96  0000              Heap_Ptr        defl    $0002
-  97  0000              Heap_offset     defl     0
-  98  0000
+  94  0000 ~            ORIGIN          equ     $6366                   // binary and Tape
+  95  0000 ~            // ORIGIN          equ     $9A93                // binary and Tape
+  96  0000 ~            Heap_Ptr        defl    $0002
+  97  0000 ~            Heap_offset     defl     0
+  98  0000 ~
   99  0000                              endif
  100  0000              //  ______________________________________________________________________
  101  0000
@@ -111,10 +111,10 @@
  110  0000                              DEVICE  ZXSPECTRUMNEXT
  111  0000
  112  0000                              ORG     ORIGIN
- 113  6366
- 114  6366                              if ( -1 == DEBUGGING )
- 115  6366 ~                            ds 128                            // for binary comparison
- 116  6366                              endif
+ 113  62E6
+ 114  62E6                              if ( -1 == DEBUGGING )
+ 115  62E6 00 00 00...                  ds 128                            // for binary comparison
+ 116  62EA                              endif
  117  6366
  118  6366              //  ______________________________________________________________________
  119  6366              //
@@ -392,7 +392,7 @@
   13+ 636B C3 27 76                     jp      WarmRoutine
   14+ 636E
   15+ 636E              // +008
-  16+ 636E E4 D0        SP_Basic:       dw      $D0E4               // These are bits with some "standard" meaning... 0101
+  16+ 636E 01 01        SP_Basic:       dw      $0101               // These are bits with some "standard" meaning... 0101
   17+ 6370
   18+ 6370              // +00A
   19+ 6370 00 0E                        dw      $0E00
@@ -454,15 +454,15 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2024-06-16 ", $0D  // 37
+  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2024-04-20 ", $0D  // 37
   67+ E028 70 20 56 6F
   67+ E02C 63 61 62 75
   67+ E030 6C 61 72 79
   67+ E034 20 2D 20 62
   67+ E038 75 69 6C 64
   67+ E03C 20 32 30 32
-  67+ E040 34 2D 30 36
-  67+ E044 2D 31 36 20
+  67+ E040 34 2D 30 34
+  67+ E044 2D 32 30 20
   67+ E048 0D
   68+ E049 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E04D 20 4C 69 63
@@ -16738,1286 +16738,1289 @@
  253+ 761D 85 6A 92 6B                  dw      ZERO, SOURCE_ID, STORE
  253+ 7621 99 69
  254+ 7623
- 255+ 7623 C5 75        Warm_Start:     dw      WARM
- 256+ 7625 D0 75        Cold_Start:     dw      COLD
- 257+ 7627              //              dw      EXIT
- 258+ 7627
- 259+ 7627              //  ______________________________________________________________________
- 260+ 7627              WarmRoutine:
- 261+ 7627              ColdRoutine:
- 262+ 7627                              // First, save Basic's status: H'L' and SP
- 263+ 7627 D9                           exx
- 264+ 7628 E5                           push    hl                      // save Basic's return address
- 265+ 7629 D9                           exx
- 266+ 762A ED 73 6E 63                  ld      (SP_Basic), sp
- 267+ 762E
- 268+ 762E                              // pre-set the four main 16-bit registers
- 269+ 762E ED 7B 78 63                  ld      sp, (S0_origin)         // Calculator Stack Pointer
- 270+ 7632 2A 7A 63                     ld      hl, (R0_origin)         // Return Stack Pointer
- 271+ 7635 EB                           ex      de, hl
- 272+ 7636 DD 21 9A 63                  ld      ix, Next_Ptr            // Inner Interpreter Pointer
- 273+ 763A 01 23 76                     ld      bc, Warm_Start          // Instruction Pointer
- 274+ 763D
- 275+ 763D 38 02                        jr      c, Warm_Skip
- 276+ 763F 03                           inc     bc
- 277+ 7640 03                           inc     bc
- 278+ 7641              Warm_Skip:
- 279+ 7641                              next
- 279+ 7641 DD E9       >                jp      (ix)
- 280+ 7643
- 281+ 7643              //  ______________________________________________________________________
- 282+ 7643              //
- 283+ 7643              // basic        --
- 284+ 7643                              New_Def BASIC, "BASIC", is_code, is_normal
- 284+ 7643             >
- 284+ 7643             >Dict_Ptr        defl    $
- 284+ 7643             >
- 284+ 7643             >//              ______________________________________________________________________
- 284+ 7643             >//              Heap part
- 284+ 7643             >
- 284+ 7643             >
- 284+ 7643             >                org     (Heap_Ptr & $1FFF) + $E000
- 284+ E978             >
- 284+ E978             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 284+ E978             >Latest_Definition defl  Heap_Ptr
- 284+ E978             >
- 284+ E978             >                // dummy db directives used to calculate length of namec
- 284+ E978 42 41 53 49 >                db      "BASIC"
- 284+ E97C 43          >
- 284+ E97D             >len_NFA         defl    $ - temp_NFA
- 284+ E97D             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 284+ E978             >
- 284+ E978 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 284+ E979 42 41 53 49 >                db      "BASIC"               // name string in 7-bit ascii, but
- 284+ E97D 43          >
- 284+ E97E             >                org     $-1                 // alter last byte of Name just above to set
- 284+ E97D C3          >                db      {b $} | END_BIT     // msb as name end
- 284+ E97E             >
- 284+ E97E 6F 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 284+ E980             >Prev_Ptr        defl    Heap_Ptr
- 284+ E980             >
- 284+ E980             >mirror_Ptr      defl    $
- 284+ E980             >
- 284+ E980 45 76       >                dw      Dict_Ptr + 2        // xt
- 284+ E982             >Heap_Ptr        defl    $ - $E000           // save current HP
- 284+ E982             >
- 284+ E982             >Current_HP      defl  $ - $E000             // used to set HP once!
- 284+ E982             >
- 284+ E982             >//              ______________________________________________________________________
- 284+ E982             >//              Dictionary part
- 284+ E982             >
- 284+ E982             >                org     Dict_Ptr
- 284+ 7643             >
- 284+ 7643 80 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 284+ 7645             >
- 284+ 7645             >BASIC:          if is_code != 0 ; ok        // This is the start address of the direct jp(hl)
- 284+ 7645 ~           >                call    runcode ; ok        // for primitive definitions  actual code
- 284+ 7645 ~           >
- 284+ 7645 ~           >
- 284+ 7645             >                endif           ; ok        // for other definitions it "points" the correct handler
- 284+ 7645             >                // Use of "; ok" to suppress "warning[fwdref]"
- 284+ 7645             >
- 284+ 7645             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 285+ 7645 C1                           pop     bc                      // return  TOS  value to Basic
- 286+ 7646 21 00 00                     ld      hl, 0
- 287+ 7649 39                           add     hl, sp
- 288+ 764A ED 7B 6E 63                  ld      sp, (SP_Basic)          // restore Basic's SP
- 289+ 764E              //              nop
- 290+ 764E 22 6E 63                     ld      (SP_Basic),hl           // but also save Forth's
- 291+ 7651 D9                           exx
- 292+ 7652 E1                           pop     hl                      // restore h'l'
- 293+ 7653 D9                           exx
- 294+ 7654 C9                           ret                             // to where USR Basic was left
- 295+ 7655
- 296+ 7655              //  ______________________________________________________________________
- 297+ 7655              //
- 298+ 7655              // +-           n1 n2 -- n3
- 299+ 7655              // leaves n1 with the sign of n2 as n3.
- 300+ 7655                              Colon_Def PLUS_MINUS, "+-", is_normal
- 300+ 7655             >                New_Def  PLUS_MINUS, "+-", Enter_Ptr, is_normal ; ok
- 300+ 7655             >
- 300+ 7655             >Dict_Ptr        defl    $
- 300+ 7655             >
- 300+ 7655             >//              ______________________________________________________________________
- 300+ 7655             >//              Heap part
- 300+ 7655             >
- 300+ 7655             >
- 300+ 7655             >                org     (Heap_Ptr & $1FFF) + $E000
- 300+ E982             >
- 300+ E982             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 300+ E982             >Latest_Definition defl  Heap_Ptr
- 300+ E982             >
- 300+ E982             >                // dummy db directives used to calculate length of namec
- 300+ E982 2B 2D       >                db      "+-"
- 300+ E984             >len_NFA         defl    $ - temp_NFA
- 300+ E984             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 300+ E982             >
- 300+ E982 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 300+ E983 2B 2D       >                db      "+-"               // name string in 7-bit ascii, but
- 300+ E985             >                org     $-1                 // alter last byte of Name just above to set
- 300+ E984 AD          >                db      {b $} | END_BIT     // msb as name end
- 300+ E985             >
- 300+ E985 78 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 300+ E987             >Prev_Ptr        defl    Heap_Ptr
- 300+ E987             >
- 300+ E987             >mirror_Ptr      defl    $
- 300+ E987             >
- 300+ E987 57 76       >                dw      Dict_Ptr + 2        // xt
- 300+ E989             >Heap_Ptr        defl    $ - $E000           // save current HP
- 300+ E989             >
- 300+ E989             >Current_HP      defl  $ - $E000             // used to set HP once!
- 300+ E989             >
- 300+ E989             >//              ______________________________________________________________________
- 300+ E989             >//              Dictionary part
- 300+ E989             >
- 300+ E989             >                org     Dict_Ptr
- 300+ 7655             >
- 300+ 7655 87 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 300+ 7657             >
- 300+ 7657             >PLUS_MINUS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 300+ 7657 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 300+ 765A             >
- 300+ 765A             >
- 300+ 765A             >                endif           ; ok        // for other definitions it "points" the correct handler
- 300+ 765A             >                // Use of "; ok" to suppress "warning[fwdref]"
- 300+ 765A             >
- 300+ 765A             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 301+ 765A 86 68                        dw      ZLESS                   // 0<
- 302+ 765C                                                              // if
- 303+ 765C F5 63                        dw      ZBRANCH
- 304+ 765E 04 00                        dw      Plus_Minus_Endif - $
- 305+ 7660 E1 68                        dw          MINUS               //      minus
- 306+ 7662              Plus_Minus_Endif:                               // endif
- 307+ 7662 4F 68                        dw      EXIT                    // ;
- 308+ 7664
- 309+ 7664              //  ______________________________________________________________________
- 310+ 7664              //
- 311+ 7664              // d+-          d1 n -- d2
- 312+ 7664              // leaves d1 with the sign of n as d2.
- 313+ 7664                              Colon_Def DPLUS_MINUS, "D+-", is_normal
- 313+ 7664             >                New_Def  DPLUS_MINUS, "D+-", Enter_Ptr, is_normal ; ok
- 313+ 7664             >
- 313+ 7664             >Dict_Ptr        defl    $
- 313+ 7664             >
- 313+ 7664             >//              ______________________________________________________________________
- 313+ 7664             >//              Heap part
- 313+ 7664             >
- 313+ 7664             >
- 313+ 7664             >                org     (Heap_Ptr & $1FFF) + $E000
- 313+ E989             >
- 313+ E989             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 313+ E989             >Latest_Definition defl  Heap_Ptr
- 313+ E989             >
- 313+ E989             >                // dummy db directives used to calculate length of namec
- 313+ E989 44 2B 2D    >                db      "D+-"
- 313+ E98C             >len_NFA         defl    $ - temp_NFA
- 313+ E98C             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 313+ E989             >
- 313+ E989 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 313+ E98A 44 2B 2D    >                db      "D+-"               // name string in 7-bit ascii, but
- 313+ E98D             >                org     $-1                 // alter last byte of Name just above to set
- 313+ E98C AD          >                db      {b $} | END_BIT     // msb as name end
- 313+ E98D             >
- 313+ E98D 82 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 313+ E98F             >Prev_Ptr        defl    Heap_Ptr
- 313+ E98F             >
- 313+ E98F             >mirror_Ptr      defl    $
- 313+ E98F             >
- 313+ E98F 66 76       >                dw      Dict_Ptr + 2        // xt
- 313+ E991             >Heap_Ptr        defl    $ - $E000           // save current HP
- 313+ E991             >
- 313+ E991             >Current_HP      defl  $ - $E000             // used to set HP once!
- 313+ E991             >
- 313+ E991             >//              ______________________________________________________________________
- 313+ E991             >//              Dictionary part
- 313+ E991             >
- 313+ E991             >                org     Dict_Ptr
- 313+ 7664             >
- 313+ 7664 8F 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 313+ 7666             >
- 313+ 7666             >DPLUS_MINUS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 313+ 7666 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 313+ 7669             >
- 313+ 7669             >
- 313+ 7669             >                endif           ; ok        // for other definitions it "points" the correct handler
- 313+ 7669             >                // Use of "; ok" to suppress "warning[fwdref]"
- 313+ 7669             >
- 313+ 7669             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 314+ 7669 86 68                        dw      ZLESS                   // 0<
- 315+ 766B                                                              // if
- 316+ 766B F5 63                        dw      ZBRANCH
- 317+ 766D 04 00                        dw      DPlus_Minus_Endif - $
- 318+ 766F EE 68                        dw          DMINUS              //      dminus
- 319+ 7671              DPlus_Minus_Endif:                              // endif
- 320+ 7671 4F 68                        dw      EXIT                    // ;
- 321+ 7673
- 322+ 7673              //  ______________________________________________________________________
- 323+ 7673              //
- 324+ 7673              // abs          n1 -- n2
- 325+ 7673                              Colon_Def ABS_OP, "ABS", is_normal
- 325+ 7673             >                New_Def  ABS_OP, "ABS", Enter_Ptr, is_normal ; ok
- 325+ 7673             >
- 325+ 7673             >Dict_Ptr        defl    $
- 325+ 7673             >
- 325+ 7673             >//              ______________________________________________________________________
- 325+ 7673             >//              Heap part
- 325+ 7673             >
- 325+ 7673             >
- 325+ 7673             >                org     (Heap_Ptr & $1FFF) + $E000
- 325+ E991             >
- 325+ E991             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 325+ E991             >Latest_Definition defl  Heap_Ptr
- 325+ E991             >
- 325+ E991             >                // dummy db directives used to calculate length of namec
- 325+ E991 41 42 53    >                db      "ABS"
- 325+ E994             >len_NFA         defl    $ - temp_NFA
- 325+ E994             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 325+ E991             >
- 325+ E991 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 325+ E992 41 42 53    >                db      "ABS"               // name string in 7-bit ascii, but
- 325+ E995             >                org     $-1                 // alter last byte of Name just above to set
- 325+ E994 D3          >                db      {b $} | END_BIT     // msb as name end
- 325+ E995             >
- 325+ E995 89 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 325+ E997             >Prev_Ptr        defl    Heap_Ptr
- 325+ E997             >
- 325+ E997             >mirror_Ptr      defl    $
- 325+ E997             >
- 325+ E997 75 76       >                dw      Dict_Ptr + 2        // xt
- 325+ E999             >Heap_Ptr        defl    $ - $E000           // save current HP
- 325+ E999             >
- 325+ E999             >Current_HP      defl  $ - $E000             // used to set HP once!
- 325+ E999             >
- 325+ E999             >//              ______________________________________________________________________
- 325+ E999             >//              Dictionary part
- 325+ E999             >
- 325+ E999             >                org     Dict_Ptr
- 325+ 7673             >
- 325+ 7673 97 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 325+ 7675             >
- 325+ 7675             >ABS_OP:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 325+ 7675 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 325+ 7678             >
- 325+ 7678             >
- 325+ 7678             >                endif           ; ok        // for other definitions it "points" the correct handler
- 325+ 7678             >                // Use of "; ok" to suppress "warning[fwdref]"
- 325+ 7678             >
- 325+ 7678             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 326+ 7678 25 69                        dw      DUP                     // dup
- 327+ 767A 57 76                        dw      PLUS_MINUS              // +-
- 328+ 767C 4F 68                        dw      EXIT                    // ;
- 329+ 767E
- 330+ 767E              //  ______________________________________________________________________
- 331+ 767E              //
- 332+ 767E              // dabs         d1 -- d2
- 333+ 767E                              Colon_Def DABS, "DABS", is_normal
- 333+ 767E             >                New_Def  DABS, "DABS", Enter_Ptr, is_normal ; ok
- 333+ 767E             >
- 333+ 767E             >Dict_Ptr        defl    $
- 333+ 767E             >
- 333+ 767E             >//              ______________________________________________________________________
- 333+ 767E             >//              Heap part
- 333+ 767E             >
- 333+ 767E             >
- 333+ 767E             >                org     (Heap_Ptr & $1FFF) + $E000
- 333+ E999             >
- 333+ E999             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 333+ E999             >Latest_Definition defl  Heap_Ptr
- 333+ E999             >
- 333+ E999             >                // dummy db directives used to calculate length of namec
- 333+ E999 44 41 42 53 >                db      "DABS"
- 333+ E99D             >len_NFA         defl    $ - temp_NFA
- 333+ E99D             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 333+ E999             >
- 333+ E999 84          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 333+ E99A 44 41 42 53 >                db      "DABS"               // name string in 7-bit ascii, but
- 333+ E99E             >                org     $-1                 // alter last byte of Name just above to set
- 333+ E99D D3          >                db      {b $} | END_BIT     // msb as name end
- 333+ E99E             >
- 333+ E99E 91 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 333+ E9A0             >Prev_Ptr        defl    Heap_Ptr
- 333+ E9A0             >
- 333+ E9A0             >mirror_Ptr      defl    $
- 333+ E9A0             >
- 333+ E9A0 80 76       >                dw      Dict_Ptr + 2        // xt
- 333+ E9A2             >Heap_Ptr        defl    $ - $E000           // save current HP
- 333+ E9A2             >
- 333+ E9A2             >Current_HP      defl  $ - $E000             // used to set HP once!
- 333+ E9A2             >
- 333+ E9A2             >//              ______________________________________________________________________
- 333+ E9A2             >//              Dictionary part
- 333+ E9A2             >
- 333+ E9A2             >                org     Dict_Ptr
- 333+ 767E             >
- 333+ 767E A0 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 333+ 7680             >
- 333+ 7680             >DABS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 333+ 7680 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 333+ 7683             >
- 333+ 7683             >
- 333+ 7683             >                endif           ; ok        // for other definitions it "points" the correct handler
- 333+ 7683             >                // Use of "; ok" to suppress "warning[fwdref]"
- 333+ 7683             >
- 333+ 7683             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 334+ 7683 25 69                        dw      DUP                     // dup
- 335+ 7685 66 76                        dw      DPLUS_MINUS             // d+-
- 336+ 7687 4F 68                        dw      EXIT                    // ;
- 337+ 7689
- 338+ 7689              //  ______________________________________________________________________
- 339+ 7689              //
- 340+ 7689              // m*           n1 n2 -- d
- 341+ 7689              // multiply two integer giving a double
- 342+ 7689                              Colon_Def MMUL, "M*", is_normal
- 342+ 7689             >                New_Def  MMUL, "M*", Enter_Ptr, is_normal ; ok
- 342+ 7689             >
- 342+ 7689             >Dict_Ptr        defl    $
- 342+ 7689             >
- 342+ 7689             >//              ______________________________________________________________________
- 342+ 7689             >//              Heap part
- 342+ 7689             >
- 342+ 7689             >
- 342+ 7689             >                org     (Heap_Ptr & $1FFF) + $E000
- 342+ E9A2             >
- 342+ E9A2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 342+ E9A2             >Latest_Definition defl  Heap_Ptr
- 342+ E9A2             >
- 342+ E9A2             >                // dummy db directives used to calculate length of namec
- 342+ E9A2 4D 2A       >                db      "M*"
- 342+ E9A4             >len_NFA         defl    $ - temp_NFA
- 342+ E9A4             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 342+ E9A2             >
- 342+ E9A2 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 342+ E9A3 4D 2A       >                db      "M*"               // name string in 7-bit ascii, but
- 342+ E9A5             >                org     $-1                 // alter last byte of Name just above to set
- 342+ E9A4 AA          >                db      {b $} | END_BIT     // msb as name end
- 342+ E9A5             >
- 342+ E9A5 99 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 342+ E9A7             >Prev_Ptr        defl    Heap_Ptr
- 342+ E9A7             >
- 342+ E9A7             >mirror_Ptr      defl    $
- 342+ E9A7             >
- 342+ E9A7 8B 76       >                dw      Dict_Ptr + 2        // xt
- 342+ E9A9             >Heap_Ptr        defl    $ - $E000           // save current HP
- 342+ E9A9             >
- 342+ E9A9             >Current_HP      defl  $ - $E000             // used to set HP once!
- 342+ E9A9             >
- 342+ E9A9             >//              ______________________________________________________________________
- 342+ E9A9             >//              Dictionary part
- 342+ E9A9             >
- 342+ E9A9             >                org     Dict_Ptr
- 342+ 7689             >
- 342+ 7689 A7 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 342+ 768B             >
- 342+ 768B             >MMUL:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 342+ 768B CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 342+ 768E             >
- 342+ 768E             >
- 342+ 768E             >                endif           ; ok        // for other definitions it "points" the correct handler
- 342+ 768E             >                // Use of "; ok" to suppress "warning[fwdref]"
- 342+ 768E             >
- 342+ 768E             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 343+ 768E 6D 69 2A 68                  dw      TWO_DUP, XOR_OP, TO_R   // 2dup xor >r
- 343+ 7692 59 68
- 344+ 7694 75 76 1E 69                  dw      ABS_OP, SWAP            // abs swap
- 345+ 7698 75 76 B4 67                  dw      ABS_OP, UM_MUL          // abs um*
- 346+ 769C 64 68 66 76                  dw      R_TO, DPLUS_MINUS       // r> d+-
- 347+ 76A0 4F 68                        dw      EXIT                    // ;
- 348+ 76A2
- 349+ 76A2              //  ______________________________________________________________________
- 350+ 76A2              //
- 351+ 76A2              // sm/rem       d n -- q r
- 352+ 76A2              // Symmetric division: divides a double into n giving quotient q and remainder r
- 353+ 76A2              // the remainder has the sign of d.
- 354+ 76A2                              Colon_Def SMDIVM, "SM/REM", is_normal
- 354+ 76A2             >                New_Def  SMDIVM, "SM/REM", Enter_Ptr, is_normal ; ok
- 354+ 76A2             >
- 354+ 76A2             >Dict_Ptr        defl    $
- 354+ 76A2             >
- 354+ 76A2             >//              ______________________________________________________________________
- 354+ 76A2             >//              Heap part
- 354+ 76A2             >
- 354+ 76A2             >
- 354+ 76A2             >                org     (Heap_Ptr & $1FFF) + $E000
- 354+ E9A9             >
- 354+ E9A9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 354+ E9A9             >Latest_Definition defl  Heap_Ptr
- 354+ E9A9             >
- 354+ E9A9             >                // dummy db directives used to calculate length of namec
- 354+ E9A9 53 4D 2F 52 >                db      "SM/REM"
- 354+ E9AD 45 4D       >
- 354+ E9AF             >len_NFA         defl    $ - temp_NFA
- 354+ E9AF             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 354+ E9A9             >
- 354+ E9A9 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 354+ E9AA 53 4D 2F 52 >                db      "SM/REM"               // name string in 7-bit ascii, but
- 354+ E9AE 45 4D       >
- 354+ E9B0             >                org     $-1                 // alter last byte of Name just above to set
- 354+ E9AF CD          >                db      {b $} | END_BIT     // msb as name end
- 354+ E9B0             >
- 354+ E9B0 A2 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 354+ E9B2             >Prev_Ptr        defl    Heap_Ptr
- 354+ E9B2             >
- 354+ E9B2             >mirror_Ptr      defl    $
- 354+ E9B2             >
- 354+ E9B2 A4 76       >                dw      Dict_Ptr + 2        // xt
- 354+ E9B4             >Heap_Ptr        defl    $ - $E000           // save current HP
- 354+ E9B4             >
- 354+ E9B4             >Current_HP      defl  $ - $E000             // used to set HP once!
- 354+ E9B4             >
- 354+ E9B4             >//              ______________________________________________________________________
- 354+ E9B4             >//              Dictionary part
- 354+ E9B4             >
- 354+ E9B4             >                org     Dict_Ptr
- 354+ 76A2             >
- 354+ 76A2 B2 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 354+ 76A4             >
- 354+ 76A4             >SMDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 354+ 76A4 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 354+ 76A7             >
- 354+ 76A7             >
- 354+ 76A7             >                endif           ; ok        // for other definitions it "points" the correct handler
- 354+ 76A7             >                // Use of "; ok" to suppress "warning[fwdref]"
- 354+ 76A7             >
- 354+ 76A7             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 355+ 76A7 01 69 59 68                  dw      OVER, TO_R, TO_R        // over >r >r
- 355+ 76AB 59 68
- 356+ 76AD 80 76 6F 68                  dw      DABS, R_OP, ABS_OP      // dabs r abs
- 356+ 76B1 75 76
- 357+ 76B3 DC 67                        dw      UMDIVMOD                // um/mod
- 358+ 76B5 64 68                        dw      R_TO                    // r>
- 359+ 76B7 6F 68 2A 68                  dw      R_OP, XOR_OP            // r xor
- 360+ 76BB 57 76 1E 69                  dw      PLUS_MINUS, SWAP        // +- swap
- 361+ 76BF 64 68                        dw      R_TO                    // r>
- 362+ 76C1 57 76 1E 69                  dw      PLUS_MINUS, SWAP        // +- swap
- 363+ 76C5 4F 68                        dw      EXIT                    // ;
- 364+ 76C7
- 365+ 76C7              //  ______________________________________________________________________
- 366+ 76C7              //
- 367+ 76C7              // fm/mod       d n -- q r
- 368+ 76C7              // Floored division: divides a double into n giving quotient q and remainder r
- 369+ 76C7              // the remainder has the sign of d.
- 370+ 76C7                              Colon_Def FMDIVM, "FM/MOD", is_normal
- 370+ 76C7             >                New_Def  FMDIVM, "FM/MOD", Enter_Ptr, is_normal ; ok
- 370+ 76C7             >
- 370+ 76C7             >Dict_Ptr        defl    $
- 370+ 76C7             >
- 370+ 76C7             >//              ______________________________________________________________________
- 370+ 76C7             >//              Heap part
- 370+ 76C7             >
- 370+ 76C7             >
- 370+ 76C7             >                org     (Heap_Ptr & $1FFF) + $E000
- 370+ E9B4             >
- 370+ E9B4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 370+ E9B4             >Latest_Definition defl  Heap_Ptr
- 370+ E9B4             >
- 370+ E9B4             >                // dummy db directives used to calculate length of namec
- 370+ E9B4 46 4D 2F 4D >                db      "FM/MOD"
- 370+ E9B8 4F 44       >
- 370+ E9BA             >len_NFA         defl    $ - temp_NFA
- 370+ E9BA             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 370+ E9B4             >
- 370+ E9B4 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 370+ E9B5 46 4D 2F 4D >                db      "FM/MOD"               // name string in 7-bit ascii, but
- 370+ E9B9 4F 44       >
- 370+ E9BB             >                org     $-1                 // alter last byte of Name just above to set
- 370+ E9BA C4          >                db      {b $} | END_BIT     // msb as name end
- 370+ E9BB             >
- 370+ E9BB A9 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 370+ E9BD             >Prev_Ptr        defl    Heap_Ptr
- 370+ E9BD             >
- 370+ E9BD             >mirror_Ptr      defl    $
- 370+ E9BD             >
- 370+ E9BD C9 76       >                dw      Dict_Ptr + 2        // xt
- 370+ E9BF             >Heap_Ptr        defl    $ - $E000           // save current HP
- 370+ E9BF             >
- 370+ E9BF             >Current_HP      defl  $ - $E000             // used to set HP once!
- 370+ E9BF             >
- 370+ E9BF             >//              ______________________________________________________________________
- 370+ E9BF             >//              Dictionary part
- 370+ E9BF             >
- 370+ E9BF             >                org     Dict_Ptr
- 370+ 76C7             >
- 370+ 76C7 BD 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 370+ 76C9             >
- 370+ 76C9             >FMDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 370+ 76C9 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 370+ 76CC             >
- 370+ 76CC             >
- 370+ 76CC             >                endif           ; ok        // for other definitions it "points" the correct handler
- 370+ 76CC             >                // Use of "; ok" to suppress "warning[fwdref]"
- 370+ 76CC             >
- 370+ 76CC             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 371+ 76CC 25 69 59 68                  dw      DUP, TO_R               // dup >r
- 372+ 76D0 A4 76                        dw      SMDIVM
- 373+ 76D2 01 69 25 69                  dw      OVER, DUP
- 374+ 76D6 74 68 74 68                  dw      ZEQUAL, ZEQUAL
- 375+ 76DA 1E 69 86 68                  dw      SWAP, ZLESS
- 376+ 76DE 6F 68 86 68                  dw      R_OP, ZLESS
- 377+ 76E2 2A 68 0F 68                  dw      XOR_OP, AND_OP
- 378+ 76E6 F5 63                        dw      ZBRANCH
- 379+ 76E8 10 00                        dw      Fm_Mod_Else - $
- 380+ 76EA C1 68                        dw          ONE_SUBTRACT
- 381+ 76EC 1E 69 64 68                  dw          SWAP, R_TO
- 382+ 76F0 A1 68 1E 69                  dw          PLUS, SWAP
- 383+ 76F4 E8 63                        dw      BRANCH
- 384+ 76F6 06 00                        dw      Fm_Mod_Endif - $
- 385+ 76F8              Fm_Mod_Else:
- 386+ 76F8 64 68 0A 69                  dw          R_TO, DROP
- 387+ 76FC              Fm_Mod_Endif:
- 388+ 76FC 4F 68                        dw      EXIT
- 389+ 76FE              //              dw      TWO_DUP                 // 2dup
- 390+ 76FE              //              dw      XOR_OP, TO_R, TO_R      // xor >r >r
- 391+ 76FE              //              dw      DABS, R_OP, ABS_OP      // dabs r abs
- 392+ 76FE              //              dw      UMDIVMOD                // um/mod
- 393+ 76FE              //              dw      SWAP                    // swap
- 394+ 76FE              //              dw      II, ZLESS               // i'
- 395+ 76FE              //              dw      ONE, AND_OP, PLUS       // 0< 1 and +
- 396+ 76FE              //              dw      R_TO                    // r>
- 397+ 76FE              //              dw      PLUS_MINUS, SWAP        // +- swap
- 398+ 76FE              //              dw      R_OP                    // r@
- 399+ 76FE              //              dw      ZLESS                   // i'
- 400+ 76FE              //              dw      ONE, AND_OP, PLUS       // 0< 1 and +
- 401+ 76FE              //              dw      R_TO                    // r>
- 402+ 76FE              //              dw      PLUS_MINUS              // +- swap
- 403+ 76FE              //              dw      EXIT                    // ;
- 404+ 76FE
- 405+ 76FE              //  ______________________________________________________________________
- 406+ 76FE              //
- 407+ 76FE              // m/mod        d n -- q r
- 408+ 76FE              // multiply two integer giving a double
- 409+ 76FE                              Colon_Def MDIVM, "M/MOD", is_normal
- 409+ 76FE             >                New_Def  MDIVM, "M/MOD", Enter_Ptr, is_normal ; ok
- 409+ 76FE             >
- 409+ 76FE             >Dict_Ptr        defl    $
- 409+ 76FE             >
- 409+ 76FE             >//              ______________________________________________________________________
- 409+ 76FE             >//              Heap part
- 409+ 76FE             >
- 409+ 76FE             >
- 409+ 76FE             >                org     (Heap_Ptr & $1FFF) + $E000
- 409+ E9BF             >
- 409+ E9BF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 409+ E9BF             >Latest_Definition defl  Heap_Ptr
- 409+ E9BF             >
- 409+ E9BF             >                // dummy db directives used to calculate length of namec
- 409+ E9BF 4D 2F 4D 4F >                db      "M/MOD"
- 409+ E9C3 44          >
- 409+ E9C4             >len_NFA         defl    $ - temp_NFA
- 409+ E9C4             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 409+ E9BF             >
- 409+ E9BF 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 409+ E9C0 4D 2F 4D 4F >                db      "M/MOD"               // name string in 7-bit ascii, but
- 409+ E9C4 44          >
- 409+ E9C5             >                org     $-1                 // alter last byte of Name just above to set
- 409+ E9C4 C4          >                db      {b $} | END_BIT     // msb as name end
- 409+ E9C5             >
- 409+ E9C5 B4 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 409+ E9C7             >Prev_Ptr        defl    Heap_Ptr
- 409+ E9C7             >
- 409+ E9C7             >mirror_Ptr      defl    $
- 409+ E9C7             >
- 409+ E9C7 00 77       >                dw      Dict_Ptr + 2        // xt
- 409+ E9C9             >Heap_Ptr        defl    $ - $E000           // save current HP
- 409+ E9C9             >
- 409+ E9C9             >Current_HP      defl  $ - $E000             // used to set HP once!
- 409+ E9C9             >
- 409+ E9C9             >//              ______________________________________________________________________
- 409+ E9C9             >//              Dictionary part
- 409+ E9C9             >
- 409+ E9C9             >                org     Dict_Ptr
- 409+ 76FE             >
- 409+ 76FE C7 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 409+ 7700             >
- 409+ 7700             >MDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 409+ 7700 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 409+ 7703             >
- 409+ 7703             >
- 409+ 7703             >                endif           ; ok        // for other definitions it "points" the correct handler
- 409+ 7703             >                // Use of "; ok" to suppress "warning[fwdref]"
- 409+ 7703             >
- 409+ 7703             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 410+ 7703 A4 76                        dw      SMDIVM
- 411+ 7705 4F 68                        dw      EXIT                    // ;
- 412+ 7707
- 413+ 7707              //  ______________________________________________________________________
- 414+ 7707              //
- 415+ 7707              // m/           d n -- q
- 416+ 7707              // multiply two integer giving a double
- 417+ 7707                              Colon_Def MDIV, "M/", is_normal
- 417+ 7707             >                New_Def  MDIV, "M/", Enter_Ptr, is_normal ; ok
- 417+ 7707             >
- 417+ 7707             >Dict_Ptr        defl    $
- 417+ 7707             >
- 417+ 7707             >//              ______________________________________________________________________
- 417+ 7707             >//              Heap part
- 417+ 7707             >
- 417+ 7707             >
- 417+ 7707             >                org     (Heap_Ptr & $1FFF) + $E000
- 417+ E9C9             >
- 417+ E9C9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 417+ E9C9             >Latest_Definition defl  Heap_Ptr
- 417+ E9C9             >
- 417+ E9C9             >                // dummy db directives used to calculate length of namec
- 417+ E9C9 4D 2F       >                db      "M/"
- 417+ E9CB             >len_NFA         defl    $ - temp_NFA
- 417+ E9CB             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 417+ E9C9             >
- 417+ E9C9 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 417+ E9CA 4D 2F       >                db      "M/"               // name string in 7-bit ascii, but
- 417+ E9CC             >                org     $-1                 // alter last byte of Name just above to set
- 417+ E9CB AF          >                db      {b $} | END_BIT     // msb as name end
- 417+ E9CC             >
- 417+ E9CC BF 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 417+ E9CE             >Prev_Ptr        defl    Heap_Ptr
- 417+ E9CE             >
- 417+ E9CE             >mirror_Ptr      defl    $
- 417+ E9CE             >
- 417+ E9CE 09 77       >                dw      Dict_Ptr + 2        // xt
- 417+ E9D0             >Heap_Ptr        defl    $ - $E000           // save current HP
- 417+ E9D0             >
- 417+ E9D0             >Current_HP      defl  $ - $E000             // used to set HP once!
- 417+ E9D0             >
- 417+ E9D0             >//              ______________________________________________________________________
- 417+ E9D0             >//              Dictionary part
- 417+ E9D0             >
- 417+ E9D0             >                org     Dict_Ptr
- 417+ 7707             >
- 417+ 7707 CE 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 417+ 7709             >
- 417+ 7709             >MDIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 417+ 7709 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 417+ 770C             >
- 417+ 770C             >
- 417+ 770C             >                endif           ; ok        // for other definitions it "points" the correct handler
- 417+ 770C             >                // Use of "; ok" to suppress "warning[fwdref]"
- 417+ 770C             >
- 417+ 770C             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 418+ 770C 00 77 0F 69                  dw      MDIVM, NIP
- 419+ 7710 4F 68                        dw      EXIT                    // ;
- 420+ 7712
- 421+ 7712              //  ______________________________________________________________________
- 422+ 7712              //
- 423+ 7712              // *            n1 n2 -- n3
- 424+ 7712              // multiply two integer
- 425+ 7712                              Colon_Def MUL, "*", is_normal
- 425+ 7712             >                New_Def  MUL, "*", Enter_Ptr, is_normal ; ok
- 425+ 7712             >
- 425+ 7712             >Dict_Ptr        defl    $
- 425+ 7712             >
- 425+ 7712             >//              ______________________________________________________________________
- 425+ 7712             >//              Heap part
- 425+ 7712             >
- 425+ 7712             >
- 425+ 7712             >                org     (Heap_Ptr & $1FFF) + $E000
- 425+ E9D0             >
- 425+ E9D0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 425+ E9D0             >Latest_Definition defl  Heap_Ptr
- 425+ E9D0             >
- 425+ E9D0             >                // dummy db directives used to calculate length of namec
- 425+ E9D0 2A          >                db      "*"
- 425+ E9D1             >len_NFA         defl    $ - temp_NFA
- 425+ E9D1             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 425+ E9D0             >
- 425+ E9D0 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 425+ E9D1 2A          >                db      "*"               // name string in 7-bit ascii, but
- 425+ E9D2             >                org     $-1                 // alter last byte of Name just above to set
- 425+ E9D1 AA          >                db      {b $} | END_BIT     // msb as name end
- 425+ E9D2             >
- 425+ E9D2 C9 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 425+ E9D4             >Prev_Ptr        defl    Heap_Ptr
- 425+ E9D4             >
- 425+ E9D4             >mirror_Ptr      defl    $
- 425+ E9D4             >
- 425+ E9D4 14 77       >                dw      Dict_Ptr + 2        // xt
- 425+ E9D6             >Heap_Ptr        defl    $ - $E000           // save current HP
- 425+ E9D6             >
- 425+ E9D6             >Current_HP      defl  $ - $E000             // used to set HP once!
- 425+ E9D6             >
- 425+ E9D6             >//              ______________________________________________________________________
- 425+ E9D6             >//              Dictionary part
- 425+ E9D6             >
- 425+ E9D6             >                org     Dict_Ptr
- 425+ 7712             >
- 425+ 7712 D4 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 425+ 7714             >
- 425+ 7714             >MUL:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 425+ 7714 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 425+ 7717             >
- 425+ 7717             >
- 425+ 7717             >                endif           ; ok        // for other definitions it "points" the correct handler
- 425+ 7717             >                // Use of "; ok" to suppress "warning[fwdref]"
- 425+ 7717             >
- 425+ 7717             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 426+ 7717 8B 76 0A 69                  dw      MMUL, DROP              // m* drop
- 427+ 771B 4F 68                        dw      EXIT                    // ;
- 428+ 771D
- 429+ 771D              //  ______________________________________________________________________
- 430+ 771D              //
- 431+ 771D              // /mod         n1 n2 -- n3 n4
- 432+ 771D              // leaves quotient n4 and remainder n3 of the integer division n1 / n2.
- 433+ 771D              // The remainder has the sign of n1
- 434+ 771D                              Colon_Def DIVMOD, "/MOD", is_normal
- 434+ 771D             >                New_Def  DIVMOD, "/MOD", Enter_Ptr, is_normal ; ok
- 434+ 771D             >
- 434+ 771D             >Dict_Ptr        defl    $
- 434+ 771D             >
- 434+ 771D             >//              ______________________________________________________________________
- 434+ 771D             >//              Heap part
- 434+ 771D             >
- 434+ 771D             >
- 434+ 771D             >                org     (Heap_Ptr & $1FFF) + $E000
- 434+ E9D6             >
- 434+ E9D6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 434+ E9D6             >Latest_Definition defl  Heap_Ptr
- 434+ E9D6             >
- 434+ E9D6             >                // dummy db directives used to calculate length of namec
- 434+ E9D6 2F 4D 4F 44 >                db      "/MOD"
- 434+ E9DA             >len_NFA         defl    $ - temp_NFA
- 434+ E9DA             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 434+ E9D6             >
- 434+ E9D6 84          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 434+ E9D7 2F 4D 4F 44 >                db      "/MOD"               // name string in 7-bit ascii, but
- 434+ E9DB             >                org     $-1                 // alter last byte of Name just above to set
- 434+ E9DA C4          >                db      {b $} | END_BIT     // msb as name end
- 434+ E9DB             >
- 434+ E9DB D0 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 434+ E9DD             >Prev_Ptr        defl    Heap_Ptr
- 434+ E9DD             >
- 434+ E9DD             >mirror_Ptr      defl    $
- 434+ E9DD             >
- 434+ E9DD 1F 77       >                dw      Dict_Ptr + 2        // xt
- 434+ E9DF             >Heap_Ptr        defl    $ - $E000           // save current HP
- 434+ E9DF             >
- 434+ E9DF             >Current_HP      defl  $ - $E000             // used to set HP once!
- 434+ E9DF             >
- 434+ E9DF             >//              ______________________________________________________________________
- 434+ E9DF             >//              Dictionary part
- 434+ E9DF             >
- 434+ E9DF             >                org     Dict_Ptr
- 434+ 771D             >
- 434+ 771D DD 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 434+ 771F             >
- 434+ 771F             >DIVMOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 434+ 771F CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 434+ 7722             >
- 434+ 7722             >
- 434+ 7722             >                endif           ; ok        // for other definitions it "points" the correct handler
- 434+ 7722             >                // Use of "; ok" to suppress "warning[fwdref]"
- 434+ 7722             >
- 434+ 7722             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 435+ 7722 59 68 DE 6B                  dw      TO_R, S_TO_D, R_TO      // >r s->d r>
- 435+ 7726 64 68
- 436+ 7728 00 77                        dw      MDIVM                   // m/mod
- 437+ 772A 4F 68                        dw      EXIT                    // ;
- 438+ 772C
- 439+ 772C              //  ______________________________________________________________________
- 440+ 772C              //
- 441+ 772C              // /            n1 n2 -- n3
- 442+ 772C              // division
- 443+ 772C                              Colon_Def DIV, "/", is_normal
- 443+ 772C             >                New_Def  DIV, "/", Enter_Ptr, is_normal ; ok
- 443+ 772C             >
- 443+ 772C             >Dict_Ptr        defl    $
- 443+ 772C             >
- 443+ 772C             >//              ______________________________________________________________________
- 443+ 772C             >//              Heap part
- 443+ 772C             >
- 443+ 772C             >
- 443+ 772C             >                org     (Heap_Ptr & $1FFF) + $E000
- 443+ E9DF             >
- 443+ E9DF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 443+ E9DF             >Latest_Definition defl  Heap_Ptr
- 443+ E9DF             >
- 443+ E9DF             >                // dummy db directives used to calculate length of namec
- 443+ E9DF 2F          >                db      "/"
- 443+ E9E0             >len_NFA         defl    $ - temp_NFA
- 443+ E9E0             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 443+ E9DF             >
- 443+ E9DF 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 443+ E9E0 2F          >                db      "/"               // name string in 7-bit ascii, but
- 443+ E9E1             >                org     $-1                 // alter last byte of Name just above to set
- 443+ E9E0 AF          >                db      {b $} | END_BIT     // msb as name end
- 443+ E9E1             >
- 443+ E9E1 D6 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 443+ E9E3             >Prev_Ptr        defl    Heap_Ptr
- 443+ E9E3             >
- 443+ E9E3             >mirror_Ptr      defl    $
- 443+ E9E3             >
- 443+ E9E3 2E 77       >                dw      Dict_Ptr + 2        // xt
- 443+ E9E5             >Heap_Ptr        defl    $ - $E000           // save current HP
- 443+ E9E5             >
- 443+ E9E5             >Current_HP      defl  $ - $E000             // used to set HP once!
- 443+ E9E5             >
- 443+ E9E5             >//              ______________________________________________________________________
- 443+ E9E5             >//              Dictionary part
- 443+ E9E5             >
- 443+ E9E5             >                org     Dict_Ptr
- 443+ 772C             >
- 443+ 772C E3 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 443+ 772E             >
- 443+ 772E             >DIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 443+ 772E CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 443+ 7731             >
- 443+ 7731             >
- 443+ 7731             >                endif           ; ok        // for other definitions it "points" the correct handler
- 443+ 7731             >                // Use of "; ok" to suppress "warning[fwdref]"
- 443+ 7731             >
- 443+ 7731             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 444+ 7731 1F 77 0F 69                  dw      DIVMOD, NIP             // /mod nip
- 445+ 7735 4F 68                        dw      EXIT                    // ;
- 446+ 7737
- 447+ 7737              //  ______________________________________________________________________
- 448+ 7737              //
- 449+ 7737              // mod          n1 n2 -- n3
- 450+ 7737                              Colon_Def MOD, "MOD", is_normal
- 450+ 7737             >                New_Def  MOD, "MOD", Enter_Ptr, is_normal ; ok
- 450+ 7737             >
- 450+ 7737             >Dict_Ptr        defl    $
- 450+ 7737             >
- 450+ 7737             >//              ______________________________________________________________________
- 450+ 7737             >//              Heap part
- 450+ 7737             >
- 450+ 7737             >
- 450+ 7737             >                org     (Heap_Ptr & $1FFF) + $E000
- 450+ E9E5             >
- 450+ E9E5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 450+ E9E5             >Latest_Definition defl  Heap_Ptr
- 450+ E9E5             >
- 450+ E9E5             >                // dummy db directives used to calculate length of namec
- 450+ E9E5 4D 4F 44    >                db      "MOD"
- 450+ E9E8             >len_NFA         defl    $ - temp_NFA
- 450+ E9E8             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 450+ E9E5             >
- 450+ E9E5 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 450+ E9E6 4D 4F 44    >                db      "MOD"               // name string in 7-bit ascii, but
- 450+ E9E9             >                org     $-1                 // alter last byte of Name just above to set
- 450+ E9E8 C4          >                db      {b $} | END_BIT     // msb as name end
- 450+ E9E9             >
- 450+ E9E9 DF 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 450+ E9EB             >Prev_Ptr        defl    Heap_Ptr
- 450+ E9EB             >
- 450+ E9EB             >mirror_Ptr      defl    $
- 450+ E9EB             >
- 450+ E9EB 39 77       >                dw      Dict_Ptr + 2        // xt
- 450+ E9ED             >Heap_Ptr        defl    $ - $E000           // save current HP
- 450+ E9ED             >
- 450+ E9ED             >Current_HP      defl  $ - $E000             // used to set HP once!
- 450+ E9ED             >
- 450+ E9ED             >//              ______________________________________________________________________
- 450+ E9ED             >//              Dictionary part
- 450+ E9ED             >
- 450+ E9ED             >                org     Dict_Ptr
- 450+ 7737             >
- 450+ 7737 EB 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 450+ 7739             >
- 450+ 7739             >MOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 450+ 7739 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 450+ 773C             >
- 450+ 773C             >
- 450+ 773C             >                endif           ; ok        // for other definitions it "points" the correct handler
- 450+ 773C             >                // Use of "; ok" to suppress "warning[fwdref]"
- 450+ 773C             >
- 450+ 773C             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 451+ 773C 1F 77 0A 69                  dw      DIVMOD, DROP            // /mod drop
- 452+ 7740 4F 68                        dw      EXIT                    // ;
- 453+ 7742
- 454+ 7742              //  ______________________________________________________________________
- 455+ 7742              //
- 456+ 7742              // */mod        n1 n2 n3 -- n4 n5
- 457+ 7742              // leaves the quotient n5 and the remainder n4 of the operation
- 458+ 7742              // (n1 * n2) / n3. The intermediate passage through a double number
- 459+ 7742              // avoids loss of precision
- 460+ 7742                              Colon_Def MUL_DIV_MOD, "*/MOD", is_normal
- 460+ 7742             >                New_Def  MUL_DIV_MOD, "*/MOD", Enter_Ptr, is_normal ; ok
- 460+ 7742             >
- 460+ 7742             >Dict_Ptr        defl    $
- 460+ 7742             >
- 460+ 7742             >//              ______________________________________________________________________
- 460+ 7742             >//              Heap part
- 460+ 7742             >
- 460+ 7742             >
- 460+ 7742             >                org     (Heap_Ptr & $1FFF) + $E000
- 460+ E9ED             >
- 460+ E9ED             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 460+ E9ED             >Latest_Definition defl  Heap_Ptr
- 460+ E9ED             >
- 460+ E9ED             >                // dummy db directives used to calculate length of namec
- 460+ E9ED 2A 2F 4D 4F >                db      "*/MOD"
- 460+ E9F1 44          >
- 460+ E9F2             >len_NFA         defl    $ - temp_NFA
- 460+ E9F2             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 460+ E9ED             >
- 460+ E9ED 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 460+ E9EE 2A 2F 4D 4F >                db      "*/MOD"               // name string in 7-bit ascii, but
- 460+ E9F2 44          >
- 460+ E9F3             >                org     $-1                 // alter last byte of Name just above to set
- 460+ E9F2 C4          >                db      {b $} | END_BIT     // msb as name end
- 460+ E9F3             >
- 460+ E9F3 E5 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 460+ E9F5             >Prev_Ptr        defl    Heap_Ptr
- 460+ E9F5             >
- 460+ E9F5             >mirror_Ptr      defl    $
- 460+ E9F5             >
- 460+ E9F5 44 77       >                dw      Dict_Ptr + 2        // xt
- 460+ E9F7             >Heap_Ptr        defl    $ - $E000           // save current HP
- 460+ E9F7             >
- 460+ E9F7             >Current_HP      defl  $ - $E000             // used to set HP once!
- 460+ E9F7             >
- 460+ E9F7             >//              ______________________________________________________________________
- 460+ E9F7             >//              Dictionary part
- 460+ E9F7             >
- 460+ E9F7             >                org     Dict_Ptr
- 460+ 7742             >
- 460+ 7742 F5 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 460+ 7744             >
- 460+ 7744             >MUL_DIV_MOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 460+ 7744 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 460+ 7747             >
- 460+ 7747             >
- 460+ 7747             >                endif           ; ok        // for other definitions it "points" the correct handler
- 460+ 7747             >                // Use of "; ok" to suppress "warning[fwdref]"
- 460+ 7747             >
- 460+ 7747             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 461+ 7747 59 68 8B 76                  dw      TO_R, MMUL              // >r  m*
- 462+ 774B 64 68 00 77                  dw      R_TO, MDIVM             // r>  m/mod
- 463+ 774F 4F 68                        dw      EXIT                    // ;
- 464+ 7751
- 465+ 7751              //  ______________________________________________________________________
- 466+ 7751              //
- 467+ 7751              // */          n1 n2 n3 -- n4
- 468+ 7751              // (n1 * n2) / n3. The intermediate passage through a double number avoids loss of precision
- 469+ 7751                              Colon_Def MUL_DIV, "*/", is_normal
- 469+ 7751             >                New_Def  MUL_DIV, "*/", Enter_Ptr, is_normal ; ok
- 469+ 7751             >
- 469+ 7751             >Dict_Ptr        defl    $
- 469+ 7751             >
- 469+ 7751             >//              ______________________________________________________________________
- 469+ 7751             >//              Heap part
- 469+ 7751             >
- 469+ 7751             >
- 469+ 7751             >                org     (Heap_Ptr & $1FFF) + $E000
- 469+ E9F7             >
- 469+ E9F7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 469+ E9F7             >Latest_Definition defl  Heap_Ptr
- 469+ E9F7             >
- 469+ E9F7             >                // dummy db directives used to calculate length of namec
- 469+ E9F7 2A 2F       >                db      "*/"
- 469+ E9F9             >len_NFA         defl    $ - temp_NFA
- 469+ E9F9             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 469+ E9F7             >
- 469+ E9F7 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 469+ E9F8 2A 2F       >                db      "*/"               // name string in 7-bit ascii, but
- 469+ E9FA             >                org     $-1                 // alter last byte of Name just above to set
- 469+ E9F9 AF          >                db      {b $} | END_BIT     // msb as name end
- 469+ E9FA             >
- 469+ E9FA ED 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 469+ E9FC             >Prev_Ptr        defl    Heap_Ptr
- 469+ E9FC             >
- 469+ E9FC             >mirror_Ptr      defl    $
- 469+ E9FC             >
- 469+ E9FC 53 77       >                dw      Dict_Ptr + 2        // xt
- 469+ E9FE             >Heap_Ptr        defl    $ - $E000           // save current HP
- 469+ E9FE             >
- 469+ E9FE             >Current_HP      defl  $ - $E000             // used to set HP once!
- 469+ E9FE             >
- 469+ E9FE             >//              ______________________________________________________________________
- 469+ E9FE             >//              Dictionary part
- 469+ E9FE             >
- 469+ E9FE             >                org     Dict_Ptr
- 469+ 7751             >
- 469+ 7751 FC 09       >                dw      mirror_Ptr - $E000 + Heap_offset
- 469+ 7753             >
- 469+ 7753             >MUL_DIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 469+ 7753 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 469+ 7756             >
- 469+ 7756             >
- 469+ 7756             >                endif           ; ok        // for other definitions it "points" the correct handler
- 469+ 7756             >                // Use of "; ok" to suppress "warning[fwdref]"
- 469+ 7756             >
- 469+ 7756             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 470+ 7756 44 77                        dw     MUL_DIV_MOD              // */mod
- 471+ 7758 0F 69                        dw     NIP                      // nip
- 472+ 775A 4F 68                        dw     EXIT                     // ;
- 473+ 775C
- 474+ 775C
- 475+ 775C              //  ______________________________________________________________________
- 476+ 775C              //
- 477+ 775C              // m/mod        ud1 u2 -- u3 ud4
- 478+ 775C              // mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
- 479+ 775C              // All terms are unsigned.
- 480+ 775C              //              Colon_Def MDIV_MOD, "M/MOD", is_normal
- 481+ 775C              //              dw      TO_R                    // >r           ( ud1 )
- 482+ 775C              //              dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )
- 483+ 775C              //              dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
- 484+ 775C              //              dw      UMDIVMOD                // um/mod       ( rem2 l/r )
- 485+ 775C              //              dw      R_TO                    // r>           ( rem2 l/r h/r )
- 486+ 775C              //              dw      EXIT                    // ;
- 487+ 775C
- 488+ 775C              //  ______________________________________________________________________
- 489+ 775C              //
- 490+ 775C              // (line)       n1 n2 -- a b
- 491+ 775C              // sends the line n1 of block n2 to the disk buffer.
- 492+ 775C              // it returns the address a and ca counter b = C/L meaning a whole line.
- 493+ 775C                              Colon_Def CLINE, "(LINE)", is_normal
- 493+ 775C             >                New_Def  CLINE, "(LINE)", Enter_Ptr, is_normal ; ok
- 493+ 775C             >
- 493+ 775C             >Dict_Ptr        defl    $
- 493+ 775C             >
- 493+ 775C             >//              ______________________________________________________________________
- 493+ 775C             >//              Heap part
- 493+ 775C             >
- 493+ 775C             >
- 493+ 775C             >                org     (Heap_Ptr & $1FFF) + $E000
- 493+ E9FE             >
- 493+ E9FE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 493+ E9FE             >Latest_Definition defl  Heap_Ptr
- 493+ E9FE             >
- 493+ E9FE             >                // dummy db directives used to calculate length of namec
- 493+ E9FE 28 4C 49 4E >                db      "(LINE)"
- 493+ EA02 45 29       >
- 493+ EA04             >len_NFA         defl    $ - temp_NFA
- 493+ EA04             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 493+ E9FE             >
- 493+ E9FE 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 493+ E9FF 28 4C 49 4E >                db      "(LINE)"               // name string in 7-bit ascii, but
- 493+ EA03 45 29       >
- 493+ EA05             >                org     $-1                 // alter last byte of Name just above to set
- 493+ EA04 A9          >                db      {b $} | END_BIT     // msb as name end
- 493+ EA05             >
- 493+ EA05 F7 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 493+ EA07             >Prev_Ptr        defl    Heap_Ptr
- 493+ EA07             >
- 493+ EA07             >mirror_Ptr      defl    $
- 493+ EA07             >
- 493+ EA07 5E 77       >                dw      Dict_Ptr + 2        // xt
- 493+ EA09             >Heap_Ptr        defl    $ - $E000           // save current HP
- 493+ EA09             >
- 493+ EA09             >Current_HP      defl  $ - $E000             // used to set HP once!
- 493+ EA09             >
- 493+ EA09             >//              ______________________________________________________________________
- 493+ EA09             >//              Dictionary part
- 493+ EA09             >
- 493+ EA09             >                org     Dict_Ptr
- 493+ 775C             >
- 493+ 775C 07 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
- 493+ 775E             >
- 493+ 775E             >CLINE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 493+ 775E CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 493+ 7761             >
- 493+ 7761             >
- 493+ 7761             >                endif           ; ok        // for other definitions it "points" the correct handler
- 493+ 7761             >                // Use of "; ok" to suppress "warning[fwdref]"
- 493+ 7761             >
- 493+ 7761             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 494+ 7761 59 68                        dw      TO_R                    // >r
- 495+ 7763 AF 6A                        dw      CL                      // c/l
- 496+ 7765 B6 6A 44 77                  dw      BBUF, MUL_DIV_MOD       // */mod
- 497+ 7769 64 68                        dw      R_TO                    // r>
- 498+ 776B BD 6A 14 77                  dw      BSCR, MUL, PLUS         // b/scr * +
- 498+ 776F A1 68
- 499+ 7771 71 79                        dw      BLOCK                   // block   ( forward )
- 500+ 7773 A1 68                        dw      PLUS                    // +
- 501+ 7775 AF 6A                        dw      CL                      // c/l
- 502+ 7777 4F 68                        dw      EXIT                    // ;
- 503+ 7779
- 504+ 7779              //  ______________________________________________________________________
- 505+ 7779              //
- 506+ 7779              // .line        n1 n2 --
- 507+ 7779              // Sends to output line  n1  of screen n2.
- 508+ 7779                              Colon_Def DOT_LINE, ".LINE", is_normal
- 508+ 7779             >                New_Def  DOT_LINE, ".LINE", Enter_Ptr, is_normal ; ok
- 508+ 7779             >
- 508+ 7779             >Dict_Ptr        defl    $
- 508+ 7779             >
- 508+ 7779             >//              ______________________________________________________________________
- 508+ 7779             >//              Heap part
- 508+ 7779             >
- 508+ 7779             >
- 508+ 7779             >                org     (Heap_Ptr & $1FFF) + $E000
- 508+ EA09             >
- 508+ EA09             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 508+ EA09             >Latest_Definition defl  Heap_Ptr
- 508+ EA09             >
- 508+ EA09             >                // dummy db directives used to calculate length of namec
- 508+ EA09 2E 4C 49 4E >                db      ".LINE"
- 508+ EA0D 45          >
- 508+ EA0E             >len_NFA         defl    $ - temp_NFA
- 508+ EA0E             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 508+ EA09             >
- 508+ EA09 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 508+ EA0A 2E 4C 49 4E >                db      ".LINE"               // name string in 7-bit ascii, but
- 508+ EA0E 45          >
- 508+ EA0F             >                org     $-1                 // alter last byte of Name just above to set
- 508+ EA0E C5          >                db      {b $} | END_BIT     // msb as name end
- 508+ EA0F             >
- 508+ EA0F FE 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 508+ EA11             >Prev_Ptr        defl    Heap_Ptr
- 508+ EA11             >
- 508+ EA11             >mirror_Ptr      defl    $
- 508+ EA11             >
- 508+ EA11 7B 77       >                dw      Dict_Ptr + 2        // xt
- 508+ EA13             >Heap_Ptr        defl    $ - $E000           // save current HP
- 508+ EA13             >
- 508+ EA13             >Current_HP      defl  $ - $E000             // used to set HP once!
- 508+ EA13             >
- 508+ EA13             >//              ______________________________________________________________________
- 508+ EA13             >//              Dictionary part
- 508+ EA13             >
- 508+ EA13             >                org     Dict_Ptr
- 508+ 7779             >
- 508+ 7779 11 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
- 508+ 777B             >
- 508+ 777B             >DOT_LINE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 508+ 777B CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 508+ 777E             >
- 508+ 777E             >
- 508+ 777E             >                endif           ; ok        // for other definitions it "points" the correct handler
- 508+ 777E             >                // Use of "; ok" to suppress "warning[fwdref]"
- 508+ 777E             >
- 508+ 777E             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 509+ 777E 5E 77 83 6F                  dw      CLINE, LTRAILING, TYPE  // (line) -trailing type
- 509+ 7782 6C 6F
- 510+ 7784 4F 68                        dw      EXIT                    // ;
- 511+ 7786
- 512+ 7786              //  ______________________________________________________________________
- 513+ 7786              //
- 514+ 7786              // message       n1 n2 --
- 515+ 7786              // prints error message to current channel.
- 516+ 7786              // if WARNING is 0, prints "MSG#n".
- 517+ 7786              // if WARNING is 1, prints line n of screen 4.
- 518+ 7786              // if WARNING is -1, see ERROR
- 519+ 7786              // value can be negative or beyond block 4.
- 520+ 7786                              Colon_Def MESSAGE, "MESSAGE", is_normal
- 520+ 7786             >                New_Def  MESSAGE, "MESSAGE", Enter_Ptr, is_normal ; ok
- 520+ 7786             >
- 520+ 7786             >Dict_Ptr        defl    $
- 520+ 7786             >
- 520+ 7786             >//              ______________________________________________________________________
- 520+ 7786             >//              Heap part
- 520+ 7786             >
- 520+ 7786             >
- 520+ 7786             >                org     (Heap_Ptr & $1FFF) + $E000
- 520+ EA13             >
- 520+ EA13             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 520+ EA13             >Latest_Definition defl  Heap_Ptr
- 520+ EA13             >
- 520+ EA13             >                // dummy db directives used to calculate length of namec
- 520+ EA13 4D 45 53 53 >                db      "MESSAGE"
- 520+ EA17 41 47 45    >
- 520+ EA1A             >len_NFA         defl    $ - temp_NFA
- 520+ EA1A             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 520+ EA13             >
- 520+ EA13 87          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 520+ EA14 4D 45 53 53 >                db      "MESSAGE"               // name string in 7-bit ascii, but
- 520+ EA18 41 47 45    >
- 520+ EA1B             >                org     $-1                 // alter last byte of Name just above to set
- 520+ EA1A C5          >                db      {b $} | END_BIT     // msb as name end
- 520+ EA1B             >
- 520+ EA1B 09 0A       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 520+ EA1D             >Prev_Ptr        defl    Heap_Ptr
- 520+ EA1D             >
- 520+ EA1D             >mirror_Ptr      defl    $
- 520+ EA1D             >
- 520+ EA1D 88 77       >                dw      Dict_Ptr + 2        // xt
- 520+ EA1F             >Heap_Ptr        defl    $ - $E000           // save current HP
- 520+ EA1F             >
- 520+ EA1F             >Current_HP      defl  $ - $E000             // used to set HP once!
- 520+ EA1F             >
- 520+ EA1F             >//              ______________________________________________________________________
- 520+ EA1F             >//              Dictionary part
- 520+ EA1F             >
- 520+ EA1F             >                org     Dict_Ptr
- 520+ 7786             >
- 520+ 7786 1D 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
- 520+ 7788             >
- 520+ 7788             >MESSAGE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 520+ 7788 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
- 520+ 778B             >
- 520+ 778B             >
- 520+ 778B             >                endif           ; ok        // for other definitions it "points" the correct handler
- 520+ 778B             >                // Use of "; ok" to suppress "warning[fwdref]"
- 520+ 778B             >
- 520+ 778B             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 521+ 778B F6 6A 8F 69                  dw      WARNING, FETCH          // warning @
- 522+ 778F                                                              // if
- 523+ 778F F5 63                        dw      ZBRANCH
- 524+ 7791 12 00                        dw      Message_Else - $
- 525+ 7793 A3 63 20 00                  dw          LIT, 32, PLUS       //      32 +
- 525+ 7797 A1 68
- 526+ 7799 93 6A                        dw          TWO                 //      2
- 527+ 779B 7B 77                        dw          DOT_LINE            //      .line
- 528+ 779D 73 6C                        dw          SPACE               //      space
- 529+ 779F                                                              // else
- 530+ 779F
- 531+ 779F E8 63                        dw      BRANCH
- 532+ 77A1 0B 00                        dw      Message_ENdif - $
- 533+ 77A3              Message_Else:
- 534+ 77A3 09 71                        dw          C_DOT_QUOTE         //      .( msg#)
- 535+ 77A5 04 6D 73 67                  db          4, "msg#"
- 535+ 77A9 23
- 536+ 77AA A7 7E                        dw          DOT                 //      .  ( forward )
- 537+ 77AC              Message_ENdif:                                  // endif
- 538+ 77AC 4F 68                        dw      EXIT                    // ;
- 539+ 77AE
- 540+ 77AE
- 541+ 77AE              //  ______________________________________________________________________
- 542+ 77AE              //
- 543+ 77AE              // device
- 544+ 77AE                              Variable_Def DEVICE,   "DEVICE",   2
- 544+ 77AE             >                New_Def  DEVICE, "DEVICE", Variable_Ptr, is_normal
- 544+ 77AE             >
- 544+ 77AE             >Dict_Ptr        defl    $
- 544+ 77AE             >
- 544+ 77AE             >//              ______________________________________________________________________
- 544+ 77AE             >//              Heap part
- 544+ 77AE             >
- 544+ 77AE             >
- 544+ 77AE             >                org     (Heap_Ptr & $1FFF) + $E000
- 544+ EA1F             >
- 544+ EA1F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
- 544+ EA1F             >Latest_Definition defl  Heap_Ptr
- 544+ EA1F             >
- 544+ EA1F             >                // dummy db directives used to calculate length of namec
- 544+ EA1F 44 45 56 49 >                db      "DEVICE"
- 544+ EA23 43 45       >
- 544+ EA25             >len_NFA         defl    $ - temp_NFA
- 544+ EA25             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
- 544+ EA1F             >
- 544+ EA1F 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
- 544+ EA20 44 45 56 49 >                db      "DEVICE"               // name string in 7-bit ascii, but
- 544+ EA24 43 45       >
- 544+ EA26             >                org     $-1                 // alter last byte of Name just above to set
- 544+ EA25 C5          >                db      {b $} | END_BIT     // msb as name end
- 544+ EA26             >
- 544+ EA26 13 0A       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
- 544+ EA28             >Prev_Ptr        defl    Heap_Ptr
- 544+ EA28             >
- 544+ EA28             >mirror_Ptr      defl    $
- 544+ EA28             >
- 544+ EA28 B0 77       >                dw      Dict_Ptr + 2        // xt
- 544+ EA2A             >Heap_Ptr        defl    $ - $E000           // save current HP
- 544+ EA2A             >
- 544+ EA2A             >Current_HP      defl  $ - $E000             // used to set HP once!
- 544+ EA2A             >
- 544+ EA2A             >//              ______________________________________________________________________
- 544+ EA2A             >//              Dictionary part
- 544+ EA2A             >
- 544+ EA2A             >                org     Dict_Ptr
- 544+ 77AE             >
- 544+ 77AE 28 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
- 544+ 77B0             >
- 544+ 77B0             >DEVICE:          if Variable_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
- 544+ 77B0 CD 6C 6A    >                call    Variable_Ptr ; ok        // for primitive definitions  actual code
- 544+ 77B3             >
- 544+ 77B3             >
- 544+ 77B3             >                endif           ; ok        // for other definitions it "points" the correct handler
- 544+ 77B3             >                // Use of "; ok" to suppress "warning[fwdref]"
- 544+ 77B3             >
- 544+ 77B3             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 544+ 77B3 02 00       >                dw      2
- 545+ 77B5
- 546+ 77B5              //  ______________________________________________________________________
- 547+ 77B5
+ 255+ 7623              // (****)       dw      LIT, 26, EMITC    // unlimited scroll
+ 256+ 7623              // (****)       dw      ZERO, EMITC
+ 257+ 7623
+ 258+ 7623 C5 75        Warm_Start:     dw      WARM
+ 259+ 7625 D0 75        Cold_Start:     dw      COLD
+ 260+ 7627              //              dw      EXIT
+ 261+ 7627
+ 262+ 7627              //  ______________________________________________________________________
+ 263+ 7627              WarmRoutine:
+ 264+ 7627              ColdRoutine:
+ 265+ 7627                              // First, save Basic's status: H'L' and SP
+ 266+ 7627 D9                           exx
+ 267+ 7628 E5                           push    hl                      // save Basic's return address
+ 268+ 7629 D9                           exx
+ 269+ 762A ED 73 6E 63                  ld      (SP_Basic), sp
+ 270+ 762E
+ 271+ 762E                              // pre-set the four main 16-bit registers
+ 272+ 762E ED 7B 78 63                  ld      sp, (S0_origin)         // Calculator Stack Pointer
+ 273+ 7632 2A 7A 63                     ld      hl, (R0_origin)         // Return Stack Pointer
+ 274+ 7635 EB                           ex      de, hl
+ 275+ 7636 DD 21 9A 63                  ld      ix, Next_Ptr            // Inner Interpreter Pointer
+ 276+ 763A 01 23 76                     ld      bc, Warm_Start          // Instruction Pointer
+ 277+ 763D
+ 278+ 763D 38 02                        jr      c, Warm_Skip
+ 279+ 763F 03                           inc     bc
+ 280+ 7640 03                           inc     bc
+ 281+ 7641              Warm_Skip:
+ 282+ 7641                              next
+ 282+ 7641 DD E9       >                jp      (ix)
+ 283+ 7643
+ 284+ 7643              //  ______________________________________________________________________
+ 285+ 7643              //
+ 286+ 7643              // basic        --
+ 287+ 7643                              New_Def BASIC, "BASIC", is_code, is_normal
+ 287+ 7643             >
+ 287+ 7643             >Dict_Ptr        defl    $
+ 287+ 7643             >
+ 287+ 7643             >//              ______________________________________________________________________
+ 287+ 7643             >//              Heap part
+ 287+ 7643             >
+ 287+ 7643             >
+ 287+ 7643             >                org     (Heap_Ptr & $1FFF) + $E000
+ 287+ E978             >
+ 287+ E978             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 287+ E978             >Latest_Definition defl  Heap_Ptr
+ 287+ E978             >
+ 287+ E978             >                // dummy db directives used to calculate length of namec
+ 287+ E978 42 41 53 49 >                db      "BASIC"
+ 287+ E97C 43          >
+ 287+ E97D             >len_NFA         defl    $ - temp_NFA
+ 287+ E97D             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 287+ E978             >
+ 287+ E978 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 287+ E979 42 41 53 49 >                db      "BASIC"               // name string in 7-bit ascii, but
+ 287+ E97D 43          >
+ 287+ E97E             >                org     $-1                 // alter last byte of Name just above to set
+ 287+ E97D C3          >                db      {b $} | END_BIT     // msb as name end
+ 287+ E97E             >
+ 287+ E97E 6F 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 287+ E980             >Prev_Ptr        defl    Heap_Ptr
+ 287+ E980             >
+ 287+ E980             >mirror_Ptr      defl    $
+ 287+ E980             >
+ 287+ E980 45 76       >                dw      Dict_Ptr + 2        // xt
+ 287+ E982             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 287+ E982             >
+ 287+ E982             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 287+ E982             >
+ 287+ E982             >//              ______________________________________________________________________
+ 287+ E982             >//              Dictionary part
+ 287+ E982             >
+ 287+ E982             >                org     Dict_Ptr
+ 287+ 7643             >
+ 287+ 7643 80 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 287+ 7645             >
+ 287+ 7645             >BASIC:          if is_code != 0 ; ok        // This is the start address of the direct jp(hl)
+ 287+ 7645 ~           >                call    runcode ; ok        // for primitive definitions  actual code
+ 287+ 7645 ~           >
+ 287+ 7645 ~           >
+ 287+ 7645             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 287+ 7645             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 287+ 7645             >
+ 287+ 7645             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 288+ 7645 C1                           pop     bc                      // return  TOS  value to Basic
+ 289+ 7646 21 00 00                     ld      hl, 0
+ 290+ 7649 39                           add     hl, sp
+ 291+ 764A ED 7B 6E 63                  ld      sp, (SP_Basic)          // restore Basic's SP
+ 292+ 764E              //              nop
+ 293+ 764E 22 6E 63                     ld      (SP_Basic),hl           // but also save Forth's
+ 294+ 7651 D9                           exx
+ 295+ 7652 E1                           pop     hl                      // restore h'l'
+ 296+ 7653 D9                           exx
+ 297+ 7654 C9                           ret                             // to where USR Basic was left
+ 298+ 7655
+ 299+ 7655              //  ______________________________________________________________________
+ 300+ 7655              //
+ 301+ 7655              // +-           n1 n2 -- n3
+ 302+ 7655              // leaves n1 with the sign of n2 as n3.
+ 303+ 7655                              Colon_Def PLUS_MINUS, "+-", is_normal
+ 303+ 7655             >                New_Def  PLUS_MINUS, "+-", Enter_Ptr, is_normal ; ok
+ 303+ 7655             >
+ 303+ 7655             >Dict_Ptr        defl    $
+ 303+ 7655             >
+ 303+ 7655             >//              ______________________________________________________________________
+ 303+ 7655             >//              Heap part
+ 303+ 7655             >
+ 303+ 7655             >
+ 303+ 7655             >                org     (Heap_Ptr & $1FFF) + $E000
+ 303+ E982             >
+ 303+ E982             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 303+ E982             >Latest_Definition defl  Heap_Ptr
+ 303+ E982             >
+ 303+ E982             >                // dummy db directives used to calculate length of namec
+ 303+ E982 2B 2D       >                db      "+-"
+ 303+ E984             >len_NFA         defl    $ - temp_NFA
+ 303+ E984             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 303+ E982             >
+ 303+ E982 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 303+ E983 2B 2D       >                db      "+-"               // name string in 7-bit ascii, but
+ 303+ E985             >                org     $-1                 // alter last byte of Name just above to set
+ 303+ E984 AD          >                db      {b $} | END_BIT     // msb as name end
+ 303+ E985             >
+ 303+ E985 78 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 303+ E987             >Prev_Ptr        defl    Heap_Ptr
+ 303+ E987             >
+ 303+ E987             >mirror_Ptr      defl    $
+ 303+ E987             >
+ 303+ E987 57 76       >                dw      Dict_Ptr + 2        // xt
+ 303+ E989             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 303+ E989             >
+ 303+ E989             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 303+ E989             >
+ 303+ E989             >//              ______________________________________________________________________
+ 303+ E989             >//              Dictionary part
+ 303+ E989             >
+ 303+ E989             >                org     Dict_Ptr
+ 303+ 7655             >
+ 303+ 7655 87 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 303+ 7657             >
+ 303+ 7657             >PLUS_MINUS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 303+ 7657 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 303+ 765A             >
+ 303+ 765A             >
+ 303+ 765A             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 303+ 765A             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 303+ 765A             >
+ 303+ 765A             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 304+ 765A 86 68                        dw      ZLESS                   // 0<
+ 305+ 765C                                                              // if
+ 306+ 765C F5 63                        dw      ZBRANCH
+ 307+ 765E 04 00                        dw      Plus_Minus_Endif - $
+ 308+ 7660 E1 68                        dw          MINUS               //      minus
+ 309+ 7662              Plus_Minus_Endif:                               // endif
+ 310+ 7662 4F 68                        dw      EXIT                    // ;
+ 311+ 7664
+ 312+ 7664              //  ______________________________________________________________________
+ 313+ 7664              //
+ 314+ 7664              // d+-          d1 n -- d2
+ 315+ 7664              // leaves d1 with the sign of n as d2.
+ 316+ 7664                              Colon_Def DPLUS_MINUS, "D+-", is_normal
+ 316+ 7664             >                New_Def  DPLUS_MINUS, "D+-", Enter_Ptr, is_normal ; ok
+ 316+ 7664             >
+ 316+ 7664             >Dict_Ptr        defl    $
+ 316+ 7664             >
+ 316+ 7664             >//              ______________________________________________________________________
+ 316+ 7664             >//              Heap part
+ 316+ 7664             >
+ 316+ 7664             >
+ 316+ 7664             >                org     (Heap_Ptr & $1FFF) + $E000
+ 316+ E989             >
+ 316+ E989             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 316+ E989             >Latest_Definition defl  Heap_Ptr
+ 316+ E989             >
+ 316+ E989             >                // dummy db directives used to calculate length of namec
+ 316+ E989 44 2B 2D    >                db      "D+-"
+ 316+ E98C             >len_NFA         defl    $ - temp_NFA
+ 316+ E98C             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 316+ E989             >
+ 316+ E989 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 316+ E98A 44 2B 2D    >                db      "D+-"               // name string in 7-bit ascii, but
+ 316+ E98D             >                org     $-1                 // alter last byte of Name just above to set
+ 316+ E98C AD          >                db      {b $} | END_BIT     // msb as name end
+ 316+ E98D             >
+ 316+ E98D 82 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 316+ E98F             >Prev_Ptr        defl    Heap_Ptr
+ 316+ E98F             >
+ 316+ E98F             >mirror_Ptr      defl    $
+ 316+ E98F             >
+ 316+ E98F 66 76       >                dw      Dict_Ptr + 2        // xt
+ 316+ E991             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 316+ E991             >
+ 316+ E991             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 316+ E991             >
+ 316+ E991             >//              ______________________________________________________________________
+ 316+ E991             >//              Dictionary part
+ 316+ E991             >
+ 316+ E991             >                org     Dict_Ptr
+ 316+ 7664             >
+ 316+ 7664 8F 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 316+ 7666             >
+ 316+ 7666             >DPLUS_MINUS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 316+ 7666 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 316+ 7669             >
+ 316+ 7669             >
+ 316+ 7669             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 316+ 7669             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 316+ 7669             >
+ 316+ 7669             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 317+ 7669 86 68                        dw      ZLESS                   // 0<
+ 318+ 766B                                                              // if
+ 319+ 766B F5 63                        dw      ZBRANCH
+ 320+ 766D 04 00                        dw      DPlus_Minus_Endif - $
+ 321+ 766F EE 68                        dw          DMINUS              //      dminus
+ 322+ 7671              DPlus_Minus_Endif:                              // endif
+ 323+ 7671 4F 68                        dw      EXIT                    // ;
+ 324+ 7673
+ 325+ 7673              //  ______________________________________________________________________
+ 326+ 7673              //
+ 327+ 7673              // abs          n1 -- n2
+ 328+ 7673                              Colon_Def ABS_OP, "ABS", is_normal
+ 328+ 7673             >                New_Def  ABS_OP, "ABS", Enter_Ptr, is_normal ; ok
+ 328+ 7673             >
+ 328+ 7673             >Dict_Ptr        defl    $
+ 328+ 7673             >
+ 328+ 7673             >//              ______________________________________________________________________
+ 328+ 7673             >//              Heap part
+ 328+ 7673             >
+ 328+ 7673             >
+ 328+ 7673             >                org     (Heap_Ptr & $1FFF) + $E000
+ 328+ E991             >
+ 328+ E991             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 328+ E991             >Latest_Definition defl  Heap_Ptr
+ 328+ E991             >
+ 328+ E991             >                // dummy db directives used to calculate length of namec
+ 328+ E991 41 42 53    >                db      "ABS"
+ 328+ E994             >len_NFA         defl    $ - temp_NFA
+ 328+ E994             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 328+ E991             >
+ 328+ E991 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 328+ E992 41 42 53    >                db      "ABS"               // name string in 7-bit ascii, but
+ 328+ E995             >                org     $-1                 // alter last byte of Name just above to set
+ 328+ E994 D3          >                db      {b $} | END_BIT     // msb as name end
+ 328+ E995             >
+ 328+ E995 89 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 328+ E997             >Prev_Ptr        defl    Heap_Ptr
+ 328+ E997             >
+ 328+ E997             >mirror_Ptr      defl    $
+ 328+ E997             >
+ 328+ E997 75 76       >                dw      Dict_Ptr + 2        // xt
+ 328+ E999             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 328+ E999             >
+ 328+ E999             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 328+ E999             >
+ 328+ E999             >//              ______________________________________________________________________
+ 328+ E999             >//              Dictionary part
+ 328+ E999             >
+ 328+ E999             >                org     Dict_Ptr
+ 328+ 7673             >
+ 328+ 7673 97 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 328+ 7675             >
+ 328+ 7675             >ABS_OP:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 328+ 7675 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 328+ 7678             >
+ 328+ 7678             >
+ 328+ 7678             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 328+ 7678             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 328+ 7678             >
+ 328+ 7678             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 329+ 7678 25 69                        dw      DUP                     // dup
+ 330+ 767A 57 76                        dw      PLUS_MINUS              // +-
+ 331+ 767C 4F 68                        dw      EXIT                    // ;
+ 332+ 767E
+ 333+ 767E              //  ______________________________________________________________________
+ 334+ 767E              //
+ 335+ 767E              // dabs         d1 -- d2
+ 336+ 767E                              Colon_Def DABS, "DABS", is_normal
+ 336+ 767E             >                New_Def  DABS, "DABS", Enter_Ptr, is_normal ; ok
+ 336+ 767E             >
+ 336+ 767E             >Dict_Ptr        defl    $
+ 336+ 767E             >
+ 336+ 767E             >//              ______________________________________________________________________
+ 336+ 767E             >//              Heap part
+ 336+ 767E             >
+ 336+ 767E             >
+ 336+ 767E             >                org     (Heap_Ptr & $1FFF) + $E000
+ 336+ E999             >
+ 336+ E999             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 336+ E999             >Latest_Definition defl  Heap_Ptr
+ 336+ E999             >
+ 336+ E999             >                // dummy db directives used to calculate length of namec
+ 336+ E999 44 41 42 53 >                db      "DABS"
+ 336+ E99D             >len_NFA         defl    $ - temp_NFA
+ 336+ E99D             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 336+ E999             >
+ 336+ E999 84          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 336+ E99A 44 41 42 53 >                db      "DABS"               // name string in 7-bit ascii, but
+ 336+ E99E             >                org     $-1                 // alter last byte of Name just above to set
+ 336+ E99D D3          >                db      {b $} | END_BIT     // msb as name end
+ 336+ E99E             >
+ 336+ E99E 91 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 336+ E9A0             >Prev_Ptr        defl    Heap_Ptr
+ 336+ E9A0             >
+ 336+ E9A0             >mirror_Ptr      defl    $
+ 336+ E9A0             >
+ 336+ E9A0 80 76       >                dw      Dict_Ptr + 2        // xt
+ 336+ E9A2             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 336+ E9A2             >
+ 336+ E9A2             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 336+ E9A2             >
+ 336+ E9A2             >//              ______________________________________________________________________
+ 336+ E9A2             >//              Dictionary part
+ 336+ E9A2             >
+ 336+ E9A2             >                org     Dict_Ptr
+ 336+ 767E             >
+ 336+ 767E A0 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 336+ 7680             >
+ 336+ 7680             >DABS:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 336+ 7680 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 336+ 7683             >
+ 336+ 7683             >
+ 336+ 7683             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 336+ 7683             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 336+ 7683             >
+ 336+ 7683             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 337+ 7683 25 69                        dw      DUP                     // dup
+ 338+ 7685 66 76                        dw      DPLUS_MINUS             // d+-
+ 339+ 7687 4F 68                        dw      EXIT                    // ;
+ 340+ 7689
+ 341+ 7689              //  ______________________________________________________________________
+ 342+ 7689              //
+ 343+ 7689              // m*           n1 n2 -- d
+ 344+ 7689              // multiply two integer giving a double
+ 345+ 7689                              Colon_Def MMUL, "M*", is_normal
+ 345+ 7689             >                New_Def  MMUL, "M*", Enter_Ptr, is_normal ; ok
+ 345+ 7689             >
+ 345+ 7689             >Dict_Ptr        defl    $
+ 345+ 7689             >
+ 345+ 7689             >//              ______________________________________________________________________
+ 345+ 7689             >//              Heap part
+ 345+ 7689             >
+ 345+ 7689             >
+ 345+ 7689             >                org     (Heap_Ptr & $1FFF) + $E000
+ 345+ E9A2             >
+ 345+ E9A2             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 345+ E9A2             >Latest_Definition defl  Heap_Ptr
+ 345+ E9A2             >
+ 345+ E9A2             >                // dummy db directives used to calculate length of namec
+ 345+ E9A2 4D 2A       >                db      "M*"
+ 345+ E9A4             >len_NFA         defl    $ - temp_NFA
+ 345+ E9A4             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 345+ E9A2             >
+ 345+ E9A2 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 345+ E9A3 4D 2A       >                db      "M*"               // name string in 7-bit ascii, but
+ 345+ E9A5             >                org     $-1                 // alter last byte of Name just above to set
+ 345+ E9A4 AA          >                db      {b $} | END_BIT     // msb as name end
+ 345+ E9A5             >
+ 345+ E9A5 99 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 345+ E9A7             >Prev_Ptr        defl    Heap_Ptr
+ 345+ E9A7             >
+ 345+ E9A7             >mirror_Ptr      defl    $
+ 345+ E9A7             >
+ 345+ E9A7 8B 76       >                dw      Dict_Ptr + 2        // xt
+ 345+ E9A9             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 345+ E9A9             >
+ 345+ E9A9             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 345+ E9A9             >
+ 345+ E9A9             >//              ______________________________________________________________________
+ 345+ E9A9             >//              Dictionary part
+ 345+ E9A9             >
+ 345+ E9A9             >                org     Dict_Ptr
+ 345+ 7689             >
+ 345+ 7689 A7 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 345+ 768B             >
+ 345+ 768B             >MMUL:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 345+ 768B CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 345+ 768E             >
+ 345+ 768E             >
+ 345+ 768E             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 345+ 768E             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 345+ 768E             >
+ 345+ 768E             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 346+ 768E 6D 69 2A 68                  dw      TWO_DUP, XOR_OP, TO_R   // 2dup xor >r
+ 346+ 7692 59 68
+ 347+ 7694 75 76 1E 69                  dw      ABS_OP, SWAP            // abs swap
+ 348+ 7698 75 76 B4 67                  dw      ABS_OP, UM_MUL          // abs um*
+ 349+ 769C 64 68 66 76                  dw      R_TO, DPLUS_MINUS       // r> d+-
+ 350+ 76A0 4F 68                        dw      EXIT                    // ;
+ 351+ 76A2
+ 352+ 76A2              //  ______________________________________________________________________
+ 353+ 76A2              //
+ 354+ 76A2              // sm/rem       d n -- q r
+ 355+ 76A2              // Symmetric division: divides a double into n giving quotient q and remainder r
+ 356+ 76A2              // the remainder has the sign of d.
+ 357+ 76A2                              Colon_Def SMDIVM, "SM/REM", is_normal
+ 357+ 76A2             >                New_Def  SMDIVM, "SM/REM", Enter_Ptr, is_normal ; ok
+ 357+ 76A2             >
+ 357+ 76A2             >Dict_Ptr        defl    $
+ 357+ 76A2             >
+ 357+ 76A2             >//              ______________________________________________________________________
+ 357+ 76A2             >//              Heap part
+ 357+ 76A2             >
+ 357+ 76A2             >
+ 357+ 76A2             >                org     (Heap_Ptr & $1FFF) + $E000
+ 357+ E9A9             >
+ 357+ E9A9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 357+ E9A9             >Latest_Definition defl  Heap_Ptr
+ 357+ E9A9             >
+ 357+ E9A9             >                // dummy db directives used to calculate length of namec
+ 357+ E9A9 53 4D 2F 52 >                db      "SM/REM"
+ 357+ E9AD 45 4D       >
+ 357+ E9AF             >len_NFA         defl    $ - temp_NFA
+ 357+ E9AF             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 357+ E9A9             >
+ 357+ E9A9 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 357+ E9AA 53 4D 2F 52 >                db      "SM/REM"               // name string in 7-bit ascii, but
+ 357+ E9AE 45 4D       >
+ 357+ E9B0             >                org     $-1                 // alter last byte of Name just above to set
+ 357+ E9AF CD          >                db      {b $} | END_BIT     // msb as name end
+ 357+ E9B0             >
+ 357+ E9B0 A2 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 357+ E9B2             >Prev_Ptr        defl    Heap_Ptr
+ 357+ E9B2             >
+ 357+ E9B2             >mirror_Ptr      defl    $
+ 357+ E9B2             >
+ 357+ E9B2 A4 76       >                dw      Dict_Ptr + 2        // xt
+ 357+ E9B4             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 357+ E9B4             >
+ 357+ E9B4             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 357+ E9B4             >
+ 357+ E9B4             >//              ______________________________________________________________________
+ 357+ E9B4             >//              Dictionary part
+ 357+ E9B4             >
+ 357+ E9B4             >                org     Dict_Ptr
+ 357+ 76A2             >
+ 357+ 76A2 B2 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 357+ 76A4             >
+ 357+ 76A4             >SMDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 357+ 76A4 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 357+ 76A7             >
+ 357+ 76A7             >
+ 357+ 76A7             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 357+ 76A7             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 357+ 76A7             >
+ 357+ 76A7             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 358+ 76A7 01 69 59 68                  dw      OVER, TO_R, TO_R        // over >r >r
+ 358+ 76AB 59 68
+ 359+ 76AD 80 76 6F 68                  dw      DABS, R_OP, ABS_OP      // dabs r abs
+ 359+ 76B1 75 76
+ 360+ 76B3 DC 67                        dw      UMDIVMOD                // um/mod
+ 361+ 76B5 64 68                        dw      R_TO                    // r>
+ 362+ 76B7 6F 68 2A 68                  dw      R_OP, XOR_OP            // r xor
+ 363+ 76BB 57 76 1E 69                  dw      PLUS_MINUS, SWAP        // +- swap
+ 364+ 76BF 64 68                        dw      R_TO                    // r>
+ 365+ 76C1 57 76 1E 69                  dw      PLUS_MINUS, SWAP        // +- swap
+ 366+ 76C5 4F 68                        dw      EXIT                    // ;
+ 367+ 76C7
+ 368+ 76C7              //  ______________________________________________________________________
+ 369+ 76C7              //
+ 370+ 76C7              // fm/mod       d n -- q r
+ 371+ 76C7              // Floored division: divides a double into n giving quotient q and remainder r
+ 372+ 76C7              // the remainder has the sign of d.
+ 373+ 76C7                              Colon_Def FMDIVM, "FM/MOD", is_normal
+ 373+ 76C7             >                New_Def  FMDIVM, "FM/MOD", Enter_Ptr, is_normal ; ok
+ 373+ 76C7             >
+ 373+ 76C7             >Dict_Ptr        defl    $
+ 373+ 76C7             >
+ 373+ 76C7             >//              ______________________________________________________________________
+ 373+ 76C7             >//              Heap part
+ 373+ 76C7             >
+ 373+ 76C7             >
+ 373+ 76C7             >                org     (Heap_Ptr & $1FFF) + $E000
+ 373+ E9B4             >
+ 373+ E9B4             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 373+ E9B4             >Latest_Definition defl  Heap_Ptr
+ 373+ E9B4             >
+ 373+ E9B4             >                // dummy db directives used to calculate length of namec
+ 373+ E9B4 46 4D 2F 4D >                db      "FM/MOD"
+ 373+ E9B8 4F 44       >
+ 373+ E9BA             >len_NFA         defl    $ - temp_NFA
+ 373+ E9BA             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 373+ E9B4             >
+ 373+ E9B4 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 373+ E9B5 46 4D 2F 4D >                db      "FM/MOD"               // name string in 7-bit ascii, but
+ 373+ E9B9 4F 44       >
+ 373+ E9BB             >                org     $-1                 // alter last byte of Name just above to set
+ 373+ E9BA C4          >                db      {b $} | END_BIT     // msb as name end
+ 373+ E9BB             >
+ 373+ E9BB A9 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 373+ E9BD             >Prev_Ptr        defl    Heap_Ptr
+ 373+ E9BD             >
+ 373+ E9BD             >mirror_Ptr      defl    $
+ 373+ E9BD             >
+ 373+ E9BD C9 76       >                dw      Dict_Ptr + 2        // xt
+ 373+ E9BF             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 373+ E9BF             >
+ 373+ E9BF             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 373+ E9BF             >
+ 373+ E9BF             >//              ______________________________________________________________________
+ 373+ E9BF             >//              Dictionary part
+ 373+ E9BF             >
+ 373+ E9BF             >                org     Dict_Ptr
+ 373+ 76C7             >
+ 373+ 76C7 BD 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 373+ 76C9             >
+ 373+ 76C9             >FMDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 373+ 76C9 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 373+ 76CC             >
+ 373+ 76CC             >
+ 373+ 76CC             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 373+ 76CC             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 373+ 76CC             >
+ 373+ 76CC             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 374+ 76CC 25 69 59 68                  dw      DUP, TO_R               // dup >r
+ 375+ 76D0 A4 76                        dw      SMDIVM
+ 376+ 76D2 01 69 25 69                  dw      OVER, DUP
+ 377+ 76D6 74 68 74 68                  dw      ZEQUAL, ZEQUAL
+ 378+ 76DA 1E 69 86 68                  dw      SWAP, ZLESS
+ 379+ 76DE 6F 68 86 68                  dw      R_OP, ZLESS
+ 380+ 76E2 2A 68 0F 68                  dw      XOR_OP, AND_OP
+ 381+ 76E6 F5 63                        dw      ZBRANCH
+ 382+ 76E8 10 00                        dw      Fm_Mod_Else - $
+ 383+ 76EA C1 68                        dw          ONE_SUBTRACT
+ 384+ 76EC 1E 69 64 68                  dw          SWAP, R_TO
+ 385+ 76F0 A1 68 1E 69                  dw          PLUS, SWAP
+ 386+ 76F4 E8 63                        dw      BRANCH
+ 387+ 76F6 06 00                        dw      Fm_Mod_Endif - $
+ 388+ 76F8              Fm_Mod_Else:
+ 389+ 76F8 64 68 0A 69                  dw          R_TO, DROP
+ 390+ 76FC              Fm_Mod_Endif:
+ 391+ 76FC 4F 68                        dw      EXIT
+ 392+ 76FE              //              dw      TWO_DUP                 // 2dup
+ 393+ 76FE              //              dw      XOR_OP, TO_R, TO_R      // xor >r >r
+ 394+ 76FE              //              dw      DABS, R_OP, ABS_OP      // dabs r abs
+ 395+ 76FE              //              dw      UMDIVMOD                // um/mod
+ 396+ 76FE              //              dw      SWAP                    // swap
+ 397+ 76FE              //              dw      II, ZLESS               // i'
+ 398+ 76FE              //              dw      ONE, AND_OP, PLUS       // 0< 1 and +
+ 399+ 76FE              //              dw      R_TO                    // r>
+ 400+ 76FE              //              dw      PLUS_MINUS, SWAP        // +- swap
+ 401+ 76FE              //              dw      R_OP                    // r@
+ 402+ 76FE              //              dw      ZLESS                   // i'
+ 403+ 76FE              //              dw      ONE, AND_OP, PLUS       // 0< 1 and +
+ 404+ 76FE              //              dw      R_TO                    // r>
+ 405+ 76FE              //              dw      PLUS_MINUS              // +- swap
+ 406+ 76FE              //              dw      EXIT                    // ;
+ 407+ 76FE
+ 408+ 76FE              //  ______________________________________________________________________
+ 409+ 76FE              //
+ 410+ 76FE              // m/mod        d n -- q r
+ 411+ 76FE              // multiply two integer giving a double
+ 412+ 76FE                              Colon_Def MDIVM, "M/MOD", is_normal
+ 412+ 76FE             >                New_Def  MDIVM, "M/MOD", Enter_Ptr, is_normal ; ok
+ 412+ 76FE             >
+ 412+ 76FE             >Dict_Ptr        defl    $
+ 412+ 76FE             >
+ 412+ 76FE             >//              ______________________________________________________________________
+ 412+ 76FE             >//              Heap part
+ 412+ 76FE             >
+ 412+ 76FE             >
+ 412+ 76FE             >                org     (Heap_Ptr & $1FFF) + $E000
+ 412+ E9BF             >
+ 412+ E9BF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 412+ E9BF             >Latest_Definition defl  Heap_Ptr
+ 412+ E9BF             >
+ 412+ E9BF             >                // dummy db directives used to calculate length of namec
+ 412+ E9BF 4D 2F 4D 4F >                db      "M/MOD"
+ 412+ E9C3 44          >
+ 412+ E9C4             >len_NFA         defl    $ - temp_NFA
+ 412+ E9C4             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 412+ E9BF             >
+ 412+ E9BF 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 412+ E9C0 4D 2F 4D 4F >                db      "M/MOD"               // name string in 7-bit ascii, but
+ 412+ E9C4 44          >
+ 412+ E9C5             >                org     $-1                 // alter last byte of Name just above to set
+ 412+ E9C4 C4          >                db      {b $} | END_BIT     // msb as name end
+ 412+ E9C5             >
+ 412+ E9C5 B4 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 412+ E9C7             >Prev_Ptr        defl    Heap_Ptr
+ 412+ E9C7             >
+ 412+ E9C7             >mirror_Ptr      defl    $
+ 412+ E9C7             >
+ 412+ E9C7 00 77       >                dw      Dict_Ptr + 2        // xt
+ 412+ E9C9             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 412+ E9C9             >
+ 412+ E9C9             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 412+ E9C9             >
+ 412+ E9C9             >//              ______________________________________________________________________
+ 412+ E9C9             >//              Dictionary part
+ 412+ E9C9             >
+ 412+ E9C9             >                org     Dict_Ptr
+ 412+ 76FE             >
+ 412+ 76FE C7 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 412+ 7700             >
+ 412+ 7700             >MDIVM:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 412+ 7700 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 412+ 7703             >
+ 412+ 7703             >
+ 412+ 7703             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 412+ 7703             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 412+ 7703             >
+ 412+ 7703             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 413+ 7703 A4 76                        dw      SMDIVM
+ 414+ 7705 4F 68                        dw      EXIT                    // ;
+ 415+ 7707
+ 416+ 7707              //  ______________________________________________________________________
+ 417+ 7707              //
+ 418+ 7707              // m/           d n -- q
+ 419+ 7707              // multiply two integer giving a double
+ 420+ 7707                              Colon_Def MDIV, "M/", is_normal
+ 420+ 7707             >                New_Def  MDIV, "M/", Enter_Ptr, is_normal ; ok
+ 420+ 7707             >
+ 420+ 7707             >Dict_Ptr        defl    $
+ 420+ 7707             >
+ 420+ 7707             >//              ______________________________________________________________________
+ 420+ 7707             >//              Heap part
+ 420+ 7707             >
+ 420+ 7707             >
+ 420+ 7707             >                org     (Heap_Ptr & $1FFF) + $E000
+ 420+ E9C9             >
+ 420+ E9C9             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 420+ E9C9             >Latest_Definition defl  Heap_Ptr
+ 420+ E9C9             >
+ 420+ E9C9             >                // dummy db directives used to calculate length of namec
+ 420+ E9C9 4D 2F       >                db      "M/"
+ 420+ E9CB             >len_NFA         defl    $ - temp_NFA
+ 420+ E9CB             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 420+ E9C9             >
+ 420+ E9C9 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 420+ E9CA 4D 2F       >                db      "M/"               // name string in 7-bit ascii, but
+ 420+ E9CC             >                org     $-1                 // alter last byte of Name just above to set
+ 420+ E9CB AF          >                db      {b $} | END_BIT     // msb as name end
+ 420+ E9CC             >
+ 420+ E9CC BF 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 420+ E9CE             >Prev_Ptr        defl    Heap_Ptr
+ 420+ E9CE             >
+ 420+ E9CE             >mirror_Ptr      defl    $
+ 420+ E9CE             >
+ 420+ E9CE 09 77       >                dw      Dict_Ptr + 2        // xt
+ 420+ E9D0             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 420+ E9D0             >
+ 420+ E9D0             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 420+ E9D0             >
+ 420+ E9D0             >//              ______________________________________________________________________
+ 420+ E9D0             >//              Dictionary part
+ 420+ E9D0             >
+ 420+ E9D0             >                org     Dict_Ptr
+ 420+ 7707             >
+ 420+ 7707 CE 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 420+ 7709             >
+ 420+ 7709             >MDIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 420+ 7709 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 420+ 770C             >
+ 420+ 770C             >
+ 420+ 770C             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 420+ 770C             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 420+ 770C             >
+ 420+ 770C             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 421+ 770C 00 77 0F 69                  dw      MDIVM, NIP
+ 422+ 7710 4F 68                        dw      EXIT                    // ;
+ 423+ 7712
+ 424+ 7712              //  ______________________________________________________________________
+ 425+ 7712              //
+ 426+ 7712              // *            n1 n2 -- n3
+ 427+ 7712              // multiply two integer
+ 428+ 7712                              Colon_Def MUL, "*", is_normal
+ 428+ 7712             >                New_Def  MUL, "*", Enter_Ptr, is_normal ; ok
+ 428+ 7712             >
+ 428+ 7712             >Dict_Ptr        defl    $
+ 428+ 7712             >
+ 428+ 7712             >//              ______________________________________________________________________
+ 428+ 7712             >//              Heap part
+ 428+ 7712             >
+ 428+ 7712             >
+ 428+ 7712             >                org     (Heap_Ptr & $1FFF) + $E000
+ 428+ E9D0             >
+ 428+ E9D0             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 428+ E9D0             >Latest_Definition defl  Heap_Ptr
+ 428+ E9D0             >
+ 428+ E9D0             >                // dummy db directives used to calculate length of namec
+ 428+ E9D0 2A          >                db      "*"
+ 428+ E9D1             >len_NFA         defl    $ - temp_NFA
+ 428+ E9D1             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 428+ E9D0             >
+ 428+ E9D0 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 428+ E9D1 2A          >                db      "*"               // name string in 7-bit ascii, but
+ 428+ E9D2             >                org     $-1                 // alter last byte of Name just above to set
+ 428+ E9D1 AA          >                db      {b $} | END_BIT     // msb as name end
+ 428+ E9D2             >
+ 428+ E9D2 C9 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 428+ E9D4             >Prev_Ptr        defl    Heap_Ptr
+ 428+ E9D4             >
+ 428+ E9D4             >mirror_Ptr      defl    $
+ 428+ E9D4             >
+ 428+ E9D4 14 77       >                dw      Dict_Ptr + 2        // xt
+ 428+ E9D6             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 428+ E9D6             >
+ 428+ E9D6             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 428+ E9D6             >
+ 428+ E9D6             >//              ______________________________________________________________________
+ 428+ E9D6             >//              Dictionary part
+ 428+ E9D6             >
+ 428+ E9D6             >                org     Dict_Ptr
+ 428+ 7712             >
+ 428+ 7712 D4 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 428+ 7714             >
+ 428+ 7714             >MUL:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 428+ 7714 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 428+ 7717             >
+ 428+ 7717             >
+ 428+ 7717             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 428+ 7717             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 428+ 7717             >
+ 428+ 7717             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 429+ 7717 8B 76 0A 69                  dw      MMUL, DROP              // m* drop
+ 430+ 771B 4F 68                        dw      EXIT                    // ;
+ 431+ 771D
+ 432+ 771D              //  ______________________________________________________________________
+ 433+ 771D              //
+ 434+ 771D              // /mod         n1 n2 -- n3 n4
+ 435+ 771D              // leaves quotient n4 and remainder n3 of the integer division n1 / n2.
+ 436+ 771D              // The remainder has the sign of n1
+ 437+ 771D                              Colon_Def DIVMOD, "/MOD", is_normal
+ 437+ 771D             >                New_Def  DIVMOD, "/MOD", Enter_Ptr, is_normal ; ok
+ 437+ 771D             >
+ 437+ 771D             >Dict_Ptr        defl    $
+ 437+ 771D             >
+ 437+ 771D             >//              ______________________________________________________________________
+ 437+ 771D             >//              Heap part
+ 437+ 771D             >
+ 437+ 771D             >
+ 437+ 771D             >                org     (Heap_Ptr & $1FFF) + $E000
+ 437+ E9D6             >
+ 437+ E9D6             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 437+ E9D6             >Latest_Definition defl  Heap_Ptr
+ 437+ E9D6             >
+ 437+ E9D6             >                // dummy db directives used to calculate length of namec
+ 437+ E9D6 2F 4D 4F 44 >                db      "/MOD"
+ 437+ E9DA             >len_NFA         defl    $ - temp_NFA
+ 437+ E9DA             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 437+ E9D6             >
+ 437+ E9D6 84          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 437+ E9D7 2F 4D 4F 44 >                db      "/MOD"               // name string in 7-bit ascii, but
+ 437+ E9DB             >                org     $-1                 // alter last byte of Name just above to set
+ 437+ E9DA C4          >                db      {b $} | END_BIT     // msb as name end
+ 437+ E9DB             >
+ 437+ E9DB D0 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 437+ E9DD             >Prev_Ptr        defl    Heap_Ptr
+ 437+ E9DD             >
+ 437+ E9DD             >mirror_Ptr      defl    $
+ 437+ E9DD             >
+ 437+ E9DD 1F 77       >                dw      Dict_Ptr + 2        // xt
+ 437+ E9DF             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 437+ E9DF             >
+ 437+ E9DF             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 437+ E9DF             >
+ 437+ E9DF             >//              ______________________________________________________________________
+ 437+ E9DF             >//              Dictionary part
+ 437+ E9DF             >
+ 437+ E9DF             >                org     Dict_Ptr
+ 437+ 771D             >
+ 437+ 771D DD 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 437+ 771F             >
+ 437+ 771F             >DIVMOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 437+ 771F CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 437+ 7722             >
+ 437+ 7722             >
+ 437+ 7722             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 437+ 7722             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 437+ 7722             >
+ 437+ 7722             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 438+ 7722 59 68 DE 6B                  dw      TO_R, S_TO_D, R_TO      // >r s->d r>
+ 438+ 7726 64 68
+ 439+ 7728 00 77                        dw      MDIVM                   // m/mod
+ 440+ 772A 4F 68                        dw      EXIT                    // ;
+ 441+ 772C
+ 442+ 772C              //  ______________________________________________________________________
+ 443+ 772C              //
+ 444+ 772C              // /            n1 n2 -- n3
+ 445+ 772C              // division
+ 446+ 772C                              Colon_Def DIV, "/", is_normal
+ 446+ 772C             >                New_Def  DIV, "/", Enter_Ptr, is_normal ; ok
+ 446+ 772C             >
+ 446+ 772C             >Dict_Ptr        defl    $
+ 446+ 772C             >
+ 446+ 772C             >//              ______________________________________________________________________
+ 446+ 772C             >//              Heap part
+ 446+ 772C             >
+ 446+ 772C             >
+ 446+ 772C             >                org     (Heap_Ptr & $1FFF) + $E000
+ 446+ E9DF             >
+ 446+ E9DF             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 446+ E9DF             >Latest_Definition defl  Heap_Ptr
+ 446+ E9DF             >
+ 446+ E9DF             >                // dummy db directives used to calculate length of namec
+ 446+ E9DF 2F          >                db      "/"
+ 446+ E9E0             >len_NFA         defl    $ - temp_NFA
+ 446+ E9E0             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 446+ E9DF             >
+ 446+ E9DF 81          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 446+ E9E0 2F          >                db      "/"               // name string in 7-bit ascii, but
+ 446+ E9E1             >                org     $-1                 // alter last byte of Name just above to set
+ 446+ E9E0 AF          >                db      {b $} | END_BIT     // msb as name end
+ 446+ E9E1             >
+ 446+ E9E1 D6 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 446+ E9E3             >Prev_Ptr        defl    Heap_Ptr
+ 446+ E9E3             >
+ 446+ E9E3             >mirror_Ptr      defl    $
+ 446+ E9E3             >
+ 446+ E9E3 2E 77       >                dw      Dict_Ptr + 2        // xt
+ 446+ E9E5             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 446+ E9E5             >
+ 446+ E9E5             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 446+ E9E5             >
+ 446+ E9E5             >//              ______________________________________________________________________
+ 446+ E9E5             >//              Dictionary part
+ 446+ E9E5             >
+ 446+ E9E5             >                org     Dict_Ptr
+ 446+ 772C             >
+ 446+ 772C E3 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 446+ 772E             >
+ 446+ 772E             >DIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 446+ 772E CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 446+ 7731             >
+ 446+ 7731             >
+ 446+ 7731             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 446+ 7731             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 446+ 7731             >
+ 446+ 7731             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 447+ 7731 1F 77 0F 69                  dw      DIVMOD, NIP             // /mod nip
+ 448+ 7735 4F 68                        dw      EXIT                    // ;
+ 449+ 7737
+ 450+ 7737              //  ______________________________________________________________________
+ 451+ 7737              //
+ 452+ 7737              // mod          n1 n2 -- n3
+ 453+ 7737                              Colon_Def MOD, "MOD", is_normal
+ 453+ 7737             >                New_Def  MOD, "MOD", Enter_Ptr, is_normal ; ok
+ 453+ 7737             >
+ 453+ 7737             >Dict_Ptr        defl    $
+ 453+ 7737             >
+ 453+ 7737             >//              ______________________________________________________________________
+ 453+ 7737             >//              Heap part
+ 453+ 7737             >
+ 453+ 7737             >
+ 453+ 7737             >                org     (Heap_Ptr & $1FFF) + $E000
+ 453+ E9E5             >
+ 453+ E9E5             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 453+ E9E5             >Latest_Definition defl  Heap_Ptr
+ 453+ E9E5             >
+ 453+ E9E5             >                // dummy db directives used to calculate length of namec
+ 453+ E9E5 4D 4F 44    >                db      "MOD"
+ 453+ E9E8             >len_NFA         defl    $ - temp_NFA
+ 453+ E9E8             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 453+ E9E5             >
+ 453+ E9E5 83          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 453+ E9E6 4D 4F 44    >                db      "MOD"               // name string in 7-bit ascii, but
+ 453+ E9E9             >                org     $-1                 // alter last byte of Name just above to set
+ 453+ E9E8 C4          >                db      {b $} | END_BIT     // msb as name end
+ 453+ E9E9             >
+ 453+ E9E9 DF 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 453+ E9EB             >Prev_Ptr        defl    Heap_Ptr
+ 453+ E9EB             >
+ 453+ E9EB             >mirror_Ptr      defl    $
+ 453+ E9EB             >
+ 453+ E9EB 39 77       >                dw      Dict_Ptr + 2        // xt
+ 453+ E9ED             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 453+ E9ED             >
+ 453+ E9ED             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 453+ E9ED             >
+ 453+ E9ED             >//              ______________________________________________________________________
+ 453+ E9ED             >//              Dictionary part
+ 453+ E9ED             >
+ 453+ E9ED             >                org     Dict_Ptr
+ 453+ 7737             >
+ 453+ 7737 EB 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 453+ 7739             >
+ 453+ 7739             >MOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 453+ 7739 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 453+ 773C             >
+ 453+ 773C             >
+ 453+ 773C             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 453+ 773C             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 453+ 773C             >
+ 453+ 773C             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 454+ 773C 1F 77 0A 69                  dw      DIVMOD, DROP            // /mod drop
+ 455+ 7740 4F 68                        dw      EXIT                    // ;
+ 456+ 7742
+ 457+ 7742              //  ______________________________________________________________________
+ 458+ 7742              //
+ 459+ 7742              // */mod        n1 n2 n3 -- n4 n5
+ 460+ 7742              // leaves the quotient n5 and the remainder n4 of the operation
+ 461+ 7742              // (n1 * n2) / n3. The intermediate passage through a double number
+ 462+ 7742              // avoids loss of precision
+ 463+ 7742                              Colon_Def MUL_DIV_MOD, "*/MOD", is_normal
+ 463+ 7742             >                New_Def  MUL_DIV_MOD, "*/MOD", Enter_Ptr, is_normal ; ok
+ 463+ 7742             >
+ 463+ 7742             >Dict_Ptr        defl    $
+ 463+ 7742             >
+ 463+ 7742             >//              ______________________________________________________________________
+ 463+ 7742             >//              Heap part
+ 463+ 7742             >
+ 463+ 7742             >
+ 463+ 7742             >                org     (Heap_Ptr & $1FFF) + $E000
+ 463+ E9ED             >
+ 463+ E9ED             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 463+ E9ED             >Latest_Definition defl  Heap_Ptr
+ 463+ E9ED             >
+ 463+ E9ED             >                // dummy db directives used to calculate length of namec
+ 463+ E9ED 2A 2F 4D 4F >                db      "*/MOD"
+ 463+ E9F1 44          >
+ 463+ E9F2             >len_NFA         defl    $ - temp_NFA
+ 463+ E9F2             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 463+ E9ED             >
+ 463+ E9ED 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 463+ E9EE 2A 2F 4D 4F >                db      "*/MOD"               // name string in 7-bit ascii, but
+ 463+ E9F2 44          >
+ 463+ E9F3             >                org     $-1                 // alter last byte of Name just above to set
+ 463+ E9F2 C4          >                db      {b $} | END_BIT     // msb as name end
+ 463+ E9F3             >
+ 463+ E9F3 E5 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 463+ E9F5             >Prev_Ptr        defl    Heap_Ptr
+ 463+ E9F5             >
+ 463+ E9F5             >mirror_Ptr      defl    $
+ 463+ E9F5             >
+ 463+ E9F5 44 77       >                dw      Dict_Ptr + 2        // xt
+ 463+ E9F7             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 463+ E9F7             >
+ 463+ E9F7             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 463+ E9F7             >
+ 463+ E9F7             >//              ______________________________________________________________________
+ 463+ E9F7             >//              Dictionary part
+ 463+ E9F7             >
+ 463+ E9F7             >                org     Dict_Ptr
+ 463+ 7742             >
+ 463+ 7742 F5 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 463+ 7744             >
+ 463+ 7744             >MUL_DIV_MOD:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 463+ 7744 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 463+ 7747             >
+ 463+ 7747             >
+ 463+ 7747             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 463+ 7747             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 463+ 7747             >
+ 463+ 7747             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 464+ 7747 59 68 8B 76                  dw      TO_R, MMUL              // >r  m*
+ 465+ 774B 64 68 00 77                  dw      R_TO, MDIVM             // r>  m/mod
+ 466+ 774F 4F 68                        dw      EXIT                    // ;
+ 467+ 7751
+ 468+ 7751              //  ______________________________________________________________________
+ 469+ 7751              //
+ 470+ 7751              // */          n1 n2 n3 -- n4
+ 471+ 7751              // (n1 * n2) / n3. The intermediate passage through a double number avoids loss of precision
+ 472+ 7751                              Colon_Def MUL_DIV, "*/", is_normal
+ 472+ 7751             >                New_Def  MUL_DIV, "*/", Enter_Ptr, is_normal ; ok
+ 472+ 7751             >
+ 472+ 7751             >Dict_Ptr        defl    $
+ 472+ 7751             >
+ 472+ 7751             >//              ______________________________________________________________________
+ 472+ 7751             >//              Heap part
+ 472+ 7751             >
+ 472+ 7751             >
+ 472+ 7751             >                org     (Heap_Ptr & $1FFF) + $E000
+ 472+ E9F7             >
+ 472+ E9F7             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 472+ E9F7             >Latest_Definition defl  Heap_Ptr
+ 472+ E9F7             >
+ 472+ E9F7             >                // dummy db directives used to calculate length of namec
+ 472+ E9F7 2A 2F       >                db      "*/"
+ 472+ E9F9             >len_NFA         defl    $ - temp_NFA
+ 472+ E9F9             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 472+ E9F7             >
+ 472+ E9F7 82          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 472+ E9F8 2A 2F       >                db      "*/"               // name string in 7-bit ascii, but
+ 472+ E9FA             >                org     $-1                 // alter last byte of Name just above to set
+ 472+ E9F9 AF          >                db      {b $} | END_BIT     // msb as name end
+ 472+ E9FA             >
+ 472+ E9FA ED 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 472+ E9FC             >Prev_Ptr        defl    Heap_Ptr
+ 472+ E9FC             >
+ 472+ E9FC             >mirror_Ptr      defl    $
+ 472+ E9FC             >
+ 472+ E9FC 53 77       >                dw      Dict_Ptr + 2        // xt
+ 472+ E9FE             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 472+ E9FE             >
+ 472+ E9FE             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 472+ E9FE             >
+ 472+ E9FE             >//              ______________________________________________________________________
+ 472+ E9FE             >//              Dictionary part
+ 472+ E9FE             >
+ 472+ E9FE             >                org     Dict_Ptr
+ 472+ 7751             >
+ 472+ 7751 FC 09       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 472+ 7753             >
+ 472+ 7753             >MUL_DIV:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 472+ 7753 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 472+ 7756             >
+ 472+ 7756             >
+ 472+ 7756             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 472+ 7756             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 472+ 7756             >
+ 472+ 7756             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 473+ 7756 44 77                        dw     MUL_DIV_MOD              // */mod
+ 474+ 7758 0F 69                        dw     NIP                      // nip
+ 475+ 775A 4F 68                        dw     EXIT                     // ;
+ 476+ 775C
+ 477+ 775C
+ 478+ 775C              //  ______________________________________________________________________
+ 479+ 775C              //
+ 480+ 775C              // m/mod        ud1 u2 -- u3 ud4
+ 481+ 775C              // mixed operation: it leaves the remainder u3 and the quotient ud4 of ud1 / u1.
+ 482+ 775C              // All terms are unsigned.
+ 483+ 775C              //              Colon_Def MDIV_MOD, "M/MOD", is_normal
+ 484+ 775C              //              dw      TO_R                    // >r           ( ud1 )
+ 485+ 775C              //              dw      ZERO, R_OP, UMDIVMOD    // 0 r um/mod   ( l rem1 h/r )
+ 486+ 775C              //              dw      R_TO, SWAP, TO_R        // r> swap >r   ( l rem )
+ 487+ 775C              //              dw      UMDIVMOD                // um/mod       ( rem2 l/r )
+ 488+ 775C              //              dw      R_TO                    // r>           ( rem2 l/r h/r )
+ 489+ 775C              //              dw      EXIT                    // ;
+ 490+ 775C
+ 491+ 775C              //  ______________________________________________________________________
+ 492+ 775C              //
+ 493+ 775C              // (line)       n1 n2 -- a b
+ 494+ 775C              // sends the line n1 of block n2 to the disk buffer.
+ 495+ 775C              // it returns the address a and ca counter b = C/L meaning a whole line.
+ 496+ 775C                              Colon_Def CLINE, "(LINE)", is_normal
+ 496+ 775C             >                New_Def  CLINE, "(LINE)", Enter_Ptr, is_normal ; ok
+ 496+ 775C             >
+ 496+ 775C             >Dict_Ptr        defl    $
+ 496+ 775C             >
+ 496+ 775C             >//              ______________________________________________________________________
+ 496+ 775C             >//              Heap part
+ 496+ 775C             >
+ 496+ 775C             >
+ 496+ 775C             >                org     (Heap_Ptr & $1FFF) + $E000
+ 496+ E9FE             >
+ 496+ E9FE             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 496+ E9FE             >Latest_Definition defl  Heap_Ptr
+ 496+ E9FE             >
+ 496+ E9FE             >                // dummy db directives used to calculate length of namec
+ 496+ E9FE 28 4C 49 4E >                db      "(LINE)"
+ 496+ EA02 45 29       >
+ 496+ EA04             >len_NFA         defl    $ - temp_NFA
+ 496+ EA04             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 496+ E9FE             >
+ 496+ E9FE 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 496+ E9FF 28 4C 49 4E >                db      "(LINE)"               // name string in 7-bit ascii, but
+ 496+ EA03 45 29       >
+ 496+ EA05             >                org     $-1                 // alter last byte of Name just above to set
+ 496+ EA04 A9          >                db      {b $} | END_BIT     // msb as name end
+ 496+ EA05             >
+ 496+ EA05 F7 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 496+ EA07             >Prev_Ptr        defl    Heap_Ptr
+ 496+ EA07             >
+ 496+ EA07             >mirror_Ptr      defl    $
+ 496+ EA07             >
+ 496+ EA07 5E 77       >                dw      Dict_Ptr + 2        // xt
+ 496+ EA09             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 496+ EA09             >
+ 496+ EA09             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 496+ EA09             >
+ 496+ EA09             >//              ______________________________________________________________________
+ 496+ EA09             >//              Dictionary part
+ 496+ EA09             >
+ 496+ EA09             >                org     Dict_Ptr
+ 496+ 775C             >
+ 496+ 775C 07 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 496+ 775E             >
+ 496+ 775E             >CLINE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 496+ 775E CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 496+ 7761             >
+ 496+ 7761             >
+ 496+ 7761             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 496+ 7761             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 496+ 7761             >
+ 496+ 7761             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 497+ 7761 59 68                        dw      TO_R                    // >r
+ 498+ 7763 AF 6A                        dw      CL                      // c/l
+ 499+ 7765 B6 6A 44 77                  dw      BBUF, MUL_DIV_MOD       // */mod
+ 500+ 7769 64 68                        dw      R_TO                    // r>
+ 501+ 776B BD 6A 14 77                  dw      BSCR, MUL, PLUS         // b/scr * +
+ 501+ 776F A1 68
+ 502+ 7771 71 79                        dw      BLOCK                   // block   ( forward )
+ 503+ 7773 A1 68                        dw      PLUS                    // +
+ 504+ 7775 AF 6A                        dw      CL                      // c/l
+ 505+ 7777 4F 68                        dw      EXIT                    // ;
+ 506+ 7779
+ 507+ 7779              //  ______________________________________________________________________
+ 508+ 7779              //
+ 509+ 7779              // .line        n1 n2 --
+ 510+ 7779              // Sends to output line  n1  of screen n2.
+ 511+ 7779                              Colon_Def DOT_LINE, ".LINE", is_normal
+ 511+ 7779             >                New_Def  DOT_LINE, ".LINE", Enter_Ptr, is_normal ; ok
+ 511+ 7779             >
+ 511+ 7779             >Dict_Ptr        defl    $
+ 511+ 7779             >
+ 511+ 7779             >//              ______________________________________________________________________
+ 511+ 7779             >//              Heap part
+ 511+ 7779             >
+ 511+ 7779             >
+ 511+ 7779             >                org     (Heap_Ptr & $1FFF) + $E000
+ 511+ EA09             >
+ 511+ EA09             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 511+ EA09             >Latest_Definition defl  Heap_Ptr
+ 511+ EA09             >
+ 511+ EA09             >                // dummy db directives used to calculate length of namec
+ 511+ EA09 2E 4C 49 4E >                db      ".LINE"
+ 511+ EA0D 45          >
+ 511+ EA0E             >len_NFA         defl    $ - temp_NFA
+ 511+ EA0E             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 511+ EA09             >
+ 511+ EA09 85          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 511+ EA0A 2E 4C 49 4E >                db      ".LINE"               // name string in 7-bit ascii, but
+ 511+ EA0E 45          >
+ 511+ EA0F             >                org     $-1                 // alter last byte of Name just above to set
+ 511+ EA0E C5          >                db      {b $} | END_BIT     // msb as name end
+ 511+ EA0F             >
+ 511+ EA0F FE 09       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 511+ EA11             >Prev_Ptr        defl    Heap_Ptr
+ 511+ EA11             >
+ 511+ EA11             >mirror_Ptr      defl    $
+ 511+ EA11             >
+ 511+ EA11 7B 77       >                dw      Dict_Ptr + 2        // xt
+ 511+ EA13             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 511+ EA13             >
+ 511+ EA13             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 511+ EA13             >
+ 511+ EA13             >//              ______________________________________________________________________
+ 511+ EA13             >//              Dictionary part
+ 511+ EA13             >
+ 511+ EA13             >                org     Dict_Ptr
+ 511+ 7779             >
+ 511+ 7779 11 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 511+ 777B             >
+ 511+ 777B             >DOT_LINE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 511+ 777B CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 511+ 777E             >
+ 511+ 777E             >
+ 511+ 777E             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 511+ 777E             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 511+ 777E             >
+ 511+ 777E             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 512+ 777E 5E 77 83 6F                  dw      CLINE, LTRAILING, TYPE  // (line) -trailing type
+ 512+ 7782 6C 6F
+ 513+ 7784 4F 68                        dw      EXIT                    // ;
+ 514+ 7786
+ 515+ 7786              //  ______________________________________________________________________
+ 516+ 7786              //
+ 517+ 7786              // message       n1 n2 --
+ 518+ 7786              // prints error message to current channel.
+ 519+ 7786              // if WARNING is 0, prints "MSG#n".
+ 520+ 7786              // if WARNING is 1, prints line n of screen 4.
+ 521+ 7786              // if WARNING is -1, see ERROR
+ 522+ 7786              // value can be negative or beyond block 4.
+ 523+ 7786                              Colon_Def MESSAGE, "MESSAGE", is_normal
+ 523+ 7786             >                New_Def  MESSAGE, "MESSAGE", Enter_Ptr, is_normal ; ok
+ 523+ 7786             >
+ 523+ 7786             >Dict_Ptr        defl    $
+ 523+ 7786             >
+ 523+ 7786             >//              ______________________________________________________________________
+ 523+ 7786             >//              Heap part
+ 523+ 7786             >
+ 523+ 7786             >
+ 523+ 7786             >                org     (Heap_Ptr & $1FFF) + $E000
+ 523+ EA13             >
+ 523+ EA13             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 523+ EA13             >Latest_Definition defl  Heap_Ptr
+ 523+ EA13             >
+ 523+ EA13             >                // dummy db directives used to calculate length of namec
+ 523+ EA13 4D 45 53 53 >                db      "MESSAGE"
+ 523+ EA17 41 47 45    >
+ 523+ EA1A             >len_NFA         defl    $ - temp_NFA
+ 523+ EA1A             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 523+ EA13             >
+ 523+ EA13 87          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 523+ EA14 4D 45 53 53 >                db      "MESSAGE"               // name string in 7-bit ascii, but
+ 523+ EA18 41 47 45    >
+ 523+ EA1B             >                org     $-1                 // alter last byte of Name just above to set
+ 523+ EA1A C5          >                db      {b $} | END_BIT     // msb as name end
+ 523+ EA1B             >
+ 523+ EA1B 09 0A       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 523+ EA1D             >Prev_Ptr        defl    Heap_Ptr
+ 523+ EA1D             >
+ 523+ EA1D             >mirror_Ptr      defl    $
+ 523+ EA1D             >
+ 523+ EA1D 88 77       >                dw      Dict_Ptr + 2        // xt
+ 523+ EA1F             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 523+ EA1F             >
+ 523+ EA1F             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 523+ EA1F             >
+ 523+ EA1F             >//              ______________________________________________________________________
+ 523+ EA1F             >//              Dictionary part
+ 523+ EA1F             >
+ 523+ EA1F             >                org     Dict_Ptr
+ 523+ 7786             >
+ 523+ 7786 1D 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 523+ 7788             >
+ 523+ 7788             >MESSAGE:          if Enter_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 523+ 7788 CD 30 6A    >                call    Enter_Ptr ; ok        // for primitive definitions  actual code
+ 523+ 778B             >
+ 523+ 778B             >
+ 523+ 778B             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 523+ 778B             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 523+ 778B             >
+ 523+ 778B             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 524+ 778B F6 6A 8F 69                  dw      WARNING, FETCH          // warning @
+ 525+ 778F                                                              // if
+ 526+ 778F F5 63                        dw      ZBRANCH
+ 527+ 7791 12 00                        dw      Message_Else - $
+ 528+ 7793 A3 63 20 00                  dw          LIT, 32, PLUS       //      32 +
+ 528+ 7797 A1 68
+ 529+ 7799 93 6A                        dw          TWO                 //      2
+ 530+ 779B 7B 77                        dw          DOT_LINE            //      .line
+ 531+ 779D 73 6C                        dw          SPACE               //      space
+ 532+ 779F                                                              // else
+ 533+ 779F
+ 534+ 779F E8 63                        dw      BRANCH
+ 535+ 77A1 0B 00                        dw      Message_ENdif - $
+ 536+ 77A3              Message_Else:
+ 537+ 77A3 09 71                        dw          C_DOT_QUOTE         //      .( msg#)
+ 538+ 77A5 04 6D 73 67                  db          4, "msg#"
+ 538+ 77A9 23
+ 539+ 77AA A7 7E                        dw          DOT                 //      .  ( forward )
+ 540+ 77AC              Message_ENdif:                                  // endif
+ 541+ 77AC 4F 68                        dw      EXIT                    // ;
+ 542+ 77AE
+ 543+ 77AE
+ 544+ 77AE              //  ______________________________________________________________________
+ 545+ 77AE              //
+ 546+ 77AE              // device
+ 547+ 77AE                              Variable_Def DEVICE,   "DEVICE",   2
+ 547+ 77AE             >                New_Def  DEVICE, "DEVICE", Variable_Ptr, is_normal
+ 547+ 77AE             >
+ 547+ 77AE             >Dict_Ptr        defl    $
+ 547+ 77AE             >
+ 547+ 77AE             >//              ______________________________________________________________________
+ 547+ 77AE             >//              Heap part
+ 547+ 77AE             >
+ 547+ 77AE             >
+ 547+ 77AE             >                org     (Heap_Ptr & $1FFF) + $E000
+ 547+ EA1F             >
+ 547+ EA1F             >temp_NFA        defl    $                   // save this NFA address to temp_NFA
+ 547+ EA1F             >Latest_Definition defl  Heap_Ptr
+ 547+ EA1F             >
+ 547+ EA1F             >                // dummy db directives used to calculate length of namec
+ 547+ EA1F 44 45 56 49 >                db      "DEVICE"
+ 547+ EA23 43 45       >
+ 547+ EA25             >len_NFA         defl    $ - temp_NFA
+ 547+ EA25             >                org     $ - len_NFA         // rewind to temp_NFA and re-do NFA part
+ 547+ EA1F             >
+ 547+ EA1F 86          >                db      len_NFA | END_BIT | is_normal  // The start of NFA must have msb set to signal the beginning of the sounted string
+ 547+ EA20 44 45 56 49 >                db      "DEVICE"               // name string in 7-bit ascii, but
+ 547+ EA24 43 45       >
+ 547+ EA26             >                org     $-1                 // alter last byte of Name just above to set
+ 547+ EA25 C5          >                db      {b $} | END_BIT     // msb as name end
+ 547+ EA26             >
+ 547+ EA26 13 0A       >                dw      Prev_Ptr  + Heap_offset     // Link to previous definition Name
+ 547+ EA28             >Prev_Ptr        defl    Heap_Ptr
+ 547+ EA28             >
+ 547+ EA28             >mirror_Ptr      defl    $
+ 547+ EA28             >
+ 547+ EA28 B0 77       >                dw      Dict_Ptr + 2        // xt
+ 547+ EA2A             >Heap_Ptr        defl    $ - $E000           // save current HP
+ 547+ EA2A             >
+ 547+ EA2A             >Current_HP      defl  $ - $E000             // used to set HP once!
+ 547+ EA2A             >
+ 547+ EA2A             >//              ______________________________________________________________________
+ 547+ EA2A             >//              Dictionary part
+ 547+ EA2A             >
+ 547+ EA2A             >                org     Dict_Ptr
+ 547+ 77AE             >
+ 547+ 77AE 28 0A       >                dw      mirror_Ptr - $E000 + Heap_offset
+ 547+ 77B0             >
+ 547+ 77B0             >DEVICE:          if Variable_Ptr != 0 ; ok        // This is the start address of the direct jp(hl)
+ 547+ 77B0 CD 6C 6A    >                call    Variable_Ptr ; ok        // for primitive definitions  actual code
+ 547+ 77B3             >
+ 547+ 77B3             >
+ 547+ 77B3             >                endif           ; ok        // for other definitions it "points" the correct handler
+ 547+ 77B3             >                // Use of "; ok" to suppress "warning[fwdref]"
+ 547+ 77B3             >
+ 547+ 77B3             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
+ 547+ 77B3 02 00       >                dw      2
+ 548+ 77B5
+ 549+ 77B5              //  ______________________________________________________________________
+ 550+ 77B5
 # file closed: C:\Zx\CSpect\Projects\vForth17_MMU7/source/L2.asm
  141  77B5                              include "next-opt1.asm"
 # file opened: C:\Zx\CSpect\Projects\vForth17_MMU7/source/next-opt1.asm
@@ -19676,7 +19679,7 @@
  318+ 7B60             >                // Use of "; ok" to suppress "warning[fwdref]"
  318+ 7B60             >
  318+ 7B60             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 319+ 7B60 3A 7B                        dw      OPEN_FH                 // open
+ 319+ 7B60 3A 7B                        dw      OPEN_FH                 // open<
  320+ 7B62 85 7A                        dw      F_INCLUDE               //  f_include
  321+ 7B64 4F 68                        dw      EXIT                    // ;
  322+ 7B66

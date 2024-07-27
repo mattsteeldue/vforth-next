@@ -264,7 +264,6 @@ FInclude_Begin:                                 // begin
 FInclude_Repeat:                                // repeat
                 //  close current file
                 dw      SOURCE_ID, FETCH        // source-id @
-           //   dw      ZERO, SOURCE_ID, STORE  // 0 source-id !
                 dw      F_CLOSE                 // f_close
                 dw      LIT, 42, QERROR         // 42 ?error
 
@@ -305,12 +304,12 @@ FInclude_Endif_2:                               // endif
 //
 // use          -- cccc
 // Include the following filename
-                Colon_Def USE, "USE", is_normal
-                dw      OPEN_FH                 // open<
-                dw      BLK_FH, FETCH           // blk-fh @
-                dw      F_CLOSE, DROP           // f_close drop
-                dw      BLK_FH, STORE           // blk-fh !
-                dw      EXIT                    // ;
+//              Colon_Def USE, "USE", is_normal
+//              dw      OPEN_FH                 // open<
+//              dw      BLK_FH, FETCH           // blk-fh @
+//              dw      F_CLOSE, DROP           // f_close drop
+//              dw      BLK_FH, STORE           // blk-fh !
+//              dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
 //
@@ -319,8 +318,6 @@ FInclude_Endif_2:                               // endif
                 Colon_Def INCLUDE, "INCLUDE", is_normal
                 dw      OPEN_FH                 // open<
                 dw      F_INCLUDE               //  f_include
-            //  dw      DUP, F_INCLUDE          // dup f_include
-            //  dw      F_CLOSE, DROP           // f_close drop
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -742,7 +739,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20240420", 13  // 33
+//              db      "Heap Vocabulary - build 20240616", 13  // 33
 //              db      "1990-2024 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
@@ -771,17 +768,15 @@ Index_Leave:
 // load Screen# 1. Once called it patches itself to prevent furhter runs.
                 Colon_Def AUTOEXEC, "AUTOEXEC", is_normal
 Autoexec_Self:                
+                dw      LIT, QUIT
+                dw      LIT, Autoexec_Self      // self patch
                 dw      LIT, Param
                 dw      PAD, ONE
                 dw      F_OPEN
                 dw      DROP    
                 dw      F_INCLUDE
-                dw      QUIT
-                dw      LIT, QUIT
-                dw      LIT, Autoexec_Self
                 dw      STORE
                 dw      EXIT
-
 
 
 //              dw      LIT, 11
@@ -1004,22 +999,25 @@ CDoBack_While:
 // \
                 Colon_Def BACKSLASH, "\\", is_immediate  // this is a single back-slash
                 dw      BLK, FETCH
+                dw      ONE_SUBTRACT // BLOCK 1 is used as temp-line in INCLUDE file
                 dw      ZBRANCH
                 dw      Backslash_Else_1 - $
-                dw          BLK, FETCH, ONE, GREATER  // BLOCK 1 is used as temp-line in INCLUDE file
+
+                dw          BLK, FETCH
                 dw          ZBRANCH
                 dw          Backslash_Else_2 - $
-                dw              TO_IN, FETCH, CL, MOD, CL
+
+                dw              TO_IN, FETCH, CL, ONE_SUBTRACT, AND_OP, CL
                 dw              SWAP, SUBTRACT, TO_IN, PLUSSTORE
                 dw          BRANCH
                 dw          Backslash_Endif_2 - $
 Backslash_Else_2:
-                dw              BBUF, CELL_MINUS, TO_IN, STORE
+                dw              ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, CSTORE
 Backslash_Endif_2:
                 dw      BRANCH
                 dw      Backslash_Endif_1 - $
 Backslash_Else_1:
-                dw          ZERO, TIB, FETCH, TO_IN, FETCH, PLUS, STORE
+                dw              BBUF, CELL_MINUS, TO_IN, STORE
 Backslash_Endif_1:
                 dw      EXIT
 

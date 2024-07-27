@@ -42,7 +42,7 @@ variable v-last
 \ __________________________________________________________
 
 code bailout
-        ldn     a'|  0 N,
+        ldn     a'|  2 N,
         scf
         ret
     c;
@@ -226,8 +226,6 @@ code main
         lda()   v-last  rel-AA,
         cpa      e|
         jpf     cy|    ' wronginterval rel-AA,
-
-        
 
         \ f_open using hl string
         push    hl|

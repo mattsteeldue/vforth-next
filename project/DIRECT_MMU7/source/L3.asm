@@ -316,7 +316,7 @@ FInclude_Endif_2:                               // endif
 // include      -- cccc
 // Include the following filename
                 Colon_Def INCLUDE, "INCLUDE", is_normal
-                dw      OPEN_FH                 // open 
+                dw      OPEN_FH                 // open< 
                 dw      F_INCLUDE               //  f_include
                 dw      EXIT                    // ;
 

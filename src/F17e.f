@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240404 ) CR
+.( build 20240616 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -36,14 +36,14 @@
 \ Z80N (ZX Spectrum Next) extension is available.
 \
 \ This list has been tested using the following configuration:
-\     - CSpect emulator V.2.16.5.0
+\     - CSpect emulator V.2.19.4.4
 \
 \ There are a few modifications to keep in mind since previous v. 1.2
 \  '      (tick) returns CFA, instead of PFA as previously was
 \  -FIND         returns CFA, instead of PFA as previously was
-\  SP!           must be passed with the address to initialize SP register
-\  RP!           must be passed with the address to initialize RP.
-\  WORD          now returns address HERE: a few blocks must be corrected
+\  SP!           must be given the address to initialize SP register
+\  RP!           must be given the address to initialize RP.
+\  WORD          now returns address HERE, and a few blocks must be corrected
 \  CREATE        now creates a definition that returns its PFA.
 \ ______________________________________________________________________
 \
@@ -571,22 +571,22 @@ CODE (do) ( lim ind -- )
       \ ' (do) TO (do)~
         ' (do)    ' DO >BODY 1 CELLS + !
 
-        RENAME      LITERAL   Literal
-        RENAME      DLITERAL  Dliteral
-        
-        RENAME      IF        If
-        RENAME      THEN      Then
-        RENAME      ELSE      Else
-        
-        RENAME      BEGIN     Begin
-        RENAME      AGAIN     Again
-        RENAME      UNTIL     Until
-        RENAME      WHILE     While
-        RENAME      REPEAT    Repeat
-        
-        RENAME      DO        Do
-        RENAME      LOOP      Loop
-        RENAME      ?DO       ?Do
+    RENAME      LITERAL   Literal
+    RENAME      DLITERAL  Dliteral
+    
+    RENAME      IF        If
+    RENAME      THEN      Then
+    RENAME      ELSE      Else
+    
+    RENAME      BEGIN     Begin
+    RENAME      AGAIN     Again
+    RENAME      UNTIL     Until
+    RENAME      WHILE     While
+    RENAME      REPEAT    Repeat
+    
+    RENAME      DO        Do
+    RENAME      LOOP      Loop
+    RENAME      ?DO       ?Do
 
 
 \ 61E9h
@@ -2747,8 +2747,8 @@ CODE p! ( b p -- )
          
         EXX
         POP     BC|
-        POP     DE|
-        OUT(C)  E'|
+        POP     HL|
+        OUT(C)  L'|
         EXX
         Next
         C;
@@ -4693,7 +4693,7 @@ immediate
 
     ' abort abort^ ! \ patch
 
-\   -2 ALLOT \ we can save two bytes because QUIT
+    -2 ALLOT \ we can save two bytes because QUIT modifies RP
 
 
 \ 74AEh 
@@ -4711,7 +4711,7 @@ immediate
     abort
     ;
 
-\   -2 ALLOT \ we can save two bytes because COLD starts
+    -2 ALLOT \ we can save two bytes because ABORT modifies RP
 
     
 \ 74C3h
@@ -4755,10 +4755,10 @@ immediate
     
     [ here TO y^ ]
     warm
-    noop
+    noop                     \ ___ forward ___
     ;
 
-\    -2 ALLOT    \ we can save two bytes because COLD starts
+    -2 ALLOT    \ we can save two bytes because COLD starts
  
     ' cold  y^ CELL+ !  \ this goes just after WARM ...
 \                       \ ... so we can inc bc twice to get it later
@@ -4769,8 +4769,6 @@ here cold^ ! \ patch
 here warm^ ! \ patch
 
         ASSEMBLER 
-
-        LDX     IX|    (next)   NN, 
 
         EXX
         PUSH    HL|                   \ saves HL' (of Basic)
@@ -4783,8 +4781,10 @@ here warm^ ! \ patch
 \       LD()A   hex 5C6B AA,   \ DF_SZ system variable
         
         LDHL()  hex  14 +origin AA, \ forth's RP
-        LD()HL  hex 030 +origin AA,
+\       LD()HL  hex 030 +origin AA,
         EXDEHL
+
+        LDX     IX|    (next)   NN, 
 
         LDX     BC|    y^    NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,
@@ -5463,13 +5463,13 @@ decimal
 ;
 
 
-.( USE )
-: use 
-    open<
-    blk-fh @
-    f_close drop
-    blk-fh !
-;
+\ .( USE )
+\ : use 
+\     open<
+\     blk-fh @
+\     f_close drop
+\     blk-fh !
+\ ;
 
 
 .( INCLUDE )
@@ -5890,7 +5890,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-04-04" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-06-16" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 
@@ -6193,16 +6193,16 @@ decimal
 .( \ )
 \ the following text is interpreted as a comment until end-of-line
 : \ 
-    blk @ 
+    blk @ 1- \ BLOCK 1 is used as temp-line in INCLUDE file.
     If
-        blk @ 1 >  \ BLOCK 1 is used as temp-line in INCLUDE file.
+        blk @ 
         If
-            >in @ c/l mod c/l swap - >in +!
+            >in @ c/l 1- and c/l swap - >in +!
         Else
-            b/buf cell- >in !
+            0 tib @ >in @ + c!
         Then
     Else
-        0 tib @ >in @ + !
+        b/buf cell- >in !
     Then
     ;
     immediate
@@ -6664,7 +6664,7 @@ CASEOFF
 
 \ ______________________________________________________________________ 
 
-\ this cuts LFA so dictionary starts with "lit"
+\ this cuts LFA so dictionary starts with "LIT"
 0 ' LIT     >BODY LFA ! 
 
 \ QUIT 

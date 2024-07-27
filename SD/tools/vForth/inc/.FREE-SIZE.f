@@ -1,16 +1,19 @@
 \
-\ f_getfree.f
+\ .FREE-SIZE.f
 \
-\
-BASE @ \
-\
-.( .)
-NEEDS F_GETFREE \
-.( .)
-\
-DECIMAL \
+\ display free space available on default drive expressed in G, M or K 
+\ depending on which is better fit, with one decimal precision digit.
 
-\
+BASE @
+
+.( .)  \ show progression
+
+NEEDS F_GETFREE \
+
+.( .)  \ show progression
+
+DECIMAL 
+
 \ Given a double-precision integer representing free space / 512 bytes
 \ emit the best fit for scale unit G, M or K
 \ It returns a character G, M or K for later processing
@@ -36,8 +39,9 @@ DECIMAL \
   <# # [char] . hold #s #> 
   type R>             \ emit quantity
 ;
-.( .)
-\
+
+.( .)  \ show progression
+
 \ display free space on default drive with one place after the decimal-point
 \ expressed in G, M or K depending on which is better fit.
 : .FREE-SIZE ( -- ) \
@@ -45,13 +49,13 @@ DECIMAL \
   IF                    \ zero means error
     2DROP               \ so discard result
   ELSE                  \ d is the number of 512-bytes-blocks free on drive
-    D.GMK               \
-    SPACE               \
+    D.GMK 
+    SPACE 
     EMIT                \ emit unit
-    ." bytes free on default drive." \
-  THEN \
-; \
+  THEN 
+; 
 \
-8 dup dup emitc emitc emitc
+\ wipe progression-bar 
+8 DUP DUP EMITC EMITC EMITC \ hide progression
 \
 BASE ! \
