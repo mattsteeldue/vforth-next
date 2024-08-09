@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      113
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2024-04-20 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-08-09 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 db      7,0
@@ -758,7 +758,9 @@ Emitc_Ptr:
                 push    bc
                 push    de
                 push    ix
+
                 rst     $10
+
                 pop     ix
                 pop     de
                 pop     bc
@@ -842,6 +844,10 @@ C_Emit_Bel:
                 ld      hl, $0200
                 push    ix                  // save Next Pointer
                 call    $03B6               // bleep Standard-ROM routine
+
+
+
+
                 pop     ix                  // restore Next Pointer
                 pop     de
                 pop     bc                  // restore Instruction Pointer
@@ -900,6 +906,7 @@ Key_MapTo:
                 push    de                  // save Return Stack Pointer
                 push    ix  
                 ld      (SP_Saved), sp      // be sure to not to be paged out.
+
                 ld      sp, Cold_origin - 5 // maybe $8000 in the future...
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
@@ -907,6 +914,8 @@ Cur_Wait:
                     halt
                     ld      a, 2                // selec channel #2 (Upper Video)
                     call    $1601               // SELECT Standard-ROM Routine
+
+
     
                     // software-flash: flips face every 320 ms
                     ld      a, $20              // Timing based
@@ -922,7 +931,6 @@ Cur_Cursor:
                     rst     $10
                     ld      a, BACKSPACE_CHAR    // backspace            
                     rst     $10
-
                     bit     5, (iy + 1)         // FLAGS (5C3A+1)
                 jr      z, Cur_Wait
     
@@ -1069,8 +1077,13 @@ Key_NoCapsLock: ld      l, a
                 ld      a, l
                 ld      (SP_Saved), sp
                 ld      sp, Cold_origin - 5
+
                 push    ix
                 call    $1601         
+
+
+
+
                 pop     ix
                 ld      sp, (SP_Saved)
                 pop     de

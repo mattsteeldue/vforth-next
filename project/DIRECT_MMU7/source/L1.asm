@@ -646,7 +646,7 @@ PFA_Skip:                                    // endif
 //  ______________________________________________________________________ 
 //
 // ?error       f n --
-// rase error n if flag f it true
+// raise error n if flag f it true
                 Colon_Def QERROR, "?ERROR", is_normal
                 dw      SWAP                    // swap
                                                 // if
@@ -771,7 +771,7 @@ QError_Endif:                                   // endif
 // make immediate the latest definition
                 Colon_Def IMMEDIATE, "IMMEDIATE", is_normal
                 dw      LATEST                  // latest
-                dw      LIT, $40                // 64
+                dw      LIT, IMMEDIATE_BIT      // 64
                 dw      TOGGLE                  // toggle
                 dw      EXIT                    // ;
 
@@ -989,7 +989,7 @@ LTrailing_Leave:
                 dw      C_Q_DO
                 dw      Accept_Leave - $
 Accept_Loop:                                                            
-                dw          CUR
+                dw          CUR                 //      cur             ( a  0 )
                 dw          DROP, KEY           //      drop key        ( a  c )
                 dw          DUP                 //      dup             ( a  c  c )
                 dw          LIT, $0E            //      0E
@@ -1045,12 +1045,12 @@ Accept_Endif_2:
                                                 //          endif
 Accept_Endif_3:
 Accept_Endif_0:                                 //      endif
-                dw          EMIT                //      emit
+                dw          EMIT                //      emit            ( a )
 
                 dw          ZERO, I, ONE_PLUS   //      0 i 1+ !
                 dw          STORE               //          ( zero pad )
                 dw          I                   //      i
-                dw          I, CFETCH, ZEQUAL   //      i 0= if
+                dw          I, CFETCH, ZEQUAL   //      i c@ 0= if
                 dw          ZBRANCH             //
                 dw              Accept_Endif_4 - $ 
                 dw                  C_LEAVE     //              leave       

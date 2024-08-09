@@ -23,6 +23,7 @@ NEEDS IDE_MODE@
 NEEDS DEFER 
 NEEDS IS
 
+\ this allows FORGET GRAPHICS to remove this whole package, see bottom of this source.
 : GRAPHICS 
     NOOP
 ;
@@ -564,7 +565,6 @@ HEX
         DUP C@  TO  FLAG-MASK   1+
         DUP C@  LAYER!          1+
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
-        CR    
 ;        
 
 \ ____________________________________________________________________

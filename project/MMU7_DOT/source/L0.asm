@@ -62,11 +62,11 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 // length include a leading space in each line
-                db      110 
+                db      107 
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33
-                db      " Heap Vocabulary - build 2024-06-16 ", $0D  // 37
+                db      " Dot-command - build 2024-08-09 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
-                db      " 1990-2024 Matteo Vitturi "                 // 26
+                db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -772,7 +772,7 @@ Emitc_Ptr:
 //
 // cr           --
 // send a CR via EMITC
-                Colon_Def CR, "CR", is_normal
+                New_Def CR, "CR", is_code, is_normal
 
                 ld      a, CR_CHAR
                 jr      Emitc_Ptr

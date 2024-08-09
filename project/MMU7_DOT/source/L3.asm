@@ -331,8 +331,7 @@ FInclude_Endif_2:                               // endif
                 ds      35                      // 32 + .f + 0x00 = len 35
 // temp complete path+filename
                 New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
-Param:          db      "c:/tools/vforth/lib/autoexec.f", 0
-                ds      30
+                ds      40
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
                 db      4, "inc/", 0
@@ -363,16 +362,17 @@ Needs_1:
 Needs_2:
                 dw      EXIT                    // ;
 
-
-                New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
+NDOM_PTR:
+//              New_Def NDOM,   "NDOM", Create_Ptr, is_normal  
 //              db $3A, $3F, $2F, $2A, $7C, $5C, $3C, $3E, $22
                 db ':?/*|\<>"'
-                db 0
+//              db 0
 
-                New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
+NCDM_PTR:
+//              New_Def NCDM,   "NCDM", Create_Ptr, is_normal  
 //              db $5F, $5E, $25, $26, $24, $5F, $7B, $7D, $7E
                 db '_^%&$_{}~' 
-                db 0
+//              db 0
 
 // Replace illegal character in filename using the map here above
 // at the moment we need only  "
@@ -380,7 +380,10 @@ Needs_2:
                 dw      COUNT, BOUNDS
                 dw      C_DO
 Needs_3:
-                dw          NCDM, NDOM, LIT, 10
+//              dw          NCDM, NDOM, LIT, 10
+                dw          LIT, NCDM_PTR           //                
+                dw          LIT, NDOM_PTR           //                
+                dw          LIT, 9
                 dw          I, CFETCH
                 dw          C_MAP
                 dw          I, CSTORE
@@ -727,9 +730,32 @@ Index_Leave:
 //  ______________________________________________________________________ 
 //
 // cls          --
-                Colon_Def CLS, "CLS", is_normal
-                dw      LIT, $0E, EMITC
-                dw      EXIT
+//              Colon_Def CLS, "CLS", is_normal
+//              dw      LIT, $0E, EMITC
+//              dw      EXIT
+
+                New_Def CLS, "CLS", is_code, is_normal
+                push    bc
+                push    de
+                push    ix
+                ld      de, $01D5   // on success set carry-flag  
+                ld      c, 7        // necessary to call M_P3DOS
+                xor     a           // query current status
+                rst     8
+                db      $94         // carry flag set on success 
+                and     a
+                jr      nz, CLS_No_Layer_0
+                  rst     $18
+                  defw    $0DAF
+                jr      CLS_Layer_0
+CLS_No_Layer_0:                
+                  ld      a, $0E
+                  rst     $10
+CLS_Layer_0:                
+                pop     ix
+                pop     de
+                pop     bc
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -768,9 +794,9 @@ Index_Leave:
 // load Screen# 1. Once called it patches itself to prevent furhter runs.
                 Colon_Def AUTOEXEC, "AUTOEXEC", is_normal
 Autoexec_Self:                
-                dw      LIT, QUIT
-                dw      LIT, Autoexec_Self      // self patch
-                dw      LIT, Param
+                dw      LIT, NOOP
+                dw      LIT, Autoexec_Ptr
+                dw      LIT, Param_From_Basic
                 dw      PAD, ONE
                 dw      F_OPEN
                 dw      DROP    
@@ -1027,9 +1053,10 @@ Backslash_Endif_1:
                 Variable_Def BLK_FH,   "BLK-FH",   1
 
                 New_Def BLK_FNAME,   "BLK-FNAME", Create_Ptr, is_normal  
-Len_Filename:   db      30
-Blk_filename:   db      "c:/tools/vforth/!Blocks-64.bin", 0
-                ds      32
+Len_Filename:   db      14   // length of the following string, excluding 0x00 
+Blk_filename:   db      "!Blocks-64.bin", 0
+Param_From_Basic:  
+                db      "lib/autoexec.f", 0
 
 Fence_Word:
 //  ______________________________________________________________________ 

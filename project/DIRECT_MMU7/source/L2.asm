@@ -252,8 +252,8 @@ Autoexec_Ptr:
                 dw      ZERO, BLK, STORE
                 dw      ZERO, SOURCE_ID, STORE
 
-// (****)       dw      LIT, 26, EMITC    // unlimited scroll
-// (****)       dw      ZERO, EMITC       
+                dw      LIT, 26, EMITC    // unlimited scroll
+                dw      ZERO, EMITC       
 
 Warm_Start:     dw      WARM
 Cold_Start:     dw      COLD      

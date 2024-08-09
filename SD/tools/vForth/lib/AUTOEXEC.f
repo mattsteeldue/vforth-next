@@ -30,7 +30,7 @@ DECIMAL
 00 26 EMIT2C                \ Non-stop scroll
 
 \ Display splash-screen
-\ SPLASH 
+SPLASH 
 
 CR 
 

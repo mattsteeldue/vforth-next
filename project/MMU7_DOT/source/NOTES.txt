@@ -3,8 +3,7 @@ Differences between MMU7 and DOT version
 
 L0.asm
 ------
-EMITC       MMU7 version pokes SCR_CT to have unlimited scroll
-CR          DOT version emit chr$(26)+chr$(0) to have unlimited scroll
+In general, rst $10 is called widh interrupt disabled 
 (?EMIT)     calling $03B6, DOT version must use RST $18 but don't use TSTACK.
 CURS        calling $1601, DOT version must use RST $18 and dare to use TSTACK.
 SELECT      idem c.s.
@@ -13,20 +12,21 @@ SELECT      idem c.s.
 L2.asm
 ------
 Startup from Basic in DOT version has to initialize more things:
-    0. store at $3FFC H'L' and return-address to Basic
+    0. save H'L' for later
     1. accepts one parameter from Basic and make it available to AUTOEXEC
     2. save hw-register status Speed, MMU2-MMU7, and current Layer 
     3. reserve twelve 8k pages from $1D to $28, (8 HEAP, 3 MAIN, 1 BACKUP)
     4. backup MMU2 content, to be restored when exiting to Basic
-    5. set layer 1,2
-    6. change current directory to C:/tools/vForth/ and setup MMU for Forth.
+    5. change current directory to C:/tools/vForth/ 
+    6. setup MMU pages for Forth
     7. get current handle and load to $E000 the rest of vocabulary
-    8. pre-set four main Z80 register 
+    8. set layer 1,2
+    9. pre-set four main Z80 register, enable interrupt and start Forth.     
         SP Calculator Stack Pointer 
         IX Inner Interpreter Pointer
         DE Return Stack Pointer     
         BC Instruction Pointer      
-    9. enable interrupt and start Forth.    
+       
 Closedown restores original status and frees RAM pages.
 
 WARM        DOT does not execute SPLASH
@@ -35,7 +35,8 @@ WARM        DOT does not execute SPLASH
 
 L3.asm
 ------
-AUTOEXEC    MMU7 executes 11 LOAD whiile 
+CLS         call $0DAF is performed via rst $18 
+AUTOEXEC    MMU7 executes 11 LOAD while 
             DOT  includes filename passed as parameter from Basic or 
             defaulted with "c:/tools/vforth/lib/autoexec.f"
 
@@ -47,13 +48,13 @@ BLK-INIT    in case of error, DOT version exit to Basic with error.
 BLK-FH      DOT versione, moved at end of source L3.asm
 
 
-next-opt1.asm
+next-opt0.asm
 -------------
-F_SEEK
 F_CLOSE
 F_SYNC
-F_GETPOS    DOT version has to DIsable interrupt 
+F_GETPOS    DOT version has to DIsable interrupt  
 
+F_SEEK
 F_READ
 F_WRITE
 F_OPEN

@@ -550,3 +550,7 @@ definitions ASK, SEND and THIS to easily interact with RPi0's Bash Shell
 New proposal for ZAP and ZAP" definitions to create standalone executable.
 Improved lib/mouse-tester.f and MOUSE documentation.
 Improved dot-command compatibility for LAYERS.
+
+\ build 20240809
+At last, fixed CLS for all graphics mode available now.
+Added annotations about back-ported version to Microdrive and DISCiPLE

@@ -273,17 +273,17 @@ Saved_MMU       db      2,3,4,5,6,7   // MMU2-MMU7
 Saved_Layer:
                 db      0           // graphics current mode
 
+Saved_Basic_Add dw      0
+
 //  ______________________________________________________________________ 
 WarmRoutine:
 ColdRoutine:
 //  ______________________________________________________________________ 
 // 0.
-                pop     de                      // retrieve return to basic address
                 ld      (SP_Basic), sp
                 ld      sp, $4000               // safe area
-                push    de                      // save return to basic address
                 exx
-                push    hl                      // save Basic's h'l' return address
+                ld      (Saved_Basic_Add), hl   //  save Basic's h'l' return address
                 exx
 
 //  ______________________________________________________________________ 
@@ -293,7 +293,7 @@ ColdRoutine:
                 or      l
                 jr      z, Skip_Parameter
 
-                ld      de, Param
+                ld      de, Param_From_Basic
                 ld      bc, 0
 Parameter_Loop:
                 ld      a, (hl)           
@@ -345,12 +345,12 @@ MMU_read_loop:
 
                 ld      (Saved_Layer), a     // store after MMUs
 //  ______________________________________________________________________ 
-// 2.3
+// 3.
 // Reserve from OS twelve pages from $1D upward.
                 call    Restore_Reserve_MMU     // multiple IDE_BANK  !
                 
 //  ______________________________________________________________________ 
-// 2.4
+// 4.
 // Backup MMU2 content to page $28
                 ld      hl, $6000
                 ld      de, $4000
@@ -358,13 +358,6 @@ MMU_read_loop:
 
 //  ______________________________________________________________________ 
 // 5.
-// set LAYER 1,2
-                exx
-                ld      bc, $0102
-                call    Set_Layer
-
-//  ______________________________________________________________________ 
-// 6.
 // Set current drive/directory
 
 //              ld      a, $00
@@ -376,7 +369,7 @@ MMU_read_loop:
                 call    Set_Cur_Dir
 
 //  ______________________________________________________________________ 
-// 6.1
+// 6.
 // Setup MMU for Forth system (set MMU3-MMU7 to $20-$1C)
                 call    Set_forth_MMU
 
@@ -396,17 +389,24 @@ MMU_read_loop:
 
 //  ______________________________________________________________________ 
 // 8.
+// set LAYER 1,2
+                exx
+                ld      bc, $0102
+                call    Set_Layer
+
+//  ______________________________________________________________________ 
+// 9.
 // pre-set the four main 16-bit registers
                 ld      sp, (S0_origin)         // Calculator Stack Pointer
                 ld      ix, Next_Ptr            // Inner Interpreter Pointer
                 ld      de, (R0_origin)         // Return Stack Pointer
                 ld      bc, Cold_Start          // Instruction Pointer
 
-                // never stop scrolling: print chr$26;chr$0
-                ld      a, 26
-                rst     $10
-                xor     a
-                rst     $10
+                // unlimited scrolling: print chr$26;chr$0
+                // ld      a, 26
+                // rst     $10
+                // xor     a
+                // rst     $10
 
                 ei
 
@@ -433,7 +433,8 @@ Set_Cur_Dir:
                 ld      a, 0
                 rst     8
                 db      $94     // carry flag set on success !
-
+                                // but we don't care for now, in case
+                                // later INIT-BLK will issue an error
                 ret
 
 //  ______________________________________________________________________ 
@@ -562,6 +563,9 @@ MMU_put_loop:
                 // restore layer ide mode
                 ld      a, (hl)
 
+                // decode what service $01D5 returned at startup
+                // bits 0..1=layer (0,1,2)
+                // bits 2..3=sub-mode for layer 1 (0=lores,1=ula,2=hires,3=hicol)
                 exx
                 ld      b, a
                 rrca
@@ -587,12 +591,13 @@ MMU_put_loop:
 //  ______________________________________________________________________ 
 
                 // restore basic pointers
-                pop     hl                      // restore h'l'
+                ld      hl, (Saved_Basic_Add)   // restore h'l'
                 exx
-                pop     hl      
                 ld      sp, (SP_Basic)          // restore Basic's SP
-                push    hl
+                
                 ei
+
+                // these two bytes are patched by BLK-INIT with RST8+$FF
 Exit_with_error:
                 xor     a
                 halt

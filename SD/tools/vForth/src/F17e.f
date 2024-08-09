@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.7 NextZXOS version ) CR
-.( build 20240616 ) CR
+.( build 20240809 ) CR
 .( Direct Threaded Heap Dictionary - NextZXOS version ) CR
 \ ______________________________________________________________________ 
 \
@@ -183,6 +183,8 @@ DECIMAL
      0  VALUE     twofind^
      0  VALUE     pcdm^
      0  VALUE     pdom^
+     0  VALUE     ndom^
+     0  VALUE     ncdm^
      
 
 .( Psh2 Psh1 Next )
@@ -4200,10 +4202,10 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
     -1 dpl !
     (number)                \ d a
     Begin
-        dup c@ >r 
-        [ pcdm^ ] Literal \ pcdm 
-        [ pdom^ ] Literal \ pdom 
-        [ decimal 4 ] Literal r> (map) ( a2 a1 n c1 -- c2 ) 
+        dup c@ >r           \ d a     R: c
+        [ pcdm^ ] Literal   \ d a a2
+        [ pdom^ ] Literal   \ d a a2 a1
+        [ decimal 4 ] Literal r> (map) 
         0 swap             \ d a 0 c
         [ CHAR . ] Literal = 
         If 
@@ -4748,6 +4750,8 @@ immediate
     noop
     0 blk !
     0 source-id !
+    
+    [ decimal    26  ] Literal emitc 0 emitc \ unlimited scroll
     
     \ [ here TO xi/o^ ]      
     
@@ -5523,17 +5527,19 @@ decimal
 
 \ create ndom hex    (   \ : ? / * | \ < > "   )
 \     3A C,  3F C,  2F C,  2A C,  7C C,  5C C,  3C C,  3E C,  22 C,
-create ndom hex    (   : ? / * | \ < > "   )
+\ create ndom hex    (   : ? / * | \ < > "   )
+HERE TO ndom^
     char : c,  char ? c,  char / c,  char * c, 
     char | c,  char \ c,  char < c,  char > c,  char " c,
-    00     c,
+\   00     c,
 
 \ create ncdm hex    (   \ _ ^ % & $ _ { } ~   )
 \     5F C,  5E C,  25 C,  26 C,  24 C,  5F C,  7B C,  7D C,  7E C,
-create ncdm hex    (   _ ^ % & $ _ { } ~   )
+\ create ncdm hex    (   _ ^ % & $ _ { } ~   )
+HERE TO ncdm^
     char _ c,  char ^ c,  char % c,  char & c,  
     char $ c,  char _ c,  char { c,  char } c,  char ~ c,
-    hex 00     c,
+\   hex 00     c,
 
 
 \ Replace illegal character in filename 
@@ -5541,7 +5547,9 @@ decimal
 : map-fn ( a -- )
     count bounds
     Do
-        ncdm ndom [ 10 ] Literal i c@ (map) i c!
+        [ ncdm^ ] Literal \ ncdm 
+        [ ndom^ ] Literal \ ndom 
+        [ decimal 9 ] Literal i c@ (map) i c!
     Loop
 ;
 
@@ -5878,9 +5886,33 @@ decimal
 .( CLS or PAGE )
 \ CODE cls 
 \ Chr$ 14 is NextZXOS version CLS (LAYER0 don't work this way, though)
-: cls 
-    [ hex 0E ] Literal emitc
-;    
+\ : cls 
+\    [ hex 0E ] Literal emitc
+\ ;    
+
+\ duplicates the top value of stack
+CODE cls ( n -- n n )
+         
+        PUSH    BC|
+        PUSH    DE|
+        PUSH    IX|
+        LDX     DE| $01D5  NN,  \ on success set carry-flag   
+        LDN     C'|     7   N,  \ necessary to call M_P3DOS
+        XORA     A|
+        RST     08|     $94  C,
+        ANDA     A|             \ zero in case of LAYER 0    
+        JRF    NZ'| HOLDPLACE
+            CALL    $0DAF  AA,
+        JR  HOLDPLACE  SWAP HERE DISP, \ ELSE,
+            LDN     A'|   $0E   N,
+            RST     10|
+        HERE DISP, \ THEN,            
+        POP     IX|
+        POP     DE|
+        POP     BC|
+        Next
+        C;
+
 
 
 \ 7e96
@@ -5890,7 +5922,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-06-16" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-08-09" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 
@@ -6316,8 +6348,8 @@ RENAME   load           LOAD
 RENAME   needs          NEEDS 
 RENAME   needs-f        NEEDS-F
 RENAME   map-fn         MAP-FN
-RENAME   ndom           NDOM
-RENAME   ncdm           NCDM
+\ RENAME   ndom           NDOM
+\ RENAME   ncdm           NCDM
 RENAME   needs/         NEEDS/
 RENAME   needs-lib      NEEDS-LIB
 RENAME   needs-inc      NEEDS-INC
