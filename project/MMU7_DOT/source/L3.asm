@@ -796,12 +796,12 @@ CLS_Layer_0:
 Autoexec_Self:                
                 dw      LIT, NOOP
                 dw      LIT, Autoexec_Ptr
+                dw      STORE
                 dw      LIT, Param_From_Basic
                 dw      PAD, ONE
                 dw      F_OPEN
                 dw      DROP    
                 dw      F_INCLUDE
-                dw      STORE
                 dw      EXIT
 
 

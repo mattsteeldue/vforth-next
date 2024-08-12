@@ -18,9 +18,8 @@ NEEDS S"
 : ABORT" ( f -- ccc )
     [COMPILE]  IF
     [COMPILE]     S" 
-     COMPILE      TYPE
-     COMPILE      -1
-     COMPILE      ERROR
+                  COMPILE TYPE
+                  COMPILE ABORT
     [COMPILE]  THEN
 ;
 IMMEDIATE

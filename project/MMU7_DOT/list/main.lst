@@ -22035,12 +22035,12 @@
  796+ 3D83              Autoexec_Self:
  797+ 3D83 3D 20 EE 26                  dw      LIT, NOOP
  798+ 3D87 3D 20 61 32                  dw      LIT, Autoexec_Ptr
- 799+ 3D8B 3D 20 43 3F                  dw      LIT, Param_From_Basic
- 800+ 3D8F 51 2D 2E 27                  dw      PAD, ONE
- 801+ 3D93 F6 23                        dw      F_OPEN
- 802+ 3D95 AC 25                        dw      DROP
- 803+ 3D97 3F 38                        dw      F_INCLUDE
- 804+ 3D99 3B 26                        dw      STORE
+ 799+ 3D8B 3B 26                        dw      STORE
+ 800+ 3D8D 3D 20 43 3F                  dw      LIT, Param_From_Basic
+ 801+ 3D91 51 2D 2E 27                  dw      PAD, ONE
+ 802+ 3D95 F6 23                        dw      F_OPEN
+ 803+ 3D97 AC 25                        dw      DROP
+ 804+ 3D99 3F 38                        dw      F_INCLUDE
  805+ 3D9B F1 24                        dw      EXIT
  806+ 3D9D
  807+ 3D9D

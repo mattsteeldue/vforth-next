@@ -553,4 +553,5 @@ Improved dot-command compatibility for LAYERS.
 
 \ build 20240809
 At last, fixed CLS for all graphics mode available now.
+Improved documentation for exception handler (CATCH THROW and ABORT")
 Added annotations about back-ported version to Microdrive and DISCiPLE

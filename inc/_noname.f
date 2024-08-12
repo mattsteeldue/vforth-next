@@ -16,7 +16,7 @@ NEEDS SKIP-HP-PAGE
 BASE @ \ save base status
 
 : :NONAME ( -- cccc ) ( -- xt )
-    ?EXEC
+\   ?EXEC
 
     \ detect if this is 1.7, 
     [ ' LIT <NAME 0< ] LITERAL
