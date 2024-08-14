@@ -9,13 +9,15 @@
 \ 256 colours total, 32 x 192 cells, each capable of displaying 2 colours
 \ 
 NEEDS IDE_MODE!
+NEEDS NARROWCHAR
+NEEDS PAUSEOFF
 
 BASE @
 
 : LAYER13
-    [ HEX ] 0103 IDE_MODE!
-    1E EMITC 4 EMITC
-    1A EMITC 0 EMITC
+    $0103 IDE_MODE!
+    NARROWCHAR
+    PAUSEOFF
 ;
 
 BASE !

@@ -9,13 +9,15 @@
 \ 256 colours total, only 2 colours on screen
 \
 NEEDS IDE_MODE!
+NEEDS WIDECHAR
+NEEDS PAUSEOFF
 
 BASE @
 
 : LAYER12
-    [ HEX ] 0102 IDE_MODE!
-    1E EMITC 8 EMITC
-    1A EMITC 0 EMITC
+    $0102 IDE_MODE!
+    WIDECHAR
+    PAUSEOFF
 ;
 
 BASE !

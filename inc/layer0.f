@@ -13,7 +13,7 @@ NEEDS IDE_MODE!
 BASE @
 
 : LAYER0
-    [ HEX ] 0000 IDE_MODE!
+    $0000 IDE_MODE!
     -1 $5C8C C!
 ;
 

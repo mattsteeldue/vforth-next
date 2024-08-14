@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      113
                 db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2024-08-09 ", $0D  // 37
+                db      " Heap Vocabulary - build 2024-08-15 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 db      7,0
@@ -161,13 +161,13 @@ Exec_Ptr:
                 New_Def C_PLOOP, "(+LOOP)", is_code, is_normal
 
 Loop_Ptr:
-                pop     hl                  // get increment
-                ex      de, hl
-                // *** ldhlrp
-                push    bc                  // Save IP
-                ld      b, d                // bc is increment
+                push    de
+                exx
+                pop     hl                  // HL is RP
+                pop     de                  // DE get increment
+                ld      b, d                // bc is increment also
                 ld      c, e
-                push    hl
+
                 ld      e, (hl)             // hl points to loop-index, add increment to it.
                 ld      a, e                // de keeps index before increment.
                 add     c
@@ -194,16 +194,24 @@ Loop_Ptr:
                     ccf                     // carry-flag tracks bonudary limit crossing.
 Loop_NegativeIncrement:
                 jr      c, Loop_Endif
-                    pop     de              // Discard RP+3, retrieve original RP
-                    pop     bc                  // Retrieve IP
-                    jr      Branch_Ptr      // perform branch consuming following cell
+                    exx                     // restore IP and RP
+Branch_Ptr:                
+                    ld      a, (bc)
+                    ld      l, a
+                    inc     bc
+                    ld      a, (bc)
+                    ld      h, a
+                    dec     bc
+                    add     hl, bc
+                    ld      c, l
+                    ld      b, h
+                    next
 Loop_Endif:
-                pop     bc                  // discard original RP
-                ex      de, hl
-                inc     hl                  // keep    RP+4 (exit from loop)
-                // *** ldrphl                      // ld rp,hl macro 30h +Origin
-                ex      de, hl
-                pop     bc                  // Retrieve IP
+                inc     de                  // keep    RP+4 (exit from loop)
+                push    de
+                exx
+                pop     de
+End_Loop_Ptr:
                 inc     bc                  // skip branch-style offset
                 inc     bc
                 next
@@ -224,17 +232,7 @@ Loop_Endif:
 // compiled by ELSE, AGAIN and some other immediate words
 
                 New_Def BRANCH, "BRANCH", is_code, is_normal
-Branch_Ptr:                
-                ld      a, (bc)    
-                ld      l, a
-                inc     bc
-                ld      a, (bc)
-                ld      h, a
-                dec     bc
-                add     hl, bc
-                ld      c, l
-                ld      b, h
-                next
+                jr Branch_Ptr
 
 
 //  ______________________________________________________________________ 
@@ -249,9 +247,10 @@ ZBranch_Ptr:
                 ld      a, l
                 or      h
                 jr      z, Branch_Ptr      
-                inc     bc                  // if not branch, skip offset cell.
-                inc     bc
-                next
+                jr      End_Loop_Ptr
+//              inc     bc                  // skip branch-style offseet
+//              inc     bc
+//              next
 
 //  ______________________________________________________________________ 
 //
@@ -1437,10 +1436,10 @@ Zero_Equal:
                 pop     hl
                 ld      a, l
                 or      h
-                ld      hl, FALSE_FLAG
                 jr      nz, ZEqual_Skip
-                    dec     hl
+                    ccf
 ZEqual_Skip:    
+                sbc     hl, hl
                 psh1
 
 //  ______________________________________________________________________ 
@@ -1469,12 +1468,10 @@ ZEqual_Skip:
                 pop     hl
                 ld      a, l
                 or      h
+                jr      z, ZGreater_Skip
                 add     hl, hl
-                ld      hl, FALSE_FLAG
-                jr      c, ZGreater_Skip
-                    and     a
-                    jr      z, ZGreater_Skip
-                        dec     hl
+                ccf
+                sbc     hl, hl
 ZGreater_Skip:  
                 psh1
 
@@ -1587,6 +1584,7 @@ CellMinus:
                 exx
                 pop     de
                 xor     a
+Negate_Ptr:                
                 ld      h, a
                 ld      l, a
                 sbc     hl, de
@@ -1600,20 +1598,22 @@ CellMinus:
 // change the sign of a double number
                 New_Def DMINUS, "DNEGATE", is_code, is_normal
                 exx
-                pop     bc                  // d1.H
-                pop     de                  // d1.L
+                pop     de                  // d1.H
+                pop     bc                  // d1.L
                 xor     a
                 ld      h, a                
                 ld      l, a
-                sbc     hl, de              // subtact from zero
+                sbc     hl, bc              // subtact from zero
                 push    hl                  // > d2-L
-                ld      h, a
-                ld      l, a
-                sbc     hl, bc              // subtract from zero with carry
+
+                jr      Negate_Ptr
+//              ld      h, a
+//              ld      l, a
+//              sbc     hl, de              // subtract from zero with carry
                                             // > d2-H
-                push    hl                  
-                exx
-                next
+//              push    hl                  
+//              exx
+//              next
 
 //  ______________________________________________________________________ 
 //

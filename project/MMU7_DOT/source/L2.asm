@@ -268,7 +268,7 @@ Filename_Ram7:  db      "C:/dot/vforth.bin",0
 
 Saved_Speed:
                 db      0
-Saved_MMU       db      2,3,4,5,6,7   // MMU2-MMU7
+Saved_MMU       db      0,0,0, 0,0,0   // MMU2-MMU7
 
 Saved_Layer:
                 db      0           // graphics current mode
@@ -321,15 +321,15 @@ Skip_Parameter:
 // 2.1
 // ask / read speed and MMU status
                 ld      a ,$07                  // read current speed 
-                call    Get_MMU_status
+                call    Get_MMU_status          // Saved_Speed becomes Saved_MMU
                 ld      d, 3                    // set top speed
                 or      d                       // reuse data just read
                 nextreg 07, a
 
-                ld      e, 6                    // loop limit
+                ld      e, 6                    // loop limit for six 8k-pages
 MMU_read_loop:                
                 ld      a, $58                  // MMU2-MMU7 ($52-$57)
-                sub     e
+                sub     e                       // calculated as difference from $58 ($58-6 ... $58-1)
                 call    Get_MMU_status
                 dec     e
                 jr      nz, MMU_read_loop
@@ -346,7 +346,7 @@ MMU_read_loop:
                 ld      (Saved_Layer), a     // store after MMUs
 //  ______________________________________________________________________ 
 // 3.
-// Reserve from OS twelve pages from $1D upward.
+// Reserve from OS twelve pages from $20 upward.
                 call    Restore_Reserve_MMU     // multiple IDE_BANK  !
                 
 //  ______________________________________________________________________ 
@@ -370,7 +370,7 @@ MMU_read_loop:
 
 //  ______________________________________________________________________ 
 // 6.
-// Setup MMU for Forth system (set MMU3-MMU7 to $20-$1C)
+// Setup MMU for Forth system (set MMU4-MMU6 to $28-$2A and MMU7 to $20)
                 call    Set_forth_MMU
 
 //  ______________________________________________________________________ 
@@ -379,7 +379,7 @@ MMU_read_loop:
                 rst     8              
                 DEFB    $8d             ; M_GETHANDLE  
                 push    af
-                ld      hl, $E000
+                ld      hl, $E000       ; that now is attached to 8k-page $20
                 ld      bc, $1FFF
                 rst     8              
                 DEFB    $9D             ; f_read
@@ -438,32 +438,35 @@ Set_Cur_Dir:
                 ret
 
 //  ______________________________________________________________________ 
+// Routine 
+// set MMU7 to $20  
+Set_forth_MMU:
+        ////    nextreg $53, $28         ;   MMU3  = $6000 no !!
+                nextreg $54, $28         ;   MMU4  = $8000
+                nextreg $55, $29         ;   MMU5  = $A000
+                nextreg $56, $2A         ;   MMU6  = $C000
+                nextreg $57, $20         ;   MMU7  = $E000
+                ret
+
+//  ______________________________________________________________________ 
 // Routine, safe backup
 // INput: hl:$6000, de:$E000 for backup or viceversa for restore.
 Backup_Restore_MMU:
-                nextreg $52, $28        ;   MMU2  = $6000
-                ld      bc, $2000
+                nextreg $52, $2B        ;   MMU2  = $4000 never modified
+                ld      bc, $2000       ;   8k
                 ldir
-                ld      a, (Saved_MMU)
+                ld      a, (Saved_MMU)  
                 nextreg $52, a
                 ret
 
 //  ______________________________________________________________________ 
-// Routine 
-// set MMU7 to $20 and laod ram7.bin
-Set_forth_MMU:
-        ////    nextreg $53, $28         ;   MMU3  = 24576
-                nextreg $54, $1D         ;   MMU4  = $8000
-                nextreg $55, $1E         ;   MMU5
-                nextreg $56, $1F         ;   MMU6
-                nextreg $57, $20         ;   MMU7
-                ret
-
-//  ______________________________________________________________________ 
 // Routine:
-// reserve MMU pages
+// reserve MMU pages 
+// $20 - $27 Heap Space (8 pages)
+// $28 - $2A Main memory
+// $2B : backup of MMU3
 Restore_Reserve_MMU:
-                ld      l, $1D      // first page
+                ld      l, $20      // first page 
                 ld      h, 8+3+1    // 8 HEAP, 3 MAIN, 1 BACKUP
 Reserve_MMU_Loop:                
                 ld      a, l            // pass page through a
@@ -578,7 +581,7 @@ MMU_put_loop:
                 call    Set_Layer
 
 //  ______________________________________________________________________ 
-// 
+//              Restore page from backup
                 ld      hl, $4000
                 ld      de, $6000
                 call    Backup_Restore_MMU

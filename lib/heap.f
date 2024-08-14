@@ -30,16 +30,16 @@ BASE @
 \  n4 =  a register parameter value
 \  addr = routine address in ROM 3
 
-\   hl de bc  a  addr           f     a  bc  de hl
+\ hl de bc  a  addr           f     a  bc  de hl
 
-HEX  2 20  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 21  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 22  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 23  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 24  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 25  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 26  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
-HEX  2 27  0  0  01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $20  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $21  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $22  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $23  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $24  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $25  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $26  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
+  2 $27  0  0 $01BD  M_P3DOS  DROP  2DROP  2DROP 
 
 
 \

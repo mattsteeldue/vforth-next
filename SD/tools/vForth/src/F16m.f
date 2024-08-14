@@ -1,7 +1,7 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.6 MDR/MGT version ) CR
-.( build 20240609 ) CR
+.( build 20240815 ) CR
 .( ZX Microdrive version + MGT DISCiPLE version ) CR
 \ ______________________________________________________________________ 
 \
@@ -146,8 +146,9 @@ DECIMAL
      0  VALUE     next^         \ ptr to NEXT in inner interpreter
      0  VALUE     exec^         \ ptr to exec xt
      0  VALUE     branch^       \ PFA of BRANCH
-     0  VALUE     branch^^      \ ptr to be patched with PFA of BRANCH
+\    0  VALUE     branch^^      \ ptr to be patched with PFA of BRANCH
      0  VALUE     loop^         \ entry-point for compiled (+LOOP)
+     0  VALUE     endloop^      \ entry-point to make skip IP a cell
      0  VALUE     do^           \ entry-point for compiled (DO)
      0  VALUE     emitc^        \ entry-point for EMITC
      0  VALUE     upper^        \ entry-point for UPPER
@@ -368,13 +369,13 @@ CODE (+loop) ( n -- )
 
     HERE TO loop^
     
+        PUSH    DE|         
+        EXX
+        POP     DE|
         POP     HL|         \ HL is increment   DE is RP
-        EXDEHL              \ DE is increment   HL is RP
-
-        PUSH    BC|         \ save IP
         LD      B'|    D|
-        LD      C'|    E|   \ BC is increment
-        PUSH    HL|         \ save original RP
+        LD      C'|    E|   \ BC is increment, too
+
         LD      E'| (HL)|   \ DE keeps index before increment
         LD      A'|    E|   \ index is incremented in memory.
         ADDA     C|
@@ -402,17 +403,29 @@ CODE (+loop) ( n -- )
         HERE DISP, \ THEN,
         JRF    CY'|    HOLDPLACE
             \ stay in loop, increment index
-            POP     DE|         \ restore RP
-            POP     BC|         \ restore IP
-            JR      HERE  TO  branch^^    26  D,
-          \  JP         branch^  AA,
-        HERE DISP, \ THEN,
-        POP     BC|         \ discard original RP
-        EXDEHL              \ HL is RP
-        INCX    HL|
 
-        EXDEHL              \ DE is RP
-        POP     BC|         \ restore IP
+            EXX       |         \ restore IP and RP
+            HERE TO branch^
+            
+                LDA(X)  BC|
+                LD      L'|    A|
+                INCX    BC|
+                LDA(X)  BC|
+                LD      H'|    A|
+                DECX    BC|
+                ADDHL   BC|
+                LD      C'|    L|
+                LD      B'|    H|
+                Next
+            
+        HERE DISP, \ THEN,
+
+        INCX    DE|
+        PUSH    DE|
+        EXX
+        POP     DE|         \ restore RP
+
+    HERE TO endloop^
         INCX    BC|
         INCX    BC|
         Next
@@ -440,26 +453,15 @@ CODE (loop)    ( -- )
 \ compiled by ELSE, AGAIN and some other immediate words
 CODE branch ( -- )
 \ 615E
-         
-    HERE TO branch^
-    
-        LDA(X)  BC|
-        LD      L'|    A|
-        INCX    BC|
-        LDA(X)  BC|
-        LD      H'|    A|
-        DECX    BC|
-        ADDHL   BC|
-        LD      C'|    L|
-        LD      B'|    H|
-        Next
+
+        JR      loop^  HERE 1 + - D,
         C;
         
       \ ' branch TO branch~
         ' branch  ' ELSE  >BODY 4 CELLS + !
         ' branch  ' AGAIN >BODY 4 CELLS + !
 
-        branch^  branch^^  1+ -  branch^^ C!  \ fixed previous "30" 
+      \ branch^  branch^^  1+ -  branch^^ C!  \ fixed previous "30" 
 
 
 \ 616Ah
@@ -473,9 +475,7 @@ CODE 0branch ( f -- )
         ORA      H|
       \ JPF      Z|    branch^  AA,
         JRF     Z'|    branch^  HERE 1 + - D,
-        INCX    BC|
-        INCX    BC|
-        Next
+        JR            endloop^  HERE 1 + - D,
         C;
         
       \ ' 0branch TO 0branch~
@@ -547,10 +547,9 @@ CODE (?do)      ( lim ind -- )
         LD   (HL)'|    D|
         EXX        
         \ skips 0branch offset 
-        INCX    BC|
-        INCX    BC|
-        Next
+        JR            endloop^  HERE 1 + - D,
         C;
+
 
       \ ' (?do) TO (?do)~
         ' (?do)  ' ?DO >BODY 1 CELLS + !
@@ -1707,10 +1706,11 @@ CODE 0= ( n -- f )
         POP     HL|
         LD      A'|    L|
         ORA      H|
-        LDX     HL|    0 NN,
+
         JRF    NZ'|    HOLDPLACE
-            DECX      HL|           \ true
+            CCF
         HERE DISP, \ THEN,
+        SBCHL   HL|
         PUSH    HL|
         Next
         C;
@@ -1750,13 +1750,10 @@ CODE 0> ( n -- f )
         POP     HL|
         LD      A'|    L|
         ORA      H|
-        ADDHL   HL|
-        LDX     HL|    0 NN,
-        JRF    CY'|    HOLDPLACE    
-            ANDA     A|
-            JRF     Z'|    HOLDPLACE
-                DECX      HL|           \ true
-            HERE DISP, 
+        JRF     Z'|    HOLDPLACE
+            ADDHL   HL|
+            CCF        
+            SBCHL   HL|
         HERE DISP, \ THEN, THEN,
         PUSH    HL|
         Next
@@ -1886,6 +1883,7 @@ CODE negate ( n1 -- n2 )
         EXX
         POP     DE|
         XORA     A|
+    HERE 
         LD      H'|    A|
         LD      L'|    A|
         SBCHL   DE|
@@ -1903,20 +1901,20 @@ CODE negate ( n1 -- n2 )
 CODE dnegate ( d1 -- d2 )
 
         EXX
-        POP     BC|            \ hd1
-        POP     DE|            \ ld1
+        POP     DE|            \ hd1
+        POP     BC|            \ ld1
         XORA     A|
-        LD      H'|    A|
-        LD      L'|    A|
-        SBCHL   DE|
-        PUSH    HL|
         LD      H'|    A|
         LD      L'|    A|
         SBCHL   BC|
         PUSH    HL|
-        EXX
-        Next
-        
+        JR      BACK,
+\       LD      H'|    A|
+\       LD      L'|    A|
+\       SBCHL   DE|
+\       PUSH    HL|
+\       EXX
+\       Next
         C;
 
 
@@ -4655,6 +4653,7 @@ CODE rsad ( a n -- )
         PUSH    DE|
         EXDEHL
         RST     08|    hex 44 c,    \ RSAD 
+HERE        
         POP     DE|
         POP     BC|
         POP     IX|    \ pop ix
@@ -4674,10 +4673,11 @@ CODE wsad ( a n -- )
         PUSH    DE|
         EXDEHL
         RST     08|    hex 45 c,    \ WSAD 
-        POP     DE|
-        POP     BC|
-        POP     IX|    \ pop ix
-        Next
+        JR      BACK,
+\       POP     DE|
+\       POP     BC|
+\       POP     IX|    \ pop ix
+\       Next
         C;
 
 
@@ -5130,7 +5130,7 @@ CODE cls
 \   [ decimal 2 ] Literal far count type
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.6 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20240420" -1 allot ]
+    [ decimal 13 here ," build 20240815" -1 allot ]
     [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
