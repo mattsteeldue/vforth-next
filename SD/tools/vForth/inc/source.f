@@ -5,14 +5,15 @@
 
 \ a is the address of, and u is the number of characters in, the input buffer.
 
+: SOURCE NOOP ;
+
 VARIABLE SOURCE-P   \ heap pointer address of string
 VARIABLE SOURCE-L   \ length of string
 
 0 SOURCE-P !
 0 SOURCE-L !
 
-
-: SOURCE ( -- a u )
+: (SOURCE) ( -- a u )
 
     SOURCE-ID @ 
 
@@ -37,9 +38,10 @@ VARIABLE SOURCE-L   \ length of string
                 (LINE)                               \ a n
             ELSE
                 \ BLK is zero during keyboard input
-                TIB @ C/L
+                TIB @ 0 ENCLOSE DROP NIP
             THEN
         THEN
     THEN
 ;
 
+' (SOURCE) ' SOURCE >BODY !

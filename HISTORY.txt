@@ -561,3 +561,10 @@ Added annotations about back-ported version to Microdrive and DISCiPLE
 \ build 20240815
 Optimization of a few low-level definitions and reduced the core-code some 20 bytes.
 Re-check why LAYERs don't work well in dot-version.
+
+
+\ build 20240922 Version 1.8. 
+From this version DOES> is standard and works as direct-vectored so that <BUILDS 
+is deprecated and CREATE should be used instead. 
+This way new definitions built using DOES> will run slightly faster because
+the indirect pointer decoding is substituted by a direct CALL op-code.

@@ -787,7 +787,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
         POP     DE|        \ dictionary
         HERE
         
-            \ if dictionary address < 4000h then it's a heap offset
+            \ if dictionary address < 6000h then it's a heap offset
             LD      A'|    D|
             SUBN    HEX 060    N,   \ *# /!\ #*
             JRF     NC'| HOLDPLACE
@@ -3324,7 +3324,7 @@ CODE >far ( ha -- a n )
         
 
 .( <FAR )
-\ given an address E000-FFFF and a page number n (64-71 or 40h-47h)
+\ given an address E000-FFFF and a page number n (32-39 or 20h-27h)
 \ reverse of >FAR: encodes a FAR address compressing
 \ to bits 765 of H, lower bits of HL address offset from E000h
 CODE <far ( a n -- ha )

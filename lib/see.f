@@ -52,6 +52,22 @@ NEEDS (H")
 \ a forward definition is reported in inverse-video
 : ?FWD ( pfa -- pfa ) DUP DUP @ U< IF INVV THEN ;
 
+
+\ Used to skip 4 bytes inside the definitions that used DOES>
+: DEB-DELTA ( a -- a )
+    \ verify the first word of DOES> to check if this is v.1.8
+    [ ' DOES> >BODY @ ' COMPILE = ] LITERAL
+    IF 
+        \ verify if pfa refers to (DOES>)
+        DUP 
+        [ ' DOES> >BODY CELL+ @ ] LITERAL
+        =
+        IF
+            SWAP 3 + SWAP
+        THEN
+    THEN
+;
+
 \ de-load a single word
 : (DELOAD) ( pfa -- pfa )      
     DUP @
@@ -67,6 +83,7 @@ NEEDS (H")
         ['] (H")        OF  DEB.S  ENDOF  \ relies on S"
         ['] COMPILE     OF  DEB-W CELL+ INVV DEB-W ENDOF
             DUP .WORD
+            DEB-DELTA
     ENDCASE
 ; 
 
