@@ -3666,20 +3666,19 @@ HEX 1F80 constant page-watermark
     immediate
 
 
-\ 6BCDh
-.( <BUILDS )
-: <builds    ( -- ) 
-    0 
-    constant
-    ;
-
-
 \ .( RECURSE )
 \ : recurse
 \     ?comp
 \     latest pfa cfa ,
 \     ; 
 \     immediate
+
+
+\ 6BCDh
+.( <BUILDS )
+: <builds    ( -- ) 
+    create
+    ;
 
 
 \ 6BDFh
@@ -3694,7 +3693,7 @@ HEX 1F80 constant page-watermark
 .( DOES> )
 : does>    ( -- ) 
     compile _does>_
-    $CD00 ,                  \ this compiles a CALL opcode
+    $CD C,                   \ this compiles a CALL opcode
     [ ' : 1+ @ ] Literal ,   \ this compiles ENTER as address for call 
 ; immediate
 
