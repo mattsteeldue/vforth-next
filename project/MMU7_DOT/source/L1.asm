@@ -451,7 +451,7 @@ Traverse_Begin:                                 // begin
 //  ______________________________________________________________________ 
 // 
 // <far         a n  -- ha
-// given an address E000-FFFF and a page number n (64-71 or 40h-47h)
+// given an address E000-FFFF and a page number n (32-39 or 20h-27h)
 // reverse of >FAR: encodes a FAR address compressing
 // to bits 765 of H, lower bits of HL address offset from E000h
                 New_Def FROM_FAR, "<FAR", is_code, is_normal
@@ -646,7 +646,7 @@ PFA_Skip:                                    // endif
 //  ______________________________________________________________________ 
 //
 // ?error       f n --
-// rase error n if flag f it true
+// raise error n if flag f it true
                 Colon_Def QERROR, "?ERROR", is_normal
                 dw      SWAP                    // swap
                                                 // if
@@ -822,14 +822,6 @@ QError_Endif:                                   // endif
 
 //  ______________________________________________________________________ 
 //
-// <builds      --
-                Colon_Def CBUILDS, "<BUILDS", is_normal
-                dw      ZERO                    // 0
-                dw      CONSTANT                // constant
-                dw      EXIT                    // ;
-
-//  ______________________________________________________________________ 
-//
 // recurse      --
 //              Colon_Def RECURSE, "RECURSE", is_immediate
 //              dw      QCOMP                   // ?comp
@@ -840,33 +832,30 @@ QError_Endif:                                   // endif
 
 //  ______________________________________________________________________ 
 //
-// does>     --
-                Colon_Def DOES_TO, "DOES>", is_normal   
+// <builds      --
+                Colon_Def CBUILDS, "<BUILDS", is_normal
+                dw      CREATE                  // CREATE
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// _does>_     --
+                Colon_Def C_DOES, "_DOES>_", is_normal   
                 dw      R_TO                    // r>
                 dw      LATEST                  // latest
                 dw      PFA                     // pfa 
-                dw      STORE                   // !        \ old use of <BUILDS
-//              dw      COMMA                   // ,        \ new use of CREATE
-                dw      C_SEMICOLON_CODE        // ;code
-Does_Ptr:
-                // via call coded in CFA
-                ex      de, hl //** 
-                // *** ldhlrp
-                dec     hl                  // push on Return-Stack current Instruction-Pointer
-                ld      (hl), b
-                dec     hl
-                ld      (hl), c
-                // *** ldrphl
-                ex      de, hl //** 
-                pop     hl                  // CFA has a call to this, so PFA -> IP
+                dw      CFA, ONE_PLUS           // cfa 1+
+                dw      STORE                   // !
+                dw      EXIT                    // ;
 
-                ld      c, (hl)
-                inc     hl                  
-                ld      b, (hl)
-                inc     hl                  
-
-                psh1
-                // SMUDGE !
+//  ______________________________________________________________________ 
+//
+// does>     --
+                Colon_Def DOES_TO, "DOES>", is_immediate 
+                dw      COMPILE,  C_DOES
+                dw      LIT, $CD, CCOMMA
+                dw      LIT, Enter_Ptr, COMMA
+                dw      EXIT
 
 //  ______________________________________________________________________ 
 //
@@ -1439,7 +1428,7 @@ Number_Endif_2:                                 // endif
                     dw      LFind_Endif2 - $
                     dw          R_OP                //      r@
                     dw          LIT, FORTH, TO_BODY
-                    dw          CELL_PLUS, CELL_PLUS
+                    dw          CELL_PLUS //, CELL_PLUS
                     dw          FETCH
                     dw          C_FIND              //      (find)
 LFind_Endif2:                                    // endif

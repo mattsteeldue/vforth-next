@@ -3,7 +3,7 @@
 //  main.asm
 //  ______________________________________________________________________ 
 // 
-//  v-Forth 1.7 NextZXOS version 
+//  v-Forth 1.8 NextZXOS version 
 //  DOT-command version
 //  build 20240809
 // 

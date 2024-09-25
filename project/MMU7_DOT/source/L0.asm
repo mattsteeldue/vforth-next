@@ -13,7 +13,7 @@ Warm_origin:
                 jp      WarmRoutine
 
 // +008
-SP_Basic:       dw      $D0E6               // These are bits with some "standard" meaning... 0101
+SP_Basic:       dw      $0101               // These are bits with some "standard" meaning... 0101
 
 // +00A                
                 dw      $0E00               
@@ -63,8 +63,8 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 // length include a leading space in each line
                 db      107 
-                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2024-08-15 ", $0D  // 33
+                db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
+                db      " Dot-command - build 2024-09-22 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2024 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -453,6 +453,9 @@ Case_Upper:
 
 //  ______________________________________________________________________ 
 
+// This routine must be called with alternate registers active
+// input: None
+// Output: A = 8k-page number currently fitted at MMU7
 MMU7_read:
                 ld      a, 87
 NEXTREG_read:                
@@ -465,6 +468,8 @@ NEXTREG_read:
 //  ______________________________________________________________________ 
 
 // given an HP-pointer in input, turn it into page + offset
+// Input: HL = hp-pointer
+// Output: A = page,  HL = offset
 TO_FAR_rout:
                 ld      a, h
                 ex      af, af
@@ -1938,6 +1943,7 @@ Negate_Ptr:
                 exx
                 pop     hl                  // address
                 pop     de                  // < n
+Store_end:                
                 ld      (hl), e             // low-byte
                 inc     hl
                 ld      (hl), d             // high-byte
@@ -2011,11 +2017,12 @@ Negate_Ptr:
                 inc     hl
                 ld      (hl), b
                 inc     hl
-                ld      (hl), e
-                inc     hl
-                ld      (hl), d
-                exx
-                next
+                jr      Store_end
+            //  ld      (hl), e
+            //  inc     hl
+            //  ld      (hl), d
+            //  exx
+            //  next
 
 //  ______________________________________________________________________ 
 //

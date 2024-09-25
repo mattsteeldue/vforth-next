@@ -191,7 +191,7 @@ Variable_Def    macro   label, namec, initial_value
 
 //  ______________________________________________________________________
 //
-// Create a "user"
+// Create a "user" variable
 // It uses a single byte as offset to calculate the address of the variable
 User_Def        macro   label, namec, offset_value
                 New_Def  label, namec, User_Ptr, is_normal

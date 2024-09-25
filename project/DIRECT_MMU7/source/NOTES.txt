@@ -1,0 +1,35 @@
+Differences between v1.7 and 1.8
+----------------------------------------
+
+L0.asm
+------
+
+2!      final part is equal to ! so save a few bytes (Store_end:)
+
+
+L1.asm
+------
+
+2FIND   needs one  CELL+  less because of how new FORTH VOCABULARY is built
+
+DOES>   now compiles a "_DOES>_" followed by a "call" op-code to Enter i.e. same as ":"
+        _DOES>_  replaces what DOES> did in previous version.
+
+<BUILDS now is the same as CREATE, but kept for backward compatibility.
+
+
+L2.asm
+------
+
+FORTH   doesn't have the indirect pointer to the DOES> part of VOCABULARY
+        For the same reason 2FIND has one  CELL+  less.
+
+VOCABULARY begins with CREATE instead of <BUILDS and ends with _DOES>_ instead of DOES>
+        _DOES>_ is followed by a "call" op-code to Enter i.e. same as ":"
+
+
+L3.asm
+------
+
+MARKER  begins with CREATE instead of <BUILDS and ends with _DOES>_ instead of DOES>
+        _DOES>_ is followed by a "call" op-code to Enter i.e. same as ":"

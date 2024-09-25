@@ -513,13 +513,19 @@ Needs_11:
 //
 // marker       -- cccc
                 Colon_Def MARKER, "MARKER", is_immediate
-                dw      CBUILDS
+                dw      CREATE
+
                 dw      VOC_LINK, FETCH, COMMA
                 dw      CURRENT, FETCH, COMMA
                 dw      CONTEXT, FETCH, COMMA
                 dw      CURRENT, FETCH, FETCH,  COMMA
                 dw      LATEST, PFA, LFA, FETCH, COMMA
-                dw      DOES_TO
+                
+                dw      C_DOES
+
+          //    nop
+                call    Enter_Ptr                
+                
                 dw      DUP, FETCH, VOC_LINK, STORE, CELL_PLUS
                 dw      DUP, FETCH, CURRENT, STORE, CELL_PLUS
                 dw      DUP, FETCH, CONTEXT, STORE, CELL_PLUS
@@ -764,8 +770,8 @@ CLS_Layer_0:
 //              dw      CLS
 //              dw      C_DOT_QUOTE
 //              db      87
-//              db      "v-Forth 1.7 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20240616", 13  // 33
+//              db      "v-Forth 1.8 NextZXOS version", 13    // 29
+//              db      "Heap Vocabulary - build 20240922", 13  // 33
 //              db      "1990-2024 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 

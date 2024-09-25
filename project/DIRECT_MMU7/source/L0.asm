@@ -62,12 +62,11 @@ IX_Echo:        dw      $0000               // Echo IX after NextOS call
                 Start_Heap 
 Splash_Ptr      defl    $ - $E000           // save current HP                
                 // length include a leading space in each line
-                db      113
-                db      " v-Forth 1.7 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2024-08-15 ", $0D  // 37
+                db      111
+                db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
+                db      " Heap Vocabulary - build 2024-09-22 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2024 Matteo Vitturi ", $0D            // 27
-                db      7,0
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -454,6 +453,9 @@ Case_Upper:
 
 //  ______________________________________________________________________ 
 
+// This routine must be called with alternate registers active
+// input: None
+// Output: A = 8k-page number currently fitted at MMU7
 MMU7_read:
                 ld      a, 87
                 ld      bc, $243B 
@@ -465,6 +467,8 @@ MMU7_read:
 //  ______________________________________________________________________ 
 
 // given an HP-pointer in input, turn it into page + offset
+// Input: HL = hp-pointer
+// Output: A = page,  HL = offset
 TO_FAR_rout:
                 ld      a, h
                 ex      af, af
@@ -545,17 +549,10 @@ Find_ThisWord:      // begin loop
                     ld      hl, 3               // 3 bytes for CFA offset to skip LFA
                     add     hl, de
 
-                //  ld      a, h
-                //  and     $E0
-                //  xor     h
-                //  jr      nz, Non_MMU7
-                    //  call    MMU7_read
-                    //  dec     a
-                    //  jr      z, Non_MMU7
-                            ld      e, (hl)
-                            inc     hl
-                            ld      d, (hl)
-                            ex      de, hl
+                    ld      e, (hl)
+                    inc     hl
+                    ld      d, (hl)
+                    ex      de, hl
 //Non_MMU7:
                     ex      (sp), hl            // CFA on stack and drop addr
                     ex      af, af'             // retrieve NFA byte (!)
@@ -1272,11 +1269,10 @@ Boolean_exit:
                 ld      l, a
                 ld      a, d
                 or      h
-                jr      Boolean_exit
-          //    ld      h, a
-          //    push    hl
-          //    exx
-          //    next
+                ld      h, a
+                push    hl
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -1291,11 +1287,10 @@ Boolean_exit:
                 ld      l, a
                 ld      a, d
                 xor     h
-                jr      Boolean_exit
-          //    ld      h, a
-          //    push    hl
-          //    exx
-          //    next
+                ld      h, a
+                push    hl
+                exx
+                next
 
 //  ______________________________________________________________________ 
 //
@@ -1810,13 +1805,13 @@ Negate_Ptr:
 // swaps the two doubles on top of stack
                 New_Def TWO_SWAP, "2SWAP", is_code, is_normal
                 exx
-                pop     af                  //   d2-H  
+                pop     af                  // < d2-H  
                 pop     hl                  // < d2-L
                 pop     de                  // < d1-H
                 ex      (sp), hl            // < d1-L > d2-L    
-                push    af                  // > d2-H
-                push    hl                  // > d1-L
-                push    de
+                push    af                  //        > d2-H
+                push    hl                  //        > d1-L
+                push    de                  //        > d1-H
                 exx
                 next
 
@@ -1829,9 +1824,9 @@ Negate_Ptr:
                 pop     hl                  // < d-H    
                 pop     af                  // < d-L
                 push    af                  // < d-L
-                push    hl                  // > d-H
-                push    af                  // > d-L
-                push    hl                  // > d-H
+                push    hl                  //       > d-H
+                push    af                  //       > d-L
+                push    hl                  //       > d-H
                 next
 
 //  ______________________________________________________________________ 
@@ -1935,6 +1930,7 @@ Negate_Ptr:
                 exx
                 pop     hl                  // address
                 pop     de                  // < n
+Store_end:                
                 ld      (hl), e             // low-byte
                 inc     hl
                 ld      (hl), d             // high-byte
@@ -2008,11 +2004,12 @@ Negate_Ptr:
                 inc     hl
                 ld      (hl), b
                 inc     hl
-                ld      (hl), e
-                inc     hl
-                ld      (hl), d
-                exx
-                next
+                jr      Store_end
+            //  ld      (hl), e
+            //  inc     hl
+            //  ld      (hl), d
+            //  exx
+            //  next
 
 //  ______________________________________________________________________ 
 //
@@ -2099,4 +2096,5 @@ Two_Mul_Ptr:
 
 
 //  ______________________________________________________________________ 
+
 

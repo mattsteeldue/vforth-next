@@ -83,7 +83,7 @@ Interpret_Endif_5:                                      //      endif
 // so new definitions can be inserted in that vocabulary.
                 Colon_Def VOCABULARY, "VOCABULARY", is_normal
                 
-                dw      CBUILDS
+                dw      CREATE
 
                 // dummy word + link part
                 dw      LIT, $A081, COMMA       // $81A0 ,
@@ -98,8 +98,11 @@ Interpret_Endif_5:                                      //      endif
                 dw      COMMA                   // ,
                 dw      VOC_LINK, STORE         // voc-link !
                 // DOES part
-                dw      DOES_TO                 // does>
+                dw      C_DOES                  // _does>_
 Vocabulary_Does:
+          //    nop
+                call    Enter_Ptr
+                
                 dw      CELL_PLUS               // cell+
                 dw      CONTEXT, STORE          // context !
                 dw      EXIT                    // ;
@@ -113,8 +116,7 @@ Vocabulary_Does:
 // part of FORTH. It is immediate, so it will executed during the creation
 // of a colon definition to be able to select the vocabulary.
 
-                New_Def FORTH, "FORTH", Does_Ptr, is_immediate
-                dw      Vocabulary_Does
+                New_Def FORTH, "FORTH", Vocabulary_Does, is_immediate
                 
                 db      $81, $A0
 Forth_Latest_Ptr:                
@@ -221,7 +223,7 @@ Autoexec_Ptr:
 // warm         --
                 Colon_Def WARM, "WARM", is_normal
                 dw      BLK_INIT                // blk-init
-                dw      SPLASH                  // splash
+            //  dw      SPLASH                  // splash
             //  dw      LIT, 7, EMIT            // 7 emit
                 dw      ABORT                   // abort
             //  dw      EXIT                    // exit
