@@ -26,6 +26,7 @@ CREATE sin-table
     09945 , 09962 , 09976 , 09986 , 09994 , 09998 , 10000 ,
 
 
+\ based on previous table, compute Sine(n1) where n1 is expressed in degrees.
 : SIN ( n1 -- n2 )
     180 /mod >R dup >R abs              \ |q|         R: r q
     dup 90 >                            \ |q|  f        
@@ -34,6 +35,9 @@ CREATE sin-table
     R> +-                               \ |sin| with sign of q
     R> 1 and if negate then             \ sin   with quadrant
 ;
+
+\ various constants used in the following definition.
+\ Constants are faster than literals when later executed
 
 20736 CONSTANT 20736
 27192 CONSTANT 27192

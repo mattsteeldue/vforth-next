@@ -24,6 +24,7 @@ T{ GE4          -> 345 }T
 ( TEST EVALUATE IN COMPILE STATE )
 
 \ *** N.B. nested EVALUATE still has bug ***
+\ *** We need to split the test in two lines ***
 
 T{ : GE6 GE1 GE5 
 ; -> }T  
@@ -33,7 +34,8 @@ T{ : GE7 GE2 GE5
 ; -> }T
 T{ GE7 -> 124 }T
 
-\ custom test...
+\ my custom test...
+
 : GE8 S" : GE9 678 ;" EVALUATE ; 
 T{ GE8 -> }T
 T{ GE9 -> 678 }T

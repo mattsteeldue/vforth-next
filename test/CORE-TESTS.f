@@ -256,7 +256,7 @@ TESTING \ F.3.12 Characters
     INCLUDE  test/[.f
     INCLUDE  test/s~.f      \ S" 
     
-\   INCLUDE  test/c~.f      \ C" *** to do ***
+\   INCLUDE  test/c~.f      \ C" *** this word is not implemented yet ***
 
 
 TESTING \ F.3.13 Dictionary
@@ -275,8 +275,9 @@ TESTING \ F.3.13 Dictionary
     INCLUDE  test/state.f
 
     INCLUDE  test/[compile].f  
-\   INCLUDE  test/compile,.f   *** q Can't be executed ***
-\   INCLUDE  test/compile.f    *** TO TO ***
+    INCLUDE  test/compile,.f   
+
+\   INCLUDE  test/compile.f    *** this test is not implemented yet ***
 
 
 TESTING \ F.3.14 Flow Control
@@ -351,7 +352,7 @@ TESTING \ F.3.18 Parser Input Source Control
 
    INCLUDE  test/source.f          
    INCLUDE  test/}in.f      \ >IN  \ *** N.B. nested EVALUATE still has bug ***
-   INCLUDE  test/word.f            \ *** incorrect result on emtpy lines ***
+   INCLUDE  test/word.f            \ *** N.B. Blank lines return zero-length strings ***
 
 
 TESTING \ F.3.19 Number Patterns
@@ -415,7 +416,7 @@ TESTING \ F.3.23 Dictionary Search Rules
 \ own name in the definition is not recursive but rather refers to the previous
 \ definition of the word.
 
-    \ INCLUDE  test/_.f               \ already done
+    \ INCLUDE  test/_.f         \ already done in F.3.16 Defining Words
     T{ : GDX     123 ; -> }T    \ First defintion
     T{ : GDX GDX 234 ; -> }T    \ Second defintion
     T{ GDX -> 123 234 }T
