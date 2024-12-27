@@ -1,0 +1,40 @@
+20240815
+
+    solo commenti
+
+20240809
+
+    P!      uso di differenti registri (BC/DE)
+    COLD    aggiunta di [ decimal    26  ] Literal emitc 0 emitc \ unlimited scroll
+            -2 ALLOT    \ alla fine.
+            spostato    LDX     IX|    (next)   NN,
+            levato      LD()HL  hex 030 +origin AA,
+    USE     rimosso da qui
+    ndom    trasformato in pointer
+    ncdm    trasformato in pointer
+    map-fn  utilizza i due pointer suddetti
+    CLS     modificato...
+    
+20240616
+
+    solo commenti
+    
+20240404
+
+    (leave) modificato
+    DIGIT   modificato LD HL,1 in SBC HL,HL
+    ROT     accorciato
+    -ROT    accorciato
+    2@      accorciato di uno
+    <       accorciato con jr a U<
+    ?heap_ptr   6000/6300
+    
+    
+20240321 TEMP
+
+
+?
+    NEGATE  modificato LD HL,0 con XORA,A e LD successivi
+    2OVER   rifatto
+    P!      uso di differenti registri (BC/DE)
+    CELLS   JR verso 2*
