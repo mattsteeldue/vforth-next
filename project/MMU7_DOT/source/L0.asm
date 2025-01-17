@@ -64,9 +64,9 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2024-09-22 ", $0D  // 33
+                db      " Dot-command - build 2025-01-01 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
-                db      " 1990-2024 Matteo Vitturi ", $0D            // 27
+                db      " 1990-2025 Matteo Vitturi ", $0D            // 27
                 End_Heap
 
 //  ______________________________________________________________________ 
@@ -313,10 +313,11 @@ Do_Ptr:
                  inc     hl
                  ld      (hl), d
                 exx
+                jr      End_Loop_Ptr
                 // skip branch-style offseet
-                inc     bc       
-                inc     bc
-                next
+            //  inc     bc       
+            //  inc     bc
+            //  next
 
 //  ______________________________________________________________________ 
 //
@@ -550,13 +551,6 @@ Find_ThisWord:      // begin loop
                     ld      hl, 3               // 3 bytes for CFA offset to skip LFA
                     add     hl, de
 
-                //  ld      a, h
-                //  and     $E0
-                //  xor     h
-                //  jr      nz, Non_MMU7
-                    //  call    MMU7_read
-                    //  dec     a
-                    //  jr      z, Non_MMU7
                             ld      e, (hl)
                             inc     hl
                             ld      d, (hl)
@@ -646,9 +640,10 @@ Enclose_NonDelimiter:
                     inc     de 
                     push    de
                     dec     de
-                    push    de
-                    exx
-                    next
+                    jr      Enclose_common_ending                   
+                //  push    de
+                //  exx
+                //  next
 Enclose_NextChar:
                     ld      a, c
                     inc     hl
@@ -659,9 +654,10 @@ Enclose_NextChar:
                         // pop     bc                  // restore Instruction Pointer
                         push    de
                         inc     de
-                        push    de
-                        exx
-                        next
+                        jr      Enclose_common_ending
+                //      push    de
+                //      exx
+                //      next
 Enclose_NonSeparator: 
                     ld      a, (hl)               
                     and     a
@@ -670,6 +666,7 @@ Enclose_NonSeparator:
                 // case ii. separator & terminator
                 // pop     bc                  // restore Instruction Pointer
                 push    de
+Enclose_common_ending:
                 push    de
                 exx
                 next
@@ -731,20 +728,22 @@ C_Compare_Loop:
                     jr      z, C_Compare_Equal
                         jr      c, C_Compare_NotLessThan  // If LessThan
                             ld      hl, 1               // a1 gt a2
-                        jr      C_Compare_Then      // Else
+                        jr      C_Compare_common_ending
+                    //  jr      C_Compare_Then      // Else
 C_Compare_NotLessThan:                
                             ld      hl, -1              // a1 lt a2
-C_Compare_Then:                                 // Endif
+// C_Compare_Then:                                 // Endif
 //                      pop     bc              // restore Instruction Pointer
-                        push    hl
-                        exx
+//                      jr      C_Compare_common_ending
+                    //  push    hl
+                    //  exx
+                    //  next
 
-                        next
-                
 C_Compare_Equal:
                 djnz    C_Compare_Loop
                 ld      hl, 0               // a1 eq a2
 //              pop     bc                  // restore Instruction Pointer
+C_Compare_common_ending:
                 push    hl
                 exx
 
@@ -1140,7 +1139,7 @@ Cmove_NoMove:
                 pop     hl                  // hl has source, save Instruction Pointer
                 ld      a, b                
                 or      c
-                jr      z, CmoveV_NoMove
+                jr      z, Cmove_NoMove  // CmoveV_NoMove
                     ex      de, hl              // compute address to 
                     add     hl, bc              // operate backward
                     dec     hl
@@ -1148,10 +1147,11 @@ Cmove_NoMove:
                     add     hl, bc
                     dec     hl               
                     lddr                        // backward
-CmoveV_NoMove:   
-                exx
+                    jr      Cmove_NoMove
+// CmoveV_NoMove:   
+            //  exx
 
-                next
+            //  next
 
 //  ______________________________________________________________________ 
 //
@@ -1191,6 +1191,7 @@ CmoveV_NoMove:
                 mul
                 ex      de, hl
                 adc     hl, bc
+Mul_Bailout:                
                 push    de
                 push    hl
                 exx
@@ -1236,17 +1237,18 @@ Um_DivMod_Endif:                                   // endif
                         dec     a
                     jr      nz, Um_DivMod_Loop
                     ex      de, hl
-Um_DivMod_Bailout:
-                    push    de                  // de := remanider
-                    push    hl                  // hl := quotient
-                    exx
-                    next
+                    jr      Mul_Bailout
+// Um_DivMod_Bailout:
+                //  push    de                  // de := remanider
+                //  push    hl                  // hl := quotient
+                //  exx
+                //  next
 
 Um_DivMod_OutOfRange:
                 ld      hl, -1
                 ld      d, h
                 ld      e, l
-                jr      Um_DivMod_Bailout
+                jr      Mul_Bailout
 
 //  ______________________________________________________________________ 
 //
@@ -1773,16 +1775,16 @@ Negate_Ptr:
 // copy the second double of stack and put on top.
                 New_Def TWO_OVER, "2OVER", is_code, is_normal
                 exx
-                pop     hl      // 10
-                pop     de      // 10
-                pop     bc      // 10
-                pop     af      // 10
-                push    af      // 11
-                push    bc      // 11
-                push    de      // 11
-                push    hl      // 11
-                push    af      // 11
-                push    bc      // 11
+                pop     hl      // n4
+                pop     de      // n3 : d2
+                pop     bc      // n2
+                pop     af      // n1 : d1
+                push    af      // n1
+                push    bc      // n2 : d1
+                push    de      // n3
+                push    hl      // n4 : d2
+                push    af      // n1
+                push    bc      // n2 : d1
                 exx
                 next
 
@@ -1818,13 +1820,13 @@ Negate_Ptr:
 // swaps the two doubles on top of stack
                 New_Def TWO_SWAP, "2SWAP", is_code, is_normal
                 exx
-                pop     af                  //   d2-H  
+                pop     af                  // < d2-H  
                 pop     hl                  // < d2-L
                 pop     de                  // < d1-H
                 ex      (sp), hl            // < d1-L > d2-L    
-                push    af                  // > d2-H
-                push    hl                  // > d1-L
-                push    de
+                push    af                  //        > d2-H
+                push    hl                  //        > d1-L
+                push    de                  //        > d1-H
                 exx
                 next
 
@@ -1837,9 +1839,9 @@ Negate_Ptr:
                 pop     hl                  // < d-H    
                 pop     af                  // < d-L
                 push    af                  // < d-L
-                push    hl                  // > d-H
-                push    af                  // > d-L
-                push    hl                  // > d-H
+                push    hl                  //       > d-H
+                push    af                  //       > d-L
+                push    hl                  //       > d-H
                 next
 
 //  ______________________________________________________________________ 
@@ -2012,7 +2014,7 @@ Store_end:
                 exx
                 pop     hl                  // address
                 pop     bc                  // < high-part
-                pop     de                  // < low-part > Instruction Pointer
+                pop     de                  // < low-part 
                 ld      (hl), c
                 inc     hl
                 ld      (hl), b

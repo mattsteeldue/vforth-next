@@ -1,5 +1,9 @@
+\
 \ Z80-TEST.f
-
+\
+\ v-Forth 1.8 - NextZXOS version - build 2025-01-01            
+\ MIT License (c) 1990-2025 Matteo Vitturi     
+\
 NEEDS ASSEMBLER
 
 MARKER REDO
@@ -243,7 +247,7 @@ C;
 
 CASEOFF
 
-HERE DUP ' Z80-TESTER - 
+HERE DUP ' Z80-TESTER - 1- 
 NEEDS CHECKSUM
 CHECKSUM . 
 #97 . CR

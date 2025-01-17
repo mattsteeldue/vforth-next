@@ -568,3 +568,8 @@ From this version DOES> is standard and works as direct-vectored so that <BUILDS
 is deprecated and CREATE should be used instead. 
 This way new definitions built using DOES> will run slightly faster because
 the indirect pointer decoding is substituted by a direct CALL op-code.
+
+
+\ build 20250101
+Just a little optimization. Introducing PERSISTANCE to save and restore your
+last session: useful for dot version

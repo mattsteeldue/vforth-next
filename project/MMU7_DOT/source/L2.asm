@@ -400,9 +400,9 @@ MMU_read_loop:
 // 9.
 // pre-set the four main 16-bit registers
                 ld      sp, (S0_origin)         // Calculator Stack Pointer
-                ld      ix, Next_Ptr            // Inner Interpreter Pointer
                 ld      de, (R0_origin)         // Return Stack Pointer
                 ld      bc, Cold_Start          // Instruction Pointer
+                ld      ix, Next_Ptr            // Inner Interpreter Pointer
 
                 // unlimited scrolling: print chr$26;chr$0
                 // ld      a, 26

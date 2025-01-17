@@ -1,11 +1,15 @@
 \
 \ z80n-asm.f
-\ 
+\
+\ v-Forth 1.8 - NextZXOS version - build 2025-01-01            
+\ MIT License (c) 1990-2025 Matteo Vitturi     
+\
+ 
 CR DECIMAL 
 
 BASE @
 
-NEEDS <BUILDS 
+NEEDS <BUILDS                   \ backward compatibiity
 
 INCLUDE SRC/Z80N-ASM.F
 

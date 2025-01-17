@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  DOT-command version
-//  build 20240809
+//  build 20250101
 // 
 //  Direct-Threaded version.
 // 
@@ -14,7 +14,7 @@
 // 
 // MIT License
 // 
-// Copyright (c) 1990-2024 Matteo Vitturi
+// Copyright (c) 1990-2025 Matteo Vitturi
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal

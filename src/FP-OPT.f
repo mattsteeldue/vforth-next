@@ -1,3 +1,6 @@
+\
+\ v-Forth 1.8 - NextZXOS version - build 2025-01-01 
+\ MIT License (c) 1990-2025 Matteo Vitturi     
 \ _________________
 \
 \ Floating point option

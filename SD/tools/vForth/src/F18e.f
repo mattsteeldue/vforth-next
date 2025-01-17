@@ -1,8 +1,8 @@
 \ ______________________________________________________________________ 
 \
-.( v-Forth 1.8 NextZXOS version ) CR
-.( build 20240824 ) CR
-.( Direct Threaded Heap Dictionary - NextZXOS version ) CR
+\ v-Forth 1.8 - NextZXOS version - build 2025-01-01 
+\ MIT License (c) 1990-2025 Matteo Vitturi     
+\ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
 \
 \ MIT License
@@ -148,7 +148,6 @@ DECIMAL
      0  VALUE     mmu7@^        \ entry-point for mmu7@
      0  VALUE     tofar^        \ entry-point for >far
      0  VALUE     store_end^    \ ending part of !
-     0  VALUE     negate^       \ ending part of negate
 
 \ some pointers are used to patch words later... 
 \ Since we need to define a word using "forward" definitions 
@@ -156,6 +155,8 @@ DECIMAL
 \ we'll patch the just created word using the forward definitions
 \ as soon as we have them available (later during the compilation)
 \    0  VALUE     lit~          \ some CFA
+        \ at the *end*, zero has to be put at   lit~ - 2 
+        \ to cut-off older dictionary :       0 lit~   2  -  !
 \    0  VALUE     branch~       \ CFA of BRANCH
 \    0  VALUE     0branch~      \ CFA of 0BRANCH
 \    0  VALUE     (loop)~       \ CFA of (LOOP)
@@ -181,6 +182,8 @@ DECIMAL
      0  VALUE     f_read_exit^  
      0  VALUE     f_open_exit^  
      0  VALUE     boolean_exit^  
+     0  VALUE     loop_exit^ 
+     0  VALUE     negate^       \ ending part of negate
      0  VALUE     emptyb^
      0  VALUE     twofind^
      0  VALUE     pcdm^
@@ -203,18 +206,18 @@ DECIMAL
 
 \ ______________________________________________________________________
 \
-\ HERE HEX U. 
-\ HP@      U.
-\ KEY  DROP
+  HERE HEX U. 
+  HP@      U.
+  KEY  DROP
 
 \ force origin to an even address?
 \ HERE 1 AND ALLOT
 
 SET-DP-TO-ORG
 
-\ HERE HEX U. 
-\ HP@      U.
-\ KEY  DROP
+  HERE HEX U. 
+  HP@      U.
+  KEY  DROP
 \ ______________________________________________________________________
 \
 
@@ -370,14 +373,14 @@ CODE execute ( xt -- )
 CODE (+loop) ( n -- )
 
     HERE TO loop^
-    
-        POP     HL|         \ HL is increment   DE is RP
-        EXDEHL              \ DE is increment   HL is RP
+        PUSH    DE| 
+        EXX
+        POP     HL|         \ HL RP
+        POP     DE|         \ DE is increment 
 
-        PUSH    BC|         \ save IP
         LD      B'|    D|
         LD      C'|    E|   \ BC is increment
-        PUSH    HL|         \ save original RP
+
         LD      E'| (HL)|   \ DE keeps index before increment
         LD      A'|    E|   \ index is incremented in memory.
         ADDA     C|
@@ -402,21 +405,27 @@ CODE (+loop) ( n -- )
         BIT      7|    B|    \ doesn't affect carry flag
         JRF     Z'|    HOLDPLACE \ if increment is negative then
             CCF                  \ complement carry flag
-        HERE DISP, \ THEN,
+        HERE DISP, \ THEN,       \ Negative Increment 
         JRF    CY'|    HOLDPLACE
-            \ stay in loop, increment index
-            POP     DE|         \ restore RP
-            POP     BC|         \ restore IP
-            JR      HERE  TO  branch^^    26  D,
-          \  JP         branch^  AA,
+            EXX                  \ restore IP and RP
+HERE TO branch^ 
+            LDA(X)  BC|
+            LD      L'|    A|
+            INCX    BC|
+            LDA(X)  BC|
+            LD      H'|    A|
+            DECX    BC|
+            ADDHL   BC|
+            LD      C'|    L|
+            LD      B'|    H|
+            Next
         HERE DISP, \ THEN,
-        POP     BC|         \ discard original RP
-        EXDEHL              \ HL is RP
-        INCX    HL|
-
-        EXDEHL              \ DE is RP
-        POP     BC|         \ restore IP
-        INCX    BC|
+        INCX    DE|
+        PUSH    DE|         \ keep    RP+4 (exit from loop)
+        EXX
+        POP     DE| 
+HERE TO loop_exit^        
+        INCX    BC|         \ skip branch-style offset
         INCX    BC|
         Next
         C;
@@ -443,19 +452,22 @@ CODE (loop)    ( -- )
 CODE branch ( -- )
 \ 615E
          
-    HERE TO branch^
-    
-        LDA(X)  BC|
-        LD      L'|    A|
-        INCX    BC|
-        LDA(X)  BC|
-        LD      H'|    A|
-        DECX    BC|
-        ADDHL   BC|
-        LD      C'|    L|
-        LD      B'|    H|
-        Next
+        JR      branch^    HERE 1 + - D,
         C;
+        
+\   HERE TO branch^
+\   
+\       LDA(X)  BC|
+\       LD      L'|    A|
+\       INCX    BC|
+\       LDA(X)  BC|
+\       LD      H'|    A|
+\       DECX    BC|
+\       ADDHL   BC|
+\       LD      C'|    L|
+\       LD      B'|    H|
+\       Next
+\       C;
         
       \ ' branch TO branch~
         ' branch  ' ELSE  >BODY 4 CELLS + !
@@ -473,11 +485,11 @@ CODE 0branch ( f -- )
         POP     HL|
         LD      A'|    L|
         ORA      H|
-      \ JPF      Z|    branch^  AA,
         JRF     Z'|    branch^  HERE 1 + - D,
-        INCX    BC|
-        INCX    BC|
-        Next
+        JR      loop_exit^ HERE 1 + - D,
+\       INCX    BC|
+\       INCX    BC|
+\       Next
         C;
         
       \ ' 0branch TO 0branch~
@@ -491,8 +503,8 @@ CODE (leave) ( -- )
         LDN     A'|  4  N,   \ UNLOOP index & limit from Return Stack      
         ADDDE,A
 
-      \ EXDEHL        
-      \ JP      branch^  AA, \ jump out of loop
+
+
         JR      branch^  HERE 1 + - D,
         Next
         C;       
@@ -519,7 +531,6 @@ CODE (?do)      ( lim ind -- )
         JRF    NZ'| HOLDPLACE \ if lim == ind
             POP     HL|
             POP     HL|
-          \ JP      branch^  AA,
             JR      branch^  HERE 1 + - D,
         HERE DISP, \ THEN,
         
@@ -575,22 +586,22 @@ CODE (do) ( lim ind -- )
       \ ' (do) TO (do)~
         ' (do)    ' DO >BODY 1 CELLS + !
 
-    RENAME      LITERAL   Literal
-    RENAME      DLITERAL  Dliteral
-    
-    RENAME      IF        If
-    RENAME      THEN      Then
-    RENAME      ELSE      Else
-    
-    RENAME      BEGIN     Begin
-    RENAME      AGAIN     Again
-    RENAME      UNTIL     Until
-    RENAME      WHILE     While
-    RENAME      REPEAT    Repeat
-    
-    RENAME      DO        Do
-    RENAME      LOOP      Loop
-    RENAME      ?DO       ?Do
+        RENAME      LITERAL   Literal
+        RENAME      DLITERAL  Dliteral
+        
+        RENAME      IF        If
+        RENAME      THEN      Then
+        RENAME      ELSE      Else
+        
+        RENAME      BEGIN     Begin
+        RENAME      AGAIN     Again
+        RENAME      UNTIL     Until
+        RENAME      WHILE     While
+        RENAME      REPEAT    Repeat
+        
+        RENAME      DO        Do
+        RENAME      LOOP      Loop
+        RENAME      ?DO       ?Do
 
 
 \ 61E9h
@@ -731,6 +742,7 @@ CODE upper ( c1 -- c2 )
 
 
 \ >far routine
+\ given an HP-pointer in input, turn it into page + offset
 \ input:  hl : heap-pointer
 \ output:  a : page
 \       : hl : address starting from $E000
@@ -1936,11 +1948,11 @@ CODE or  ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         ORA      H|     
-        JR      boolean_exit^ BACK,
-     \  LD      H'|    A|
-     \  PUSH    HL|
-     \  EXX 
-     \  Next
+     \  JR      boolean_exit^ BACK,
+        LD      H'|    A|
+        PUSH    HL|
+        EXX 
+        Next
         C;
 
 
@@ -1956,11 +1968,11 @@ CODE xor ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         XORA     H|     
-        JR      boolean_exit^ BACK,
-     \  LD      H'|    A|
-     \  PUSH    HL|
-     \  EXX 
-     \  Next
+     \  JR      boolean_exit^ BACK,
+        LD      H'|    A|
+        PUSH    HL|
+        EXX 
+        Next
         C;
 
 
@@ -2108,14 +2120,14 @@ CODE r@ ( -- n )
 .( 0= )
 \ true (-1) if n is zero, false (0) elsewere
 CODE 0= ( n -- f )
-         
+HERE    \ resolved by BACK,         
         POP     HL|
         LD      A'|    L|
         ORA      H|
-        LDX     HL|    0 NN,
         JRF    NZ'|    HOLDPLACE
-            DECX      HL|           \ true
+            CCF
         HERE DISP, \ THEN,
+        SBCHL   HL|
         PUSH    HL|
         Next
         C;
@@ -2125,9 +2137,8 @@ CODE 0= ( n -- f )
 CODE not  ( n -- f )         
          
         \ this way we will have a real duplicate of 0=
-        JR  $F0  D,
-      \ JR  ' 0= HERE - 1-  D,
-      \ JR   $F0 D,
+      \ JR  ' 0= >BODY HERE - 1-  D,
+        JR BACK,
       \ ' 0=  \ >BODY  LATEST PFA CELL- ! 
       \ DISP,
         C;
@@ -2154,13 +2165,10 @@ CODE 0> ( n -- f )
         POP     HL|
         LD      A'|    L|
         ORA      H|
+        JRF     Z'|    HOLDPLACE
         ADDHL   HL|
-        LDX     HL|    0 NN,
-        JRF    CY'|    HOLDPLACE    
-            ANDA     A|
-            JRF     Z'|    HOLDPLACE
-                DECX      HL|           \ true
-            HERE DISP, 
+        CCF
+        SBCHL   HL|
         HERE DISP, \ THEN, THEN,
         PUSH    HL|
         Next
@@ -3677,7 +3685,7 @@ HEX 1F80 constant page-watermark
 \ 6BCDh
 .( <BUILDS )
 : <builds    ( -- ) 
-    create
+    CREATE                  \ ___ forward ___ because of CREATE
     ;
 
 
@@ -3693,8 +3701,9 @@ HEX 1F80 constant page-watermark
 .( DOES> )
 : does>    ( -- ) 
     compile _does>_
-    $CD C,                   \ this compiles a CALL opcode
-    [ ' : 1+ @ ] Literal ,   \ this compiles ENTER as address for call 
+    [ $CD ] Literal C,       \ this compiles a CALL opcode
+\   [ ' : 1+ @ ] Literal ,   \ this compiles ENTER as address for call 
+    [ enter^   ] Literal ,   \ this compiles ENTER as address for call 
 ; immediate
 
 
@@ -4243,7 +4252,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
                 r@          \ addr
                 [ HERE CELL+ TO twofind^ ]
                 \ [COMPILE] FORTH     \ addr voc
-                [ ' FORTH ] Literal >body cell+ cell+ @       ( *** )
+                [ ' FORTH ] Literal >body cell+       @       ( *** )
                 (find)      \ cfa b 1   |  0 
             Then   
 
@@ -4371,6 +4380,11 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
 
         Next
         C;
+
+\ Late-Patch for : <builds
+
+    ' create 
+    ' <builds >body !
 
 
 \ Late-Patch for : colon-definition
@@ -4585,8 +4599,8 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
     _does>_                         \ at runtime does> provides this address
    
         [ 
-            $CD00 ,                 \ call ENTER
-            ' : 1+ @ ,
+            $CD   C,                \ call ENTER
+            enter^ ,
         ] 
         cell+ context !
     ;
@@ -4706,8 +4720,8 @@ immediate
     [ here TO xi/o2^ ]    
     BLK-INIT                 \ ___ forward ___
 
-    [ here TO splash^ ]
-    SPLASH                   \ ___ forward ___
+\   [ here TO splash^ ]
+\   SPLASH                   \ ___ forward ___
 
 \   [ decimal      7 ] Literal emit
     
@@ -4788,9 +4802,7 @@ here warm^ ! \ patch
         LDHL()  hex  14 +origin AA, \ forth's RP
 \       LD()HL  hex 030 +origin AA,
         EXDEHL
-
         LDX     IX|    (next)   NN, 
-
         LDX     BC|    y^    NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,
 
@@ -5671,7 +5683,7 @@ decimal
     _does>_                         \ at runtime does> provides this address
     
         [ 
-            $CD00 ,                 \ call ENTER
+            $CD C,                 \ call ENTER
             ' : 1+ @ ,
         ] 
     
@@ -5929,13 +5941,13 @@ CODE cls ( n -- n n )
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-08-24" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-09-22" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2024 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 
     ;
 
-    ' splash splash^ ! \ patch 
+\   ' splash splash^ ! \ patch 
 
 
 \ 7ecb
@@ -6704,7 +6716,7 @@ CASEOFF
 
 \ ______________________________________________________________________ 
 
-\ this cuts LFA so dictionary starts with "LIT"
+\ this cuts LFA so dictionary starts with "lit"
 0 ' LIT     >BODY LFA ! 
 
 \ QUIT 

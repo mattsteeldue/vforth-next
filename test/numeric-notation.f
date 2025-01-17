@@ -8,7 +8,7 @@ NEEDS TESTING
 
 TESTING Numeric Notation
 
-\ implementation of NUMBER in v-Forth is very simple and it cannot handle 
+\ implementation of NUMBER in v-Forth can handle 
 \ prefix such as those used in the following tests.
 
 DECIMAL

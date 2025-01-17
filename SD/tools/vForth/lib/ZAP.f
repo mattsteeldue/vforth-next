@@ -1,5 +1,5 @@
 \
-\ inc/zap.f
+\ lib/zap.f
 \
 
 .( ZAP ) 
