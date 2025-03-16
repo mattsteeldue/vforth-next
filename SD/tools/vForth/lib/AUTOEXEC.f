@@ -10,22 +10,21 @@
 \ if any session has been saved, otherwise, perform the standard splash screen 
 
 
-MARKER FORGET-THIS-TASK-1 CLS
 
 \ Display splash-screen
-  SPLASH CR 
+CLS SPLASH CR 
+
+MARKER FORGET-THIS-TASK-1 
 
 \ set current palette idx entry to byte value b
 : SET-PALETTE ( b idx -- ) 
     #64 REG!     \ Palette Index Select  
     #65 REG!     \ Palette Data 
 ; 
-
+\
 : EMIT2C EMITC EMITC ;
-
 \ reset default palette control    
   0  67 REG!          \ Palette Control (ULA first)
-
 \ modify blue background and yellow foreground color
   %00000001 #25 SET-PALETTE   \ darker blue paper
   %11111001 #14 SET-PALETTE   \ yellow ink
@@ -34,51 +33,57 @@ MARKER FORGET-THIS-TASK-1 CLS
 
 FORGET-THIS-TASK-1
 
-\ try restore
-NEEDS PERSISTANCE RESTORE-SYSTEM \ quits if restored.
+
 
 \ display Core Version number
-    ." Core Version: " 
-     1 REG@         \ Core Version register
-    DUP 4 RSHIFT SWAP #15 AND SWAP . 8 EMITC
-    0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE 
-    #14 REG@         \ Core Version (Sub minor number) register
-    0 <# # # # #> TYPE 
-    CR 
-
-MARKER FORGET-THIS-TASK-2
-
-\ display free space on default drive
-\ .FREE-SIZE gives the number of 512-bytes block free on drive
-    ." Free space  : "  \
-    NEEDS .FREE-SIZE 
-    .FREE-SIZE 
-    ." bytes free on default drive." 
-    
-    CR 
+  ." Core Version: " 
+   1 REG@         \ Core Version register
+  DUP 4 RSHIFT SWAP #15 AND SWAP . 8 EMITC
+  0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE 
+  #14 REG@         \ Core Version (Sub minor number) register
+  0 <# # # # #> TYPE 
+  CR 
 
 \ display CPU speed 3.5, 7.0, 14.0 or 28.0 MHz
-." CPU Speed   : " 
-#35                  
-#7 REG@      \ CPU Speed register
-3 AND LSHIFT 
-0 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz"
+  ." CPU Speed   : " 
+  #35                  
+  #7 REG@      \ CPU Speed register
+  3 AND LSHIFT 
+  0 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz"
 
-CR 
+  CR 
 
 \ display memory available
-." Dictionary  : "
-SP@ PAD  - U. ." bytes free." 
+  ." Dictionary  : "
+  SP@ PAD  - U. ." bytes free."   
+  CR 
+  
+  ." Heap        : " \
+   -1 HP @ - U. ." bytes free." 
+  CR 
 
-CR 
 
-." Heap        : " \
- -1 HP @ - U. ." bytes free." 
+\ try restore now
+\ move the following line up/down to include less/more display
+NEEDS PERSISTANCE RESTORE-SYSTEM \ quits if restored.
 
-CR 
+
+
+MARKER FORGET-THIS-TASK-2
+\
+\ display free space on default drive
+\ .FREE-SIZE gives the number of 512-bytes block free on drive
+  ." Free space  : "  \
+  NEEDS .FREE-SIZE 
+  .FREE-SIZE ." bytes free on default drive." 
+  CR
+
+FORGET-THIS-TASK-2
 
 \ we do not have conditional iterpreting, but we can emulate small task
 \ wisely using MARKER called as the last-word of a definition
+
+MARKER FORGET-THIS-TASK-3
 
 : ASK-Y/N ( -- ) 
 \ ask Y/n to continue loading 
@@ -89,15 +94,14 @@ CR
     [ CHAR N ] LITERAL = 
     IF ( in-key == N )
         ." ok " 
-        FORGET-THIS-TASK-2 
+        FORGET-THIS-TASK-3 
         QUIT 
     ELSE 
-        FORGET-THIS-TASK-2
+        FORGET-THIS-TASK-3
     THEN 
 ; 
 
 CR 
-
 ASK-Y/N \ to continue loading 
 
 \
