@@ -1,9 +1,9 @@
 File: c:\Zx\forth\F15\tools\vForth\!Blocks-64.bin
-Created: Thu Jan 16 23:42:09 2025
+Created: Sun Mar 16 21:11:44 2025
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS version - build 2025-01-01
+\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
 \ MIT License (c) 1990-2025 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement
 \ or at prompt type NEEDS VIEW and then VIEW LICENSE.md
@@ -53,19 +53,19 @@ Scr# 2
 Scr# 3 
   0 ( Error messages    from -15 to -1  )
   1 msg# -15
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  2 msg# -14
+  3 msg# -13
+  4 msg# -12
+  5 msg# -11
+  6 msg# -10
+  7 msg# -9
+  8 msg# -8
+  9 msg# -7
+ 10 msg# -6
+ 11 msg# -5
+ 12 msg# -4
+ 13 msg# -3
+ 14 msg# -2
  15 msg# -1
 
 Scr# 4 
@@ -180,9 +180,9 @@ Scr# 10
   0 .( AUX )
   1 \ include demo/savebank.dot.f
   2 
-  3 persistance
+  3 \ persistance
   4 needs persistance
-  5 save-system
+  5 restore-system
   6 
   7 
   8 
@@ -198,18 +198,36 @@ Scr# 11
   0 ( Autoexec )
   1 \ This Screen loaded at first cold start by Autoexec.
   2 \ Set up colors and start lib/autoexec.f
-  3 \ first
-  4   DECIMAL
-  5   7 17 EMITC EMITC       \ Paper 7 (white)
-  6   0 26 EMITC EMITC       \ non stop scroll
-  7           0  67 REG!     \ Palette Control (ULA first)
-  8          25  64 REG!     \ Palette Index Select (blue paper)
-  9   %00000001  65 REG!     \ Palette Data (darker blue)
- 10          14  64 REG!     \ Palette Index Select (yellow ink)
- 11   %11111001  65 REG!     \ Palette Data (lighter yellow)
- 12 \
- 13   INCLUDE  LIB/AUTOEXEC.F
- 14   ABORT
+  3   1 #17 EMITC EMITC      \ Paper 7 (white)
+  4   0 #26 EMITC EMITC      \ non stop scroll
+  5           0 #67 REG!     \ Palette Control (ULA first)
+  6         #25 #64 REG!     \ Palette Index Select (blue paper)
+  7   %00000001 #65 REG!     \ Palette Data (darker blue)
+  8         #14 #64 REG!     \ Palette Index Select (yellow ink)
+  9   %11111001 #65 REG!     \ Palette Data (lighter yellow)
+ 10 \
+ 11   INCLUDE  LIB/AUTOEXEC.F
+ 12   ABORT
+ 13 \
+ 14 
+ 15 
+
+Scr# 12 
+  0 ( Autoexec )
+  1 \ This Screen loaded at first cold start by Autoexec.
+  2 \ Set up colors and start lib/autoexec.f
+  3   DECIMAL
+  4   7 17 EMITC EMITC       \ Paper 7 (white)
+  5   0 26 EMITC EMITC       \ non stop scroll
+  6           0  67 REG!     \ Palette Control (ULA first)
+  7          25  64 REG!     \ Palette Index Select (blue paper)
+  8   %00000001  65 REG!     \ Palette Data (darker blue)
+  9          14  64 REG!     \ Palette Index Select (yellow ink)
+ 10   %11111001  65 REG!     \ Palette Data (lighter yellow)
+ 11 \
+ 12   NEEDS PERSISTANCE
+ 13   RESTORE-SYSTEM
+ 14 \
  15 
 
 Scr# 20 
@@ -20199,6 +20217,7 @@ Index:
     9 ( Print a complete error list )
    10 .( AUX )
    11 ( Autoexec )
+   12 ( Autoexec )
    20 ( LOADG )
    21 ( LOADG )
    22 ( LOADG )

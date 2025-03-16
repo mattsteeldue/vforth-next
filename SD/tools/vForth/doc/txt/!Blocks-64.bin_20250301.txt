@@ -1,16 +1,16 @@
 File: c:\Zx\forth\F15\tools\vForth\!Blocks-64.bin
-Created: Mon Sep 23 22:57:51 2024
+Created: Sun Mar 16 21:11:44 2025
 
 See index at end of file.
 
-\ v-Forth 1.7 - NextZXOS version - build 2024-08-09
-\ MIT License (c) 1990-2024 Matteo Vitturi
+\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
+\ MIT License (c) 1990-2025 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement
-\ or at Forth prompt use NEEDS VIEW and then VIEW LICENSE.md
+\ or at prompt type NEEDS VIEW and then VIEW LICENSE.md
 \
-\ This file provides persistency for BLOCK-Screen system.
-\ The first 512 bytes of this file aren't used by BLOCK system
-\ they're used by F_GETLINE primitive instead.
+\ This file provides persistency for BLOCK/Screen system.
+\ The first 512 bytes of this file aren't used by BLOCK system.
+
 
 
 
@@ -29,7 +29,7 @@ Scr# 1
  11 (  be used as a virtual-memory area where you can
  12 (  persistently store anything you like.
  13 (
- 14 (  Accessing the first blocks is faster than the others.
+ 14 (
  15 (
 
 Scr# 2 
@@ -53,19 +53,19 @@ Scr# 2
 Scr# 3 
   0 ( Error messages    from -15 to -1  )
   1 msg# -15
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  2 msg# -14
+  3 msg# -13
+  4 msg# -12
+  5 msg# -11
+  6 msg# -10
+  7 msg# -9
+  8 msg# -8
+  9 msg# -7
+ 10 msg# -6
+ 11 msg# -5
+ 12 msg# -4
+ 13 msg# -3
+ 14 msg# -2
  15 msg# -1
 
 Scr# 4 
@@ -95,7 +95,7 @@ Scr# 5
   5 is a protected definition.
   6 Aren't loading now.
   7 Forget across vocabularies.
-  8 RPi0 UART not responding.
+  8 RS loading error.
   9 Cannot open stream.
  10 Error at postit time.
  11 Inconsistent fixup.
@@ -161,28 +161,28 @@ Scr# 8
 Scr# 9 
   0 ( Print a complete error list )
   1 \ LOAD this screen to display the error list page by page
-  2 DECIMAL MARKER FORGET-THIS-TASK
-  3  : LIST-A-PAGE ( n -- )
-  4    DUP 1+ 16 * SWAP 16 * DO
-  5      I 3 .R SPACE 58 EMIT SPACE I MESSAGE CR
-  6    LOOP ;
-  7  : LIST-OF-ERRORS ( -- )
-  8    CR 5 0 DO I LIST-A-PAGE
-  9      I 4 - IF ."   press any key..." KEY CR THEN
- 10      ?TERMINAL IF LEAVE THEN
- 11    LOOP
- 12    FORGET-THIS-TASK ABORT ;
- 13 \ ...
- 14 LIST-OF-ERRORS
- 15 \ ...
+  2 \ Type:  9 LOAD <enter>
+  3 \
+  4 marker forget-this-task
+  5  : List-a-page ( n -- )
+  6    dup 1+ #16 * swap #16 * do
+  7      i 3 .r space 58 emit space i message cr
+  8    loop ;
+  9  : List-all-errors ( -- )
+ 10    cr #5 0 do i List-a-page
+ 11      i #4 - if ." PRESS ANY KEY TO CONTINUE" key then
+ 12      ?terminal if leave then cr
+ 13    loop
+ 14    forget-this-task abort ;
+ 15  List-all-errors ...
 
 Scr# 10 
   0 .( AUX )
-  1 include src/f18e.f
-  2 \ : t over >R >R drop R> R> ;
-  3 \ : x over xor over xor ;
-  4 
-  5 
+  1 \ include demo/savebank.dot.f
+  2 
+  3 \ persistance
+  4 needs persistance
+  5 restore-system
   6 
   7 
   8 
@@ -196,20 +196,38 @@ Scr# 10
 
 Scr# 11 
   0 ( Autoexec )
-  1 \ This Screen is usually loaded at first cold start
-  2 \ by AUTOEXEC definition
-  3 \
-  4   1 $11 emitc emitc  \ yellow-on-blue
-  5 \
-  6 \ INCLUDE  C:/tools/vforth/lib/autoexec.f
-  7   INCLUDE                  lib/autoexec.f
-  8 \
-  9   1 SCR !
- 10   ABORT
- 11 
- 12 
- 13 
+  1 \ This Screen loaded at first cold start by Autoexec.
+  2 \ Set up colors and start lib/autoexec.f
+  3   1 #17 EMITC EMITC      \ Paper 7 (white)
+  4   0 #26 EMITC EMITC      \ non stop scroll
+  5           0 #67 REG!     \ Palette Control (ULA first)
+  6         #25 #64 REG!     \ Palette Index Select (blue paper)
+  7   %00000001 #65 REG!     \ Palette Data (darker blue)
+  8         #14 #64 REG!     \ Palette Index Select (yellow ink)
+  9   %11111001 #65 REG!     \ Palette Data (lighter yellow)
+ 10 \
+ 11   INCLUDE  LIB/AUTOEXEC.F
+ 12   ABORT
+ 13 \
  14 
+ 15 
+
+Scr# 12 
+  0 ( Autoexec )
+  1 \ This Screen loaded at first cold start by Autoexec.
+  2 \ Set up colors and start lib/autoexec.f
+  3   DECIMAL
+  4   7 17 EMITC EMITC       \ Paper 7 (white)
+  5   0 26 EMITC EMITC       \ non stop scroll
+  6           0  67 REG!     \ Palette Control (ULA first)
+  7          25  64 REG!     \ Palette Index Select (blue paper)
+  8   %00000001  65 REG!     \ Palette Data (darker blue)
+  9          14  64 REG!     \ Palette Index Select (yellow ink)
+ 10   %11111001  65 REG!     \ Palette Data (lighter yellow)
+ 11 \
+ 12   NEEDS PERSISTANCE
+ 13   RESTORE-SYSTEM
+ 14 \
  15 
 
 Scr# 20 
@@ -1523,25 +1541,25 @@ Scr# 164
  10   ld   (hl)'|       a|
  11 HERE DISP,
  12   exx
- 13   jpix
+ 13   jpix                        \ next address
  14 C;
  15 
 
 Scr# 165 
   0 ( M*/ - development )
-  1 NEEDS PICK
-  2 : M*/ ( d  m  n  -- d2 )
-  3   2dup xor 3 pick xor >R      \ l h m n        R: s
-  4   abs >R abs >R DABS          \ l h            R: s n m
-  5   swap R@ um* rot R> um*      \ l L h H        R: s n
-  6   rot 0 D+                    \ l dx
-  7   R@ um/mod                   \ l r1 q1
-  8   rot rot                     \ q1 l r1
-  9   R> um/mod                   \ q1 r2 q2       R: s
- 10   nip swap                    \ q2 q1
- 11   R> D+-                      \ d              R:
- 12 ;
- 13 
+  1 NEEDS PICK                    \ Pick is already in the core
+  2 \ mixed scaling: multiply d by a signed fraction n/m
+  3 : M*/ ( d  n  m  -- d2 )
+  4   2dup xor 3 pick xor >R      \ l h n m        R: sign
+  5   abs >R abs >R DABS          \ l h            R: sign m n
+  6   swap R@ um* rot R> um*      \ l L h H        R: sign m
+  7   rot 0 D+                    \ l dx
+  8   R@ um/mod                   \ l r1 q1
+  9   rot rot                     \ q1 l r1
+ 10   R> um/mod                   \ q1 r2 q2       R: s
+ 11   nip swap                    \ q2 q1
+ 12   R> D+-                      \ d              R:
+ 13 ;
  14 
  15 
 
@@ -2465,19 +2483,19 @@ Scr# 216
 
 Scr# 217 
   0 ( TEST )
-  1 needs assembler
-  2 code z> ( n -- f )
-  3  pop    hl|
-  4  ld     a'|  l|
-  5  ora     h|
-  6  jrf    z'|  holdplace
-  7  addhl  hl|
-  8  ccf
-  9  sbchl  hl|
- 10 HERE DISP,
- 11  push   hl|
- 12  Next
- 13  c;
+  1 HEX
+  2 : TEST
+  3  FFFF 0 DO
+  4   I I 1- U*
+  5   I I 1- UM*
+  6   DMINUS D+ AND IF I . CR QUIT THEN
+  7  LOOP
+  8 ;
+  9 DECIMAL
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
@@ -3220,52 +3238,70 @@ Scr# 259
  15 
 
 Scr# 260 
-  0 ( Trace facility )
+  0 ( TRACE )
   1 \
-  2 \ tracer ghost definition
+  2 \ tracer word
   3 \
-  4 VARIABLE TRACER 0 ,
-  5 \
-  6 \ saved Instruction Pointer (BC register)
-  7 \
-  8 VARIABLE TR-IP
-  9 VARIABLE TR-RP
- 10 VARIABLE TR-SP
- 11 -->
- 12 
- 13 
- 14 
- 15 
+  4 ' NOOP   VARIABLE TRACER        TRACER !
+  5 ' NOOP , \ patched to TR-EXIT  on scr# 262
+  6 \
+  7 \ saved Instruction Pointer (BC register)
+  8 \
+  9 ' QUIT >BODY VARIABLE TR-IP      TR-IP  !
+ 10 R0 @         VARIABLE TR-RP      TR-RP  !
+ 11 S0 @         VARIABLE TR-SP      TR-SP  !
+ 12 0            VARIABLE TR-X       TR-X   !
+ 13 0            VARIABLE TR-Y       TR-Y   !
+ 14 1            VARIABLE TR-MMU     TR-MMU !
+ 15 -->
 
 Scr# 261 
-  0 ( Trace facility )
-  1 \
-  2 CODE TR-ENTER HEX
-  3   ED C, 73 C, TR-SP  ,    \ ld (TR-SP),sp     ; save SP
-  4   ED C, 43 C, TR-IP  ,    \ ld (TR-IP),bc     ; save BC (IP)
-  5   ED C, 53 C, TR-RP  ,    \ ld (TR-RP),de     ; save DE (RP)
-  6   DD C, 21 C, (NEXT) ,    \ ld ix,(NEXT)
-  7   01 C,      TRACER  ,    \ ld bc,TRACER
-  8   DD C, E9 C,             \ jp (ix)
-  9   SMUDGE
- 10 \
+  0 ( TRACE )
+  1 HEX CODE TROFF                \ disable tracing
+  2   DD C, 21 C,  (NEXT) ,       \ ld ix, (NEXT)
+  3   DD C, E9 C,                 \ jpix
+  4   SMUDGE
+  5 \
+  6 : AT@ ( -- row col )
+  7   MMU7@ >R  10 MMU7!
+  8 \ FB23  @  FB21  @  FB2D  @
+  9   FB22 C@ 8 /       FB24 C@
+ 10   R> MMU7! ;
  11 -->
- 12 
- 13 
+ 12 : AT! ( col row -- )
+ 13   MMU7@ >R  10 MMU7!
+ 14   FB2D  !  FB21  !  FB23  !
+ 15   R> MMU7! ;
+
+Scr# 262 
+  0 ( TRACE )
+  1 HEX CODE TR-ENTER
+  2   ED C, 73 C, TR-SP  ,    \ ld (TR-SP),sp     ; save SP
+  3   ED C, 43 C, TR-IP  ,    \ ld (TR-IP),bc     ; save BC (IP)
+  4   2A C, 30 +ORIGIN   ,    \ ld hl,(RP)        ; save RP
+  5   22 C,       TR-RP  ,    \ ld (TR-RP),hl
+  6 \
+  7   01 C,      TRACER  ,    \ ld bc,TRACER      ; goto tracer
+  8   DD C, 21 C, (NEXT) ,    \ ld ix,(NEXT)      ; disable trc
+  9   DD C, E9 C,             \ jp (ix)
+ 10   SMUDGE
+ 11 \
+ 12 : AT. 16 EMITC SWAP EMITC EMITC ;
+ 13 -->
  14 
  15 
 
-Scr# 262 
-  0 ( Trace facility )
-  1 \
-  2 CODE TR-EXIT HEX
-  3   ED C, 7B C, TR-SP  ,            \ ld sp,(TR-SP)
-  4   ED C, 4B C, TR-IP  ,            \ ld bc,(TR-IP)
-  5   ED C, 5B C, TR-RP  ,            \ ld de,(TR-RP)
-  6   DD C, 21 C, ' TR-ENTER >BODY ,  \ ld ix, TR-ENTER->BODY
-  7   C3 C, (NEXT) ,                  \ jp (NEXT)
-  8   SMUDGE
-  9 \
+Scr# 263 
+  0 ( TRACE )
+  1 HEX CODE TR-EXIT
+  2   ED C, 7B C, TR-SP  ,            \ ld sp,(TR-SP)
+  3   ED C, 4B C, TR-IP  ,            \ ld bc,(TR-IP)
+  4   2A C,       TR-RP  ,            \ ld hl,(TR-RP)
+  5   22 C, 30 +ORIGIN   ,            \ ld (RP),hl
+  6 \
+  7   DD C, 21 C, ' TR-ENTER >BODY ,  \ ld ix, TR-ENTER->BODY
+  8   C3 C, (NEXT) ,                  \ jp (NEXT)
+  9   SMUDGE
  10   ' TR-EXIT   TRACER CELL+ !      \ patch to TRACER
  11 \
  12 -->
@@ -3273,44 +3309,44 @@ Scr# 262
  14 
  15 
 
-Scr# 263 
-  0 ( Trace facility )
-  1 \
-  2 CODE TRON HEX                     \ Enable tracing
-  3   DD C, 21 C, ' TR-ENTER  >BODY , \ ld ix, TR-ENTER->BODY
-  4   C3 C, (NEXT) ,                  \ jp (NEXT)
-  5   SMUDGE
-  6 \
-  7 CODE TROFF HEX                    \ Disable tracing
-  8   DD C, 21 C,  (NEXT) ,           \ ld ix, (NEXT)
-  9   DD C, E9 C,                     \ jpix
- 10   SMUDGE
- 11 \
- 12 -->
- 13 
- 14 
- 15 
-
 Scr# 264 
-  0 ( Trace facility )
-  1 NEEDS .WORD
-  2 TROFF DECIMAL
-  3 : TRACE
-  4   ?TERMINAL IF TROFF QUIT THEN
-  5   R@ @ .WORD CURS KEY
-  6 ; ' TRACE TRACER !
-  7 \
-  8 
-  9 
- 10 
+  0 ( TRACE )
+  1 HEX CODE TRON                     \ Restore tracing
+  2   DD C, 21 C, ' TR-ENTER  >BODY , \ ld ix, TR-ENTER->BODY
+  3   C3 C, (NEXT) ,                  \ jp (NEXT)
+  4   SMUDGE
+  5 \
+  6 : -SPACES
+  7   1F AND
+  8   0 DO 8 EMITC LOOP ;
+  9 \
+ 10 -->
  11 
  12 
  13 
  14 
  15 
 
+Scr# 265 
+  0 ( TRACE )
+  1 NEEDS INVV NEEDS TRUV NEEDS .WORD
+  2 TROFF DECIMAL
+  3 : TRACE
+  4   14 SELECT 0 0 AT. INVV       BASE @ HEX
+  5 \ TR-RP @ CELL- R0 @ DO I U. I @ CELL- @ DUP U. .WORD
+  6 \ 32 SPACES CR  -2 +LOOP 5 SPACES
+  7 \ TR-IP @ @ DUP U. .WORD CR
+  8 \ CR .S
+  9   ?TERMINAL IF TROFF QUIT THEN
+ 10   BASE ! DEVICE @ SELECT ;
+ 11 ' TRACE TRACER !
+ 12 \ ' NOOP  TRACER !
+ 13 
+ 14 
+ 15 
+
 Scr# 266 
-  0 ( Trace facility )
+  0 ( TEST )
   1 MARKER TASK
   2 : TEST
   3   22 0 DO
@@ -8782,7 +8818,7 @@ Scr# 714
  15 
 
 Scr# 715 
-  0 N1it
+  0 exit
 
 Restarting Supervisor
 c [38;5;154mi------------------
@@ -8809,60 +8845,42 @@ Restarting Supervisor
  15 
 
 Scr# 716 
-  0 ( DOES> without <BUILDS )
-  1 marker task
-  2 : (does>)
-  3   r> latest pfa cfa 1+ !
-  4 ;
-  5 \
-  6 : does>>
-  7   compile (does>)
-  8   $CD00 , [ ' : 1+ @ ] Literal ,
-  9 ; immediate
- 10 \
- 11 : 3constant
- 12   create  , , ,
- 13   does>>  dup 4 + @ swap 2@
- 14 ;
- 15 
-
-Scr# 717 
-  0 ( DOES> without <BUILDS )
-  1 \ another entative
-  2 marker task
-  3 : does>>
-  4   state @ if
-  5     $CD00 , [ ' : 1+ @ ] Literal ,
-  6   else
-  7     r> latest pfa cfa 1+ !
-  8   then
-  9 ;
- 10 \
- 11 : 3constant
- 12   create  , , ,
- 13   does>>  dup 4 + @ swap 2@
- 14 ;
- 15 
-
-Scr# 718 
-  0 ( DOES> without <BUILDS )
-  1 \
-  2 1 2 3   3constant 3foo
-  3 3foo .s
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
+  0 ( 3CONSTANT )
+  1 : does> hex
+  2 \ latest pfa dup cell+ here latest pfa -
+  3 \ cr latest pfa U. cr here U.
+  4   latest pfa >R R@ R@ cell+ here R@ - 2 allot cmove>
+  5   r> r> swap ! ;code HEX
+  6   EB C, 2B C, 70 C, 2B C, 71 C, EB C, E1 C,
+  7   4E C, 23 C, 46 C, 23 C, E5 C, DD C, E9 C,
+  8   DECIMAL SMUDGE
+  9 \
+ 10 : <builds create ;
  11 
  12 
  13 
  14 
  15 
 
-Scr# 719 
+Scr# 717 
+  0 ( 3CONSTANT )
+  1 \
+  2 : 3constant  ( n3 n2 n1 -- ) ( -- n1 n2 n3 )
+  3   create , , ,
+  4   does> ( point A ) dup 4 + @  swap 2@ ;
+  5 \
+  6 1 2 3 3constant 3foo
+  7 3foo .s
+  8 \
+  9 : 3constant  ( n3 n2 n1 -- ) ( -- n1 n2 n3 )
+ 10   create , , ,
+ 11   ;code HEX
+ 12   D9 C, E1 C, 5E C, 23 C, 56 C, D5 C,
+ 13         23 C, 5E C, 23 C, 56 C, D5 C,
+ 14         23 C, 5E C, 23 C, 56 C, D5 C,
+ 15   D9 C, DD C, E9 C, SMUDGE
+
+Scr# 718 
   0 ( Collatz conjecture )
   1 : hail ( n -- )
   2   0 swap
@@ -10663,36 +10681,36 @@ Scr# 893
  15 
 
 Scr# 895 
-  0 ( RPI0 wrapper )
+  0 1 RPI0 wrapper )
   1 needs RPi0
   2 : this ( -- a n )
   3   >in @ >R   -2 >in +!  [compile] \
   4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
-  5                            else  b/buf c/l - then
-  6         else  span @  then
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
   7   blk @ if  blk @ block  else  tib @  then  R> + swap ;
-  8 : send ( a n1 -- n2 )
+  8 : send ( a1 n1 a2 n2 -- n3 )
   9   2dup      uart-send-text  uart-wait-for
- 10   pad 1000  uart-send-cr    uart-wait-cr-lf
- 11   uart-rx-burst 7 - 0 max ;
- 12 : ask this send ;
- 13 : sh  ask  drop ;
- 14 
+ 10             uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
+ 12 : ask  pad 1024 this send ;
+ 13 : sh  here 1024 this send drop ;
+ 14 : display cr pad swap type cr ;
  15 
 
 Scr# 896 
   0 ( RPI0 wrapper )
-  1 needs  RPi0
+  1 needs RPi0
   2 : ask  ( -- n )
   3   >in @ >R   -2 >in +!  [compile] \
   4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
-  5                            else  b/buf c/l - then
-  6         else  span @  then
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
   7   blk @ if  blk @ block  else  tib @  then  R> + swap
-  8   2dup      uart-send-text  uart-wait-for
-  9   pad 1000  uart-send-cr    uart-wait-cr-lf
- 10   uart-rx-burst 7 - 0 max
- 11 ;
+  8 \
+  9   2dup      uart-send-text  uart-wait-for
+ 10   pad 100   uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
  12 : sh ( -- )
  13   ask drop ;
  14 
@@ -10700,18 +10718,18 @@ Scr# 896
 
 Scr# 897 
   0 ( RPI0 wrapper )
-  1 needs s"
+  1   needs s"  needs ask  needs sh
   2 \ RPi0-init
   3 \ uart-wait-prompt
-  4   sh   echo 'print 2**300' > temp.py
+  4   send echo 'print 2**300' > temp.py
   5   ask  python temp.py
   6   pad swap type
   7 \
   8 : test
-  9   s"  python -c 'print 2**400'  "
- 10   ask pad swap type
- 11 ;
- 12 
+  9   here 200
+ 10   s"  python -c 'print 2**400'  "
+ 11   send here swap type
+ 12 ;
  13 
  14 
  15 
@@ -10721,7 +10739,7 @@ Scr# 898
   1 \ RPi0-init
   2 
   3 \ uart-wait-prompt
-  4   sh   echo 'print 2**300' > temp.py
+  4   send echo 'print 2**300' > temp.py
   5   ask  python temp.py
   6   pad swap type
   7 \
@@ -10731,6 +10749,24 @@ Scr# 898
  11 
  12 
  13 
+ 14 
+ 15 
+
+Scr# 899 
+  0 ( Example for THIS definition )
+  1 \
+  2   ASK     echo $BASH_VERSION
+  3   DISPLAY
+  4 \
+  5   ASK     date
+  6   DISPLAY
+  7 \
+  8 \ ASK     date -s 2024-07-13
+  9 \ ASK     date -s 17:30
+ 10 \ 2DROP
+ 11 \
+ 12   ASK     date
+ 13   DISPLAY
  14 
  15 
 
@@ -16135,24 +16171,6 @@ Scr# 6476
  14     cx cy plot
  15   then ;
 
-Scr# 6477 
-  0 ( flood-fill )
-  1 needs graphics   needs .s     marker task
-  2 : flood-fill ( x y -- )
-  3   !csp 2dup begin
-  4   sp@ csp @ - while
-  5     2dup point if 2drop else
-  6               2dup     plot
-  7               2dup 1+       >R >R
-  8               2dup 1-       >R >R
-  9          swap 2dup 1+  swap >R >R
- 10                    1-  swap  R> R>  R> R>  R> R>
- 11     then  ?terminal if quit then
- 12   repeat 2drop ;
- 13 : test  ( x y -- )
- 14   100 300 6 circle
- 15   100 300 flood-fill ;
-
 Scr# 6989 
   0 ( new SPLASH with string on Heap )
   1 needs HEAP  needs PAD"  needs POINTER
@@ -20167,21 +20185,21 @@ Scr# 15362
  14 
  15 
 
-Scr# 16000 
-  0 ( porting page 1 to blocks )
-  1 : porting>
-  2   $10 0 do i .
-  3     $E000 i b/buf * +   1 mmu7!
-  4     $7D02 i + block     b/buf cmove update flush
-  5   loop
-  6 ;
-  7 : <porting
-  8   $20 mmu7!
-  9   $10 0 do i .
- 10     $7D02 i + block     $20 mmu7!
- 11     $E000 i b/buf * +   b/buf cmove
- 12   loop
- 13 ; decimal
+Scr# 15999 
+  0 ( clear blocks 16000 - 16208 )
+  1 needs bcopy
+  2 \
+  3 : clear-blocks
+  4   16209 16000 do
+  5     15998 i bcopy flush
+  6     [char] . emit
+  7   loop
+  8 ;
+  9 \
+ 10 
+ 11 
+ 12 
+ 13 
  14 
  15 
 
@@ -20199,6 +20217,7 @@ Index:
     9 ( Print a complete error list )
    10 .( AUX )
    11 ( Autoexec )
+   12 ( Autoexec )
    20 ( LOADG )
    21 ( LOADG )
    22 ( LOADG )
@@ -20366,12 +20385,13 @@ Index:
   257 ( +loop standardization )
   258 ( +loop standardization )
   259 \ Forth Application Tecniques - 5.1.1
-  260 ( Trace facility )
-  261 ( Trace facility )
-  262 ( Trace facility )
-  263 ( Trace facility )
-  264 ( Trace facility )
-  266 ( Trace facility )
+  260 ( TRACE )
+  261 ( TRACE )
+  262 ( TRACE )
+  263 ( TRACE )
+  264 ( TRACE )
+  265 ( TRACE )
+  266 ( TEST )
   267 ( GO-TO )
   268 ( GO-TO )
   269 ( GO-TO )
@@ -20675,14 +20695,13 @@ Index:
   712 ( TERM0 )
   713 ( TERM0 )
   714 ( TERM0 )
-  715 N1it
+  715 exit
 
 Restarting Supervisor
 c [38;5;154mi------------------
-  716 ( DOES> without <BUILDS )
-  717 ( DOES> without <BUILDS )
-  718 ( DOES> without <BUILDS )
-  719 ( Collatz conjecture )
+  716 ( 3CONSTANT )
+  717 ( 3CONSTANT )
+  718 ( Collatz conjecture )
   720 ( 256 bitmap )
   721 ( 256 bitmap )
   722 ( 256 bitmap )
@@ -20782,10 +20801,11 @@ Restarting Supervisor
   881 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   892 ( trim routine )
   893 ( trim routine )
-  895 ( RPI0 wrapper )
+  895 1 RPI0 wrapper )
   896 ( RPI0 wrapper )
   897 ( RPI0 wrapper )
   898 ( RPI0 wrapper )
+  899 ( Example for THIS definition )
   900 ( UART Raspberry PI Zero )
   901 ( UART Raspberry PI Zero - setup )
   902 ( UART Raspberry PI Zero - setup )
@@ -21076,7 +21096,6 @@ Restarting Supervisor
  4646 ( reply )
  6475 ( solid circle )
  6476 : solid-circle ( x y r -- )
- 6477 ( flood-fill )
  6989 ( new SPLASH with string on Heap )
  8990 ( PRESENTATION )
  8991 ( PRESENTATION )
@@ -21300,4 +21319,4 @@ Restarting Supervisor
 15360 
 15361 x     x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 15362 x             x          x          x          x          x
-16000 ( porting page 1 to blocks )
+15999 ( clear blocks 16000 - 16208 )
