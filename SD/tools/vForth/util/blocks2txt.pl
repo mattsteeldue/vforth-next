@@ -4,7 +4,7 @@
 
  blocks2txt.pl
 
- Small utility to extract from a file (usually !Blocks.bin) 
+ Small utility to extract from a file (usually !Blocks-64.bin) 
  all "Screens" between 1 and N in a human readable Unix format.
  
  It needs the filename of binary file as first parameter.
@@ -12,10 +12,10 @@
 
  "N" is passed as second parameter.
   
- For example 
-    perl  blocks2txt.pl  !Blocks.bin   1000
+ For example: 
+    perl  blocks2txt.pl  c:\Zx\forth\F15\tools\vForth\!Blocks-64.bin   16383
  
- will produce !Blocks.bin.txt 
+ extracts all data and produces  !Blocks.bin.txt 
  
 =cut
 

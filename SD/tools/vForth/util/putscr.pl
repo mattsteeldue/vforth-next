@@ -4,9 +4,16 @@
 
  putscr.pl
 
- Small utility to put into !Blocks.bin a specific screen
- using a suitable text file
- It's the reverse operation performed by blocks2txt.pl script
+ Small utility to put into !Blocks-64.bin a specific 1K Screen 
+ using a suitable text file (one Screen is two Blocks).
+ 
+ This is the reverse operation performed by blocks2txt.pl script
+ 
+ For example: 
+ 
+    perl  putscr.pl  Messages.txt  !Blocks-64.bin  4
+    
+ restores the blocks that contain the standard messages.
 
 =cut
 
@@ -47,7 +54,7 @@ while( my $line = <F> ) {
         $line_number = 0 ;
     }
 }
-put_screen( $screen_number ) ;
+put_screen( $screen_number ) if scalar @screen_data ;
 
 close F ;
 
@@ -75,7 +82,8 @@ sub put_screen {
     if ( $final_len != $init_len ) {
         1;
     }
-    print length( $binary_content ) . " , " . length( $str ) . "\n" ;
+    print "Screen# $num\n" ;
+    # print length( $binary_content ) . " , " . length( $str ) . "\n" ;
     1;
 }
 
@@ -84,4 +92,8 @@ sub put_screen {
 
 print qq[File "$block_filename" re-written\n] ;
 1;
+
+# c:\Zx\Forth\F15\version\20210228\chomp.f  c:\Zx\Forth\F15\version\20210228\!Blocks-64.bin
+
+
 

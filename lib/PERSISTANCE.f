@@ -1,89 +1,206 @@
 \
 \ lib/persistance.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2025-01-01            
+\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
 \ MIT License (c) 1990-2025 Matteo Vitturi     
 \
 
-.( PERSISTANCE ) 
+( PERSISTANCE ) 
 
-\ save the complete current vForth status to blocks 
+\ Save the complete current vForth status to blocks 
+\ This must be the very first definition loaded just after a COLD start
+\ this way these definitions are always at lower address than any subsequent 
+\ loading.
 
-MARKER PERSISTANCE
-NEEDS FLIP
+\ Use SAVE-SYSTEM one first time to enable it.
+\ Use NO-PERSISTANCE to disable.
 
+\ Block-numbers where RAM is dumped to
+\ Normal version:
+\ User data: 32000
+\ Core data: 32001 - 32040
+\ Heap data: 32048 - 32175
+\ Dot-version:
+\ User data: 32200
+\ Core data: 32201 - 32040 
+\ Heap data: 32291 - 32375
+
+
+MARKER PERSISTANCE-CLEAN-UP
+
+\ normal version has origin >$4000, dot version <$4000
+\ and uses 200 blocks higher than normal version
+0 +ORIGIN $4000 > 1+ #200 *
+#32000 + CONSTANT PERSISTANCE
+
+\ must be keep track of the latest definition pointer 
+' FORTH >BODY CELL+ 
+CONSTANT FORTH-POINTER
+
+\ user data pointer
+$2E +ORIGIN @
+CONSTANT USER-POINTER
+
+\ Disable persistance
+: NO-PERSISTANCE
+    0 PERSISTANCE BLOCK !
+    UPDATE FLUSH
+;
+
+.( .)
+
+\ Clear blocks used by persistance
+: CLEAR-BLOCKS
+    PERSISTANCE #176 +
+    PERSISTANCE 
+    DO 
+        I BLOCK B/BUF ERASE UPDATE
+    LOOP    
+;
+ 
 \ given a memory address 'a' and a block number 'u'
 \ restore data from block to memory
+\ any FAR 8k-paging must be done in advance
 : RESTORE-FROM-BLOCK ( a u -- )
     BLOCK                       \ a a1
     SWAP                        \ a1 a
-    B/BUF                       \ a1 a 512
-    CMOVE 
+    B/BUF CMOVE 
 ;    
 
 \ given a memory address 'a' and a block number 'u'
 \ save data from memory to block
+\ any FAR 8k paging must be performed beforehand
 : SAVE-TO-BLOCK ( a u -- )
     BLOCK                       \ a a1
-    UPDATE                      \ a a1
-    B/BUF                       \ a a1 512
-    CMOVE 
+    B/BUF CMOVE 
+    UPDATE FLUSH
 ;    
 
-\ based on flag f save or restore 512 bytes using
-\ memory address a and block number u
-: MANAGE-RW-BLOCK ( a u f -- )
-    IF 
-\       ." save to block " decimal u. ." addr " hex u. cr
+\ based on flag f, save (true) or restore (false) 512 bytes 
+\ using memory address a and block number u
+: MANAGE-RW-BLOCK ( f a u -- )
+    ROT IF                      \ a u f
+    \   [ CHAR > ] LITERAL EMIT \ a u
+    \   2DUP CR DECIMAL U. HEX U.           
         SAVE-TO-BLOCK
-        $2E EMIT
     ELSE
-\       ." restore from block " decimal u. ." addr " hex u. cr
+    \   [ CHAR < ] LITERAL EMIT \ a u
+    \   2DUP CR DECIMAL U. HEX U.           
         RESTORE-FROM-BLOCK
-        $3C EMIT
+        \ or COMPARE-BLOCK for test 
     THEN
-    decimal
+    \ ?TERMINAL IF ABORT THEN
 ;
 
-\ starting block number where memory is dumped
-\ Heap is stored in blocks from 32000 to 32127
-\ User data to 32128, core from 32198 to 32415
-\
-#32000 CONSTANT HEAP-BLOCK-NUM 
-#32080 CONSTANT CORE-BLOCK-NUM 
+.( .)
+
+\ given flag f and core address, save or restore 512-bytes page
+\ block number is computed from FENCE upward. 
+: MANAGE-CORE-PAGE ( f a -- )
+    DUP FENCE @ - 9 RSHIFT      \ f a b
+    PERSISTANCE 1+ +            \ f a u
+    MANAGE-RW-BLOCK             \ f
+;
+
+\ given flag f and heap address, save or restore 512-bytes page
+\ block number is computed using heap-address
+: MANAGE-HEAP-PAGE ( f hp -- )
+    DUP 9 RSHIFT                \ f hp b
+    PERSISTANCE #48 + +         \ f hp u
+    SWAP FAR SWAP               \ f a u
+    MANAGE-RW-BLOCK   
+;
+
+\ manage user data
+\ uses single block 32000 (or 32200)
+: MANAGE-USER-DATA ( f -- )
+    PERSISTANCE BLOCK           \ f blk
+    USER-POINTER                \ f blk usr
+    ROT DUP >R                  \   blk urs f
+    IF                          \   blk usr
+        SWAP                    \   usr blk
+        \ save forth latest
+        FORTH-POINTER @         \   usr blk latest
+        USER-POINTER !          \   usr blk 
+    THEN                        \   a1  a2       
+    #28 CMOVE  \ only 14 user variables are needed
+    R> IF
+        UPDATE FLUSH 
+    ELSE
+        \ restore forth latest
+        USER-POINTER @
+        FORTH-POINTER !
+    THEN
+;
+
+.( .)
 
 \ based on flag f save or restore the system
 : MANAGE-PAGES ( f -- )
-    \ manage heap-pages 1K per loop
-    \ index counts half-K
-    #128 0 DO 
-\       i    u. 
-        I    2* FLIP      FAR   \ f a
-        I    HEAP-BLOCK-NUM +   \ f a u
-        2 PICK                  \ f a u f
-        MANAGE-RW-BLOCK         \ f
-\       i 1+ u. 
-        I 1+ 2* FLIP      FAR   \ f a
-        I 1+ HEAP-BLOCK-NUM +   \ f a u+1
-        2 PICK                  \ f a u f
-        MANAGE-RW-BLOCK         \ f
-        ?TERMINAL IF LEAVE THEN
-    2 +LOOP
-\   \ save main memory from $6300 to $D000
-    $D0 $63 DO
-\       i    u. 
-        I    FLIP               \ f a
-        I 2/ CORE-BLOCK-NUM +   \ f a u
-        2 PICK                  \ f a u f
-        MANAGE-RW-BLOCK         \ f
-        ?TERMINAL IF LEAVE THEN
-    2 +LOOP
-    \ save USER zone
-    $2E +ORIGIN @               \ f a
-    HEAP-BLOCK-NUM 128 +        \ f a u
-    ROT                         \ a u f
-    MANAGE-RW-BLOCK 
+    DUP MANAGE-USER-DATA        \ f
+    \ manage allocated heap
+    HP@ 0                       \ f hp 0
+    DO                          \ f
+        DUP I MANAGE-HEAP-PAGE  \ f
+    B/BUF +LOOP                 \ f
+    \ manage dictionary
+    HERE FENCE @                \ f a2 a1
+    DO                          \ f 
+        DUP I MANAGE-CORE-PAGE  \ f
+    B/BUF +LOOP
+    MANAGE-USER-DATA
 ;
 
-: SAVE-SYSTEM    1 MANAGE-PAGES ;
-: RESTORE-SYSTEM 1 MANAGE-PAGES ;
+\ restore the last session if any
+
+: RESTORE-SYSTEM 
+    PERSISTANCE BLOCK @ 
+    IF
+        0 MANAGE-PAGES 
+    \   HERE #34 BLANK
+        .( ok) QUIT
+    ELSE
+        PERSISTANCE-CLEAN-UP
+    THEN    
+;
+
+\ enable persistance and save session
+
+: SAVE-SYSTEM
+    1 MANAGE-PAGES 
+;
+
+\ patch to BYE to perform a save-system before exiting to basic
+
+  WARNING @ 
+0 WARNING !
+: BYE
+    PERSISTANCE BLOCK @ 
+    IF
+        SAVE-SYSTEM
+    THEN
+    BYE
+; WARNING !
+
+
+MARKER AND-CLEAN-UP
+
+\ cleanup screen
+: SOME-BLANKS ( n -- )
+    0 DO 
+        SPACE
+    LOOP
+;
+
+: SOME-BACKSPACES
+    0 DO 
+        8 EMITC
+    LOOP
+;
+
+14 DUP DUP 
+SOME-BACKSPACES
+SOME-BLANKS 
+SOME-BACKSPACES
+AND-CLEAN-UP
+

@@ -573,3 +573,8 @@ the indirect pointer decoding is substituted by a direct CALL op-code.
 \ build 20250101
 Just a little optimization. Introducing PERSISTANCE to save and restore your
 last session: useful for dot version
+
+
+\ build 20250315
+First version of PERSISTANCE included in autoexec.
+

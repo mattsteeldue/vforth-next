@@ -6,7 +6,7 @@
    5  0000              //
    6  0000              //  v-Forth 1.8 NextZXOS version
    7  0000              //  Basic Loader version
-   8  0000              //  build 20250101
+   8  0000              //  build 20250315
    9  0000              //
   10  0000              //  Direct-Threaded version.
   11  0000              //
@@ -464,15 +464,15 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2025-01-01 ", $0D  // 37
+  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2025-03-15 ", $0D  // 37
   67+ E028 70 20 56 6F
   67+ E02C 63 61 62 75
   67+ E030 6C 61 72 79
   67+ E034 20 2D 20 62
   67+ E038 75 69 6C 64
   67+ E03C 20 32 30 32
-  67+ E040 35 2D 30 31
-  67+ E044 2D 30 31 20
+  67+ E040 35 2D 30 33
+  67+ E044 2D 31 35 20
   67+ E048 0D
   68+ E049 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E04D 20 4C 69 63
@@ -21692,7 +21692,7 @@
  772+ 7F94              //              dw      C_DOT_QUOTE
  773+ 7F94              //              db      87
  774+ 7F94              //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
- 775+ 7F94              //              db      "Heap Vocabulary - build 20250101", 13  // 33
+ 775+ 7F94              //              db      "Heap Vocabulary - build 20250315", 13  // 33
  776+ 7F94              //              db      "1990-2025 Matteo Vitturi", 13        // 25
  777+ 7F94              //              dw      EXIT
  778+ 7F94

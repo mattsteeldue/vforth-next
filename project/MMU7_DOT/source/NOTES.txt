@@ -36,9 +36,9 @@ WARM        DOT does not execute SPLASH
 L3.asm
 ------
 CLS         call $0DAF is performed via rst $18 
-AUTOEXEC    normal version executes 11 LOAD while 
-            but DOT version includes filename passed as parameter from Basic 
-            or default filename "c:/tools/vforth/lib/autoexec.f"
+AUTOEXEC    MMU7 executes 11 LOAD while 
+            DOT  includes filename passed as parameter from Basic or 
+            defaulted with "c:/tools/vforth/lib/autoexec.f"
 
 
 next-opt1.asm

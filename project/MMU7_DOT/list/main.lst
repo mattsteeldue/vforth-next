@@ -6,7 +6,7 @@
    5  0000              //
    6  0000              //  v-Forth 1.8 NextZXOS version
    7  0000              //  DOT-command version
-   8  0000              //  build 20250101
+   8  0000              //  build 20250315
    9  0000              //
   10  0000              //  Direct-Threaded version.
   11  0000              //
@@ -455,14 +455,14 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 44 6F 74                  db      " Dot-command - build 2025-01-01 ", $0D  // 33
+  67+ E024 20 44 6F 74                  db      " Dot-command - build 2025-03-15 ", $0D  // 33
   67+ E028 2D 63 6F 6D
   67+ E02C 6D 61 6E 64
   67+ E030 20 2D 20 62
   67+ E034 75 69 6C 64
   67+ E038 20 32 30 32
-  67+ E03C 35 2D 30 31
-  67+ E040 2D 30 31 20
+  67+ E03C 35 2D 30 33
+  67+ E040 2D 31 35 20
   67+ E044 0D
   68+ E045 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E049 20 4C 69 63
@@ -21916,7 +21916,7 @@
  771+ 3D50              //              dw      C_DOT_QUOTE
  772+ 3D50              //              db      87
  773+ 3D50              //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
- 774+ 3D50              //              db      "Heap Vocabulary - build 20250101", 13  // 33
+ 774+ 3D50              //              db      "Heap Vocabulary - build 20250315", 13  // 33
  775+ 3D50              //              db      "1990-2025 Matteo Vitturi", 13        // 25
  776+ 3D50              //              dw      EXIT
  777+ 3D50

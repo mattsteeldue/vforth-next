@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2025-01-01 
+\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
 \ MIT License (c) 1990-2025 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -4742,7 +4742,7 @@ immediate
     cmove
     
     [ hex 0C +origin ] Literal @  \ Latest
-    [ ' forth >body 4 + ] Literal !  \
+    [ ' forth >body 2 + ] Literal !  \
 
 \ included in initial cmove
 \   [ first @        ] Literal first !
@@ -4799,9 +4799,10 @@ here warm^ ! \ patch
 \       LDN     A'|    1 N,
 \       LD()A   hex 5C6B AA,   \ DF_SZ system variable
         
-        LDHL()  hex  14 +origin AA, \ forth's RP
+        LDDE()  hex  14 +origin AA, \ forth's RP
+\       LDHL()  hex  14 +origin AA, \ forth's RP
 \       LD()HL  hex 030 +origin AA,
-        EXDEHL
+\       EXDEHL
         LDX     IX|    (next)   NN, 
         LDX     BC|    y^    NN, \ ... so BC is WARM, quick'n'dirty
         JRF    CY'|    HOLDPLACE \ IF,

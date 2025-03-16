@@ -1,16 +1,13 @@
 \
 \ remount.f
 \
-\ REMOUNT via IDE_MOUNT    $01d2 )
+\ v-Forth 1.8 - NextZXOS version - build 2025-01-01
+\ MIT License (c) 1990-2025 Matteo Vitturi 
+\
+\ REMOUNT via IDE_MOUNT    $01d2
 \ This definitions uses M_P3DOS primitive.
 \ M_P3DOS expects hl, de, bc, a, and address of service routine
 \         returns hl, de, bc, a, and status 0=ok 1=ko
-\
-\ Using REMOUNT staying in Forth, you need to use Basic's REMOUNT no more.
-\
-\ You can even change the BLOCKs file used by changing the content of
-\ BLK-FNAME (counted-string-with zero-padding)
-\
 \
 : REMOUNT  ( -- )
   BLK-FH @ F_CLOSE DROP         \ close BLOCKs file and ignore any error
@@ -23,8 +20,7 @@
   ELSE
     ." Remove/insert SD and press Y "
     BEGIN
-        CURS
-        KEY UPPER               \ wait for Y
+        CURS KEY UPPER          \ wait for Y
         [CHAR] Y =
     UNTIL
     0 0 0 1 [ HEX ] 01D2 M_P3DOS \ invoke IDE_MOUNT NextZXOS service
