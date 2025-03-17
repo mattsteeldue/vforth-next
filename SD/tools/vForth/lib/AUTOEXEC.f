@@ -6,7 +6,7 @@
 \
 
 \ This is executed at first COLD start by AUTOEXEC to display system info
-\ by default, it tries to restore your last session via PERSISTANCE utility
+\ by default, it tries to restore your last session via PERSISTENCE utility
 \ if any session has been saved, otherwise, perform the standard splash screen 
 
 
@@ -65,7 +65,7 @@ FORGET-THIS-TASK-1
 
 \ try restore now
 \ move the following line up/down to include less/more display
-NEEDS PERSISTANCE RESTORE-SYSTEM \ quits if restored.
+NEEDS PERSISTENCE RESTORE-SYSTEM \ quits if restored.
 
 
 
