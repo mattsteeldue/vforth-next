@@ -8,9 +8,10 @@
    source described in Leo's book are available in Screens from 800 upward.
    
 
-#vForth1.6
-On January 2023, I published here on GitHub the latest version that represents the fastest up to now.
-It seems we're approaching some Golden Ratio version...
+#vForth versions 1.6, 1.7 and 1.8
+On January 2023, I published here on GitHub  version 1.6 that represents the fastest up to now, followed by version 1.7 (March 2023) where 
+the dictionary is split in two parts: name-space and code-space increasing overall space available.
+Version 1.8 has DOES> following the latest standard, released on September 2024.
 
 
 #vForth1.52
