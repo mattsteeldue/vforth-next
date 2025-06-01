@@ -63,3 +63,8 @@ directory /demos/bmp256converts/bitmaps/ standard distro
 Since the loading of each .bpm file takes some time, uses two distinct RAM
 zones to be able to load one image while the previous is still displayed.
 
+
+
+Layer3-Demo1.f
+------------
+This demo shows two Layer3

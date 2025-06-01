@@ -7,7 +7,7 @@
 \
 \ TRUV
 : TRUV ( -- )
-  [ HEX 14 ] LITERAL EMITC
+  [ $14 ] LITERAL EMITC
   0 EMITC
 ;
 

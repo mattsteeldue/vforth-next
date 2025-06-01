@@ -9,7 +9,7 @@ BASE @ \ save base status
 \
 \ INVV
 : INVV ( -- )
-  [ HEX 14 ] LITERAL EMITC
+  [ $14 ] LITERAL EMITC
   1 EMITC
 ;
 

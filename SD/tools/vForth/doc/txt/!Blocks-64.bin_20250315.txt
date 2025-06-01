@@ -15,7 +15,7 @@ See index at end of file.
 
 
 Scr# 1 
-  0 98BLOCK system - introduction )
+  0 ( BLOCK system - introduction )
   1 (  This Forth System comes with a 16 MBytes file named
   2 (  !Blocks-64.bin that provides a BLOCK-like mass storage
   3 (  system to hold 32767 BLOCKs or 16383 Screens  that

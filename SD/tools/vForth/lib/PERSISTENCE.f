@@ -22,16 +22,18 @@
 \ Heap data: 32048 - 32175
 \ Dot-version:
 \ User data: 32200
-\ Core data: 32201 - 32040 
-\ Heap data: 32291 - 32375
+\ Core data: 32201 - 32240 
+\ Heap data: 32248 - 32375
 
 
 MARKER PERSISTENCE-CLEAN-UP
 
+.( Restoring system)
+
 \ normal version has origin >$4000, dot version <$4000
 \ and uses 200 blocks higher than normal version
 0 +ORIGIN $4000 > 1+ #200 *
-#32000 + CONSTANT PERSISTENCE
+#32000 + CONSTANT PERSISTENCE 
 
 \ must be keep track of the latest definition pointer 
 ' FORTH >BODY CELL+ 
@@ -170,6 +172,9 @@ CONSTANT USER-POINTER
     1 MANAGE-PAGES 
 ;
 
+
+.( .)
+
 \ patch to BYE to perform a save-system before exiting to basic
 
   WARNING @ 
@@ -183,24 +188,26 @@ CONSTANT USER-POINTER
 ; WARNING !
 
 
+
 MARKER AND-CLEAN-UP
 
-\ cleanup screen
-: SOME-BLANKS ( n -- )
+\ emit blanks 
+: SOME-BLANKS ( u -- )
     0 DO 
         SPACE
     LOOP
 ;
 
-: SOME-BACKSPACES
+\ emit backspaces
+: SOME-BACKSPACES ( u -- )
     0 DO 
         8 EMITC
     LOOP
 ;
 
-14 DUP DUP 
+#15 DUP DUP 
 SOME-BACKSPACES
 SOME-BLANKS 
 SOME-BACKSPACES
 AND-CLEAN-UP
-
+CR

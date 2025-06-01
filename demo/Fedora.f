@@ -5,7 +5,9 @@ needs J
 needs GRAPHICS
 needs SQRT
 
-marker task
+marker task
+
+decimal
 
 \ array indexed by integer "deg" between 0 and 90
 \ with the value of sin(deg) scaled /10000 for 

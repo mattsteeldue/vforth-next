@@ -3,21 +3,19 @@
 \
 .( DSQRT )
 \
-\ Square root
+\ Square root of d (modified Newton-Raphson method)
+\ 0 <= d < 1073741824
+\ n <-- ( n + d/n ) / 2
 \
 DECIMAL
-NEEDS INVERT
 \
 : DSQRT ( d -- n )
-    [ 0 INVERT 1 RSHIFT INVERT ] LITERAL    \ number with high bit set only 
-    15 0 DO
-        >R                 \ d         R: n
-        2DUP R@            \ d d n
-        UM/MOD             \ d r q
-        NIP                \ d q
-        R>                 \ d q n     R:
-        + 1 RSHIFT         \ d (q+n)/2
+    [ -1 1 RSHIFT -1 XOR ] LITERAL \ number with high bit set only 
+    15 0 DO 
+        >R 2DUP R@      \ d d n     R: n
+        UM/MOD NIP      \ d d/n
+        R> +            \ d n+d/n
+        1 RSHIFT        \ d (n+d/n)/2
     LOOP
-    NIP NIP                \ n
+    NIP NIP             \ n
 ;
-

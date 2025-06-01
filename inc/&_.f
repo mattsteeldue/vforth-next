@@ -11,7 +11,7 @@
 \ Multiplying two (12:4) numbers yelds a (24:8) that needs a final >>4 to scale to get 12:4 again
 \ and all this happens MOD $10000, then the big $40000000 can be ignored.
 \ So we have to subtract a (x+y)$8000 from the result before the final >>4.
-\ ... or a (x+y)$08000 after the final >>4 scaling.
+\ ... or a (x+y)$0800 after the final >>4 scaling.
 \ this is 
 
 
