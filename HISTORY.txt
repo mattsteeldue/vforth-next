@@ -578,3 +578,9 @@ last session: useful for dot version
 \ build 20250315
 First version of PERSISTENCE included in autoexec.
 
+
+\ build 20250719
+New build needed to ease TILE mode implementation (aka Layer 3).
+Introducing the first DEMO on three TILE modes.
+Introducing TILE80 that allows switching to Layer-3 most EMIT functions (work in progress).
+
