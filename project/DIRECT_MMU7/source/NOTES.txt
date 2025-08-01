@@ -1,13 +1,26 @@
 Differences between v1.7 and 1.8
 ----------------------------------------
 
+------
 L0.asm
 ------
 
-2!      final part is equal to ! so save a few bytes (Store_end:)
-AND OR XOR restored fast version
+2!      final part is equal to ! so save a 4 bytes (Store_end:)
+AND OR XOR restored slower version, these few bytes aren't worth this change ?
+ENCLOSE is optimized to save space on exiting [push de...]
 
+    (COMPARE) is optimized to save space on common exit [push hl...]
+    (EMITC) replaces EMITC that can be vectored
+    (CLS)   replaces CLS that can be vectored
+    CR      is made colon definition to be routed via EMIT
+    (?EMIT) modified to allow UDG
+    CURS    is made colon definitio to be able to vector it later
+    (?DO)   should we save 2 bytes?
+    CMOVE>  should we save 2 bytes?
+    UM/MOD  exits through UM* ending part (save 3 bytes)
+    
 
+------
 L1.asm
 ------
 
@@ -19,6 +32,12 @@ DOES>   now compiles a "_DOES>_" followed by a "call" op-code to Enter i.e. same
 2FIND   needs one  CELL+  less because of how new FORTH VOCABULARY is built
 
 
+    EMITC   is moved here from L0.asm and calls (EMITC)
+    CR      is moved here from L0.asm and calls EMIT
+    CURS    is moved here from L0.asm -- this is a translation from the original CODE
+
+
+------
 L2.asm
 ------
 
@@ -30,8 +49,11 @@ VOCABULARY begins with CREATE instead of <BUILDS and ends with _DOES>_ instead o
 
 WARM    doesn't SPLASH anymore.
 
+------
 L3.asm
 ------
 
 MARKER  begins with CREATE instead of <BUILDS and ends with _DOES>_ instead of DOES>
         _DOES>_ is followed by a "call" op-code to Enter i.e. same as ":"
+
+CLS     is made colon definition and calls (CLS)

@@ -1,0 +1,11 @@
+forth(38913), 7722
+
+
+0  VALUE     branch^       \ PFA of BRANCH
+0  VALUE     branch^^      \ ptr to be patched with PFA of BRANCH
+HERE TO branch^ 
+JR      branch^    HERE 1 + - D,
+branch^  branch^^  1+ -  branch^^ C!  \ fixed previous "30" 
+JRF     Z'|    branch^  HERE 1 + - D,
+JR      branch^  HERE 1 + - D,
+JR      branch^  HERE 1 + - D,

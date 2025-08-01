@@ -41,7 +41,7 @@ Bakup of first 350 screens to 10001 onward, just to be safe. Accessing high numb
 
 
 \ build 20200702
-Introduced a quick'n'dirty audible click on  KEY.
+Introduced a quick'n'dirty audible click on  KEY (later abandoned again).
 Word  BASIC, on returning to Basic, retuns the value currently on top-of-stack. Useful to return ORIGIN and make faster rebuild.
 Test on  AUTOEXEC  in core, run 11 LOAD. Useful at startup, as already seen..
 Verified and corrected words MOVE-SP; copied words MOVE-SP, MOVE-RP, MOVE-LIMIT to screen 220-223: useful to free MMU7 last 8K bank (E000-FFFF)
@@ -135,7 +135,7 @@ Documentation upgraded and revised.
 
 \ build 20201115
 Bugfix: DO ... +LOOP structure with negative step that crosses the 0 boundary behaves in a buggy way. The bug is in (LOOP) definition that does a JP C instead of a JP M.
-Changed   STRING"   into   ,"    Ã  la  Forth Inc. style.
+Changed   STRING"   into   ,"    a-la  Forth Inc. style.
 Re-introduced  PICK  INVV  TRUV, but plan to move them in include directory.
 Introducing a new  Full Screen Editor  that can be loaded from library.
 Attached block-system file  !Blocks64.bin  has become integral part of this Forth system, since many features come along with it.

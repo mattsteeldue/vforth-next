@@ -5943,14 +5943,14 @@ CASEOFF
 \           ...     Free memory
 \           ...     Stack grows downward
 \ SP                SP@
-\ D0E8              S0 @
-\ D0E8              #TIB     TIB @
+\ F250              S0 @
+\ F250              #TIB     TIB @
 \                   #...     Return stack grows downward: it can hold 80 entries
 \                   #RP@
-\ D188              #R0 @
-\ D188-D1D8         #        User variables area (about 50 entries)
-\ D1E4      FIRST   First buffer.
-\ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
+\ F2F0              #R0 @
+\ F2F0-F340         #        User variables area (about 50 entries)
+\ F340      FIRST   First buffer.
+\ FF58      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
 \ FFFF      P_RAMT  Phisical ram-top
 \ 
 

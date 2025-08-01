@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2025-03-15 ", $0D  // 33
+                db      " Dot-command - build 2025-07-19 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2025 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -217,7 +217,7 @@ End_Loop_Ptr:
 
 //  ______________________________________________________________________ 
 //
-// (loop)       n --
+// (loop)         --
 // same as (LOOP) but index is incremented by 1
 // compiled by LOOP. 
                 New_Def C_LOOP, "(LOOP)", is_code, is_normal
@@ -754,16 +754,18 @@ C_Compare_common_ending:
 // emitc        c -- 
 // low level emit, calls ROM routine at #10 to send a character to 
 // the the current channel (see SELECT to change stream-channel)
-                New_Def EMITC, "EMITC", is_code, is_normal
+                New_Def CEMITC, "(EMITC)", is_code, is_normal
                 pop     hl
                 ld      a, l
 Emitc_Ptr:      
                 push    bc
                 push    de
                 push    ix
+CLS_No_Layer_0:
                 di
                 rst     $10
                 ei
+CLS_Layer_0:
                 pop     ix
                 pop     de
                 pop     bc
@@ -773,12 +775,44 @@ Emitc_Ptr:
 
 //  ______________________________________________________________________ 
 //
+// (cls)          --
+
+//              Colon_Def CLS, "CLS", is_normal
+//              dw      LIT, $0E, EMITC
+//              dw      EXIT
+
+                New_Def CCLS, "(CLS)", is_code, is_normal
+                push    bc
+                push    de
+                push    ix
+                ld      de, $01D5   // on success set carry-flag  
+                ld      c, 7        // necessary to call M_P3DOS
+                xor     a           // query current status
+                rst     8
+                db      $94         // carry flag set on success 
+                and     a
+                ld      a, $0E
+                jr      nz, CLS_No_Layer_0
+                  call    $0DAF
+                jr      CLS_Layer_0
+                
+//              jr      Emit_Rst
+//              rst     $10
+//CLS_Layer_0:                
+//              pop     ix
+//              pop     de
+//              pop     bc
+//              next
+
+
+//  ______________________________________________________________________ 
+//
 // cr           --
 // send a CR via EMITC
-                New_Def CR, "CR", is_code, is_normal
-
-                ld      a, CR_CHAR
-                jr      Emitc_Ptr
+//              New_Def CR, "CR", is_code, is_normal
+//
+//              ld      a, CR_CHAR
+//              jr      Emitc_Ptr
 
 Emitc_Vec:    
                 dw      C_Emit_Printable  // comma
@@ -811,7 +845,13 @@ Emit_Selector_End:
                 exx
                 pop     de
                 ld      a, e                //  de has c1
-                and     $7F                 // 7-bit ascii only
+
+                cp      $90  // allow standard udg
+                jr      c,  C_Emit_n_udg
+
+                  and     $7F                 // 7-bit ascii only
+C_Emit_n_udg:                
+
                 // push    bc                  // save Instruction Pointer
                 ld      bc, Emit_Selector_End - Emit_Selector_Start + 1
                 ld      hl, Emit_Selector_End
@@ -898,58 +938,65 @@ Key_MapTo:
                 db      $7E                 //  0: SYMBOL+A : ~
 
 //  ______________________________________________________________________ 
+
+                New_Def ONE_FRAME, "1FRAME", is_code, is_normal
+                ei
+                halt
+                next
+
+//  ______________________________________________________________________ 
 //
-// curs         -- c
+// curs         -- 
 // wait for a keypress
 // This definition need Standard ROM Interrupt to be served
-
-                New_Def CUR, "CURS", is_code, is_normal
-
-                push    bc                  // save Instruction Pointer
-                push    de                  // save Return Stack Pointer
-                push    ix  
-                ld      (SP_Saved), sp      // be sure to not to be paged out.
-            //  ld      sp, Cold_origin - 5 // maybe $8000 in the future...
-                ld      sp, TSTACK           // Carefully balanced from startup
-                res     5, (iy + 1)         // FLAGS (5C3A+1)
-
-Cur_Wait:       
-                    halt
-                    ld      a, 2                // selec channel #2 (Upper Video)
-                //  call    $1601               // SELECT Standard-ROM Routine
-                    rst     $18 
-                    dw      $1601
-
-                    // software-flash: flips face every 320 ms
-                    ld      a, $20              // Timing based
-                    and     (iy + $3E)          // FRAMES (5C3A+3E)
-    
-                    ld      a, (Block_Face)     // see origin.asm
-                    jr      nz, Cur_Cursor
-                        ld      a, (Half_Face)      // see origin.asm
-                        bit     3, (iy + $30)       // FLAGS2 (5C3A+$30) that is CAPS-LOCK
-                        jr      z, Cur_Cursor
-                            ld      a, (Underscore_Face) // see origin
-Cur_Cursor:     
-                    rst     $10
-                    ld      a, BACKSPACE_CHAR    // backspace            
-                    rst     $10
-                    bit     5, (iy + 1)         // FLAGS (5C3A+1)
-                jr      z, Cur_Wait
-    
-                halt    // this is to sync flashing cursor.
-
-                ld      a, BLANK_CHAR       // space to blank cursor
-                rst     $10
-                ld      a, BACKSPACE_CHAR   // backspace
-                rst     $10
-
-                ld      sp, (SP_Saved)
-
-                pop     ix  
-                pop     de                  // Restore Return Stack Pointer
-                pop     bc                  // Restore Instruction Pointer
-                next
+//
+//                New_Def CUR, "CURS", is_code, is_normal
+//
+//                push    bc                  // save Instruction Pointer
+//                push    de                  // save Return Stack Pointer
+//                push    ix  
+//                ld      (SP_Saved), sp      // be sure to not to be paged out.
+//            //  ld      sp, Cold_origin - 5 // maybe $8000 in the future...
+//                ld      sp, TSTACK           // Carefully balanced from startup
+//                res     5, (iy + 1)         // FLAGS (5C3A+1)
+//
+//Cur_Wait:       
+//                    halt
+//                    ld      a, 2                // selec channel #2 (Upper Video)
+//                //  call    $1601               // SELECT Standard-ROM Routine
+//                    rst     $18 
+//                    dw      $1601
+//
+//                    // software-flash: flips face every 320 ms
+//                    ld      a, $20              // Timing based
+//                    and     (iy + $3E)          // FRAMES (5C3A+3E)
+//    
+//                    ld      a, (Block_Face)     // see origin.asm
+//                    jr      nz, Cur_Cursor
+//                        ld      a, (Half_Face)      // see origin.asm
+//                        bit     3, (iy + $30)       // FLAGS2 (5C3A+$30) that is CAPS-LOCK
+//                        jr      z, Cur_Cursor
+//                            ld      a, (Underscore_Face) // see origin
+//Cur_Cursor:     
+//                    rst     $10
+//                    ld      a, BACKSPACE_CHAR    // backspace            
+//                    rst     $10
+//                    bit     5, (iy + 1)         // FLAGS (5C3A+1)
+//                jr      z, Cur_Wait
+//    
+//                halt    // this is to sync flashing cursor.
+//
+//                ld      a, BLANK_CHAR       // space to blank cursor
+//                rst     $10
+//                ld      a, BACKSPACE_CHAR   // backspace
+//                rst     $10
+//
+//                ld      sp, (SP_Saved)
+//
+//                pop     ix  
+//                pop     de                  // Restore Return Stack Pointer
+//                pop     bc                  // Restore Instruction Pointer
+//                next
 
 
 //  ______________________________________________________________________ 

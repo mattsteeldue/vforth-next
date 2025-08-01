@@ -1,13 +1,13 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
+\ v-Forth 1.8 - NextZXOS version - build 2025-07-19
 \ MIT License (c) 1990-2025 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
 \
 \ MIT License
 \ 
-\ Copyright (c) 1990-2024 Matteo Vitturi
+\ Copyright (c) 1990-2025 Matteo Vitturi
 \ 
 \ Permission is hereby granted, free of charge, to any person obtaining a copy
 \ of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@
 \ SOFTWARE.
 \ ______________________________________________________________________ 
 \
-\ https://sites.google.com/view/vforth/vforth15-next
+\ https://sites.google.com/view/vforth/vforth17-next
 \ https://www.oocities.org/matteo_vitturi/english/index.htm
 \  
 \ This is the complete compiler for v.Forth for SINCLAIR ZX Spectrum Next.
@@ -103,7 +103,9 @@ HEX
         \ 6A00 \ 27136 \ = room for 3 buffers below ORIGIN
         \ 8000 \ 32768 \ = final
         DP !
-          2 FAR C@ 3 +
+        \ heap pointer restored to the beginning of heap
+        \ just after the splash message
+        2 FAR C@ 3 +
         HP !
     THEN
     ;
@@ -182,6 +184,8 @@ DECIMAL
      0  VALUE     f_read_exit^  
      0  VALUE     f_open_exit^  
      0  VALUE     boolean_exit^  
+     0  VALUE     mul_exit^  
+     0  VALUE     cmove_exit^
      0  VALUE     loop_exit^ 
      0  VALUE     negate^       \ ending part of negate
      0  VALUE     emptyb^
@@ -208,7 +212,7 @@ DECIMAL
 \
   HERE HEX U. 
   HP@      U.
-  KEY  DROP
+\ KEY  DROP
 
 \ force origin to an even address?
 \ HERE 1 AND ALLOT
@@ -217,7 +221,7 @@ SET-DP-TO-ORG
 
   HERE HEX U. 
   HP@      U.
-  KEY  DROP
+\ KEY  DROP
 \ ______________________________________________________________________
 \
 
@@ -562,9 +566,10 @@ CODE (?do)      ( lim ind -- )
         LD   (HL)'|    D|
         EXX        
         \ skips 0branch offset 
-        INCX    BC|
-        INCX    BC|
-        Next
+        JR      loop_exit^ HERE 1 + - D,
+    \   INCX    BC|
+    \   INCX    BC|
+    \   Next
         C;
 
       \ ' (?do) TO (?do)~
@@ -840,7 +845,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
                     ADDA     A|         \ ignore msb in compare
                     JRF    NZ'| HOLDPLACE SWAP \ didn't match, jump (*)
 
-                JRF    NC'| HOLDPLACE SWAP DISP, 
+                JRF    NC'| BACK, \ UNTIL, 
                 \ loop back until last byte msb is found set 
                 \ that bit marks the ending char of this word
 
@@ -890,7 +895,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
                 INCX    DE| 
                 LDA(X)  DE|
                 ADDA     A|
-            JRF    NC'|  HOLDPLACE SWAP DISP, 
+            JRF    NC'|  BACK, \ UNTIL, 
             \ loop until last byte msb is set 
             \ consume chars until the end of the word
             
@@ -905,7 +910,7 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
             
             LD      A'|    D|       \ keep high byte in B too
             ORA      E|
-        JRF    NZ'|  HOLDPLACE SWAP DISP,
+        JRF    NZ'|  BACK, \ UNTIL,
         \ loop until end of vocabulary 
         \ it relies on the fact that tha first word has LFA==0000h
 
@@ -948,7 +953,7 @@ HEX
             INCX    HL|
             INCX    DE|
             CPA   (HL)|
-        JRF     Z'|  HOLDPLACE SWAP DISP, ( 1st non-delimiter )
+        JRF     Z'|  BACK, \ UNTIL, ( 1st non-delimiter )
         \ UNTIL,
 
         PUSH    DE|
@@ -964,9 +969,11 @@ HEX
             INCX    DE|
             PUSH    DE|
             DECX    DE|
-            PUSH    DE|
-            EXX 
-            Next
+            JR  HOLDPLACE  SWAP  ( !! )
+    \       JR $0F D, \ ####
+    \       PUSH    DE|
+    \       EXX 
+    \       Next
         HERE DISP, \ THEN,
         HERE  \ BEGIN, 
             LD      A'|      C|     
@@ -978,16 +985,22 @@ HEX
                 \ POP     BC|         \ retrieve BC
                 PUSH    DE|         ( i. first non enclosed )
                 INCX    DE|
-                PUSH    DE|
-                EXX 
-                Next
+                
+    \           JR  HOLDPLACE  SWAP  ( !!! )
+                JR $05 D, \ ####
+    \           PUSH    DE|
+    \           EXX 
+    \           Next
             HERE DISP, \ THEN,
             LD      A'| (HL)|
             ANDA     A|
-        JRF    NZ'| HOLDPLACE SWAP DISP,
+        JRF    NZ'| BACK, \ UNTIL,
                                    ( ii. separator & terminator )
         \ POP     BC|         \ retrieve BC
         PUSH    DE|
+        
+        HERE DISP,  ( !! )
+        
         PUSH    DE|
         EXX 
         Next
@@ -1049,19 +1062,22 @@ CODE (compare) ( a1 a2 n -- b )
             INCX    DE| 
             INCX    HL|
             JRF Z'| HOLDPLACE   \ match
-                JRF CY'| HOLDPLACE
+                JRF CY'| $05 D, \ #### CY'| HOLDPLACE
                       LDX   HL|     1   NN,
-                JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
+                JR $08 D, \ ####
+            \   JR   HOLDPLACE  
+            \    SWAP HERE DISP, \ ELSE,
                       LDX   HL|    -1   NN,
-                HERE DISP, \ THEN,
-                PUSH    HL|
-                EXX  \ POP     BC| 
-                Next
+            \   HERE DISP, \ THEN,
+\               PUSH    HL|
+\               EXX  \ POP     BC| 
+\               Next
 
             HERE DISP, \ THEN,
 
-        DJNZ BACK,          \ until
+        DJNZ BACK,          \ until,
         LDX     HL|     0   NN,
+\ common ending
         PUSH    HL|
         EXX  \ POP     BC| 
         Next
@@ -1069,10 +1085,10 @@ CODE (compare) ( a1 a2 n -- b )
 
 
 \ 62BDh 
-.( EMITC )
+." (EMITC) "
 \ low level emit, calls ROM routine at #10 to send a character to 
 \ the the current channel (see SELECT to change stream-channel)
-CODE emitc     ( c -- )
+CODE (emitc)     ( c -- )
         POP     HL|
         LD      A'|    L|
     HERE TO emitc^    
@@ -1093,14 +1109,40 @@ CODE emitc     ( c -- )
         C;
 
 
-\ 6396h
-.( CR )
-\ sends a CR via EMITC.
-CODE cr  ( -- )
+\ clear screen
+CODE (cls) ( -- )
          
-        LDN     A'|     HEX 0D N,
-        JR      emitc^  HERE 1 +  - D, 
+        PUSH    BC|
+        PUSH    DE|
+        PUSH    IX|
+        LDX     DE| $01D5  NN,  \ on success set carry-flag   
+        LDN     C'|     7   N,  \ necessary to call M_P3DOS
+        XORA     A|
+        RST     08|     $94  C,
+        ANDA     A|             \ zero in case of LAYER 0    
+        LDN     A'|   $0E   N,
+        JRF    NZ'| $E1 D, \ ####
+            CALL    $0DAF  AA,
+        JR $DD D, \ ####
+        
+\       JR  HOLDPLACE  SWAP HERE DISP, \ ELSE,
+\           RST     10|
+\       HERE DISP, \ THEN,            
+\       POP     IX|
+\       POP     DE|
+\       POP     BC|
+\       Next
         C;
+
+
+\ \ 6396h
+\ .( CR )
+\ \ sends a CR via EMITC.
+\ CODE cr  ( -- )
+\          
+\         LDN     A'|     HEX 0D N,
+\         JR      emitc^  HERE 1 +  - D, 
+\         C;
 
 
 \ conversion table for (?EMIT)
@@ -1126,7 +1168,11 @@ CODE (?emit) ( c1 -- c2 )
         EXX 
         POP     DE|
         LD      A'|    E|
-        ANDN    HEX    7F N,  \ 7-bit ascii only
+        CPN     HEX    90 N,
+        JRF     CY'|   HOLDPLACE
+            ANDN    HEX    7F N,  \ 7-bit ascii only
+        HERE DISP, \ THEN,   
+            
 \       PUSH    BC|            \ saves program counter
         LDX     BC|  EMIT-N  NN,
         LDX     HL|  EMIT-C^ EMIT-N + 1- NN, \ EMIT-Z^
@@ -1258,64 +1304,72 @@ HERE TO KEY-2^  \ same table in reverse order, sorry, I am lazy
     7E   C,   \  0: SYMBOL+A   ~
 
 
-\ new
-.( CURS )
-\ display a flashing cursor then
-\ reads one character from keyboard stream and leaves it on stack
-CODE curs ( -- )
-         
-        PUSH    BC|
-        PUSH    DE|
-        PUSH    IX|
-
-        LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
-        LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
-
-        RES      5| (IY+ 1 )|
-        HERE  \ BEGIN, 
-
-            HALT
-
-            LDN     A'| HEX 02 N,   \ select channel #2
-            CALL    HEX 1601 AA,
-
-            \ software-flash: flips face every 320 ms
-            LDN     A'| HEX 20 N,             \ Timing  
-            ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
-
-\           LDN     A'| HEX 8F N,             \ block character
-            LDA()   HEX 028 org^ +   AA,
-            JRF    NZ'| HOLDPLACE \ IF,
-\               LDN     A'| HEX 88 N,         \ lower-half-block character
-                LDA()   HEX 029 org^ +   AA,
-                BIT      3| (IY+ HEX 30 )|    \ FLAGS2 (5C3A+30)                
-                JRF     Z'| HOLDPLACE \ IF,
-\                   LDN     A'| 5F N,         \ upper-half-block character 
-                    LDA()   HEX 02A org^ +   AA,
-                HERE DISP, \ THEN, 
-            HERE DISP, \ THEN, 
-
-            RST     10|
-            LDN     A'| HEX 08 N,   \ backspace
-            RST     10|
-
-            BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
-        JRF     Z'| HOLDPLACE SWAP DISP,  \ UNTIL, 
-
+\ 1FRAME
+CODE 1frame 
+        EI
         HALT
-
-        LDN     A'| HEX 20 N,   \ space to blank cursor
-        RST     10|
-        LDN     A'| HEX 08 N,   \ backspace
-        RST     10|
-        
-        LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
-
-        POP     IX|
-        POP     DE|
-        POP     BC|
         Next
         C;
+
+
+\ new
+\ .( CURS )
+\ display a flashing cursor then
+\ reads one character from keyboard stream and leaves it on stack
+\ CODE curs ( -- )
+\          
+\         PUSH    BC|
+\         PUSH    DE|
+\         PUSH    IX|
+\ 
+\         LD()X   SP|    HEX 02C org^ +  AA, \ saves SP
+\         LDX     SP|    HEX  -5 org^ +  NN, \ temp stack just below ORIGIN
+\ 
+\         RES      5| (IY+ 1 )|
+\         HERE  \ BEGIN, 
+\ 
+\             HALT
+\ 
+\             LDN     A'| HEX 02 N,   \ select channel #2
+\             CALL    HEX 1601 AA,
+\ 
+\             \ software-flash: flips face every 320 ms
+\             LDN     A'| HEX 20 N,             \ Timing  
+\             ANDA    (IY+ HEX 3E )|            \ FRAMES (5C3A+3E)
+\ 
+\ \           LDN     A'| HEX 8F N,             \ block character
+\             LDA()   HEX 028 org^ +   AA,
+\             JRF    NZ'| HOLDPLACE \ IF,
+\ \               LDN     A'| HEX 88 N,         \ lower-half-block character
+\                 LDA()   HEX 029 org^ +   AA,
+\                 BIT      3| (IY+ HEX 30 )|    \ FLAGS2 (5C3A+30)                
+\                 JRF     Z'| HOLDPLACE \ IF,
+\ \                   LDN     A'| 5F N,         \ upper-half-block character 
+\                     LDA()   HEX 02A org^ +   AA,
+\                 HERE DISP, \ THEN, 
+\             HERE DISP, \ THEN, 
+\ 
+\             RST     10|
+\             LDN     A'| HEX 08 N,   \ backspace
+\             RST     10|
+\ 
+\             BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
+\         JRF     Z'| BACK,  \ UNTIL, 
+\ 
+\         HALT
+\ 
+\         LDN     A'| HEX 20 N,   \ space to blank cursor
+\         RST     10|
+\         LDN     A'| HEX 08 N,   \ backspace
+\         RST     10|
+\         
+\         LDX()   SP|    HEX 02C org^ +  AA, \ restore SP
+\ 
+\         POP     IX|
+\         POP     DE|
+\         POP     BC|
+\         Next
+\         C;
 
 
 ( KEY polls LASTK )
@@ -1336,7 +1390,7 @@ CODE key ( -- c )
 
         HERE  \ BEGIN, 
             BIT      5| (IY+ 1 )|         \ FLAGS (5C3A+1)
-        JRF     Z'| HOLDPLACE SWAP DISP,  \ UNTIL, 
+        JRF     Z'| BACK,  \ UNTIL, 
 
         LDA()  HEX 5C08 AA,    \ LAST-K to get typed character
 
@@ -1383,7 +1437,7 @@ CODE key ( -- c )
 \         OUTA    HEX FE P,
 \         LDN     B'|    0 N,
 \         HERE \ BEGIN,
-\         DJNZ    HOLDPLACE SWAP DISP, \ Wait loop
+\         DJNZ    BACK, \ Wait loop
 \         XORN    18 N,           \ click ?
 \         OUTA    HEX FE P,
 \         PUSH    BC|
@@ -1771,6 +1825,7 @@ CODE cmove ( a1 a2 nc -- )
         JRF     Z'| HOLDPLACE
             LDIR  
         HERE DISP, \ THEN,
+HERE TO cmove_exit^  
         EXX
         Next 
         C;
@@ -1789,7 +1844,8 @@ CODE cmove> ( a1 a2 nc -- )
         POP     HL|
         LD      A'|    B|
         ORA      C|
-        JRF     Z'| HOLDPLACE
+        JRF     Z'| $F3 D,
+    \   JRF     Z'| HOLDPLACE
             EXDEHL
             ADDHL   BC|
             DECX    HL|
@@ -1797,9 +1853,10 @@ CODE cmove> ( a1 a2 nc -- )
             ADDHL   BC|
             DECX    HL|
             LDDR  
-        HERE DISP, \ THEN,
-        EXX
-        Next 
+    \   HERE DISP, \ THEN,
+        JR      cmove_exit^ BACK,
+    \   EXX
+    \   Next 
         C;
 
 
@@ -1852,6 +1909,7 @@ CODE um* ( u1 u2 -- ud )
         MUL                     \  r     qy  Zz  sT    
         EXDEHL                  \  r     Zz  qy  sT    
         ADCHL   BC|             \  .     Uu  qy  ..    
+    HERE TO mul_exit^        
         PUSH    DE|
         PUSH    HL|
         EXX
@@ -1900,19 +1958,22 @@ CODE um/mod ( ud u1 -- r q )
 
                 INCX    DE|
                 DEC     A'|
-            JRF     NZ'| HOLDPLACE SWAP DISP, \ -UNTIL,  
+            JRF     NZ'| BACK, \ -UNTIL,  
             \ until zero
             EXDEHL
-        HERE SWAP                    \ strange jump here
-            PUSH    DE|
-            PUSH    HL|
-            EXX
-            Next 
+            JR      mul_exit^ BACK,
+
+    \   HERE SWAP                    \ strange jump here
+    \       PUSH    DE|
+    \       PUSH    HL|
+    \       EXX
+    \       Next 
         HERE DISP, \ THEN,
         LDX     HL|    HEX FFFF NN,
         LD      D'|    H|
         LD      E'|    L|
-        JR      HOLDPLACE SWAP DISP, \ strange jump there 
+    \   JR      BACK, \ strange jump there 
+        JR      mul_exit^ BACK,
         C;
 
 
@@ -1948,11 +2009,11 @@ CODE or  ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         ORA      H|     
-     \  JR      boolean_exit^ BACK,
-        LD      H'|    A|
-        PUSH    HL|
-        EXX 
-        Next
+        JR      boolean_exit^ BACK,
+    \   LD      H'|    A|
+    \   PUSH    HL|
+    \   EXX 
+    \   Next
         C;
 
 
@@ -1968,11 +2029,11 @@ CODE xor ( n1 n2 -- n3 )
         LD      L'|    A|
         LD      A'|    D|
         XORA     H|     
-     \  JR      boolean_exit^ BACK,
-        LD      H'|    A|
-        PUSH    HL|
-        EXX 
-        Next
+        JR      boolean_exit^ BACK,
+    \   LD      H'|    A|
+    \   PUSH    HL|
+    \   EXX 
+    \   Next
         C;
 
 
@@ -3249,6 +3310,13 @@ CODE -dup ( n -- 0 | n n )
         C;
 
 
+\ vectorizable EMITC
+.( EMITC )
+: emitc  ( -- )
+    (emitc)
+    ;
+
+
 \ 62CFh <<< moved here because of OUT
 .( EMIT )
 : emit  ( c -- )
@@ -3265,6 +3333,15 @@ CODE -dup ( n -- 0 | n n )
 : space  ( -- )
     bl emit
     ;
+
+
+\ 6396h
+.( CR )
+\ sends a CR via EMITC.
+: cr  ( -- )
+    [ DECIMAL 13 ] Literal 
+    emit
+;
 
     
 \ Dictionary word is structured as follows
@@ -3701,7 +3778,7 @@ HEX 1F80 constant page-watermark
 .( DOES> )
 : does>    ( -- ) 
     compile _does>_
-    [ $CD ] Literal C,       \ this compiles a CALL opcode
+    [ $CD ] Literal c,       \ this compiles a CALL opcode
 \   [ ' : 1+ @ ] Literal ,   \ this compiles ENTER as address for call 
     [ enter^   ] Literal ,   \ this compiles ENTER as address for call 
 ; immediate
@@ -3750,6 +3827,33 @@ CODE bounds  ( a n -- a+n a )
     r> over !               ( csp H x h 0 h 3 h 2 )
     cell- 0 swap !          ( csp H 0 h 0 h 3 h 2 )
 ; immediate    
+
+
+.( CURS )
+: curs
+    2 select
+    $5c3b c@     \ : res 5, (iy + 1)
+    $DF and      \ FLAGS 
+    $5c3b c!
+    Begin
+        1frame
+        $28 +origin
+        $5c78 c@     \ FRAMES
+        $20 and
+        If
+            1+ $5c6a c@   \ FLAGS2
+            8 and
+            If 1+ Then
+        Then
+        c@ emit 
+        8 emit
+        $5c3b c@
+        $20 and \ bit 5, (iy + 1)   
+    Until
+    1frame
+    space
+    8 emit
+;
 
 
 \ 6C1Ah
@@ -4799,12 +4903,12 @@ here warm^ ! \ patch
 \       LDN     A'|    1 N,
 \       LD()A   hex 5C6B AA,   \ DF_SZ system variable
         
-        LDDE()  hex  14 +origin AA, \ forth's RP
+        LDX() DE| hex  14 +origin AA, \ forth's RP
 \       LDHL()  hex  14 +origin AA, \ forth's RP
 \       LD()HL  hex 030 +origin AA,
 \       EXDEHL
-        LDX     IX|    (next)   NN, 
         LDX     BC|    y^    NN, \ ... so BC is WARM, quick'n'dirty
+        LDX     IX|    (next)   NN, 
         JRF    CY'|    HOLDPLACE \ IF,
 
         INCX    BC|
@@ -5910,29 +6014,9 @@ decimal
 \    [ hex 0E ] Literal emitc
 \ ;    
 
-\ duplicates the top value of stack
-CODE cls ( n -- n n )
-         
-        PUSH    BC|
-        PUSH    DE|
-        PUSH    IX|
-        LDX     DE| $01D5  NN,  \ on success set carry-flag   
-        LDN     C'|     7   N,  \ necessary to call M_P3DOS
-        XORA     A|
-        RST     08|     $94  C,
-        ANDA     A|             \ zero in case of LAYER 0    
-        JRF    NZ'| HOLDPLACE
-            CALL    $0DAF  AA,
-        JR  HOLDPLACE  SWAP HERE DISP, \ ELSE,
-            LDN     A'|   $0E   N,
-            RST     10|
-        HERE DISP, \ THEN,            
-        POP     IX|
-        POP     DE|
-        POP     BC|
-        Next
-        C;
-
+: cls ( -- )
+    (cls)
+;
 
 
 \ 7e96
@@ -5942,9 +6026,9 @@ CODE cls ( n -- n n )
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2024-09-22" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2025-07-19" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
-\    [ decimal 127 here ," 1990-2024 Matteo Vitturi" -1 allot ]
+\    [ decimal 127 here ," 1990-2025 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 
     ;
 
@@ -6344,6 +6428,7 @@ RENAME   video          VIDEO
 \ RENAME   printer        PRINTER        
 \ RENAME   xi/o           XI/O
 RENAME   splash         SPLASH
+RENAME   (cls)          (CLS)
 RENAME   cls            CLS
 RENAME   index          INDEX
 RENAME   list           LIST
@@ -6528,6 +6613,7 @@ RENAME   >far           >FAR
 RENAME   traverse       TRAVERSE
 RENAME   space          SPACE
 RENAME   emit           EMIT 
+RENAME   emitc          EMITC
 RENAME   ?dup           ?DUP 
 RENAME   -dup           -DUP 
 RENAME   max            MAX  
@@ -6679,11 +6765,12 @@ RENAME   select         SELECT
 RENAME   ?terminal      ?TERMINAL
 \ RENAME   key?           KEY?   
 \ RENAME   click          CLICK  
-RENAME   key            KEY     
+RENAME   key            KEY  
+RENAME   1frame         1FRAME   
 RENAME   curs           CURS 
 \ RENAME   bleep          BLEEP  
 RENAME   (?emit)        (?EMIT)
-RENAME   emitc          EMITC  
+RENAME   (emitc)        (EMITC)
 RENAME   (compare)      (COMPARE)
 RENAME   (map)          (MAP)
 RENAME   enclose        ENCLOSE
@@ -6711,7 +6798,7 @@ RENAME   lit            LIT
 \ display address and length
 DECIMAL  
 1 WARNING !
-CR CR ." give LET A="    0 +ORIGIN DUP U. ." : GO TO 50" CR CR
+CR CR ." give PROC Forth( "  0 +ORIGIN DUP U. ." ) " CR CR
 CR CR ." give SAVE f$ CODE A, " FENCE @ SWAP - U. CR CR
 CASEOFF
 
@@ -6764,9 +6851,9 @@ CASEOFF
 \ D0E8              #TIB     TIB @
 \                   #...     Return stack grows downward: it can hold 80 entries
 \                   #RP@
-\ D188              #R0 @
-\ D188-D1D8         #        User variables area (about 50 entries)
-\ D1E4      FIRST   First buffer.
+\ D398              #R0 @
+\ D398-D3E0         #        User variables area (40 entries, 80 bytes)
+\ D3E8      FIRST   First buffer.
 \ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
 \ FFFF      P_RAMT  Phisical ram-top
 \ 

@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  Basic Loader version
-//  build 20250315
+//  build 2025719
 // 
 //  Direct-Threaded version.
 // 
@@ -84,9 +84,9 @@ DEBUGGING       equ     0
 
                 if ( -2 == DEBUGGING ) 
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with single incremental compilation
-ORIGIN          equ     39060 - $80       // $9aba     // for binary comparison with single incremental compilation
-Heap_Ptr        defl    $0100 -$8b      // HP before compilation 1b53
-Heap_offset     defl    0                // given by compilation 
+ORIGIN          equ     38915 - $80       // $9aba: HERE when first compilation begins.
+Heap_Ptr        defl    $1BAB - $72       // HP before first compilation minus HP after second compilation
+Heap_offset     defl    0                 // given by compilation 
 
                 endif
 //  ______________________________________________________________________
@@ -95,7 +95,7 @@ Heap_offset     defl    0                // given by compilation
 // ORIGIN          equ     $6366 - $80                 // for binary comparison with double compilation
 ORIGIN          equ     $6366   -$80                   // for binary comparison with single compilation
 Heap_Ptr        defl    $0002              // HP before compilation
-Heap_offset     defl    0                // given by compilation 
+Heap_offset     defl    $00                // given by compilation 
 
                 endif
 //  ______________________________________________________________________

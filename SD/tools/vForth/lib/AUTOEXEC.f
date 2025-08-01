@@ -63,9 +63,10 @@ FORGET-THIS-TASK-1
   CR 
 
 
-\ try restore now
-\ move the following line up/down to include less/more display
-NEEDS PERSISTENCE RESTORE-SYSTEM \ quits if restored.
+\ PERSISTANCE
+\ To enable PERSISTENCE facility you have to uncomment the next row
+
+\ NEEDS PERSISTENCE RESTORE-SYSTEM ( quits if restored )
 
 
 

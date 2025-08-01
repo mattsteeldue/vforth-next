@@ -149,7 +149,7 @@ Block_Endif_1:                                  // endif
 //
 // #buff        -- n
 // number of buffers available. must be the difference between LIMIT and FIRST divided by 516
-                Constant_Def NBUFF,   "#BUFF", 7  
+                Constant_Def NBUFF,   "#BUFF", BUFFERS
 
 //  ______________________________________________________________________ 
 //
@@ -736,32 +736,10 @@ Index_Leave:
 //  ______________________________________________________________________ 
 //
 // cls          --
-//              Colon_Def CLS, "CLS", is_normal
-//              dw      LIT, $0E, EMITC
-//              dw      EXIT
+                Colon_Def CLS, "CLS", is_normal
+                dw      CCLS
+                dw      EXIT
 
-                New_Def CLS, "CLS", is_code, is_normal
-                push    bc
-                push    de
-                push    ix
-                ld      de, $01D5   // on success set carry-flag  
-                ld      c, 7        // necessary to call M_P3DOS
-                xor     a           // query current status
-                rst     8
-                db      $94         // carry flag set on success 
-                and     a
-                jr      nz, CLS_No_Layer_0
-                  rst     $18
-                  defw    $0DAF
-                jr      CLS_Layer_0
-CLS_No_Layer_0:                
-                  ld      a, $0E
-                  rst     $10
-CLS_Layer_0:                
-                pop     ix
-                pop     de
-                pop     bc
-                next
 
 //  ______________________________________________________________________ 
 //
@@ -771,7 +749,7 @@ CLS_Layer_0:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20250315", 13  // 33
+//              db      "Heap Vocabulary - build 20250719", 13  // 33
 //              db      "1990-2025 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 

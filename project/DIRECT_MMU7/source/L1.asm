@@ -355,6 +355,14 @@ QDup_Skip:
 
 //  ______________________________________________________________________ 
 //
+// emitc          --
+                Colon_Def EMITC, "EMITC", is_normal
+                dw      CEMITC
+                dw      EXIT
+
+
+//  ______________________________________________________________________ 
+//
 // emit         c --
                 Colon_Def EMIT, "EMIT", is_normal
                 dw      C_EMIT                      // (?emit)
@@ -373,6 +381,13 @@ Emit_Skip:                                          // endif
 // space        --
                 Colon_Def SPACE, "SPACE", is_normal
                 dw      BL, EMIT                // bl emit
+                dw      EXIT                    // ;
+
+//  ______________________________________________________________________ 
+//
+// cr        --
+                Colon_Def CR, "CR", is_normal
+                dw      LIT,13,EMIT             // 13 emit
                 dw      EXIT                    // ;
 
 //  ______________________________________________________________________ 
@@ -919,6 +934,43 @@ Count_Here:
 
 //  ______________________________________________________________________ 
 //
+// curs         a n --
+// Sends to current output channel n characters starting at address a.
+                Colon_Def CURS, "CURS", is_normal
+
+                dw      TWO, SELECT                 //    2 select
+                dw      LIT, $5C3B, CFETCH          //    $5c3b c@     \ : res 5, (iy + 1)
+                dw      LIT, $DF, AND_OP            //    $DF and      \ FLAGS 
+                dw      LIT, $5C3B, CSTORE          //    $5c3b c!
+Curs_Loop:                                          //  begin
+                dw      ONE_FRAME
+                dw      LIT, $28, PLUS_ORIGIN       //    $28 +origin
+                dw      LIT, $5C78, CFETCH          //    $5c78 c@     \ FRAMES
+                dw      LIT, $20, AND_OP            //    $20 and
+                dw      ZBRANCH                     //    if
+                dw      Curs_endif - $
+                dw          ONE_PLUS                //      1+
+                dw          LIT, $5C6A, CFETCH      //      $5c6a c@   \ FLAGS2 
+                dw          LIT, $08, AND_OP        //      8 and
+                dw          ZBRANCH                 //      if
+                dw          Curs_endif - $
+                dw              ONE_PLUS            //        1+
+Curs_endif:
+                dw      CFETCH, EMIT                //    c@ emit 
+                dw      LIT, 8, EMIT                //    8 emit
+                dw      LIT, $5C3B, CFETCH          //    $5c3b c@
+                dw      LIT, $20, AND_OP            //    $20 and \ bit 5, (iy + 1)
+                                                    //  until
+                dw      ZBRANCH                     //    
+                dw      Curs_Loop - $               //  
+                dw      ONE_FRAME
+
+                dw      SPACE                       //  space
+                dw      LIT, 8, EMIT                //  8 emit
+                dw      EXIT                        // ;
+
+//  ______________________________________________________________________ 
+//
 // type         a n --
 // Sends to current output channel n characters starting at address a.
                 Colon_Def TYPE, "TYPE", is_normal
@@ -978,7 +1030,7 @@ LTrailing_Leave:
                 dw      C_Q_DO
                 dw      Accept_Leave - $
 Accept_Loop:                                                            
-                dw          CUR                 //      cur             ( a  0 )
+                dw          CURS                //      curs            ( a  0 )
                 dw          DROP, KEY           //      drop key        ( a  c )
                 dw          DUP                 //      dup             ( a  c  c )
                 dw          LIT, $0E            //      0E

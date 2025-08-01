@@ -1,6 +1,7 @@
 Differences between MMU7 and DOT version
 ----------------------------------------
 
+------
 L0.asm
 ------
 In general, rst $10 is called widh interrupt disabled 
@@ -9,6 +10,7 @@ CURS        calling $1601, DOT version must use RST $18 and dare to use TSTACK.
 SELECT      idem c.s.
 
 
+------
 L2.asm
 ------
 Startup from Basic in DOT version has to initialize more things:
@@ -33,6 +35,7 @@ WARM        DOT does not execute SPLASH
         
 
 
+------
 L3.asm
 ------
 CLS         call $0DAF is performed via rst $18 
@@ -41,6 +44,7 @@ AUTOEXEC    MMU7 executes 11 LOAD while
             defaulted with "c:/tools/vforth/lib/autoexec.f"
 
 
+-------------
 next-opt1.asm
 -------------
 BLK-INIT    in case of error, DOT version exit to Basic with error.
@@ -48,6 +52,7 @@ BLK-INIT    in case of error, DOT version exit to Basic with error.
 BLK-FH      DOT versione, moved at end of source L3.asm
 
 
+-------------
 next-opt0.asm
 -------------
 F_CLOSE

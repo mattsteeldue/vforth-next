@@ -227,11 +227,19 @@ Heap_Ptr        defl    $ - $E000
 //
 
 
-
-S0_system:      equ     $D0E8               // Address of top of Calc Stack
-TIB_system      equ     $D0E8               // TIB grows upwards, Return-Stack downward.
-R0_system:      equ     $D188               // Address of top of Return Stack. This is S0 + $00A0
-USER_system:    equ     $D188               // User variables zone.
-FIRST_system:   equ     $D1E4               // Address of first BUFFER
 LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
+BUFFERS         equ     6                   // number of buffers available. must be the difference between LIMIT and FIRST divided by 516
+FIRST_system:   equ     LIMIT_system - 516*BUFFERS // Address of first BUFFER
+USER_system:    equ     FIRST_system - 80   // User variables zone.
+R0_system:      equ     USER_system         // Address of top of Return Stack. This is S0 + $00A0
+TIB_system      equ     R0_system - 160     // TIB grows upwards, Return-Stack downward.
+S0_system:      equ     TIB_system          // Address of top of Calc Stack
+
+
+// S0_system:      equ     $D0E8               // Address of top of Calc Stack
+// TIB_system      equ     $D0E8               // TIB grows upwards, Return-Stack downward.
+// R0_system:      equ     $D188               // Address of top of Return Stack. This is S0 + $00A0
+// USER_system:    equ     $D188               // User variables zone.
+// FIRST_system:   equ     $D1E4               // Address of first BUFFER
+// LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
 
