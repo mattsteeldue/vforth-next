@@ -4,8 +4,9 @@
 .( .PAPER )
 \
 
-DECIMAL
-: .PAPER     ( b -- )
-    17 EMITC EMITC
-;
+NEEDS ATTRIB-MASK 
 
+: .PAPER     ( b -- )
+    #17 EMITC 
+    ATTRIB-MASK EMITC
+;

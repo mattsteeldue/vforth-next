@@ -472,15 +472,15 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2025-07-19 ", $0D  // 37
+  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2025-08-15 ", $0D  // 37
   67+ E028 70 20 56 6F
   67+ E02C 63 61 62 75
   67+ E030 6C 61 72 79
   67+ E034 20 2D 20 62
   67+ E038 75 69 6C 64
   67+ E03C 20 32 30 32
-  67+ E040 35 2D 30 37
-  67+ E044 2D 31 39 20
+  67+ E040 35 2D 30 38
+  67+ E044 2D 31 35 20
   67+ E048 0D
   68+ E049 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E04D 20 4C 69 63
@@ -11854,7 +11854,7 @@
  550+ 6CE5              //
  551+ 6CE5              // page-watermark   -- n
  552+ 6CE5              // how much a 8K page can be filled..
- 553+ 6CE5                              Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1F80
+ 553+ 6CE5                              Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1EFF
  553+ 6CE5             >                New_Def  PAGE_WATERMARK, "PAGE-WATERMARK", Constant_Ptr, is_normal
  553+ 6CE5             >
  553+ 6CE5             >Dict_Ptr        defl    $
@@ -11909,7 +11909,7 @@
  553+ 6CEA             >                // Use of "; ok" to suppress "warning[fwdref]"
  553+ 6CEA             >
  553+ 6CEA             >last_NFA        defl    temp_NFA            // keep track of NFA saved above
- 553+ 6CEA 80 1F       >                dw      $1F80
+ 553+ 6CEA FF 1E       >                dw      $1EFF
  554+ 6CEC
  555+ 6CEC              //  ______________________________________________________________________
  556+ 6CEC              //
@@ -21939,7 +21939,7 @@
  750+ 7FD5              //              dw      C_DOT_QUOTE
  751+ 7FD5              //              db      87
  752+ 7FD5              //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
- 753+ 7FD5              //              db      "Heap Vocabulary - build 20250719", 13  // 33
+ 753+ 7FD5              //              db      "Heap Vocabulary - build 20250815", 13  // 33
  754+ 7FD5              //              db      "1990-2025 Matteo Vitturi", 13        // 25
  755+ 7FD5              //              dw      EXIT
  756+ 7FD5

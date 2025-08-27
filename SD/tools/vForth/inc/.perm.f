@@ -7,14 +7,7 @@
 \
 NEEDS CALL#
 
-BASE @
-
-\
-HEX
 : .PERM 
-    0 
-    1CAD CALL#
+    0 $1CAD CALL#
     DROP
 ;
-
-BASE !

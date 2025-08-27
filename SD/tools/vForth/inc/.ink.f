@@ -4,8 +4,10 @@
 .( .INK )
 \
 
-DECIMAL
+NEEDS ATTRIB-MASK 
+
 : .INK  ( b -- )
-    16 EMITC EMITC
+    #16 EMITC 
+    ATTRIB-MASK EMITC
 ;
 

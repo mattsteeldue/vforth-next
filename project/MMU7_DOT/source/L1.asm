@@ -550,7 +550,7 @@ Q2Heap_Skip:                                          // endif
 //
 // page-watermark   -- n
 // how much a 8K page can be filled..
-                Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1F80  
+                Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1EFF  
 
 //  ______________________________________________________________________ 
 //

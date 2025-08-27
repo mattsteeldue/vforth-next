@@ -3,25 +3,40 @@
 \
 .( GRAPHICS )
 \
+\ v-Forth 1.8 - NextZXOS version - build 2025-08-15
+\ MIT License (c) 1990-2025 Matteo Vitturi     
+\
 \ N.B. in this library, x-coord is vertical (from top to bottom)
 \      and y-coord is horizontal (from left to right).
 \      Both coordinates start from zero.
 \      (0,0) is the top-left addressable pixel 
+\ N.B.B. Except 320x256 Layer2+ which swaps coordinate in display.
 
-MARKER NO-GRAPHICS      \ for easy development
+FORTH DEFINITIONS
+
+NEEDS 2OVER 
+NEEDS FLIP 
 
 NEEDS VALUE  
 NEEDS TO  
 NEEDS +TO 
 
-NEEDS 2OVER 
-NEEDS FLIP 
+NEEDS DEFER 
+NEEDS IS
 
 NEEDS IDE_MODE!
 NEEDS IDE_MODE@
 
-NEEDS DEFER 
-NEEDS IS
+MARKER NO-GRAPHICS      \ for easy development
+
+NEEDS .INK     
+NEEDS .PAPER   
+NEEDS .OVER    
+NEEDS .BRIGHT  
+NEEDS .FLASH   
+NEEDS .AT
+NEEDS .INVERSE 
+NEEDS .BORDER
 
 \ this allows FORGET GRAPHICS to remove this whole package, see bottom of this source.
 : GRAPHICS 
@@ -57,7 +72,7 @@ BASE @
 \ n can be one of the following (DECIMAL or HEX) value:
 \
 \ 00 : Layer 0 - Standard Spectrum (ULA) mode, 256 w x 192 h pixels, 8 colors
-\      total (2 intensities), 32 x 24 cells, 2 colors per cell
+\      total (2 intensities), 32 x 24 cells, 2 colors per cell 
 \
 \ 10 : Layer 1,0 - LoRes (Enhanced ULA) mode, 128 w x 96 h pixels, 256 colors
 \      total, 1 colour per pixel
@@ -72,30 +87,32 @@ BASE @
 \      256 colors total, 32 x 192 cells, 2 colors per cell
 \
 \ 20 : Layer 2 - 256 w x 192 h pixels, 256 colors total, one colour per pixel
+\
+\ 22 : Layer 22 - 320 w x 256 h pixels, 256 colors total, one colour per pixel
 \ ____________________________________________________________________
 \
-\                L0   L11   L12   L13   L10    L2   
-\               ---   ---   ---   ---   ---   ---
-\ Char-Size       8     4     8     4     4     4     
-\ V-RANGE       0C0   0C0   0C0   0C0   060   0C0  
-\ H-RANGE       100   100   200   100   080   100
-\ PIXELADD       L0    L0   L12    L0   L10    L2
-\ POINT          L0    L0    L0    L0    L1    L1
-\ PLOT           L0    L0    L0    L0    L1    L2 
-\ XPLOT          L0    L0    L0    L0    L1    L2 
-\ PIXELATT       L0    L0    na   L13    na    L2
-\ XY-RATIO        1     1    2/     1     1     1
-\ EDGE            =     =     =     =    L1    L1  
+\                L0   L11   L12   L13   L10    L2   L22   
+\               ---   ---   ---   ---   ---   ---   ---
+\ Char-Size       8     4     8     4     4     4     4   
+\ V-RANGE       0C0   0C0   0C0   0C0   060   0C0   100
+\ H-RANGE       100   100   200   100   080   100   140
+\ PIXELADD       L0    L0   L12    L0   L10    L2   L22
+\ POINT          L0    L0    L0    L0    L1    L1    L1 
+\ PLOT           L0    L0    L0    L0    L1    L2    L1
+\ XPLOT          L0    L0    L0    L0    L1    L2    L1
+\ PIXELATT       L0    L0    na   L13    na    L2    L1
+\ XY-RATIO        1     1    2/     1     1     1     1
+\ EDGE            =     =     =     =    L1    L1    L1
 \ ____________________________________________________________________
 \
 \ Default attrib values
 
     _BLUE   3 LSHIFT  _WHITE  +  VALUE  L0-ATTRIB 
-    _WHITE  3 LSHIFT  _BLACK  +  VALUE  L10-ATTRIB 
+    _BLUE   3 LSHIFT  _WHITE  +  VALUE  L10-ATTRIB 
     _BLUE   3 LSHIFT  _WHITE  +  VALUE  L11-ATTRIB 
-    00                           VALUE  L12-ATTRIB 
-    _WHITE  3 LSHIFT  _BLACK  +  VALUE  L13-ATTRIB 
-    HEX 0D8                      VALUE  L20-ATTRIB 
+                     _YELLOW     VALUE  L12-ATTRIB 
+    _BLUE   3 LSHIFT  _WHITE  +  VALUE  L13-ATTRIB 
+    %11111110                    VALUE  L20-ATTRIB 
 \ ____________________________________________________________________
 \
 \ map-table to be able to change graphics-mode ignoring what base currently is
@@ -138,25 +155,26 @@ DECIMAL
 \ In some modes, they also fit on MMU7 the correct 8k page.
 \ ____________________________________________________________________
 
+\ Deferred definition work differently depending on current Graphic-Mode.
+
 \ current "color" used in subsequent operations
 00 VALUE ATTRIB
 00 VALUE P-ATTRIB \ address of ATTRIB field inside LAYERs definition
 
-\ depenging on current Graphic-Mode, determine address of a pixel
-\ and fit MMU7 if needed
+\ determine address of a pixel and fit MMU7 if needed
 DEFER PIXELADD      ( x y -- a )
 
-\ depenging on current Graphic-Mode, set attribute byte at address a
+\ set attribute byte at address a
 DEFER PIXELATT      ( b a -- )
 
-\ depenging on current Graphic-Mode, plot a pixel using current ATTRIB
+\ plot a pixel using current ATTRIB
 DEFER PLOT          ( x y -- )
 
 \ In Layer 1,0 and Layer 2, invert the pixel value
 \ In all other Graphic-Mode, invert or unset the pixel
 DEFER XPLOT         ( x y -- )
 
-\ depending on current Graphic-Mode, return the ATTRIB of a pixel
+\ return the ATTRIB of a pixel
 DEFER POINT         ( x y -- c )
 
 \ to adjust Layer 1,2 aspect ratio for horizontal coordinate
@@ -165,20 +183,25 @@ DEFER XY-RATIO      ( y1 -- y2 )
 \ edge rule
 DEFER EDGE          ( b -- f )
 
+\ initialize step
+DEFER INITIALIZE    ( -- )
+
+
 \ ____________________________________________________________________
 \
 .( PIXELADD ) \ deterimine pixel address and fit MMU7 if needed
 \ ____________________________________________________________________
 \
-\ Layer 0 PIXELADD
+\ Layer 0 - Layer 1,1 - Layer 1,3 - PIXELADD
 \ This word exploits the new "pixelad" Z80-N op-code 
 \ This is valid for Layer 0  Layer 1,1  and  Layer 1,3 
+\ Standard RAM used is at $4000 or bank 5, 8k-page $0A-0B.
 HEX
 CODE L0-PIXELADD   ( x y -- a )
     D9 C,           \ exx
     D1 C,           \ pop   de  ; y
     E1 C,           \ pop   hl  ; x
-    55 C,           \ ld    d,l ; de is vert,horiz
+    55 C,           \ ld    d,l ; de is vert, horiz
     ED C, 94 C,     \ pixelad 
     E5 C,           \ push  hl
     D9 C,           \ exx
@@ -188,12 +211,14 @@ CODE L0-PIXELADD   ( x y -- a )
 \ ____________________________________________________________________
 \
 \ Layer 1,0  PIXELADD
+\ fit the correct 8k page on MMU7 and leaves the address from $E000
+\ even if this graphic mode uses 8k-pages $0A and $0B
 \
 HEX
 CODE L10-PIXELADD ( x y -- a ) 
     D9 C,               \ exx
     E1 C,               \ pop  hl|  \ horizontal y-coord, only L is significant
-    D1 C,               \ pop  de|  \ vertical x-coord, only E is significant
+    D1 C,               \ pop  de|  \ vertical   x-coord, only E is significant
     7B C,               \ ld   a'| e| 
     D6 C, 30 C,         \ suba hex 30 n,
     30 C, 02 C,         \ jrf  nc'| +2 d,
@@ -217,11 +242,12 @@ CODE L10-PIXELADD ( x y -- a )
 \
 \ Layer 1,2  PIXELADD
 \ fit the correct 8k page on MMU7 and leaves the address from $E000
+\ even if this graphic mode uses 8k-pages $0A and $0B and $10-11
 HEX
 CODE L12-PIXELADD   ( x y -- a )
     D9 C,               \ exx
-    D1 C,               \ pop   de      ; y
-    E1 C,               \ pop   hl      ; x
+    D1 C,               \ pop   de      ; y \ horizontal y-coord, lsb of D and E  is significant
+    E1 C,               \ pop   hl      ; x \ vertical   x-coord, only L is significant
     CB C, 3A C,         \ srl   d   
     CB C, 1B C,         \ rr    e       ; half y
     7B C,               \ ld   a'| e|   
@@ -244,16 +270,20 @@ CODE L12-PIXELADD   ( x y -- a )
 \ ____________________________________________________________________
 \
 \ Layer 2 PIXELADD
+\ fit the correct 8k page on MMU7 and leaves the address from $E000
+\ it uses six 8k-pages $12-$17
 \
 HEX 12 REG@ 2*
 CONSTANT  L2-RAM-PAGE           \ keeps Layer 2 Active RAM Page
+L2-RAM-PAGE 5 + CONSTANT L2-MAX-PAGE
 \ this operation is done only once at compile time, just to save time
 \ and setup MMU7! accordingly
+
 CODE L2-PIXELADD ( x y -- a ) 
     HEX
     D9 C,             \ exx
     E1 C,             \ pop  hl|    \ horizontal y-coord, only L is significant
-    D1 C,             \ pop  de|    \ vertical x-coord, only E is significant
+    D1 C,             \ pop  de|    \ vertical   x-coord, only E is significant
     7B C,             \ ld   a'| e| \ calc which 8K page must be fitted in MMU7
     07 C,             \ rlca
     07 C,             \ rlca
@@ -268,7 +298,32 @@ CODE L2-PIXELADD ( x y -- a )
     D9 C,             \ exx
     DD C, E9 C,       \ next
     SMUDGE            \ c; 
-   
+
+\
+\ Layer 22 PIXELADD - 320x256 resolution
+\ fit the correct 8k page on MMU7 and leaves the address from $E000
+\ it uses six 8k-pages $12-$1C
+CODE L22-PIXELADD  ( y x -- a )
+    HEX
+    D9 C,             \ exx
+    D1 C,             \ pop  de|    \ horizontal y-coord, lsb of D and E are significant
+    E1 C,             \ pop  hl|    \ vertical   x-coord, only L is significant
+    4B C,             \ ld   c'! e|
+    06 C, 05 C,       \ ldn  b'| 5  n,    
+    ED C, 2A C,       \ bsrlde,b    \ calc which 8K page must be fitted in MMU7
+    7B C,             \ ld   a'| e|
+    27 C,             \ daa
+    E6 C, 0F C,       \ andn 0F  n,
+    C6 C, L2-RAM-PAGE C, \ addn L2-RAM-PAGE n,    \ usually 18 
+    ED C, 92 C, 57 C, \ nextrega decimal 87 p, 
+    3E C, E0 C,       \ ldn  a'| E0   n,  
+    B1 C,             \ ora  c|
+    67 C,             \ ld   h'| a|
+    E5 C,             \ push hl|
+    D9 C,             \ exx
+    DD C, E9 C,       \ next
+    SMUDGE            \ c; 
+
 \ ____________________________________________________________________
 \
 .( PIXELATT ) \ set pixel attribute
@@ -432,9 +487,8 @@ HEX
 
 \ ____________________________________________________________________
 \
-\ Layer 2 PLOT
-\ ported in machine code for fast execution
-\ no coord-checking is done.
+\ Layer 2 PLOT may use Layer 1 one
+\ I ported in machine code for faster execution but no coord-checking is done.
 CODE L2-PLOT  ( x y -- )
     HEX
     D9 C,             \ exx
@@ -525,16 +579,107 @@ CODE L2-XPLOT  ( x y -- )
 
 \ ____________________________________________________________________
 
+\ Layer0 initialize
+
+: L0-INITIALIZE
+    ATTRIB COLOR-MASK AND 
+    #16 EMITC EMITC 
+    ['] (CLS) IS CLS
+;
+
+\ ____________________________________________________________________
+
+\ Layer1x initialize
+
+: L1-CLS
+    (CLS)
+    $1A EMITC 0 EMITC
+    0 #26 EMITC EMITC           \ Non-stop scroll
+;
+
+: L1-INITIALIZE
+    ATTRIB COLOR-MASK AND 
+    #16 EMITC EMITC 
+    ['] L1-CLS IS CLS
+;
+
+\ ____________________________________________________________________
+
+\ Layer2 initialize
+
+: L2-INITIALIZE
+    0    $70 REG!    \ Layer 2 Control
+    0    $1C REG!    \ Clip window Control
+    0    $18 REG!    \ X1
+    #255 $18 REG!    \ X2
+    0    $18 REG!    \ X3
+    #191 $18 REG!    \ X4
+    ATTRIB .INK
+    #255 ATTRIB - .PAPER
+    ['] L1-CLS IS CLS
+    L2-RAM-PAGE 5 + TO L2-MAX-PAGE
+;
+
+\ ____________________________________________________________________
+
+\ Layer2+ initialize
+
+: L22-CLS
+    L2-RAM-PAGE #10 +  
+    L2-RAM-PAGE 
+    DO
+        I MMU7!
+        $E000 $2000 $FF ATTRIB - FILL
+    LOOP
+;
+
+
+: L22-INITIALIZE
+    $10  $70 REG!    \ Layer 2 Control for 320x256
+    0    $1C REG!    \ Clip window Control
+    0    $18 REG!    \ X1
+    #159 $18 REG!    \ X2
+    0    $18 REG!    \ X3
+    #255 $18 REG!    \ X4
+    ATTRIB .INK
+    #255 ATTRIB - .PAPER
+    ['] L22-CLS IS CLS
+    L2-RAM-PAGE 9 + TO L2-MAX-PAGE
+;
+
+
+\ ____________________________________________________________________
+
+DECIMAL
+0   VALUE  DX                   \ x-distance between P1 and P2
+0   VALUE  DY                   \ y-distance between P1 and P2
+0   VALUE  SX                   \ x-direction from P1 to P2
+0   VALUE  SY                   \ y-direction from P1 to P2
+0   VALUE  DIFF                 \ error at each stage
+0   VALUE  ERR
+0   VALUE  X0                   \ 
+0   VALUE  Y0                   \ 
+0   VALUE  X1                   \ 
+0   VALUE  Y1                   \ 
+0   VALUE  PX
+0   VALUE  MX                   \ to be vectored...
+
+\ ____________________________________________________________________
+
 .( LAYER: )
 
 \ LAYER: is a defining word that allows you creating 6 new definitions
-\ LAYER0 , LAYER10 , LAYER11 , LAYER12 , LAYER13 , LAYER20
+\ LAYER0 , LAYER10 , LAYER11 , LAYER12 , LAYER13 , LAYER2 , LAYER2+
 \ that in one shot change all vectorized definitions behavior
 \ and they also try to change current char-size.
+\ At compile-time, data is stored in reverse order than the data given via LAYER:
+\ At run-time, all vectors change and then Graphic-Mode is activate and
+\ character-size is modified and at last video clipping is performed
 HEX
 : LAYER:
-    <BUILDS
+    CREATE
         ,           \    ATTRIB
+        ,           \ is INITIALIZE
         ,           \ is EDGE
         ,           \ is XY-RATIO
         ,           \ is PIXELATT  
@@ -549,9 +694,14 @@ HEX
         C,          \    Layer number mode
         C,          \    char-size
     DOES>
-        ATTRIB      P-ATTRIB !  \ save current attrib to previous mode default
-        DUP     TO  P-ATTRIB    \ set pointer
-        DUP  @  TO  ATTRIB      CELL+
+             ATTRIB P-ATTRIB !  \ save current attrib to previous mode default
+        DUP     TO  P-ATTRIB    \ set pointer for later use
+
+        \ setup vector for attribute
+        DUP  @  TO  ATTRIB      CELL+   
+
+        \ setup all other vectors
+        DUP  @  IS  INITIALIZE  CELL+
         DUP  @  IS  EDGE        CELL+
         DUP  @  IS  XY-RATIO    CELL+
         DUP  @  IS  PIXELATT    CELL+
@@ -559,20 +709,29 @@ HEX
         DUP  @  IS  PLOT        CELL+
         DUP  @  IS  POINT       CELL+
         DUP  @  IS  PIXELADD    CELL+
+        
+        \ setup ranges and masks.
         DUP  @  TO  H-RANGE     CELL+
         DUP  @  TO  V-RANGE     CELL+
         DUP C@  TO  COLOR-MASK  1+
         DUP C@  TO  FLAG-MASK   1+
+
+        \ activate this Graphic-Mode
         DUP C@  LAYER!          1+
+        
+        \ then modify char-size 
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
+        \ other initialization
+            INITIALIZE
 ;        
 
 \ ____________________________________________________________________
 
 \ LAYER0 
 HEX
-    00  00          \ 00 char-size means no effect.
-    1 7             \ Attribute masks
+    0               \ 00 char-size means no effect.
+    00              \ means Layer 0
+    1    7          \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT   
@@ -581,6 +740,7 @@ HEX
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L0-INITIALIZE \ INITIALIZE
     L0-ATTRIB       \ ATTRIB
 
 LAYER: LAYER0  
@@ -589,8 +749,9 @@ LAYER: LAYER0
 
 \ LAYER11 
 HEX
-    04  11          \ 04 char-size to allow 64 chars per row
-    1 7             \ Attribute masks
+    04              \ 04 char-size to allow 64 chars per row
+    11              \ means Layer 1,1
+    1    7          \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD    
     ' L0-POINT      \ POINT       
@@ -599,6 +760,7 @@ HEX
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L1-INITIALIZE \ INITIALIZE
     L11-ATTRIB      \ ATTRIB
 
 LAYER: LAYER11 
@@ -607,8 +769,9 @@ LAYER: LAYER11
 
 \ LAYER13 
 HEX
-    04  13          \ 04 char-size to allow 64 chars per row
-    1 7             \ Attribute masks
+    04              \ 04 char-size to allow 64 chars per row
+    13              \ means Layer 1,3
+    1    7          \ Attribute masks
     0C0 100         \ V-RANGE and H-RANGE
     ' L0-PIXELADD   \ PIXELADD  
     ' L0-POINT      \ POINT     
@@ -617,6 +780,7 @@ HEX
     ' L13-PIXELATT  \ PIXELATT  
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L1-INITIALIZE \ INITIALIZE
     L13-ATTRIB      \ ATTRIB
 
 LAYER: LAYER13 
@@ -625,8 +789,9 @@ LAYER: LAYER13
 
 \ LAYER10 
 HEX
-    04  10          \ 04 char-size to allow 64 chars per row
-    1 0FF           \ Attribute masks
+    04              \ 04 char-size to allow 64 chars per row
+    10              \ means Layer 1,0
+    1  0FF          \ Attribute masks
     60  80          \ V-RANGE and H-RANGE
     ' L10-PIXELADD  \ PIXELADD  
     ' L1-POINT      \ POINT     
@@ -635,33 +800,17 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning for Layer 1,0)
     ' NOOP          \ XY-RATIO  
     ' L1-EDGE       \ EDGE 
+    ' L1-INITIALIZE \ INITIALIZE
     L10-ATTRIB      \ ATTRIB
 
 LAYER: LAYER10 
 
 \ ____________________________________________________________________
 
-\ LAYER2 
-HEX
-    04  20          \ 04 char-size to allow 64 chars per row
-    1 0FF           \ Attribute masks
-    0C0 100         \ V-RANGE and H-RANGE
-    ' L2-PIXELADD   \ PIXELADD  
-    ' L1-POINT      \ POINT     
-    ' L2-PLOT       \ PLOT      
-    ' L2-XPLOT      \ XPLOT    
-    ' L2-PLOT       \ PIXELATT  (has no meaning for Layer 2)
-    ' NOOP          \ XY-RATIO  
-    ' L1-EDGE       \ EDGE 
-    L20-ATTRIB      \ ATTRIB
-
-LAYER: LAYER2  
-
-\ ____________________________________________________________________
-
 \ LAYER12 
 HEX
-    08  12          \ 08 char-size is normal 64 chars per row
+    08              \ 08 char-size is normal 64 chars per row
+    12              \ means Layer 1,2
     1 7             \ Attribute masks
     0C0 200         \ V-RANGE and H-RANGE
     ' L12-PIXELADD  \ PIXELADD  
@@ -671,190 +820,60 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning on Layer 1,2)
     ' 2/            \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L1-INITIALIZE \ INITIALIZE
     L12-ATTRIB      \ ATTRIB
 
 LAYER: LAYER12 
+
+\ ____________________________________________________________________
+
+\ LAYER2 
+HEX
+    04              \ 04 char-size to allow 64 chars per row
+    20              \ means Layer 2,1
+    1 0FF           \ Attribute masks
+    0C0 100         \ V-RANGE and H-RANGE
+    ' L2-PIXELADD   \ PIXELADD  
+    ' L1-POINT      \ POINT     
+    ' L2-PLOT       \ PLOT      
+    ' L2-XPLOT      \ XPLOT    
+    ' L2-PLOT       \ PIXELATT  (has no meaning for Layer 2)
+    ' NOOP          \ XY-RATIO  
+    ' L1-EDGE       \ EDGE 
+    ' L2-INITIALIZE \ INITIALIZE
+    L20-ATTRIB      \ ATTRIB
+
+LAYER: LAYER2
+
+\ ____________________________________________________________________
+
+\ LAYER2+
+HEX
+    04              \ 04 char-size to allow 64 chars per row
+    20              \ means Layer 2,1 but see for different INITIALIZE
+    1 0FF           \ Attribute masks
+    100 140         \ V-RANGE and H-RANGE
+    ' L22-PIXELADD  \ PIXELADD  
+    ' L1-POINT      \ POINT     
+    ' L1-PLOT       \ PLOT      
+    ' L1-XPLOT      \ XPLOT    
+    ' L1-PLOT       \ PIXELATT  (has no meaning for Layer 2)
+    ' NOOP          \ XY-RATIO  
+    ' L1-EDGE       \ EDGE 
+    ' L22-INITIALIZE \ INITIALIZE
+    L20-ATTRIB      \ ATTRIB
+
+LAYER: LAYER2+
 
 \ ____________________________________________________________________
 \
 \ Graphic Words definitions
 \ ____________________________________________________________________
 
-DECIMAL
-0   VALUE  CX                   \ x-distance between P1 and P2
-0   VALUE  CY                   \ y-distance between P1 and P2
-0   VALUE  SX                   \ x-direction from P1 to P2
-0   VALUE  SY                   \ y-direction from P1 to P2
-0   VALUE  DIFF                 \ error at each stage
-
 \ ____________________________________________________________________
 \
-.( DRAW-LINE )
-\
-\ given two points (x1,y1) and (x2,y2) and ATTRIB c
-\ draw a line using Bresenham's line algorithm
-\ Coordinates out-of-range are ignored without error.
-\ 
-: DRAW-LINE  ( x2 y2 x1 y1 -- )
-    ROT SWAP                    \ x2 x1 y2 y1
-    \ determine SX, CX, SY, CY and DIFF
-    2OVER - 1 OVER +- TO SX
-    ABS               TO CX
-    2DUP  - 1 OVER +- TO SY
-    ABS NEGATE        TO CY
-    CX CY +           TO DIFF
-    SWAP -ROT                   \ x2 y2 x1 y1
-    \ start drawing
-    BEGIN
-        \ plot current coordinate    
-        2DUP PLOT               \ x2 y2 x1 y1 
-        \ compute while condition
-        2OVER 2OVER             \ x2 y2 x1 y1  x2 y2  x1 y1
-        ROT -                   \ x2 y2 x1 y1  x2 x1  y1-y2 
-        -ROT -                  \ x2 y2 x1 y1  y1-y2  x2-x1   
-        OR                      \ x2 y2 x1 y1  f   
-        ?TERMINAL 0= AND
-    \ stay in loop until final point is reached          
-    WHILE   
-        DIFF DUP + >R           \ take twice error
-        R@ CY < NOT IF          \ e_xy+e_x > 0  
-            CY +TO DIFF         \ decrement error by CY
-            SWAP SX + SWAP      \ change x coordinate
-        THEN   
-        R> CX > NOT IF          \ e_xy+e_y < 0
-            CX +TO DIFF         \ increment error by CX
-            SY +
-        THEN
-    REPEAT
-    2DROP 2DROP
-;
-
-\ ____________________________________________________________________
-\
-.( CIRCLE )
-\
-
-\ for each coordinate SX, SY draw all eight pixel around the circumference
-\ using PLOT 
-\ https://www.geeksforgeeks.org/bresenhams-circle-drawing-algorithm/
-
-: CIRCLE-EIGHT
-    CX SX XY-RATIO +  CY SY  +  PLOT
-    CX SX XY-RATIO -  CY SY  +  PLOT
-    CX SX XY-RATIO +  CY SY  -  PLOT
-    CX SX XY-RATIO -  CY SY  -  PLOT
-    CX SY XY-RATIO +  CY SX  +  PLOT
-    CX SY XY-RATIO -  CY SX  +  PLOT
-    CX SY XY-RATIO +  CY SX  -  PLOT
-    CX SY XY-RATIO -  CY SX  -  PLOT
-;
-
-: CIRCLE ( x y r -- )
-    0 TO SX  TO SY  TO CY  TO CX
-    SY IF
-        3 SY 2* - TO DIFF   \ d := 3 - 2r
-        CIRCLE-EIGHT
-        BEGIN
-            1 +TO SX
-            DIFF 0< IF
-                SX  2* 2*  6 + +TO DIFF   \ d += 4x + 6
-            ELSE
-                SX SY -  2* 2*  10 + +TO DIFF   \ d += 4(x-y) + 10
-                -1 +TO SY
-            THEN
-            CIRCLE-EIGHT
-        SY SX < UNTIL
-    ELSE
-        CX CY PLOT
-    THEN
-;
-
-\ ____________________________________________________________________
-\
-.( PAINT )
-
-\
-HEX
-: PAINT-HIT ( x y d -- )
-    >R
-    BEGIN
-        2DUP PLOT
-        R@ + 1FF AND
-        2DUP POINT EDGE
-    UNTIL
-    R> DROP 2DROP
-;
-
-: PAINT-HIT2 ( x y -- )
-    2DUP 1 PAINT-HIT 
-        -1 PAINT-HIT
-;
-
-: PAINT-HITX ( x y d -- )
-    >R
-    BEGIN
-        SWAP R@ + 0FF AND SWAP
-        2DUP POINT EDGE NOT
-        ?TERMINAL 0= AND
-    WHILE
-        2DUP PAINT-HIT2
-    REPEAT
-    R> DROP 2DROP
-;    
-        
-: PAINT  ( x y -- )
-    2DUP PAINT-HIT2
-    2DUP 1 PAINT-HITX
-        -1 PAINT-HITX
-;
-
-    
-\ if passed  f  is zero, then it forgets all this library
-\ Typical usage:  0 GRAPHICS 
-: FGRAPHICS ( f -- )
-    NOT IF 
-        LAYER12 NO-GRAPHICS 
-    THEN
-;
-
-
-\ this allows FORGET GRAPHICS to remove this whole package
-
-' FGRAPHICS ' GRAPHICS >BODY !
-
-
-
-\ (COLOR)
-\ this definition needs 4 params
-\  b :  attribute value (in range 0-7)
-\  c :  ctrl character between 16 and 21
-\  m :  bitmask applied to b to avoid Basic's errors.
-\  s :  number of bit to be shifted
-: (COLOR)       ( b c m s -- )
-  >R                \ b c m             R: s
-  DUP R@            \ b c m m  s
-  LSHIFT NEGATE     \ b c m m1          \ m1 has 0 only on bits to work on
-  ATTRIB AND        \ b c m m1          \ zeroes working ATTRIB bits 
-  3 PICK            \ b c m m1 b 
-  R>                \ b c m m1 b s
-  LSHIFT            \ b c m m1 b1       \ shift attribute value bits
-  OR                \ b c m n           \ put them in place
-  TO ATTRIB         \ b c m 
-  ROT AND           \ c b&m             \ at end, change current attribs
-  SWAP EMITC EMITC  \ 
-;
-
-DECIMAL
-
-\         ctrl  mask       shift     
-\ _______________________________________
-\
-: .INK      16  COLOR-MASK   0   (COLOR) ;
-: .PAPER    17  COLOR-MASK   3   (COLOR) ;
-: .FLASH    18  FLAG-MASK    6   (COLOR) ;
-: .BRIGHT   19  FLAG-MASK    7   (COLOR) ;
-: .INVERSE  20  FLAG-MASK    8   (COLOR) ;
-: .OVER     21  FLAG-MASK    8   (COLOR) ;
+NEEDS DRAW-LINE
+NEEDS DRAW-CIRCLE
 
 \ ____________________________________________________________________
 \
@@ -872,7 +891,7 @@ HEX
         05 OF LAYER11 ENDOF 
         09 OF LAYER12 ENDOF 
         0D OF LAYER13 ENDOF 
-        02 OF LAYER2  ENDOF 
+        02 OF LAYER2  ENDOF \ or LAYER2+
     ENDCASE     
     DROP DROP DROP
 ;

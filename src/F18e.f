@@ -1008,9 +1008,9 @@ HEX
 
 
 ." (MAP) "
-\ translate character c1 using mapping strings a2 and a2
-\ if c1 is not present within string a1 then 
-\ c2 = c2 if it is not translated. n is the length of both a1 and a2.
+\ translate character c1 using mapping strings from a1 to a2
+\ if c1 is not present within string a1 then c1 is not translated
+\ and c2 remains c2. Integer n is the length of both a1 and a2.
 CODE (map) ( a2 a1 n c1 -- c2 )
         EXX
         POP     HL|
@@ -3489,7 +3489,7 @@ CODE <far ( a n -- ha )
     hp @ ;
 
 
-HEX 1F80 constant page-watermark
+HEX 1EFF constant page-watermark
 
 \
 \ check if  n  more bytes are available in the current 8K-page in Heap

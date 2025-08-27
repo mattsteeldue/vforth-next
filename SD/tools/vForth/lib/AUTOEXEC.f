@@ -1,5 +1,6 @@
 \
 \ autoexec.f 
+\ ____________________________________________________________________
 \
 \ v-Forth 1.8 - NextZXOS version - build 2025-03-15
 \ MIT License (c) 1990-2025 Matteo Vitturi     
@@ -9,11 +10,6 @@
 \ by default, it tries to restore your last session via PERSISTENCE utility
 \ if any session has been saved, otherwise, perform the standard splash screen 
 
-
-
-\ Display splash-screen
-CLS SPLASH CR 
-
 MARKER FORGET-THIS-TASK-1 
 
 \ set current palette idx entry to byte value b
@@ -21,54 +17,59 @@ MARKER FORGET-THIS-TASK-1
     #64 REG!     \ Palette Index Select  
     #65 REG!     \ Palette Data 
 ; 
+
 \
 : EMIT2C EMITC EMITC ;
 \ reset default palette control    
   0  67 REG!          \ Palette Control (ULA first)
+
 \ modify blue background and yellow foreground color
-  %00000001 #25 SET-PALETTE   \ darker blue paper
-  %11111001 #14 SET-PALETTE   \ yellow ink
-  1 #17 EMIT2C                \ set it  
-  0 #26 EMIT2C                \ Non-stop scroll
+\ Display splash-screen
+%00000001 #25 SET-PALETTE   \ darker blue paper
+%11111001 #14 SET-PALETTE   \ yellow ink
+1 #17 EMIT2C                \ set it  
+0 #26 EMIT2C                \ Non-stop scroll
 
 FORGET-THIS-TASK-1
 
+\ ____________________________________________________________________
 
+CLS SPLASH CR 
 
 \ display Core Version number
-  ." Core Version: " 
-   1 REG@         \ Core Version register
-  DUP 4 RSHIFT SWAP #15 AND SWAP . 8 EMITC
-  0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE 
-  #14 REG@         \ Core Version (Sub minor number) register
-  0 <# # # # #> TYPE 
-  CR 
+." Core Version: " 
+1 REG@         \ Core Version register
+DUP 4 RSHIFT SWAP #15 AND SWAP . 8 EMITC
+0 <# CHAR . HOLD # # CHAR . HOLD #> TYPE 
+#14 REG@         \ Core Version (Sub minor number) register
+0 <# # # # #> TYPE 
+CR 
 
 \ display CPU speed 3.5, 7.0, 14.0 or 28.0 MHz
-  ." CPU Speed   : " 
-  #35                  
-  #7 REG@      \ CPU Speed register
-  3 AND LSHIFT 
-  0 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz"
+." CPU Speed   : " 
+#35                  
+#7 REG@      \ CPU Speed register
+3 AND LSHIFT 
+0 <# # CHAR . HOLD #S #> TYPE SPACE ." MHz"
 
-  CR 
+CR 
 
 \ display memory available
-  ." Dictionary  : "
-  SP@ PAD  - U. ." bytes free."   
-  CR 
-  
-  ." Heap        : " \
-   -1 HP @ - U. ." bytes free." 
-  CR 
+." Dictionary  : "
+SP@ PAD  - U. ." bytes free."   
+CR 
 
+." Heap        : " \
+-1 HP @ - U. ." bytes free." 
+CR 
 
-\ PERSISTANCE
+\ ____________________________________________________________________
+
+( Persistance facility )
 \ To enable PERSISTENCE facility you have to uncomment the next row
-
 \ NEEDS PERSISTENCE RESTORE-SYSTEM ( quits if restored )
 
-
+\ ____________________________________________________________________
 
 MARKER FORGET-THIS-TASK-2
 \
@@ -81,8 +82,10 @@ MARKER FORGET-THIS-TASK-2
 
 FORGET-THIS-TASK-2
 
+
 \ we do not have conditional iterpreting, but we can emulate small task
 \ wisely using MARKER called as the last-word of a definition
+\ ____________________________________________________________________
 
 MARKER FORGET-THIS-TASK-3
 

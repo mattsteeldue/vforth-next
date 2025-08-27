@@ -28,8 +28,6 @@
 
 MARKER PERSISTENCE-CLEAN-UP
 
-.( Restoring system)
-
 \ normal version has origin >$4000, dot version <$4000
 \ and uses 200 blocks higher than normal version
 0 +ORIGIN $4000 > 1+ #200 *
@@ -158,6 +156,7 @@ CONSTANT USER-POINTER
 : RESTORE-SYSTEM 
     PERSISTENCE BLOCK @ 
     IF
+        ." Restoring "
         0 MANAGE-PAGES 
     \   HERE #34 BLANK
         .( ok) QUIT

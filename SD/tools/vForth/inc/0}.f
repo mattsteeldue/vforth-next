@@ -14,13 +14,11 @@ CODE 0> ( n -- f )
     E1 C,               \ POP     HL|
     7D C,               \ LD      A'|    L|
     B4 C,               \ ORA      H|
+    28 C, 04 C,         \ JRF     Z'|    HOLDPLACE
     29 C,               \ ADDHL   HL|
-    21 C, 0 ,           \ LDX     HL|    0 NN,
-    38 C, 04 C,         \ JRF    CY'|    HOLDPLACE    
-    A7 C,               \ ANDA     A|
-    28 C, 01 C,         \ JRF     Z'|    HOLDPLACE
-    2B C,               \     DECX      HL|           \ true
-                        \ HERE DISP, HERE DISP, \ THEN, THEN,
+    3F C,               \ CCF
+    ED C, 62 C,         \ SBCHL   HL|
+                        \ HERE DISP, \ THEN, THEN,
     E5 C,               \ PUSH    HL|
     DD C, E9 C,         \ Next
 

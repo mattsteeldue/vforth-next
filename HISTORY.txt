@@ -584,3 +584,6 @@ New build needed to ease TILE mode implementation (aka Layer 3).
 Introducing the first DEMO on three TILE modes.
 Introducing TILE80 that allows switching to Layer-3 most EMIT functions (work in progress).
 
+
+\ build 20250815
+Introducing LAYER2+ inside GRAPHICS libary to handle 320 x 512 pixel Layer 3 mode.

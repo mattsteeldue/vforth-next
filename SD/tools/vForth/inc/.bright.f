@@ -4,8 +4,6 @@
 .( .BRIGHT )
 \
 
-DECIMAL
 : .BRIGHT  ( b -- )
-    19 EMITC EMITC
+    #19 EMITC 1 AND EMITC
 ;
-
