@@ -62,7 +62,7 @@ CREATE RR 642 ALLOT
 140 VALUE DY
 
 : FEDORA ( -- ) 
-    LAYER2 LAYER22
+
     642 0 DO
         1000 RR I + !
     2 +LOOP

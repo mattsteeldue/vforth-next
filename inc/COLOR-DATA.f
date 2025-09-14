@@ -1,8 +1,0 @@
-\
-\ COLOR-MASK.f
-\
-.( COLOR-MASK )
-\
-
-CREATE COLOR-MASK
-   

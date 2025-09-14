@@ -1,15 +1,14 @@
-2022-01-01
+2025-09-14
 
 On real-hardware Sinclair ZX Spectrum Next
 ------------------------------------------
 
 1. Install, just copy SD/tools/vForth content into SD  at C:/tools/vForth
    or extract the very same content from the latest zipped file
-   vforth-next/download/vForth_15f_yyyymmdd.zip (direct-threaded) or
-   vforth-next/download/vForth_15e_yyyymmdd.zip (indirect-threaded)
+   vforth-next/download/vForth_18e_yyyymmdd.zip 
 
-2. Run, from File-Browser execute the Basic program C:/tools/vForth/Forth15_direct.bas or
-   C:/tools/vForth/Forth15_indirect.bas  
+2. Run, from File-Browser execute the Basic program C:/tools/vForth/Forth18_loader.bas
+
 
 
 On #CSpect emulator

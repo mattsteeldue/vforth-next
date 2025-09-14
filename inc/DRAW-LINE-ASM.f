@@ -1,10 +1,11 @@
 \
-\ draw-line.f  
+\ draw-line-asm.f  
 \
 .( DRAW-LINE-ASM )
 \
-NEEDS ASSEMBLER
 NEEDS GRAPHICS
+
+NEEDS ASSEMBLER
 
 MARKER TASK
 
@@ -12,7 +13,9 @@ MARKER TASK
 
 .( ROUT-DELTA-X0 )
 CODE ROUT-DELTA-X0
-    INCX    DE| \ this instruction must be INC DE when SX > 0, or DEC DE when SX < 0, modified at runtime...
+    INCX    DE| \ this instruction must be INC DE when SX > 0, 
+                \ or DEC DE when SX < 0, 
+                \ modified at runtime...
     RET
     C;
 
@@ -20,7 +23,19 @@ CODE ROUT-DELTA-X0
 
 .( ROUT-DELTA-Y0 )
 CODE ROUT-DELTA-Y0
-    INC     C'| \ this instruction must be INC C when SY > 0, or DEC C when SY < 0, modified at runtime...
+    INC     C'| \ this instruction must be INC C when SY > 0, 
+                \ or DEC C when SY < 0, 
+                \ modified at runtime...
+    RET
+    C;
+
+\ ____________________________________________________________________
+
+.( ROUT-DELTA-PAGE )
+CODE ROUT-DELTA-PAGE
+    INC     A'| \ this instruction must be INC A when SX > 0, 
+                \ or DEC A when SX < 0, 
+                \ modified at runtime...
     RET
     C;
 
@@ -42,24 +57,16 @@ CODE ROUT-PASS-BOUNDARY
 
 \ ____________________________________________________________________
 
-.( ROUT-DELTA-PAGE )
-CODE ROUT-DELTA-PAGE
-    INC     A'| \ this instruction must be INC A when SX > 0, or DEC A when SX < 0, modified at runtime...
-    RET
-    C;
-
-\ ____________________________________________________________________
-
 \ Input: 
-\   BC  : Y0 
-\   DE  : X0 
+\   BC  : Y0 pixel coord
+\   DE  : X0 pixel coord
 \    H  : MX mask for boundary-page check
-\    L  : Y1 
-\   IX  : X1    
-\  B'C' : DY   
-\  D'E' : DX
-\  H'   : SX    
-\  L'   : SY 
+\    L  : Y1 pixel coord
+\   IX  : X1 pixel coord   
+\  B'C' : DY delta y  
+\  D'E' : DX delta x
+\  H'   : SX sign x   
+\  L'   : SY sign y
 
 .( ROUT-1 )
 CODE ROUT-1
@@ -67,10 +74,10 @@ CODE ROUT-1
 \ compute boundary value for X to check for paging
 \   SX 0< IF 0 ELSE MX THEN TO PX
     LD      A'|     H|          \ MX
-    LD()A    ' ROUT-MASK-BOUNDARY 1+  AA,  \ Always MX
-    LD()A    ' ROUT-PASS-BOUNDARY 1+  AA,  \ defaults PX equals MX when SX>0
+    LD()A   ' ROUT-MASK-BOUNDARY 1+  AA,  \ Always MX
+    LD()A   ' ROUT-PASS-BOUNDARY 1+  AA,  \ defaults PX equals MX when SX>0
 
-\ Patch instructions "inc de" and "inc c"  here above used to increment X0 and Y0
+\ Patch instructions "inc de" and "inc c" above, to increment X0 and Y0
     EXX
      \ check SX
      LD      A'|     H|         \ get SX, then H is free to use
@@ -115,7 +122,7 @@ CODE ROUT-1
  
 \ --    ?TERMINAL IF QUIT THEN 
 
-\ plot current position via MMU7!
+\ X0 Y0 PLOT plot current position via MMU7!
 \ --    ATTRIB X0 FLIP Y0 + $E000 OR C!
         LD      A'|     E|
         ORN     $E0      N,
