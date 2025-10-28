@@ -8,6 +8,7 @@ On real-hardware Sinclair ZX Spectrum Next
    vforth-next/download/vForth_18e_yyyymmdd.zip 
 
 2. Run, from File-Browser execute the Basic program C:/tools/vForth/Forth18_loader.bas
+   or  .vforth  to start dot-command version.
 
 
 
@@ -15,9 +16,8 @@ On #CSpect emulator
 -------------------
 
 The operations of points 1. and 2. has to be performed within an SD image like   tbblue.mmc  
-To operato on a SD image, you can use HDFM-GOOEY available here: http://zxbasic.uk/nextbuild/hdfmgooey/
-Remember: to copy a file to SD while you're running vForth environment, you have to temporarily suspend any activity on the SD card.
-In vForth, this can be done via   REMOUNT   available after you give NEEDS REMOUNT .
+To operate on a SD image, you can use HDFM-GOOEY which is available here: http://zxbasic.uk/nextbuild/hdfmgooey/
+Remember: to copy a file to SD while you're running vForth environment, you have to temporarily suspend any activity on the SD card and in vForth this can be done via   REMOUNT   available after you give NEEDS REMOUNT .
 
 
 Debian / Ubuntu / Linux-Lite
