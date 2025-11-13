@@ -749,7 +749,7 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20250815", 13  // 33
+//              db      "Heap Vocabulary - build 20250914", 13  // 33
 //              db      "1990-2025 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
@@ -1040,7 +1040,7 @@ Backslash_Endif_1:
 Len_Filename:   db      14   // length of the following string, excluding 0x00 
 Blk_filename:   db      "!Blocks-64.bin", 0
 Param_From_Basic:  
-                db      "lib/autoexec.f", 0
+                db      "lib/autoexec-dot.f", 0
 
 Fence_Word:
 //  ______________________________________________________________________ 

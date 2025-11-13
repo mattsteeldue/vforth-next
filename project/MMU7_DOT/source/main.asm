@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  DOT-command version
-//  build 20250815
+//  build 20251111
 // 
 //  Direct-Threaded version.
 // 
@@ -75,8 +75,10 @@
 //  ______________________________________________________________________
 //
 // this controls some debugging code in L0.asm
-//  0 for final binary release.
-//  1 for debugging with Visual Studio Code and DeZog
+
+//  1 for final .DOT binary release.
+
+//  0 for debugging with Visual Studio Code and DeZog
 // -1 for for binary comparison with Forth generated code.
 DEBUGGING       equ     1   // .dot
 //

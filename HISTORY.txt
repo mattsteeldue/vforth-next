@@ -587,3 +587,8 @@ Introducing TILE80 that allows switching to Layer-3 most EMIT functions (work in
 
 \ build 20250815
 Introducing LAYER2+ inside GRAPHICS libary to handle 320 x 512 pixel Layer 3 mode.
+
+
+\ build 20251111
+Review the whole documentation.
+
