@@ -1,0 +1,71 @@
+Scr# 4 
+  0 is undefined.
+  1 Stack is empty.
+  2 Dictionary full.
+  3 No such a line.
+  4 has already been defined.
+  5 Invalid stream.
+  6 No such a block.
+  7 Stack full.
+  8 Old dictionary is full.
+  9 Tape error.
+ 10 Wrong array index.
+ 11 Invalid floating point.
+ 12 Heap full.
+ 13 Division by zero.
+ 14 Patching the wrong definition.
+ 15 [ BREAK ] was pressed.
+
+Scr# 5 
+  0 ( Error messages    from #17 to #31 )
+  1 Can't be executed.
+  2 Can't be compiled.
+  3 Syntax error.
+  4 Bad definition end.
+  5 is a protected definition.
+  6 Aren't loading now.
+  7 Forget across vocabularies.
+  8 RS loading error.
+  9 Cannot open stream.
+ 10 Error at postit time.
+ 11 Inconsistent fixup.
+ 12 Unexpected fixup/commaer.
+ 13 Commaer data error.
+ 14 Commaer wrong order.
+ 15 Programming error.
+
+Scr# 6 
+  0 ( Error messages    from #33 to #47 )
+  1 Programming error.
+  2 Checksum error.
+  3 F_GETLINE pos error.
+  4 F_GETLINE seek error.
+  5 Directory not found.
+  6 Not a BMP file.
+  7 NextZXOS Opendir error.
+  8 NextZXOS Out of memory.
+  9 NextZXOS Open error.
+ 10 NextZXOS Close error.
+ 11 File not found.
+ 12 NextZXOS DOS call error.
+ 13 NextZXOS Pos error.
+ 14 NextZXOS Read error.
+ 15 NextZXOS Write error.
+
+Scr# 7 
+  0 ( Error messages    from #49 to #63 )
+  1 \ Test suite errors.
+  2 Incorrect result.
+  3 Wrong number of results.
+  4 Cell number before '->' does not match ...}T spec.
+  5 Cell number before AND after '->' does not match.
+  6 Cell number after '->' below ...}T does not match.
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 Abort.

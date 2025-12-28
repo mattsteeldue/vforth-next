@@ -13,12 +13,14 @@ NEEDS SPEED!
 \ BLEEP-ROM
 \ invokes standard ROM BEEP routine.
 \ Input parameters are:
-\   n1 = ( 3.5M / Hz - 241 ) / 8 
-\   n2 = sec / Hz 
+\  n1 = ( 3.5M/Hz - 241 ) / 8 --> hl
+\  n2 = sec * Hz              --> de
+\ One second central A (220Hz) is  : hl=07A7 (1959), de=00DC (220)
+
 HEX
 CODE  BLEEP  ( n1 n2 -- )
     D9 C,                   \  exx
-    E1 C,                   \  pop hl    ; ms / Hz
+    E1 C,                   \  pop hl    ; s*Hz
     D1 C,                   \  pop de    ; ( 3.5M / Hz - 241 ) / 8 
     D9 C,                   \ exx
     DD C, E5 C,             \ push ix
@@ -39,24 +41,20 @@ CODE  BLEEP  ( n1 n2 -- )
 SMUDGE 
 
 
-\ BLEEP-CALC
+\ BLEEP-CALC8
 \ Input parameters are two integers:
-\  n1  : duration in millisecond
-\  n2  : 8 times sound frequency in Hertz 
+\  n1  : duration in milliseconds
+\  n2  : sound frequency in Hertz x 8
 \ Output parameters are suitable numbers for BLEEP routine
 DECIMAL
-: BLEEP-CALC  ( n1 n2 -- n3 n4 )
-    >R                      \  ms                   R: 8Hz
-    R@ 8000                 \  ms    8Hz   8000     R: 8Hz
-    */                      \  s/Hz                 R: 8Hz
-\   28000.000               \  s/Hz  28M
-\   R> UM/MOD               \  s/Hz  rem   3.5M/Hz  
-\   241 -                   \  s/Hz  rem  (3.5M/Hz - 241)
-\   3 RSHIFT                \  s/Hz  rem  (3.5M/Hz - 241) / 8
-    3500.000                \  s/Hz  3.5M
-    R> UM/MOD               \  s/Hz  rem   3.5M/Hz  
-    30 -                    \  s/Hz  rem   3.5M/Hz - 30
-    NIP                     \  s/Hz  (3.5M/Hz - 241) / 8
+: BLEEP-CALC8  ( n1 n2 -- n3 n4 )
+    >R                      \  ms                  R: 8*Hz
+    R@ 8000 */              \  s*Hz 
+    28000.000               \  s*Hz   28M
+    R> UM/MOD               \  s*Hz   rem   3.5M/Hz  
+    233 -                   \  s*Hz   rem   3.5M/Hz - 241
+    NIP                     \  s*Hz   (3.5M/Hz - 241) 
+    3 RSHIFT                \  s*Hz   (3.5M/Hz - 241) / 8
 ;
 
 
@@ -92,11 +90,10 @@ SMUDGE
 \ 
 VARIABLE OCTAVE
 
-
 \ this table contains frequencies multiplied by 4.
 CREATE FREQ-TABLE
     DECIMAL 
-    56320 ,     \ A     14,080.00 Hz  \ 56320
+    56320 ,     \ A     14,080.00 Hz  \ 56320 
     53159 ,     \ G#    13,289.75 Hz  \ 53159
     50175 ,     \ G     12,543.85 Hz  \ 50175
     47359 ,     \ F#    11,389.82 Hz  \ 47359
@@ -163,7 +160,7 @@ CREATE FREQ-TABLE
 \ standard Basic BEEP emulation
 : BEEP ( n1 n2 -- ) 
     BEEP-PITCH 
-    BLEEP-CALC 
+    BLEEP-CALC8 
     SPEED@ >R
     0 SPEED!
     BLEEP

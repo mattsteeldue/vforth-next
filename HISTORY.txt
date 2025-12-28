@@ -591,4 +591,4 @@ Introducing LAYER2+ inside GRAPHICS libary to handle 320 x 512 pixel Layer 3 mod
 
 \ build 20251111
 Review the whole documentation.
-
+Fixed (again) bleep.f library
