@@ -1,13 +1,13 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2025-07-19
-\ MIT License (c) 1990-2025 Matteo Vitturi     
+\ v-Forth 1.8 - NextZXOS version - build 2026-01-01
+\ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
 \
 \ MIT License
 \ 
-\ Copyright (c) 1990-2025 Matteo Vitturi
+\ Copyright (c) 1990-2026 Matteo Vitturi
 \ 
 \ Permission is hereby granted, free of charge, to any person obtaining a copy
 \ of this software and associated documentation files (the "Software"), to deal
@@ -6026,9 +6026,9 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2025-07-19" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-01-01" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
-\    [ decimal 127 here ," 1990-2025 Matteo Vitturi" -1 allot ]
+\    [ decimal 127 here ," 1990-2026 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 
     ;
 

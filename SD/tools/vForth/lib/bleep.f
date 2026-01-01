@@ -4,13 +4,12 @@
 
 .( BLEEP ) 
 
-\ BASE @ \ save base status
+BASE @ \ save base status
 
 NEEDS SPEED@
 NEEDS SPEED!
 
-
-\ BLEEP-ROM
+\ BLEEP 
 \ invokes standard ROM BEEP routine.
 \ Input parameters are:
 \  n1 = ( 3.5M/Hz - 241 ) / 8 --> hl
@@ -41,13 +40,13 @@ CODE  BLEEP  ( n1 n2 -- )
 SMUDGE 
 
 
-\ BLEEP-CALC8
+\ BLEEP-CALC
 \ Input parameters are two integers:
 \  n1  : duration in milliseconds
 \  n2  : sound frequency in Hertz x 8
 \ Output parameters are suitable numbers for BLEEP routine
 DECIMAL
-: BLEEP-CALC8  ( n1 n2 -- n3 n4 )
+: BLEEP-CALC  ( n1 n2 -- n3 n4 )
     >R                      \  ms                  R: 8*Hz
     R@ 8000 */              \  s*Hz 
     28000.000               \  s*Hz   28M
@@ -87,28 +86,29 @@ CODE  12/MOD    ( n --  note  octave )
 SMUDGE 
 
 
-\ 
-VARIABLE OCTAVE
-
-\ this table contains frequencies multiplied by 4.
-CREATE FREQ-TABLE
-    DECIMAL 
-    56320 ,     \ A     14,080.00 Hz  \ 56320 
-    53159 ,     \ G#    13,289.75 Hz  \ 53159
-    50175 ,     \ G     12,543.85 Hz  \ 50175
-    47359 ,     \ F#    11,389.82 Hz  \ 47359
-    44701 ,     \ F     11,175.30 Hz  \ 44701
-    42192 ,     \ E     10,548.08 Hz  \ 42192
-    39824 ,     \ D#     9,956.06 Hz  \ 39824
-    37589 ,     \ D      9,397.27 Hz  \ 37589
-    35479 ,     \ C#     8,869.84 Hz  \ 35479
-    33488 ,     \ C      8,372.02 Hz  \ 33488
-    31608 ,     \ B      7,902.13 Hz  \ 31608
-    29834 ,     \ A#     7,458.62 Hz  \ 29834
+\ this table contains frequencies multiplied by 8.
+CREATE FREQ-TABLE 
+DECIMAL 
+    56320 ,     \ A     7.040,00 Hz  \ 56320 
+    53159 ,     \ G#    6.644,88 Hz  \ 53159
+    50175 ,     \ G     6.271,93 Hz  \ 50175
+    47359 ,     \ F#    5.919,91 Hz  \ 47359
+    44701 ,     \ F     5.587,65 Hz  \ 44701
+    42192 ,     \ E     5.274,04 Hz  \ 42192
+    39824 ,     \ D#    4.978,03 Hz  \ 39824
+    37589 ,     \ D     4.698,64 Hz  \ 37589
+    35479 ,     \ C#    4.434,92 Hz  \ 35479
+    33488 ,     \ C     4.186,01 Hz  \ 33488
+    31609 ,     \ B     3.951,07 Hz  \ 31608
+    29834 ,     \ A#    3.729,31 Hz  \ 29834
+        
 
 
 \ \ creator for note-frequency of current OCTAVE
 \ \ see the following definitions
+\ 
+\ VARIABLE OCTAVE
+\
 \ : IS-NOTE   ( n -- cccc )
 \     <BUILDS 
 \         FREQ-TABLE + @
@@ -119,7 +119,6 @@ CREATE FREQ-TABLE
 \ ;
 
 
-\ DECIMAL         
 \     0   IS-NOTE   _A        ( -- freq )    
 \     2   IS-NOTE   _Ab       ( -- freq )
 \     2   IS-NOTE   _G#       ( -- freq )
@@ -141,6 +140,7 @@ CREATE FREQ-TABLE
 
 \ BEEP-PITCH
 \
+DECIMAL         
 \ Convert a tone pitch (n1) to 8*freq (n2)
 \  0  -->  central C 
 \  9  -->  440 Hz  A
@@ -160,7 +160,7 @@ CREATE FREQ-TABLE
 \ standard Basic BEEP emulation
 : BEEP ( n1 n2 -- ) 
     BEEP-PITCH 
-    BLEEP-CALC8 
+    BLEEP-CALC 
     SPEED@ >R
     0 SPEED!
     BLEEP
@@ -169,4 +169,4 @@ CREATE FREQ-TABLE
 
 DECIMAL
 
-\ BASE !
+BASE !

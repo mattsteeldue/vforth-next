@@ -64,9 +64,9 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2025-11-11 ", $0D  // 33
+                db      " Dot-command - build 2026-01-01 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
-                db      " 1990-2025 Matteo Vitturi ", $0D            // 27
+                db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
 
 //  ______________________________________________________________________ 

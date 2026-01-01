@@ -750,8 +750,8 @@ Index_Leave:
 //              dw      C_DOT_QUOTE
 //              db      87
 //              db      "v-Forth 1.8 NextZXOS version", 13    // 29
-//              db      "Heap Vocabulary - build 20250815", 13  // 33
-//              db      "1990-2025 Matteo Vitturi", 13        // 25
+//              db      "Heap Vocabulary - build 20260101", 13  // 33
+//              db      "1990-2026 Matteo Vitturi", 13        // 25
 //              dw      EXIT
 
 //  ______________________________________________________________________ 

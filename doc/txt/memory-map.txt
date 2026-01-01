@@ -1,0 +1,43 @@
+\
+\ v-Forth 1.8 - NextZXOS version - build 2025-08-15            
+\ MIT License (c) 1990-2025 Matteo Vitturi     
+\
+\ Memory Map
+\ -------------------------------------------------------
+\ 0000-3FFF         ROM of Spectrum
+\ 2000-3FFF         Dot-command memory area.
+\ 4000-47FF         Display file
+\ 5800-5AFF         Attributes
+\ 5B00-5BFF         System variables 128K RAM (former Printer buffer)
+\ 5C00-5CEF         System variables
+\          *CHANS   Stream map
+\          *PROG    Basic program
+\          *VARS    Basic variables
+\          *E_LINE  Line in editing
+\          *WORKSP  Workspace
+\          *STKBOT  Floating point Stack Bottom
+\          *STKEND  Floating point end
+\          *SP      Z80 Stack Pointer register in Basic
+\ 61FF     *RAMTOP  Logical RAM top (RAMTOP system var is at 23730)
+\ 6200-6300         Interrupt Vector table to $6363
+\ 6301-6330         Return Stack during ISR (20 entries)
+\ 6331-6362 Stack area during OS operations
+\ 6363              Interrupt routine
+\ 6366      ORIGIN  Forth Origin
+\ 639A     *IX      Inner Interpreter pointed by IX.
+\                   FENCE @
+\                   LATEST @
+\           HERE    DP @
+\           PAD     HERE 68 + (44h)
+\           ...     Dictionary grows upward
+\           ...     Free memory
+\           ...     Stack grows downward
+\ SP                SP@
+\ D3A2              S0 @
+\ D3A2              TIB @
+\                   RP@     Return stack grows downward: it can hold 80 entries
+\ D398              R0 @
+\ D398-D3E8         User variables area (about 40 entries)
+\ D3E8      FIRST   First buffer.
+\ E000      LIMIT   There are 7 buffers (516 * 6 = 3096 bytes)
+\ FFFF      P_RAMT  Phisical ram-top
