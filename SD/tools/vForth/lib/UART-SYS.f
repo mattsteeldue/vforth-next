@@ -17,21 +17,23 @@ $5C6A CONSTANT UART-FLAGS2
 
 \ Uart hardware I/O ports
 \
-$143B CONSTANT UART-RX-PORT
-$133B CONSTANT UART-TX-PORT
-$153B CONSTANT UART-CT-PORT
+$143B CONSTANT UART-RX-PORT \ Read from UART
+$133B CONSTANT UART-TX-PORT \ Write to  UART
+$153B CONSTANT UART-CT-PORT \ Control UART
+$163B CONSTANT UART-FW-PORT \ Flow-setup UART
 
 \ Uart burst-read timeout and chunk-length
-\ The inner part of burst-read routine takes 112 T-States, this means that
-\ to have 1 millisecond timemout you have to specify 250.
-\ Timeout for the first byte is set at 200 ms == 50000.
-\ Timeouts for the next bytes is set at 20 ms ==  5000.
-\ This means we expect RPi0 to reply within 250 ms to any command we issue
+\ The inner part of burst-read routine takes 112 T-States, 
+\ this means that 1 millisecond timemout corresponds to 250.
+\ Default as follow
+\ - Timeout for the first byte 200 ms == 50000.
+\ - Timeout for the subsequent bytes 40 ms == 10000.
+\ This means we expect RPi0 to reply within 200 ms to any command we issue
 \ and any subsequent delay greater than 40 ms ends output collection.
 \
 VARIABLE UART-1ST-TIMEOUT    50000 UART-1ST-TIMEOUT !
-VARIABLE UART-2ND-TIMEOUT     5000 UART-2ND-TIMEOUT !
-VARIABLE UART-CHUNK-LEN       8192 UART-CHUNK-LEN !
+VARIABLE UART-2ND-TIMEOUT    12500 UART-2ND-TIMEOUT !
+VARIABLE UART-CHUNK-LEN       8192 UART-CHUNK-LEN   !
 
 \ address at MMU7 usually 8k-page #1 is free for use
 \

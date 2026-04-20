@@ -1,85 +1,26 @@
 \
 \ TILE80.f
 
-\ v-Forth 1.8 - NextZXOS version - build 2025-07-19
-\ MIT License (c) 1990-2025 Matteo Vitturi     
+\ v-Forth 1.8 - NextZXOS version - build 2026-04-19
+\ MIT License (c) 1990-2026 Matteo Vitturi     
 
 \ Tilemode 80 columns - 1 color
 \
 .( TILE80 )
 \
 \
-MARKER TASK
+NEEDS LAYER3
 
 NEEDS PAD"
 NEEDS LOAD-BYTES
 NEEDS [']
 NEEDS CASE
 
-\ ______________________________
-\
-\ NextREG 0x68 (104) - ULA Control. disable ULA output
-\ $80 $68 reg!
-\
-\ NextREG 0x6B (107) - Tilemap Control
-\ %10100001 $6B reg!
-
-\ NextREG 0x6C (108) - Tilemap Control
-\ %10100001 $6B reg!
-\ 7-4 Palette offset
-\ 3 Set to mirror tiles in X direction
-\ 2 Set to mirror tiles in Y direction
-\ 1 Set rotate tiles 90oclockwise
-\ 0 In 512 tile mode, bit 8 of tile index, 
-\   set for ULA over tilemap, 
-\   reset for tilemap over ULA
-
-\ 0x6B (107) Tilemap Control
-\ bit 7 = 1 enable the tilemap
-\ bit 6 = 0 for 40x32, 1 for 80x32
-\ bit 5 = no attribute byte in tilemap (saves space)
-\ bit 4 = select palette, 0 first, 1 second
-\ bit 3 = set text mode, i.e. 1-bit B&W bitmaps
-\ bit 2 = reserved, must be zero
-\ bit 1 = activate 512 tile mode
-\ bit 0 = force tilemap on top of ULA
-
-: TILE-OFF %00000000 $6B reg! $00 $68 reg! ;
-: TILE-40  %10000001 $6B reg! $80 $68 reg! ;
-: TILE-80  %11001001 $6B reg! $80 $68 reg! ;
-: TILE-TXT %11101001 $6B reg! $80 $68 reg! ;
-\ ______________________________
-
-\ NextREG 0x40 (64) - Palette Index Select
-\ NextREG 0x41 (65) - 8-bit Palette Data
-: SET-PAL ( c n -- ) $40 REG! $41 REG! ;
-: GET-PAL ( n -- c ) $40 REG! $41 REG@ ;
+MARKER TASK
 
 \ ______________________________
 
-\ 80 columns, grid at $4000, 80*32*1 = 2560 = $0A00
-\ definition 1bit per pixel at $4A00
-: TILE-TXT-BASE \ $14 (-1 to offset the first 32 chars)
-    $13 $6F reg!  \ Tile Definitions Base Address $5400
-    $00 $6E reg!  \ Tilemap Base Address at $4000
-;
-
-\ ______________________________
-
-: TILE-TXT-PALETTE
-    $43 REG@        \ get current status of reg $43
-    %10001111 AND
-    %00110000 OR    \ .011.... is Tilemap 1st pal.
-    $43 REG!
-    \ palette entries are given in couple ink on paper
-    %11111001 $01  set-pal   \ light yellow
-    %00000001 $00  set-pal   \ on dark blue
-    %00000000 $6C reg!       \ globally first palette entry 
-;
-
-\ ______________________________
-
-\ Address useful
+\ Address of display-file useful
 $4000 CONSTANT DISPLAY-FILE
 
 \ screen size, height and width
@@ -163,10 +104,12 @@ VARIABLE T-POS
 
 \ decode Emit
 : T-DECODE ( c1 -- )
-    T-FLAGS @ 2 = IF
+    T-FLAGS @ 
+    IF
+        T-FLAGS @ 
         CASE
-            2 OF  T-WIDTH * T-POS !  1 T-FLAGS !  ENDOF
             1 OF  T-POS +!           0 T-FLAGS !  ENDOF
+            2 OF  T-WIDTH * T-POS !  1 T-FLAGS !  ENDOF
         ENDCASE
     ELSE
         CASE
@@ -180,10 +123,9 @@ VARIABLE T-POS
 
 \ ______________________________
 
-\ vector for emit
-: T-EMIT ( c -- 0 )
+: T-EMITC ( c -- )
     DUP BL < 
-    T-FLAGS @ OR
+    T-FLAGS @  OR
     IF
         T-DECODE
     ELSE
@@ -192,9 +134,16 @@ VARIABLE T-POS
              T-SCROLL 
         THEN
         \ Put c at the right location
-        T-XY !
-        1 OUT +!
+        T-XY C!
     THEN
+;
+
+\ ______________________________
+
+\ vector for emit
+: T-EMIT ( c -- 0 )
+    T-EMITC
+    1 OUT +!
     0
 ;
 
@@ -204,8 +153,9 @@ VARIABLE T-POS
 \
 : NO-TILE
     TILE-OFF  
-    ['] (?EMIT)       ['] EMIT >BODY !
-    ['] (CLS)         ['] CLS  >BODY !
+    ['] (EMITC)       ['] EMITC >BODY !
+    ['] (?EMIT)       ['] EMIT  >BODY !
+    ['] (CLS)         ['] CLS   >BODY !
     CLS
 ;
 
@@ -213,10 +163,10 @@ VARIABLE T-POS
 \
 : TILE80
     CLS
-    ['] T-EMIT        ['] EMIT >BODY !
-    ['] T-CLS         ['] CLS  >BODY !
+    ['] T-EMITC       ['] EMITC >BODY !
+    ['] T-EMIT        ['] EMIT  >BODY !
+    ['] T-CLS         ['] CLS   >BODY !
     TILE-TXT-PALETTE
-    TILE-TXT-BASE
     TILE-TXT
     T-CLS 
     T-HOME  

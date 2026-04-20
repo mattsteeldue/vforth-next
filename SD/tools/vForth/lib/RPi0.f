@@ -1,27 +1,26 @@
 ( UART Raspberry PI Zero library )
 \
 \ This source provides semantics to talk with Raspberry PI Zero via UART.
-\ RPI0 does the following:
+\ Definition   RPI0   performs the following:
 \ 1. Select RPi0's hardware UART and set Baudrate 115.200
 \ 2. Send a few EOT just as if we're unsure about RPi0 status
 \ 3. Wait for SUP> prompt.
 \
 \ _________________________________________________________
 
-\ NEEDS ASSEMBLER
-NEEDS UART-SYS
-NEEDS UART-RX-BURST
-NEEDS MS
-NEEDS INVV
-NEEDS TRUV
+\ NEEDS ASSEMBLER \ no more
+NEEDS UART-SYS      \ import the constants
+NEEDS UART-RX-BURST \ import the read-burst primitive
+NEEDS MS            \ import millisecond timer
+NEEDS INVV          \ inverse video
+NEEDS TRUV          \ true video
 
-MARKER REDO
-
-: BELL 7 EMIT 7 EMIT 7 EMIT 7 EMIT 7 EMIT 7 EMIT ;
+\ produce an audible beep
+: BELL 7 DUP EMIT EMIT ;
 
 \ _________________________________________________________
 \
-\ map for special Symbol-Shift Keys
+\ map special Symbol-Shift Keys
 \ some keys are encoded by Forth's KEY (e.g. $0C or $06)
 CREATE RPI0-TKB1
 \ STOP   NOT    STEP   TO     THEN   AND    OR     AT     delete <=     <>     >= 
@@ -45,7 +44,7 @@ CREATE RPI0-TKB2
 \ NextREG 17 (11h) - Video Timing (see manual)
 \ These are double precision integers you can read with 2@
 \ N.B. Using 115200 baud, integer precision is coarse enough to allow
-\ values to be divided by 100 to be able to better handle them later
+\ values to be divided by 100 to be able to better handle them 
 CREATE UART-SYS-CLOCK
 DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
         28.5714   , ,   \ VGA setting 1     28.571.429 Hz
@@ -58,8 +57,8 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 
 \ _________________________________________________________
 
-\ compute actual clock speed depending on video mode
-\ ask the hardware NextREG 17 (11h) and return a double precision integer
+\ compute actual clock speed depending on video mode.
+\ Ask the hardware NextREG 17 (11h) and return a double precision integer
 \ expressed in MHz/100
 : UART-VIDEO-TIMING  ( -- d )
     $11 REG@ 7 AND              \ Video timing register: 0-7
@@ -89,34 +88,29 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ _________________________________________________________
 \
 \ Set UART baud rate.
-\ usage is: 115200. UART-SET-BAUDRATE
+\ usage is: 115.200 UART-SET-BAUDRATE
 : UART-SET-BAUDRATE ( d -- )
     UART-BAUD-PRESCALAR
     UART-SET-PRESCALAR
-;
-
-\ _________________________________________________________
-\
-\ Select Raspberry PI Zero UART and set Baudrate d
-: RPI0-SELECT  ( d -- )
-    UART-CT-PORT P@ 
-    $80 AND #24 ?ERROR
-    3 7 REG!              \ go max speed (28 MHz)
-    $40 UART-CT-PORT P!   \ select PI Zero UART control port
-    UART-SET-BAUDRATE     \ uses double integer param
-    $30 $A0 REG!          \ PI Peripheal enable
-\   $91 $A2 REG!          \ PI I2S Audio control
 ;
 
 .( .)
 
 \ _________________________________________________________
 \
+\ Check if UART Rx buffer is empty
+: ?UART-EMPTY ( -- f )
+    UART-TX-PORT P@     \ UART TX port
+    $10 AND             \ bit is set when buffer is empty
+;
+
+\ _________________________________________________________
+\
 \ Check if UART is busy sending a byte.
 \ non-zero when transmitter is busy sending a byte
 : ?UART-BUSY-TX ( -- f )
-    UART-TX-PORT P@   \ UART TX port
-    02 AND            \ bit is set when busy
+    UART-TX-PORT P@     \ UART TX port
+    $02 AND             \ bit is set when busy
 ;
 
 \ _________________________________________________________
@@ -127,8 +121,7 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 : UART-TX-BYTE ( b -- )
     BEGIN
         ?UART-BUSY-TX NOT  
-        ?TERMINAL 
-        OR
+        ?TERMINAL OR
     UNTIL
     UART-TX-PORT P!         \ Transmit anyway
 ;
@@ -137,14 +130,14 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ _________________________________________________________
 \
 \ End Of Transmission ^D
-: UART-SEND-EOT ( -- )      
+: UART-SEND-^D ( -- )      
     04 UART-TX-BYTE
 ;
 \
 \ _________________________________________________________
 \
 \ End of TeXt ^C
-: UART-SEND-ETX ( -- )      
+: UART-SEND-^C ( -- )      
     03 UART-TX-BYTE
 ;
 \ _________________________________________________________
@@ -176,12 +169,21 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ true flag when byte ready, false elsewhere
 : ?UART-BYTE-READY  ( -- f )  
     UART-TX-PORT  P@ 
-    01 AND
+    $01 AND
 ;
 
 \ _________________________________________________________
 \
-\ accept a byte if available, 0x00 if no byte is available.
+\ Check if UART buffer is empty
+\ true flag when empty, false elsewhere
+: ?UART-BUFFER-EMPTY  ( -- f )  
+    UART-TX-PORT  P@ 
+    $10 AND
+;
+
+\ _________________________________________________________
+\
+\ accept a byte from UART if available, 0x00 if no byte is available.
 : UART-RX-BYTE  ( -- b | 0 )     
     UART-RX-PORT  P@
 ;
@@ -208,7 +210,7 @@ DECIMAL 28.0000   , ,   \ Base VGA timing   28 MHz
 \ _________________________________________________________
 \
 \ wait for a specific string given at address a length n
-: UART-WAIT-FOR  ( a n -- )
+: UART-WAIT-STR  ( a n -- )
     BOUNDS
     ?DO
         I C@ UART-WAIT-B
@@ -223,12 +225,7 @@ CREATE SUP>-STR ," SUP>"
 
 \ to synchronize things
 : UART-WAIT-PROMPT  ( -- )
-    SUP>-STR COUNT UART-WAIT-FOR
-\   [CHAR] S UART-WAIT-B
-\   [CHAR] U UART-WAIT-B
-\   [CHAR] P UART-WAIT-B
-\   [CHAR] > UART-WAIT-B
-\         BL UART-WAIT-B
+    SUP>-STR COUNT UART-WAIT-STR
 ;
 
 \ _________________________________________________________
@@ -256,9 +253,11 @@ CREATE SUP>-STR ," SUP>"
     UART-FLAGS2 C@ 
     8 AND
     IF 
-        $8F5F UART-CURSOR-FACE !
+        \ 8F is full block graph, 5F is underline
+        $8F5F UART-CURSOR-FACE !  
     ELSE
-        $8F8C UART-CURSOR-FACE !
+        \ 8c is lower half block graph
+        $8F8C UART-CURSOR-FACE !    
     THEN  
     UART-CURSOR-FACE
     UART-FRAMES C@ $10 AND IF 1+ THEN
@@ -270,6 +269,7 @@ CREATE SUP>-STR ," SUP>"
 \ this relies on standard interrupt keyboard service
 : UART-GET-KEYB ( -- c )
     UART-LASTK C@
+    \ if available, then reset the variable.
     DUP IF 0 UART-LASTK C! THEN
 ;
 
@@ -314,9 +314,9 @@ CREATE SUP>-STR ," SUP>"
 \ _________________________________________________________
 \
 
-VARIABLE UART-FORTH-BUF 
-VARIABLE UART-FORTH-PTR 
-VARIABLE UART-FORTH-CNT 
+VARIABLE UART-FORTH-BUF     \ where Forth command is received
+VARIABLE UART-FORTH-PTR     \ current position in buffer
+VARIABLE UART-FORTH-CNT     \ length of command
 VARIABLE UART-FORTH-FLG
 VARIABLE UART-META          1 UART-META !
 
@@ -331,8 +331,8 @@ VARIABLE UART-META          1 UART-META !
     0 UART-LASTK C! 
     0 UART-FLAGS2 C! 
     $0D UART-TX-BYTE
-\   6 $1E EMITC EMITC  \ narrow font 85 char per row.
-    7  17 EMITC EMITC   \ paper 7 "white" , 1 "blue"
+    7 $1E EMITC EMITC  \ narrow font 73 char per row.
+    1  17 EMITC EMITC   \ paper 1 "blue"
 ;
 
 \ _________________________________________________________
@@ -426,6 +426,35 @@ VARIABLE UART-META          1 UART-META !
 
 \ _________________________________________________________
 \
+\ Select Raspberry PI Zero UART and set Baudrate d
+: RPI0-SELECT  ( d -- )
+    UART-CT-PORT P@ 
+    $80 AND #24 ?ERROR
+    \ go max speed (28 MHz)
+    3 7 REG!              
+    \ select PI Zero UART control port
+    $40 UART-CT-PORT P!   
+    \ Hardware flow-control, 8-bit-frame, no-parity-check, one-stop-bit
+    $38 UART-FW-PORT P!   
+    \ PI Peripheal enable
+    $30 $A0 REG!          
+    \ I2S state. I2S is stereo, 
+    \ Audio Flow Direction: PCMD_OUT from Pi, PCMD_IN to Pi (pi)
+    \ Mute left and right side
+    \ Direct I2S audio to EAR on port 0xFE
+    \ Slave mode (PCM_CLK, PCM_FS external)
+\   $D2 $A2 REG!          \ PI I2S Audio control
+\   $91 $A2 REG!          \ PI I2S Audio control
+    \ uses double integer param
+    UART-SET-BAUDRATE
+    2 ms
+    UART-SEND-CR
+    UART-SEND-^C
+    UART-SEND-^C
+;
+
+\ _________________________________________________________
+\
 : RPI0-INIT ( -- )
     #115.200 RPI0-SELECT
 ;
@@ -434,8 +463,8 @@ VARIABLE UART-META          1 UART-META !
 \
 : RPI0 ( -- )
     RPI0-INIT
-    UART-SEND-ETX
-    UART-SEND-EOT
+    UART-SEND-^C
+    UART-SEND-^D
 \   UART-WAIT-PROMPT
     TERM
     

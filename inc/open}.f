@@ -13,7 +13,7 @@ BASE @
 
 DECIMAL
 
-: OPEN > ( -- fh )
+: OPEN> ( -- fh )
     BL WORD                     \  a
     COUNT                       \  a+1  n
     OVER +                      \  a+1  a+n+1

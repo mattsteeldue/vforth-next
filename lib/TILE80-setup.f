@@ -1,7 +1,7 @@
 \
 \ TILE80-SETUP.f
 \
-\ MIT License (c) 1990-2025 Matteo Vitturi     
+\ MIT License (c) 1990-2026 Matteo Vitturi     
 \
 \ This must run with non-dot vForth version.
 \

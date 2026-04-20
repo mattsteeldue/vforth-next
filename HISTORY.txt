@@ -595,3 +595,11 @@ Review the whole documentation.
 
 \ build 20260101
 Fixed (again) bleep.f library
+
+
+\ build 20260419
+Tilemap aka Layer 3 works! At last, LAYER3 and TILE80 experiments are available.
+Possible future step is to leave old fashion 64x23 and go to 80x32 text mode. 
+A few demo show the capabilities of LAYER3.
+Core-Binary hasn't changed: this is just a release for renew libraries.
+

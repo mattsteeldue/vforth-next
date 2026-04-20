@@ -1,8 +1,8 @@
 \
 \ lib/persistence.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2025-03-15
-\ MIT License (c) 1990-2025 Matteo Vitturi     
+\ v-Forth 1.8 - NextZXOS version - build 2026-04-19
+\ MIT License (c) 1990-2026 Matteo Vitturi     
 \
 
 ( PERSISTENCE ) 
