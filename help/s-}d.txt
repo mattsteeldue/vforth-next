@@ -1,0 +1,6 @@
+    S->D  n -- d
+
+Converts single-cell to double-cell.
+Obsolete: prefer S>D.
+
+Available after NEEDS S->D

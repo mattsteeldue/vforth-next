@@ -1,0 +1,12 @@
+    FLOATING  -- 
+
+NEEDS FLOATING includes a few definitions.
+  INTEGER   D>F     FIX     PI    FLOAT  
+  FLOATING  F>D     F.R     F.    F>PAD  
+  FNEGATE   F-      F+      F*    F/
+  F/MOD     FABS    FMOD    F**   F/MOD
+  F*/       F<      F>      F0<   F0>
+  FSQRT     FINT    FEXP    FLN   
+  FTAN      FCOS    FSIN
+  FATAN     FACOS   FASIN
+  RAD>DEG   DEG>RAD

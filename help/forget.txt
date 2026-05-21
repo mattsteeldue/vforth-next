@@ -1,0 +1,3 @@
+    FORGET  --
+
+Forget word and all later definitions.

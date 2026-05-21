@@ -1,0 +1,6 @@
+    MARK  a n --
+
+Prints text at address a, length n
+in reverse video.
+
+Available after NEEDS MARK

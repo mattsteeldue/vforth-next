@@ -1,0 +1,6 @@
+    RANDOM  -- u
+
+Returns a pseudo-random unsigned number.
+Uses linear congruential generator.
+
+Available after NEEDS RANDOM

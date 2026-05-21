@@ -1,0 +1,3 @@
+    3DUP  n1 n2 n3 -- n1 n2 n3 n1 n2 n3
+
+Duplicates the 3 top items on stack.

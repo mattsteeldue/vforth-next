@@ -1,0 +1,3 @@
+    SPLASH  --
+
+Display splash screen.

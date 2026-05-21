@@ -1,0 +1,6 @@
+    D=  d1 d2 -- f
+
+Returns true if d1 equals d2.
+Double-cell comparison.
+
+Available after NEEDS D=

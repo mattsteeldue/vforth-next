@@ -1,0 +1,4 @@
+    #    d1 -- d2
+
+Used between <# and #>. Given d1, produce the next ASCII
+character to be put in an output string using HOLD.

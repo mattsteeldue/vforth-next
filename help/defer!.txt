@@ -1,0 +1,6 @@
+    DEFER!  xt --
+
+Sets the execution token of a DEFER
+definition to xt.
+
+Available after NEEDS DEFER!

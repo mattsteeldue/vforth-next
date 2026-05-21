@@ -1,0 +1,6 @@
+    TRUV  --
+
+Resets inverse video mode. Returns
+to normal video.
+
+Available after NEEDS TRUV

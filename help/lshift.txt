@@ -1,0 +1,3 @@
+    LSHIFT  n1 u -- n2
+
+Left shift n1 by u bits.

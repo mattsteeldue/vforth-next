@@ -1,0 +1,6 @@
+    >TYPE  a u --
+
+Outputs string like TYPE, but first
+moves it to PAD for safety.
+
+Available after NEEDS >TYPE

@@ -1,0 +1,3 @@
+    M*  n1 n2 -- d
+
+Signed multiply 16x16 -> 32-bit.

@@ -1,0 +1,7 @@
+    CATCH  xt -- n | ff
+
+Execute xt and catch any THROW.
+Returns 0 if no exception, else
+returns exception code.
+
+Available after NEEDS CATCH

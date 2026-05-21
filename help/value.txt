@@ -1,0 +1,6 @@
+    VALUE  n --
+
+Creates a variable-like constant.
+Use TO to change its value.
+
+Available after NEEDS VALUE

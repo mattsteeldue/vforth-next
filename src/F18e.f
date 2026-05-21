@@ -5031,7 +5031,7 @@ CODE basic ( n -- )
 .( M/MOD )
 \ Mixed operation. It leaves the remainder n2 and the quotient n3 of the 
 \ integer division of a double integer d by the divisor n1. 
-: m/mod 
+: m/mod ( d n1 -- r q )
     sm/rem
     \ if you want floored division use fm/mod instead of sm/rem
     \ if you want simmetric division use sm/rem instead of fm/mod

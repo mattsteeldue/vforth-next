@@ -1,0 +1,4 @@
+    OF  --
+
+Used in CASE...OF...ENDOF...ENDCASE.
+Marks the branch for a specific case.

@@ -1,0 +1,4 @@
+    I  -- ind
+
+Return the current loop index.
+Used inside DO...LOOP or DO...+LOOP.

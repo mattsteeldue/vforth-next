@@ -1,0 +1,6 @@
+    DMIN  d1 d2 -- d
+
+Returns minimum of two double-cell
+numbers.
+
+Available after NEEDS DMIN

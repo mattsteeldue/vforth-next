@@ -1,0 +1,6 @@
+    S>D  n -- d
+
+Converts single-cell number to
+double-cell number.
+
+Available after NEEDS S>D

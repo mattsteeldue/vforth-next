@@ -1,0 +1,3 @@
+    ,  n --
+
+Compile (store) cell in dictionary.

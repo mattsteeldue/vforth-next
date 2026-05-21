@@ -1,0 +1,6 @@
+    DMAX  d1 d2 -- d
+
+Returns maximum of two double-cell
+numbers.
+
+Available after NEEDS DMAX

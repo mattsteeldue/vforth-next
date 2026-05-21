@@ -1,0 +1,3 @@
+    2DROP  d --
+
+Remove top 4 cells from stack.

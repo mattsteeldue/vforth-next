@@ -1,0 +1,6 @@
+    WIPE  --
+
+Clears current screen and fills
+with blanks.
+
+Available after NEEDS WIPE

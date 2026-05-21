@@ -1,0 +1,4 @@
+    LITERAL  n --
+
+Compile a literal value.
+Used in : definitions.

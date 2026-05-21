@@ -1,0 +1,4 @@
+    2FIND  a -- cfa b 1 | 0
+
+Internal search word. Returns CFA
+and header byte if found, else 0.

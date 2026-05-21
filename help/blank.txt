@@ -1,0 +1,4 @@
+    BLANK  a n --
+
+Fills n bytes starting at address a
+with BL (space character).

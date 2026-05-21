@@ -1,0 +1,3 @@
+    CHAR  -- c
+
+Read next character from input.

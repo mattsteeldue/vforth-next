@@ -1,0 +1,5 @@
+    BETWEEN  n a b -- f
+
+Returns true if a <= n <= b
+
+Available after NEEDS BETWEEN

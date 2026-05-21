@@ -1,0 +1,4 @@
+    .VOCAB  voc-link --
+
+Displays information about a
+vocabulary.

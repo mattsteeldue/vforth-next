@@ -1,0 +1,4 @@
+    BMOVE  n orig dest --
+
+Moves n blocks from orig to dest.
+Block-level copy operation.

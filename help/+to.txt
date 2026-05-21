@@ -1,0 +1,4 @@
+    +TO  n --
+
+Adds n to a VALUE. Usage: n +TO var
+Used inside colon definitions.

@@ -1,0 +1,3 @@
+    SPACE  --
+
+Output a space character.

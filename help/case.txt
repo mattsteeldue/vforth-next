@@ -1,0 +1,6 @@
+    CASE  --
+
+Marks start of case/of structure.
+Used with OF, ENDOF, ENDCASE.
+
+Available after NEEDS CASE

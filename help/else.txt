@@ -1,0 +1,4 @@
+    ELSE  --
+
+Part of IF...ELSE...THEN structure.
+Marks the else-branch code.

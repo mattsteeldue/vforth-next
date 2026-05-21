@@ -1,0 +1,3 @@
+    RP@  -- a
+
+Return current return stack pointer.

@@ -1,0 +1,5 @@
+    BINARY  --
+
+Sets BASE to 2 (binary number base).
+
+Available after NEEDS BINARY

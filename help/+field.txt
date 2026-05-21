@@ -1,0 +1,4 @@
+    +FIELD  n --
+
+Creates a structure field. Used
+for defining record structures.

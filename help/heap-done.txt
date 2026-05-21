@@ -1,0 +1,6 @@
+    HEAP-DONE  --
+
+Closes/finalizes the Heap memory
+facility.
+
+Available after NEEDS HEAP-DONE

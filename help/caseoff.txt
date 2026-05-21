@@ -1,0 +1,3 @@
+    CASEOFF  --
+
+Disable case-sensitive mode for word matching.

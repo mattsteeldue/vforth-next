@@ -1,0 +1,5 @@
+    IF  --
+
+Compile-time: marks conditional.
+Run-time: branches if flag is false.
+Used with THEN or ELSE...THEN.

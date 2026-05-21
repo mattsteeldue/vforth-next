@@ -1,0 +1,4 @@
+    VARIABLE  ccc --
+
+Define a named variable.
+Usage: VARIABLE X

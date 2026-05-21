@@ -1,0 +1,6 @@
+    <FAR  a n -- ha
+
+Convert far address to heap pointer.
+Takes address and page number.
+
+Available after NEEDS <FAR

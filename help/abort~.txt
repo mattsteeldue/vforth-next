@@ -1,0 +1,7 @@
+    ABORT"  --
+
+Usage: flag ABORT" message"
+If flag is true, prints message
+and aborts to command prompt.
+
+Available after NEEDS ABORT"

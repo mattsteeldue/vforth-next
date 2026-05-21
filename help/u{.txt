@@ -1,0 +1,3 @@
+    U<  u1 u2 -- f
+
+Unsigned less-than comparison.

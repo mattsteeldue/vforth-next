@@ -1,0 +1,3 @@
+    F_GETLINE  a n fh -- n f
+
+Read line from file. NextZXOS specific.

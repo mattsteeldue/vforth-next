@@ -1,0 +1,6 @@
+    RECURSE  --
+
+Used at compile-time inside a colon
+definition to call the same word.
+
+Available after NEEDS RECURSE

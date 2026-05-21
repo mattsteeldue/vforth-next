@@ -1,0 +1,3 @@
+    NIP  n1 n2 -- n2
+
+Remove second item on stack.

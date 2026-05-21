@@ -1,0 +1,4 @@
+    KEY  -- c
+
+Read a character from the keyboard.
+Waits for input until a key is pressed.

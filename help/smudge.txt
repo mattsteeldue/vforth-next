@@ -1,0 +1,3 @@
+    SMUDGE  --
+
+Toggle smudge bit on latest word.

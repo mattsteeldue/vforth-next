@@ -1,0 +1,6 @@
+    SAVE  --
+
+Saves all modified screens to disk,
+flushing buffers.
+
+Available after NEEDS SAVE

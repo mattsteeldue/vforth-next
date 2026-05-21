@@ -1,0 +1,6 @@
+    EVALUATE  a u --
+
+Interprets Forth text string
+at address a, length u.
+
+Available after NEEDS EVALUATE

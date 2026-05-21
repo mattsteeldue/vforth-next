@@ -1,0 +1,6 @@
+    WHERE  n1 n2 --
+
+Displays the offending line after
+an error during LOAD.
+
+Available after NEEDS WHERE

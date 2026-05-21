@@ -1,0 +1,4 @@
+    F_SEEK  d u -- f
+
+Seek file to position. Returns error flag.
+NextZXOS file operations.

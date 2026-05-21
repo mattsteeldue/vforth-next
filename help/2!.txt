@@ -1,0 +1,3 @@
+    2!  d a --
+
+Store double-cell (32-bit) at address.

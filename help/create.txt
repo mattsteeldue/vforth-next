@@ -1,0 +1,4 @@
+    CREATE  -- cccc
+
+Create a new dictionary entry.
+Returns parameter address.

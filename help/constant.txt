@@ -1,0 +1,4 @@
+    CONSTANT  n ccc --
+
+Define a named constant.
+Usage: 10 CONSTANT SIZE

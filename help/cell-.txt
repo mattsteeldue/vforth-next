@@ -1,0 +1,3 @@
+    CELL-  a1 -- a2
+
+Subtracts 2 (cell size) from address.

@@ -1,0 +1,5 @@
+    TRUE  -- -1
+
+Returns true constant (-1, all bits).
+
+Available after NEEDS TRUE

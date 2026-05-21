@@ -1,0 +1,4 @@
+     WORD    c -- a
+
+Read from input stream up to a delimiter c
+Store a counted-string at HERE.

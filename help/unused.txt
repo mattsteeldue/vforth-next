@@ -1,0 +1,6 @@
+    UNUSED  -- n
+
+Returns the number of free bytes
+in the dictionary.
+
+Available after NEEDS UNUSED

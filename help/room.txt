@@ -1,0 +1,6 @@
+    ROOM  --
+
+Displays the free dictionary space
+in bytes available.
+
+Available after NEEDS ROOM

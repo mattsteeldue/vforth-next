@@ -1,0 +1,6 @@
+    TOUCH  --
+
+Creates an empty file. Usage:
+TOUCH filename
+
+Available after NEEDS TOUCH

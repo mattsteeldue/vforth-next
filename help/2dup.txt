@@ -1,0 +1,3 @@
+    2DUP  d -- d d
+
+Duplicate top 32-bit item.

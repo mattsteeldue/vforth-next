@@ -1,0 +1,3 @@
+    2*  n1 -- n2
+
+Multiply by 2 (left shift).

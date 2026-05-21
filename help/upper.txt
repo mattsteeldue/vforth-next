@@ -1,0 +1,4 @@
+    UPPER  c1 -- c2
+
+Convert character to uppercase.
+Leaves character unchanged if not lowercase.

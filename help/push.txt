@@ -1,0 +1,6 @@
+    PUSH  --
+
+Allows temporary change of variable
+value; old value restored on exit.
+
+Available after NEEDS PUSH

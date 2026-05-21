@@ -1,0 +1,6 @@
+    ?VOCAB  --
+
+Displays current vocabulary, context,
+and vocabulary link chain.
+
+Available after NEEDS ?VOCAB

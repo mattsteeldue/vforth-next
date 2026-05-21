@@ -1,0 +1,3 @@
+    .  n --
+
+Print number as signed decimal.

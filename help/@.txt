@@ -1,0 +1,3 @@
+    @  a -- n
+
+Fetch cell (16-bit) from address.

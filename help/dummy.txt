@@ -1,0 +1,6 @@
+    DUMMY  --
+
+A dummy test word that prints
+a message.
+
+Available after NEEDS DUMMY

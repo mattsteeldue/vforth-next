@@ -1,0 +1,7 @@
+    K  -- n
+
+Returns index of second outer
+DO-LOOP. Used inside triple-nested
+loops.
+
+Available after NEEDS K

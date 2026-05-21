@@ -1,0 +1,3 @@
+    REG@  n -- b
+
+Read NextZXOS system register.

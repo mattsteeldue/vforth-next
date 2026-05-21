@@ -1,0 +1,6 @@
+    NARROWCHAR  --
+
+Sets 4-bit narrow character set
+for layers 1-2.
+
+Available after NEEDS NARROWCHAR

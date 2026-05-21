@@ -1,0 +1,4 @@
+    2CONSTANT  d --
+
+Creates a double-cell constant (2-cell value)
+stores d in the created constant word.

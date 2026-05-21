@@ -1,0 +1,4 @@
+    NOT  n -- f
+
+Returns true if n=0, false if n!=0.
+Logical NOT.

@@ -1,0 +1,6 @@
+    POSTPONE  --
+
+Compiles the next word in compiled
+form, even if immediate.
+
+Available after NEEDS POSTPONE

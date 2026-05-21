@@ -1,0 +1,4 @@
+    ALIGNED  a1 -- a2
+
+Rounds address a1 up to next even
+address if needed.

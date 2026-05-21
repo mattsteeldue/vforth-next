@@ -1,0 +1,3 @@
+    HEX  --
+
+Sets BASE to 16 (hexadecimal).

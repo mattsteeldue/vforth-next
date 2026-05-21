@@ -1,0 +1,7 @@
+    TO  n --
+
+Used as: n TO name
+Sets the value of a VALUE or
+DEFER definition to n.
+
+Available after NEEDS TO

@@ -1,0 +1,4 @@
+    COMPARE  a1 u1 a2 u2 -- n
+
+Compares two strings. Returns -1 if
+a1 < a2, 0 if equal, 1 if a1 > a2.

@@ -1,0 +1,4 @@
+    .S  --
+
+prints the current content of Calculator Stack 
+without destroying its content

@@ -1,0 +1,3 @@
+    P@  p -- b
+
+Fetch paged byte from address p.

@@ -1,0 +1,4 @@
+    EXIT  --
+
+Used in colon definitions to return
+to the caller. Substitutes ;S.

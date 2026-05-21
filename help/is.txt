@@ -1,0 +1,7 @@
+    IS  xt --
+
+Used as: ' word IS defer-name
+Sets the behavior of a DEFER word
+to the given execution token.
+
+Available after NEEDS IS

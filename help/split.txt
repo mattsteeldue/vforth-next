@@ -1,0 +1,6 @@
+    SPLIT  n1 -- n2 n3
+
+Splits n1 into low byte (n2) and
+high byte (n3).
+
+Available after NEEDS SPLIT

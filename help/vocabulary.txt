@@ -1,0 +1,3 @@
+    VOCABULARY  -- cccc
+
+Create a new vocabulary.

@@ -1,0 +1,4 @@
+    HELP  --
+
+Used in the form   HELP cccc  
+prints help page for cccc definition.

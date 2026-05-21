@@ -1,0 +1,6 @@
+    ENUM  --
+
+Creates enumeration type. Usage:
+ENUM type ; type name1 ; type name2
+
+Available after NEEDS ENUM

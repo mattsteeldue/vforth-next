@@ -1,0 +1,6 @@
+    SPEED@  -- n
+
+Returns CPU speed setting (0-3).
+0=3.5MHz, 1=7MHz, 2=14MHz, 3=28MHz
+
+Available after NEEDS SPEED@

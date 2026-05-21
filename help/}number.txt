@@ -1,0 +1,6 @@
+    >NUMBER  d a u -- d2 a2 u2
+
+Standard Forth number parser.
+Converts digits from string a,u.
+
+Available after NEEDS >NUMBER

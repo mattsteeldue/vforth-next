@@ -1,0 +1,4 @@
+    UM/MOD  ud u1 -- r q
+
+Unsigned divide: 32-bit by 16-bit.
+Returns remainder and quotient.

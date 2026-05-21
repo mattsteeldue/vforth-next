@@ -1,0 +1,5 @@
+    <>  n1 n2 -- f
+
+Returns true if n1 not equal to n2.
+
+Available after NEEDS <>

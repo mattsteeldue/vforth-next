@@ -1,0 +1,3 @@
+    D+-  d -- |d|
+
+Return absolute value of double-cell.

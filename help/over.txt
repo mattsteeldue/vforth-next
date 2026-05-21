@@ -1,0 +1,3 @@
+    OVER  n m -- n m n
+
+Copy second stack item to top.

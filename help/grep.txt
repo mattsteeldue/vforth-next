@@ -1,0 +1,6 @@
+    GREP  --
+
+Searches for text in first 2000
+screens using binary search.
+
+Available after NEEDS GREP

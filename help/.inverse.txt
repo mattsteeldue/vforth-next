@@ -1,0 +1,4 @@
+    .INVERSE  b --
+
+Sets inverse video attribute.
+0 = normal, 1 = inverse.

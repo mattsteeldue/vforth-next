@@ -1,0 +1,3 @@
+    COMPILE,  xt --
+
+Compile execution token into dict.

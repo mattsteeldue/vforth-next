@@ -1,0 +1,3 @@
+    SP!  a --
+
+Set data stack pointer to address a.

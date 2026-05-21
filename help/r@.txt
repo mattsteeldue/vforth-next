@@ -1,0 +1,4 @@
+    R@  -- n
+
+Returns copy of top value from
+return stack without removing it.

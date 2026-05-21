@@ -1,0 +1,6 @@
+    HEAP-INIT  --
+
+Initializes the Heap memory
+facility for allocation.
+
+Available after NEEDS HEAP-INIT

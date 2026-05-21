@@ -1,0 +1,4 @@
+    ENDIF  --
+
+Closes conditional structures.
+Alias for THEN.

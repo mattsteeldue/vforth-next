@@ -1,0 +1,3 @@
+    LATEST  -- nfa
+
+Return NFA of last defined word.

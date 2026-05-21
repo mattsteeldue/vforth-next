@@ -1,0 +1,4 @@
+    F_WRITE  a n u -- n f
+
+Write n bytes to file u from address a.
+Returns bytes written and error flag.

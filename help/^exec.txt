@@ -1,0 +1,3 @@
+    ?EXEC  --
+
+Error if in compile mode.

@@ -1,0 +1,3 @@
+    TYPE  a n --
+
+Output n characters from address a.

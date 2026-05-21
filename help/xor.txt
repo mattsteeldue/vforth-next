@@ -1,0 +1,3 @@
+    XOR  n1 n2 -- n3
+
+Bitwise XOR of two numbers.

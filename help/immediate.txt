@@ -1,0 +1,3 @@
+    IMMEDIATE  --
+
+Make latest word immediate.

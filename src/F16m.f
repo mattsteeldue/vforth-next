@@ -1,13 +1,13 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.6 MDR/MGT version ) CR
-.( build 20240815 ) CR
+.( build 20260101 ) CR
 .( ZX Microdrive version + MGT DISCiPLE version ) CR
 \ ______________________________________________________________________ 
 \
 \ MIT License
 \ 
-\ Copyright (c) 1990-2024 Matteo Vitturi
+\ Copyright (c) 1990-2026 Matteo Vitturi
 \ 
 \ Permission is hereby granted, free of charge, to any person obtaining a copy
 \ of this software and associated documentation files (the "Software"), to deal
@@ -5112,13 +5112,15 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ 7e86
 .( CLS or PAGE )
 CODE cls
-        PUSH    BC| 
-        PUSH    DE|
-        PUSH    IX|
+\       PUSH    BC| 
+\       PUSH    DE|
+\       PUSH    IX|
+        EXX
         CALL    hex 0DAF AA,
-        POP     IX|
-        POP     DE|
-        POP     BC|
+        EXX
+\       POP     IX|
+\       POP     DE|
+\       POP     BC|
         Next
         C;
 
@@ -5130,8 +5132,8 @@ CODE cls
 \   [ decimal 2 ] Literal far count type
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.6 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20240815" -1 allot ]
-    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
+    [ decimal 13 here ," build 20260101" -1 allot ]
+    [ decimal 13 here ," 1990-2026 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

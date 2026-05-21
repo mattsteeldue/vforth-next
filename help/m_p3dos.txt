@@ -1,0 +1,4 @@
+    M_P3DOS  n1 n2 n3 n4 a -- n5 n6 n7 n8 f
+
+Call NextZXOS M_P3DOS service.
+Returns result and error flag.

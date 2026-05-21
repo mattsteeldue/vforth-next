@@ -1,0 +1,6 @@
+    DUP>R  n -- n
+
+Duplicates n and also pushes copy
+to return stack.
+
+Available after NEEDS DUP>R

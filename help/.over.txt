@@ -1,0 +1,4 @@
+    .OVER  b --
+
+Sets over/transparent mode.
+0 = opaque, 1 = transparent.

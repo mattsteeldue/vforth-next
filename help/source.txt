@@ -1,0 +1,6 @@
+    SOURCE  -- a u
+
+Returns address and length of the
+current input buffer.
+
+Available after NEEDS SOURCE

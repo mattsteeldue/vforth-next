@@ -1,0 +1,4 @@
+    DIGIT  c n -- u 1 | 0
+
+Convert character to digit with base n.
+Returns digit and 1 if valid, or 0 if invalid.

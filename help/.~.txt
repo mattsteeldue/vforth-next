@@ -1,0 +1,4 @@
+    ."  --
+
+Print string until next quote.
+Used in compile mode.

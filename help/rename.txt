@@ -1,0 +1,7 @@
+    RENAME  --
+
+Rename a word. Usage:
+RENAME oldname newname
+Both names must have same length.
+
+Available after NEEDS RENAME

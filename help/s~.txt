@@ -1,0 +1,6 @@
+    S"  -- a n
+
+Creates immutable string on Heap.
+Returns address and length.
+
+Available after NEEDS S"

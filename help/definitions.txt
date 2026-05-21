@@ -1,0 +1,3 @@
+    DEFINITIONS  ccc --
+
+Make current vocabulary searchable.

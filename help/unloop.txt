@@ -1,0 +1,6 @@
+    UNLOOP  --
+
+Discards DO-LOOP limit and index
+from Return Stack. Used in loops.
+
+Available after NEEDS UNLOOP

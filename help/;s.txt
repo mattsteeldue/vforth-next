@@ -1,0 +1,6 @@
+    ;S  --
+
+Obsolete: used to exit colon defs.
+Prefer EXIT instead.
+
+Available after NEEDS ;S

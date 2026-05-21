@@ -1,0 +1,3 @@
+    #S    d1  --  d2
+
+Used between <# and #>. Equivalent to repeated # until zero
