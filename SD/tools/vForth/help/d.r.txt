@@ -1,0 +1,4 @@
+    D.R  d n --
+
+Print double-cell right-aligned in
+n character field.

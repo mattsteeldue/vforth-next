@@ -1,0 +1,4 @@
+    USER  n ccc --
+
+Define a user variable.
+Usage: 0 USER X

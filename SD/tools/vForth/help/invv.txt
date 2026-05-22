@@ -1,0 +1,6 @@
+    INVV  --
+
+Sets inverse video mode for text
+output. Counterpart: TRUV.
+
+Available after NEEDS INVV

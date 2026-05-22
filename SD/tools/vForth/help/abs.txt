@@ -1,0 +1,3 @@
+    ABS  n -- |n|
+
+Return absolute value.

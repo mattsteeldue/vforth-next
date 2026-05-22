@@ -1,0 +1,4 @@
+    PICK  n -- v
+
+Copies the nth stack item to top.
+0 PICK = DUP, 1 PICK = OVER.

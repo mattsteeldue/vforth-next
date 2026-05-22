@@ -1,0 +1,3 @@
+    COMPILE  --
+
+Compile last word (immediate word use).

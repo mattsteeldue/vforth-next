@@ -1,0 +1,4 @@
+    BACK  --
+
+Compiles a backwards branch offset.
+Used in loop structures.

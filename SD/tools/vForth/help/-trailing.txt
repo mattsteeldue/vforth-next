@@ -1,0 +1,3 @@
+    -TRAILING  a n -- a n2
+
+Remove trailing spaces from string.

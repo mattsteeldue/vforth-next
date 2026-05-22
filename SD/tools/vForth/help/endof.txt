@@ -1,0 +1,4 @@
+    ENDOF  --
+
+Closes an OF branch in a CASE
+structure. Skips to ENDCASE.

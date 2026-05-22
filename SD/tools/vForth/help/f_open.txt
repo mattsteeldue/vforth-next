@@ -1,0 +1,4 @@
+    F_OPEN  a1 a2 b -- fh f
+
+Open file. a1=path, a2=filename, b=mode.
+Returns file handle and error flag.

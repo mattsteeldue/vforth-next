@@ -1,0 +1,4 @@
+    .FLASH  b --
+
+Sets flash attribute (flashing text).
+0 = normal, 1 = flashing.

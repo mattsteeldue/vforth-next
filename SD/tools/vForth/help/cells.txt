@@ -1,0 +1,3 @@
+    CELLS  n1 -- n2
+
+Multiplies n1 by 2 (cell size).

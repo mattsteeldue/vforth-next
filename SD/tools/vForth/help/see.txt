@@ -1,0 +1,4 @@
+    SEE  --
+
+used in the form  SEE cccc
+prints how word cccc is defined 

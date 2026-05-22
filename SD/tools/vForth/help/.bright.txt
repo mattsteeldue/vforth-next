@@ -1,0 +1,4 @@
+    .BRIGHT  b --
+
+Sets bright attribute on text.
+0 = normal, 1 = bright.

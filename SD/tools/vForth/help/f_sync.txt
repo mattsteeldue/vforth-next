@@ -1,0 +1,4 @@
+    F_SYNC  u -- f
+
+Sync file to disk. Returns error flag.
+NextZXOS file operations.

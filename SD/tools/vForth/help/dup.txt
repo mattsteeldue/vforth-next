@@ -1,0 +1,3 @@
+    DUP  n -- n n
+
+Duplicate top of stack.

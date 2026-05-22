@@ -1,0 +1,4 @@
+    MCOD  -- cccc
+
+Return address for new CODE word.
+Used by CREATE and ;CODE.

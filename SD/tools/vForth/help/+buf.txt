@@ -1,0 +1,3 @@
+    +BUF  a1 -- a2 f
+
+Allocate new block buffer.

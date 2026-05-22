@@ -1,0 +1,3 @@
+    SP@  -- a
+
+Return current data stack pointer.

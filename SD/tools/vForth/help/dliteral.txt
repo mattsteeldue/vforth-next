@@ -1,0 +1,4 @@
+    DLITERAL  d --
+
+Compile a double literal value.
+Used in : definitions.

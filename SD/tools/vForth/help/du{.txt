@@ -1,0 +1,6 @@
+    DU<  d1 d2 -- f
+
+Returns true if d1 < d2
+(unsigned double-cell).
+
+Available after NEEDS DU<

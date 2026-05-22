@@ -1,0 +1,4 @@
+    SIGN  n --
+
+Add sign to formatted number if
+negative.

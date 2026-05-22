@@ -1,0 +1,6 @@
+    H"  -- ha
+
+Stores string in Heap, returns
+heap-address. Part of heap facility.
+
+Available after NEEDS H"

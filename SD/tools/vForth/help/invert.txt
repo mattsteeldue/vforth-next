@@ -1,0 +1,5 @@
+    INVERT  n1 -- n2
+
+Bitwise NOT: XOR with -1.
+
+Available after NEEDS INVERT

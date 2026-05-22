@@ -1,0 +1,4 @@
+    ?TERMINAL  -- 0 | -1
+
+Test if BREAK key is pressed.
+Returns -1 (true) if pressed, 0 if not.

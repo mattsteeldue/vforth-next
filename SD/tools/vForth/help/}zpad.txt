@@ -1,0 +1,6 @@
+    >ZPAD  a n --
+
+Moves string at a, length n to PAD
+as zero-terminated string.
+
+Available after NEEDS >ZPAD

@@ -1,0 +1,6 @@
+    WAIT-KEY  --
+
+Waits for a keyboard key press.
+Used for screen synchronization.
+
+Available after NEEDS WAIT-KEY

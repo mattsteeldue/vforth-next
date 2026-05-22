@@ -1,0 +1,3 @@
+    [CHAR]  -- c
+
+Compile next character as literal.

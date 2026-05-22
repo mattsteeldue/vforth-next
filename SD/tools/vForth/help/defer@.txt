@@ -1,0 +1,6 @@
+    DEFER@  xt1 -- xt2
+
+Returns the execution token of the
+word stored in a DEFER definition.
+
+Available after NEEDS DEFER@

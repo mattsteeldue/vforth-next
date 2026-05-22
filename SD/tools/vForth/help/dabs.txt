@@ -1,0 +1,4 @@
+    DABS  d1 -- d2
+
+Returns absolute value of double-
+cell number d1.

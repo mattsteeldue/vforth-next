@@ -1,0 +1,6 @@
+    POINTER  ha --
+
+Creates a Heap constant. When
+invoked, FAR converts to real address.
+
+Available after NEEDS POINTER

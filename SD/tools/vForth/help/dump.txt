@@ -1,0 +1,5 @@
+    DUMP  a u --
+    
+memory dump from address a for u bytes or until [Break]
+
+Available after NEEDS DUMP

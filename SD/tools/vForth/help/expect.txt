@@ -1,0 +1,6 @@
+    EXPECT  --
+
+Accepts terminal input and stores
+it. Equivalent to ACCEPT DROP.
+
+Available after NEEDS EXPECT

@@ -1,0 +1,6 @@
+    M*/  d n1 n2 -- d2
+
+Computes (d * n1) / n2 with triple
+precision to avoid precision loss.
+
+Available after NEEDS M*/

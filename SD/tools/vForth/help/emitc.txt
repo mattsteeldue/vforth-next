@@ -1,0 +1,3 @@
+    EMITC  --
+
+Internal emit handler (see EMIT).

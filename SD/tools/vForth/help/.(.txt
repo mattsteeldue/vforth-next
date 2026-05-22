@@ -1,0 +1,4 @@
+    .(  --
+
+Print string until next paren.
+Used in immediate mode.

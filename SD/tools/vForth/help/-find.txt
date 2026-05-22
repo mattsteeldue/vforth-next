@@ -1,0 +1,3 @@
+    -FIND  a -- cfa b 1 | a 0
+
+Find word or return address if not found.

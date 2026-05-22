@@ -1,0 +1,3 @@
+    INTERPRET  --
+
+Interpret one word from input.

@@ -7,15 +7,20 @@
 \ 0 <= d < 1073741824
 \ n <-- ( n + d/n ) / 2
 \
-DECIMAL
 \
-: DSQRT ( d -- n )
-    [ -1 1 RSHIFT -1 XOR ] LITERAL \ number with high bit set only 
-    15 0 DO 
-        >R 2DUP R@      \ d d n     R: n
-        UM/MOD NIP      \ d d/n
-        R> +            \ d n+d/n
-        1 RSHIFT        \ d (n+d/n)/2
-    LOOP
-    NIP NIP             \ n
+: DSQRT ( d -- n )          \ d = high low -->  n = floor(sqrt(d))
+    2DUP OR IF    
+        OVER 1+ OVER XOR
+        16 0 DO 
+            >R                      \ d         R: x
+            2DUP R@ UM/MOD NIP      \ d (d/x)
+            R@ + 1 RSHIFT           \ d x+(d/x)
+            DUP R> =                \ d x+(d/x) f
+            IF LEAVE THEN           \ leave when x=x+(d/x)
+        LOOP
+        NIP NIP
+    ELSE
+        DROP
+    THEN
 ;
+

@@ -1,0 +1,6 @@
+    SQRT  d -- n
+
+Returns square root of double-cell
+number d as integer.
+
+Available after NEEDS SQRT

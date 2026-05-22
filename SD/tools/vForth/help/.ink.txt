@@ -1,0 +1,4 @@
+    .INK  b --
+
+Sets foreground color (ink) to
+color attribute b.

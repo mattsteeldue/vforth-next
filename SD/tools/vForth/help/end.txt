@@ -1,0 +1,6 @@
+    END  --
+
+Closes BEGIN...UNTIL loop. Alias
+for UNTIL.
+
+Available after NEEDS END

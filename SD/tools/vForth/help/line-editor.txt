@@ -1,0 +1,6 @@
+    LINE-EDITOR  --
+
+NEEDS LINE-EDITOR includes line
+editing utilities.
+
+Available after NEEDS LINE-EDITOR

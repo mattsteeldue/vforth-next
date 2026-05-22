@@ -1,0 +1,6 @@
+    DSQRT  d -- n
+
+Returns integer square root of
+double-cell number d.
+
+Available after NEEDS DSQRT

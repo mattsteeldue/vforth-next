@@ -1,0 +1,4 @@
+    +"  ha -- ha
+
+Appends string to Heap.
+Part of heap memory facility.

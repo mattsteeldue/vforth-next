@@ -1,0 +1,3 @@
+    ENDCASE  --
+
+Closes a CASE...OF...ENDOF structure.

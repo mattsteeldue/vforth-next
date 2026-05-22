@@ -1,0 +1,6 @@
+    RANDOMIZE  u --
+
+Seeds the random number generator
+with value u.
+
+Available after NEEDS RANDOMIZE

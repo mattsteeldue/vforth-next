@@ -1,0 +1,5 @@
+    OCTAL  --
+
+Sets BASE to 8 (octal number base).
+
+Available after NEEDS OCTAL

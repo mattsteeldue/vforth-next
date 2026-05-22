@@ -1,0 +1,6 @@
+    >SGN  d a u -- d2 a2 u2 f
+
+Checks if character at a is sign
+(+ or -) and returns flag.
+
+Available after NEEDS >SGN

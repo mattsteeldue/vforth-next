@@ -1,0 +1,7 @@
+    INTERRUPT  --
+
+is an immediate word that selects INTERRUPT vocabulary.
+NEEDS INTERRUPT includes a few definitions.
+  ISR-XT    ISR-OFF   ISR-DI    ISR-IM1
+  ISR-SYNC  ISR-ON    ISR-EI    ISR-IM2
+

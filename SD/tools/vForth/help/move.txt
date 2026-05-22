@@ -1,0 +1,6 @@
+    MOVE  a1 a2 u --
+
+Copies u bytes from a1 to a2.
+Handles overlapping regions safely.
+
+Available after NEEDS MOVE

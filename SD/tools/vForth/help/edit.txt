@@ -1,0 +1,17 @@
+    EDIT    --
+
+Invokes the full-screen editor.
+You have first to use LIST to select the current screen.
+[Shift] key + 5 / 6 / 7 / 8 : Cursor movement
+[Edit] + Q : Quit EDIT Utility
+[Edit] + U : Undo i.e. re-read current screen from disk 
+[Edit] + H : Hold current line content and keep it in PAD
+[Edit] + R : Replace current line with the current PAD content
+[Edit] + S : make Space at current cursor position 
+[Edit] + D : Delete current line 
+[Edit] + I : Insert line from PAD: it does commands S and R
+[Edit] + N : go to Next screen
+[Edit] + B : go Back to previous screen
+[Edit] + P : accepts two hexadecimal digits for a byte
+
+Available after NEEDS EDIT

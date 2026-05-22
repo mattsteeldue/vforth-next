@@ -1,0 +1,6 @@
+    HP@  -- ha
+
+Returns current Heap Pointer.
+Part of heap memory facility.
+
+Available after NEEDS HP@

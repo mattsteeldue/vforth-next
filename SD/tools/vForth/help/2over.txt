@@ -1,0 +1,4 @@
+    2OVER  d1 d2 -- d1 d2 d1
+
+Copies the third and fourth items
+to the top of stack.

@@ -1,0 +1,3 @@
+    ALLOT  n --
+
+Allocate n bytes in dictionary.

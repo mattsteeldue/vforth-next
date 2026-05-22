@@ -1,0 +1,3 @@
+    ?ERROR  f n --
+
+Print error if flag is true.

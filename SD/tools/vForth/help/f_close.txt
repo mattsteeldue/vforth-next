@@ -1,0 +1,4 @@
+    F_CLOSE  u -- f
+
+Close file. Returns error flag.
+NextZXOS file operations.

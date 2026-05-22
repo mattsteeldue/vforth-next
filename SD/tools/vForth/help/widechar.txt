@@ -1,0 +1,6 @@
+    WIDECHAR  --
+
+Sets 8-bit wide character set
+for layers 1-2.
+
+Available after NEEDS WIDECHAR

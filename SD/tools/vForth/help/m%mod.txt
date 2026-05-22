@@ -1,0 +1,3 @@
+    M/MOD  d n1 -- r q
+
+Signed divide 32-bit by 16-bit.

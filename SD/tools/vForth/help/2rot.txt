@@ -1,0 +1,6 @@
+    2ROT  d1 d2 d3 -- d2 d3 d1
+
+Rotates three double-cell values:
+d1->d2->d3 position.
+
+Available after NEEDS 2ROT

@@ -1,0 +1,4 @@
+    ACCEPT  a n1 -- n2
+
+Read line into buffer at a.
+Returns bytes read.

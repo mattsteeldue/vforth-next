@@ -1,0 +1,4 @@
+    2VARIABLE  d --
+
+Creates a double-cell variable
+initialized with value d.

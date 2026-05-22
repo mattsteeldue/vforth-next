@@ -1,0 +1,4 @@
+    F_FGETPOS  u -- d f
+
+Get file position. Returns 32-bit position
+and error flag. NextZXOS file operations.

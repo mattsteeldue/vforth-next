@@ -1,0 +1,7 @@
+    THROW  ... n -- ... n
+
+If n is 0, does nothing. Otherwise
+executes pending CATCH or default
+error handler. Restores stack state.
+
+Available after NEEDS THROW

@@ -1,0 +1,4 @@
+    I'  -- n
+
+Returns limit of current DO-LOOP.
+Used inside DO loops.

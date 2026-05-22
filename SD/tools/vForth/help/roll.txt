@@ -1,0 +1,6 @@
+    ROLL  n1 n2 .. nk k -- n2 .. nk n1
+
+Rolls the kth item to the top of stack.
+0 ROLL = NOP, 1 ROLL = SWAP, 2 ROLL = ROT.
+
+Available after NEEDS ROLL

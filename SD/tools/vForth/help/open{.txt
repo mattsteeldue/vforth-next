@@ -1,0 +1,3 @@
+    OPEN<  -- fh
+
+Open file for input.

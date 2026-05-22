@@ -1,0 +1,4 @@
+    MARKER  -- cccc
+
+Create a dictionary marker for later
+FORGET.

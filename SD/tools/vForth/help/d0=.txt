@@ -1,0 +1,6 @@
+    D0=  d -- f
+
+Returns true if double-cell number
+d equals zero.
+
+Available after NEEDS D0=

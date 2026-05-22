@@ -1,0 +1,4 @@
+    CHARS  n1 -- n2
+
+Returns n1 unchanged (character size 1).
+Provided for compatibility.

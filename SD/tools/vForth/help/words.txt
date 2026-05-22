@@ -1,0 +1,4 @@
+    WORDS  --
+
+Lists all words in current context
+vocabulary in a formatted display.

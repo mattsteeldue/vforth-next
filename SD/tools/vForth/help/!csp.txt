@@ -1,0 +1,4 @@
+    !CSP    --
+
+save the value of SP register in CSP user variable
+used by : and ; for syntax checking

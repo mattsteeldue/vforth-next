@@ -1,0 +1,3 @@
+    COUNT  a1 -- a2 n
+
+Get address of string and its length.

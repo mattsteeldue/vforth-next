@@ -1,0 +1,3 @@
+    [  --
+
+Switch to interpret (execute) mode.

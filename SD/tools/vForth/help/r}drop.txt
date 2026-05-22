@@ -1,0 +1,6 @@
+    R>DROP  --
+
+Pops value from return stack and
+discards it.
+
+Available after NEEDS R>DROP

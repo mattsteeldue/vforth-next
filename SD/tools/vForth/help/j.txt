@@ -1,0 +1,6 @@
+    J  -- n
+
+Returns index of outer DO-LOOP.
+Used inside nested loops.
+
+Available after NEEDS J

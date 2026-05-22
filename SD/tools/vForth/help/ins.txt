@@ -1,0 +1,5 @@
+    INS  n --
+
+Inserts line n from PAD into block.
+
+Available after NEEDS INS

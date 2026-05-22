@@ -1,0 +1,3 @@
+    !    n a  --
+
+store integer n in the memory cell at address a and a + 1

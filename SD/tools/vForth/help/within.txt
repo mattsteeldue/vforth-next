@@ -1,0 +1,6 @@
+    WITHIN  n1 n2 n3 -- f
+
+Returns true if n1 is within range
+defined by n2 and n3.
+
+Available after NEEDS WITHIN

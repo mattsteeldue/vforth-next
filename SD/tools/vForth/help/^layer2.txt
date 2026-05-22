@@ -1,0 +1,6 @@
+    ?LAYER2  --
+
+Shows Hi-Color Layer2 display and
+waits for key press.
+
+Available after NEEDS ?LAYER2

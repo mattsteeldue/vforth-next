@@ -1,0 +1,4 @@
+    .TAB  n --
+
+Sets tab stop or text formatting.
+Escape sequence control.

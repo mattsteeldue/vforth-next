@@ -1,0 +1,6 @@
+    FAR  ha -- a
+
+Converts heap-pointer to real
+address. Part of heap facility.
+
+Available after NEEDS FAR

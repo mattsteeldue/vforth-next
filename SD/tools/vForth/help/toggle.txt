@@ -1,0 +1,3 @@
+    TOGGLE  a n --
+
+Toggle bits of n at address a.

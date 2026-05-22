@@ -1,0 +1,3 @@
+    ?COMP  --
+
+Error if not in compile mode.

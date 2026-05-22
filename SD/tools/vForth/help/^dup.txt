@@ -1,0 +1,3 @@
+    ?DUP  n -- 0 | n n
+
+Duplicate if non-zero.

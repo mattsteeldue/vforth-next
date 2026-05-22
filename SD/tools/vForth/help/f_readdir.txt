@@ -1,0 +1,4 @@
+    F_READDIR  a1 a2 fh -- n f
+
+Read directory entry. Returns entry info
+and error flag. NextZXOS file operations.

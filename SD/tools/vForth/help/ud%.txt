@@ -1,0 +1,6 @@
+    UD/  ud u -- uq
+
+Unsigned double division: divides
+unsigned double ud by u.
+
+Available after NEEDS UD/

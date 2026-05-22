@@ -1,0 +1,3 @@
+    D.  d --
+
+Print double-cell number.

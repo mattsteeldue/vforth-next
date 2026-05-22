@@ -1,0 +1,3 @@
+    DNEGATE  d1 -- d2
+
+Negate a double-cell number.

@@ -1,0 +1,6 @@
+    CODE  --
+
+Defines a low-level machine-code
+word in Z80 assembly.
+
+Available after NEEDS CODE

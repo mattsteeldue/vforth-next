@@ -1,0 +1,6 @@
+    BLANKS  a n --
+
+Fills n bytes starting at address
+a with space characters.
+
+Available after NEEDS BLANKS

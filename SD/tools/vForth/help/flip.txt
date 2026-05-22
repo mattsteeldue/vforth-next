@@ -1,0 +1,5 @@
+    FLIP  n1 -- n2
+
+Swaps high and low bytes of n1.
+
+Available after NEEDS FLIP

@@ -1,0 +1,3 @@
+    CASEON  --
+
+Enable case-sensitive mode for word matching.

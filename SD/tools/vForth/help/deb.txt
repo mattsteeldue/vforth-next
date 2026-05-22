@@ -1,0 +1,6 @@
+    DEB  n --
+
+Debugging word: displays "debug n"
+and shows data/return stacks.
+
+Available after NEEDS DEB

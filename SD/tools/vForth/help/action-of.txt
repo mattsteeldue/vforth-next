@@ -1,0 +1,7 @@
+    ACTION-OF  -- xt
+
+Used as: ACTION-OF defer-name
+Returns the execution token of the
+word stored in a DEFER definition.
+
+Available after NEEDS ACTION-OF

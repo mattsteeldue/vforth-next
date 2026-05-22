@@ -1,0 +1,4 @@
+    F_READ  a n u -- n f
+
+Read n bytes from file u into address a.
+Returns bytes read and error flag.

@@ -1,0 +1,5 @@
+    HALLOT  u --
+
+Allocates u bytes from the Heap.
+
+Available after NEEDS HALLOT

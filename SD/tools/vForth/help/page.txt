@@ -1,0 +1,5 @@
+    PAGE  --
+
+Clears the screen.
+
+Available after NEEDS PAGE

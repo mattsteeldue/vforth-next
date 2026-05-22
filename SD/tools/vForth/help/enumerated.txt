@@ -1,0 +1,6 @@
+    ENUMERATED  n --
+
+Creates n enumerated constants.
+Usage: 8 ENUMERATED name1...name8
+
+Available after NEEDS ENUMERATED

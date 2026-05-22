@@ -1,0 +1,3 @@
+    2@  a -- d
+
+Fetch double-cell (32-bit) from address.

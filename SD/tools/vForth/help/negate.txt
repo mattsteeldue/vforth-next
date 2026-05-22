@@ -1,0 +1,3 @@
+    NEGATE  n1 -- n2
+
+Negate a number (0 - n1).

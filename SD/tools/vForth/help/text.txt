@@ -1,0 +1,6 @@
+    TEXT  c --
+
+Accepts text up to delimiter c
+and stores in PAD as counted-string.
+
+Available after NEEDS TEXT

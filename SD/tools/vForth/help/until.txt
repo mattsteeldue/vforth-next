@@ -1,0 +1,5 @@
+    UNTIL  --
+
+Compile-time: closes BEGIN loop.
+Run-time: branches back to BEGIN
+if flag is false (0).

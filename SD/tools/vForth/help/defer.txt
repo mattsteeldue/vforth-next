@@ -1,0 +1,7 @@
+    DEFER  --
+
+Creates a deferred word that can be
+redefined later with IS. Used for
+late binding and dynamic dispatch.
+
+Available after NEEDS DEFER

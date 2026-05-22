@@ -1,0 +1,5 @@
+    WHILE  --
+
+Used in BEGIN...WHILE...REPEAT.
+Compile-time: marks conditional.
+Run-time: branches if flag is false.

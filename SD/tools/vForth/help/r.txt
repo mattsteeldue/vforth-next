@@ -1,0 +1,6 @@
+    R  -- n
+
+Returns top value from return stack.
+Obsolete: prefer R@.
+
+Available after NEEDS R

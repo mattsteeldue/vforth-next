@@ -1,0 +1,6 @@
+    -DUP  n -- 0 | n n
+
+Duplicates if n is non-zero, else push 0.
+Same as ?DUP.
+
+Available after NEEDS -DUP

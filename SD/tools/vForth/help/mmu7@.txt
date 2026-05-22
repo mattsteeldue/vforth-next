@@ -1,0 +1,4 @@
+    MMU7@  -- n
+
+Read current memory page from MMU7.
+NextZXOS-specific word.

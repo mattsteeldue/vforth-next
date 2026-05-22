@@ -1,0 +1,4 @@
+    COLD  --
+
+Cold start the Forth system.
+Initialize everything from scratch.

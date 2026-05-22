@@ -1,0 +1,6 @@
+    CMOVE>  a1 a2 nc --
+
+Copy nc bytes from a1 to a2
+(backward copy, allows overlap).
+
+Available after NEEDS CMOVE>

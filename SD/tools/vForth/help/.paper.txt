@@ -1,0 +1,4 @@
+    .PAPER  b --
+
+Sets background color (paper) to
+color attribute b.

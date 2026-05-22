@@ -1,0 +1,3 @@
+    R/W  a n f --
+
+Set block I/O mode: read/write.

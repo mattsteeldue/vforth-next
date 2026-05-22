@@ -1,0 +1,6 @@
+    LINE  n -- a
+
+Returns address of line n in the
+current screen.
+
+Available after NEEDS LINE

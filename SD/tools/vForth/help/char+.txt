@@ -1,0 +1,5 @@
+    CHAR+  a1 -- a2
+
+Adds 1 to address a1 (character size).
+
+Available after NEEDS CHAR+

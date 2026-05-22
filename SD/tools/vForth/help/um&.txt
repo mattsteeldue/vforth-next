@@ -1,0 +1,4 @@
+    UM*  u1 u2 -- ud
+
+Unsigned multiply: u1*u2 produces 32-bit.
+Returns low cell and high cell.

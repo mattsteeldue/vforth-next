@@ -1,0 +1,4 @@
+    D-  d1 d2 -- f
+
+Subtracts double-cell number d2
+from d1.

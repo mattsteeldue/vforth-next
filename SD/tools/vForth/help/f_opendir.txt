@@ -1,0 +1,4 @@
+    F_OPENDIR  a -- fh f
+
+Open directory at path a.
+Returns directory handle and error flag.

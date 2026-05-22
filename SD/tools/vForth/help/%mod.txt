@@ -1,0 +1,4 @@
+    /MOD  n1 n2 -- n3 n4
+
+Divide n1 by n2, return quotient
+and remainder.

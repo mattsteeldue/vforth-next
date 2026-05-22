@@ -1,0 +1,3 @@
+    REG!  b n --
+
+Write NextZXOS system register.

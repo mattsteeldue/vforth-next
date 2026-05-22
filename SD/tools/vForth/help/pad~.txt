@@ -1,0 +1,6 @@
+    PAD"  --
+
+Accepts string to PAD. Used as:
+PAD" text" . String is zero-padded.
+
+Available after NEEDS PAD"

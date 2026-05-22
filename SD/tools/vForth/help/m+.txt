@@ -1,0 +1,6 @@
+    M+  d n -- d2
+
+Adds signed integer n to double-
+cell number d.
+
+Available after NEEDS M+

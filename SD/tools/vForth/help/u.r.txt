@@ -1,0 +1,4 @@
+    U.R  u n --
+
+Prints unsigned number u in field
+width n, right-aligned.

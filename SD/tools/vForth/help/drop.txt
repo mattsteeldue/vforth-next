@@ -1,0 +1,3 @@
+    DROP  n --
+
+Remove top of stack.

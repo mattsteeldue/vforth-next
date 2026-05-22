@@ -1,0 +1,5 @@
+    REPEAT  --
+
+Closes BEGIN...WHILE...REPEAT loop.
+Branches back to BEGIN and resolves
+WHILE branch.
