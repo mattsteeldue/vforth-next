@@ -1,5 +1,7 @@
-
 inc/+c.h
+*.bak
+.claude/*
+*/version/*
 download/vForth15m_8Microdrives_20211119.zip
 download/vForth15m_DISCIPLE_prev_20211119.zip
 SD/tools/vForth/lib/GRAPHICS.20220220.f
@@ -8,9 +10,4 @@ SD/tools/vForth/lib/GRAPHICS-20220217.F
 lib/GRAPHICS-20220215.F
 lib/GRAPHICS-20220217.F
 lib/GRAPHICS.20220220.f
-*.bak
-project/DIRECT_MMU7/list/Edit1
-project/DIRECT_MMU7/list/Edit1
-project/DIRECT_MMU7/list/Edit1
-project/DIRECT_MMU7/list/Edit1
 project/DIRECT_MMU7/list/Edit1
