@@ -24,6 +24,29 @@ CR
 
 
 \ ===========================================================================
+\ 0. Comments
+\ ===========================================================================
+\
+\ Forth has two comment forms.  You are reading them right now.
+\
+\ \ (backslash)   --  line comment.  Everything from \ to end of line
+\                     is ignored.  This is the most common form.
+\
+\ ( text )        --  inline comment, delimited by parentheses.
+\                     Used almost exclusively for stack-effect notation:
+\                       : SQUARE  ( n -- n^2 )  DUP * ;
+\                     The space after ( is mandatory  --  ( is a word.
+\                     Nesting is NOT supported; a ) always closes the comment.
+\
+\ .( text)        --  like (, but the text is printed when encountered.
+\                     Used for load-time progress messages (as above).
+\                     Delimited by ) with no space required before it.
+\
+\ By convention all tutorials use => to show expected output in examples:
+\   42 .    => 42
+
+
+\ ===========================================================================
 \ 1. Pushing numbers and printing them
 \ ===========================================================================
 \
