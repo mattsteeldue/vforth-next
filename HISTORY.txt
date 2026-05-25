@@ -603,3 +603,6 @@ Possible future step is to leave old fashion 64x23 and go to 80x32 text mode.
 A few demo show the capabilities of LAYER3.
 Core-Binary hasn't changed: this is just a release for renew libraries.
 
+\ build 20260525
+there was a bug in (COMPARE) primitive that prevented DIR to sort correctly. This seems the only affected definition.
+
