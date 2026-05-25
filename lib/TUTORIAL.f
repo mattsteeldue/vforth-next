@@ -17,6 +17,12 @@
 
 .( TUTORIAL )
 
+CR
+.( Use: n TUTORIAL )
+CR
+.(   Import tutorial source 'n'.)
+CR
+
 \ ---------------------------------------------------------------------------
 \ Filename table -- one CREATE per tutorial.
 \ Each word, when executed, pushes the address of a counted-z-string

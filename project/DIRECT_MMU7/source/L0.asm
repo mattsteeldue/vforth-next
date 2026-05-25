@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      111
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2026-04-19 ", $0D  // 37
+                db      " Heap Vocabulary - build 2026-05-25 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -727,22 +727,20 @@ C_Compare_Loop:
                     jr      z, C_Compare_Equal
                         jr      c, C_Compare_NotLessThan  // If LessThan
                             ld      hl, 1               // a1 gt a2
-                        jr      C_Compare_common_ending
-                    //  jr      C_Compare_Then      // Else
+                        jr      C_Compare_Then      // Else
 C_Compare_NotLessThan:                
                             ld      hl, -1              // a1 lt a2
-// C_Compare_Then:                                 // Endif
+C_Compare_Then:                                 // Endif
 //                      pop     bc              // restore Instruction Pointer
-//                      jr      C_Compare_common_ending
-                    //  push    hl
-                    //  exx
-                    //  next
+                        push    hl
+                        exx
+
+                        next
                 
 C_Compare_Equal:
                 djnz    C_Compare_Loop
                 ld      hl, 0               // a1 eq a2
 //              pop     bc                  // restore Instruction Pointer
-C_Compare_common_ending:
                 push    hl
                 exx
 

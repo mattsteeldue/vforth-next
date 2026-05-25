@@ -1062,16 +1062,14 @@ CODE (compare) ( a1 a2 n -- b )
             INCX    DE| 
             INCX    HL|
             JRF Z'| HOLDPLACE   \ match
-                JRF CY'| $05 D, \ #### CY'| HOLDPLACE
+                JRF CY'| HOLDPLACE
                       LDX   HL|     1   NN,
-                JR $08 D, \ ####
-            \   JR   HOLDPLACE  
-            \    SWAP HERE DISP, \ ELSE,
+                JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
                       LDX   HL|    -1   NN,
-            \   HERE DISP, \ THEN,
-\               PUSH    HL|
-\               EXX  \ POP     BC| 
-\               Next
+                HERE DISP, \ THEN,
+                PUSH    HL|
+                EXX  \ POP     BC| 
+                Next
 
             HERE DISP, \ THEN,
 
