@@ -30,6 +30,8 @@ CR
 .( --- Tutorial 006: control flow loaded. ) CR
 .(     Type NO-CONTROL-FLOW to unload.   ) CR
 
+NEEDS ABORT"                        \ for conditional abort
+
 
 \ ===========================================================================
 \ 1. IF ... THEN  (one-armed conditional)
@@ -174,8 +176,6 @@ CR
 \
 \ If f is true, prints message and aborts to the command prompt.
 \ Useful for defensive checks inside definitions.
-
-NEEDS ABORT"
 
 : SAFE-DIVIDE  ( n1 n2 -- n3 )
     DUP 0= ABORT" division by zero"

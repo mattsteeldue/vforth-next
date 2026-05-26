@@ -214,7 +214,7 @@ CR
 : FILL-ARRAY  ( addr n val -- )
     \ Store val into n consecutive cells starting at addr.
     SWAP 0 ?DO                  \ ?DO guards against n=0
-        2DUP OVER I CELLS + !   \ store val at addr+I*2
+        2DUP SWAP I CELLS + !   \ store val at addr+I*2
     LOOP
     2DROP ;
 

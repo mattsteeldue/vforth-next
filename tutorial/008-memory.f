@@ -26,12 +26,12 @@
 
 MARKER NO-MEMORY
 
-NEEDS DUMP
-NEEDS 2VARIABLE
-
 CR
 .( --- Tutorial 008: memory loaded. ) CR
 .(     Type NO-MEMORY to unload.   ) CR
+
+NEEDS DUMP
+NEEDS 2VARIABLE
 
 
 \ ===========================================================================

@@ -25,11 +25,12 @@
 
 MARKER NO-DEFINING-WORDS
 
-NEEDS VALUE                         \ for VALUE and TO
-
 CR
 .( --- Tutorial 005: defining words loaded. ) CR
 .(     Type NO-DEFINING-WORDS to unload.   ) CR
+
+NEEDS VALUE                         \ for VALUE
+NEEDS TO                            \ for TO
 
 
 \ ===========================================================================
@@ -119,7 +120,6 @@ VARIABLE LIVES-LEFT
 \ Inside a colon-definition TO compiles a store at compile time:
 \   : NEXT-LEVEL  ( -- )  LEVEL 1+ TO LEVEL ;
 
-NEEDS TO                            \ TO is not in the core
 10 VALUE LEVEL
 
 

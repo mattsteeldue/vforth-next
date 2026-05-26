@@ -27,6 +27,8 @@ CR
 .( --- Tutorial 004: numeric bases loaded. ) CR
 .(     Type NO-NUMERIC-BASES to unload.   ) CR
 
+NEEDS BINARY                        \ for BINARY in demonstration words
+
 
 \ ===========================================================================
 \ 1. BASE and the global switching words
@@ -126,7 +128,6 @@ CR
 \ 5. Demonstration words
 \ ===========================================================================
 
-NEEDS BINARY                        \ must be interpreted before .BASES is called
 : .BASES  ( n -- )
     \ Print n in decimal, binary, and hex on one line.
     ." dec=" DUP DECIMAL .

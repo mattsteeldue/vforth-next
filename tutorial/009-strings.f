@@ -175,12 +175,13 @@ CREATE S2  ," Hello?"
     \ Return true (-1) if two addr/len strings are identical.
     ROT         ( a1 a2 n2 n1 )
     OVER        ( a1 a2 n2 n1 n2 )
-    - IF        ( a1 a2 n2 )
+    <> IF       ( a1 a2 n2 )
         2DROP   ( a1 )
         DROP    ( )
         0       ( ff )
-    ELSE
-        (COMPARE) 0= 
+    ELSE        ( a1 a2 n2 )
+        (COMPARE)   ( b )
+        0=          ( tf )
     THEN ;
 
 : .COUNTED  ( addr -- )
