@@ -29,6 +29,8 @@ CR
 
 NEEDS BINARY                        \ for BINARY in demonstration words
 
+NEEDS BINARY                        \ for BINARY in demonstration words
+
 
 \ ===========================================================================
 \ 1. BASE and the global switching words
