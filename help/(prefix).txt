@@ -1,0 +1,8 @@
+    (prefix)  a1 -- a2
+
+Recognise a numeric base prefix at a1+1 and set BASE accordingly:
+  $  ->  hexadecimal (BASE 16)
+  %  ->  binary      (BASE 2)
+  #  ->  decimal     (BASE 10)
+If a prefix is found, a2 is a1+1 (pointing past the prefix); otherwise a2=a1.
+Called internally by NUMBER.

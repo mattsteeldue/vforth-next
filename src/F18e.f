@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-04-19
+\ v-Forth 1.8 - NextZXOS version - build 2026-05-31
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -1041,43 +1041,48 @@ CODE (map) ( a2 a1 n c1 -- c2 )
 \  0 : if strings are equal
 \ +1 : if string at a1 greater than string at a2 
 \ -1 : if string at a1 less than string at a2 
-\ strings can be 256 bytes in length at most.
+
 CODE (compare) ( a1 a2 n -- b )
-        EXX
         POP     HL| 
         LD      A'|    L|
+        ORA      L|
+        EXX
         POP     HL|         \ string a2
         POP     DE|         \ string a1
-        \ PUSH    BC|
-        LD      B'|    A|
-        HERE                \ begin
-\           LDA(X)  DE| 
-\           CPA   (HL)|
-            LD      A'|   (HL)|
-            CALL    upper^ AA,  \ uppercase routine
-            LD      C'|      A|
-            LDA(X)  DE|
-            CALL    upper^ AA,  \ uppercase routine
-            CPA      C|         \ compare both uppercased chars
-            INCX    DE| 
-            INCX    HL|
-            JRF Z'| HOLDPLACE   \ match
-                JRF CY'| HOLDPLACE
-                      LDX   HL|     1   NN,
-                JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
-                      LDX   HL|    -1   NN,
+        JRF Z'|   HOLDPLACE \ IF,
+
+            HERE                \ begin,
+                LD      A'|   (HL)|
+                CALL    upper^ AA,  \ uppercase routine
+                LD      C'|      A|
+                LDA(X)  DE|
+                CALL    upper^ AA,  \ uppercase routine
+                CPA      C|         \ compare both uppercased chars
+                INCX    DE| 
+                INCX    HL|
+
+                JRF Z'| HOLDPLACE   \ match
+                    JRF CY'| HOLDPLACE
+                          LDX   HL|     1   NN,
+                    JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
+                          LDX   HL|    -1   NN,
+                    HERE DISP, \ THEN,
+                    PUSH    HL|
+                    EXX  \ POP     BC| 
+                    Next
                 HERE DISP, \ THEN,
-                PUSH    HL|
-                EXX  \ POP     BC| 
-                Next
+    
+                EXX
+                DECX    HL|
+                LD      A'|    L|
+                ORA      L|
+                EXX
+            JRF NZ'|   BACK,    \ until,
 
-            HERE DISP, \ THEN,
-
-        DJNZ BACK,          \ until,
-        LDX     HL|     0   NN,
 \ common ending
+        HERE DISP, \ THEN,
+        EXX  
         PUSH    HL|
-        EXX  \ POP     BC| 
         Next
         C; 
 
@@ -4255,7 +4260,7 @@ CODE fill ( a n c -- )
 \ Instead, in 2VARIABLE a double number is stored as EDLH.
 : (number)  ( d a -- d1 a1 )
     Begin
-        1+          ( d a ) 
+\       1+          ( d a ) 
         dup >r      ( d a )   
         c@          ( d c )
         base @      ( d c b )
@@ -4273,6 +4278,7 @@ CODE fill ( a n c -- )
             1 dpl +!
         Then
         r>          ( d a )
+        1+          ( d a ) 
     Repeat
     r>              ( d a )
     ;
@@ -4331,7 +4337,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
 
 \ 7178h
 .( 2FIND )
-\ used in the form -FIND "cccc"
+\ used in the form 2FIND "cccc"
 \ searches the dictionary giving CFA and the heading byte 
 \ or zero if not found
 : 2find ( a -- cfa b 1 | 0 )
@@ -4658,7 +4664,9 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
                 noop            \ need this to avoid LIT to crash the system
             Then
         Else
-            here number 
+            here 
+            1+ 
+            number 
             dpl @ 1+ 
             If 
 \               nmode @ 
@@ -6024,7 +6032,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-01-01" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-05-31" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2026 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 

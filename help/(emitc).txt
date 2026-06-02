@@ -1,0 +1,6 @@
+    (emitc)  c --
+
+Low-level character output.
+Sends c to the current channel via ROM RST 10h.
+Preserves BC, DE, IX across the ROM call.
+Resets the scroll counter (SCR-CT) to prevent "scroll?" prompts.

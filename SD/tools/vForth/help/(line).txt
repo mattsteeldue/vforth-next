@@ -1,0 +1,5 @@
+    (line)  n1 n2 -- a b
+
+Return the address a and length b (= C/L) of line n1 within block n2.
+Calls BLOCK to bring the block into a buffer.
+Used by .LINE and the block editor.

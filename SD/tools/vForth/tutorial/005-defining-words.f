@@ -17,19 +17,20 @@
 \ Reference: sec.2.12.9, 6.1 (CONSTANT, VARIABLE, VALUE)
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/005-defining-words.f
+\   NEEDS TUTORIAL
+\   005 TUTORIAL
 \ To unload and reload interactively:
-\   NO-DEFINING-WORDS
-\   INCLUDE tutorial/005-defining-words.f
+\   NEWTASK 005 TUTORIAL
 \
 
-MARKER NO-DEFINING-WORDS
-
-NEEDS VALUE                         \ for VALUE and TO
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 005: defining words loaded. ) CR
-.(     Type NO-DEFINING-WORDS to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
+
+NEEDS VALUE                         \ for VALUE
+NEEDS TO                            \ for TO
 
 
 \ ===========================================================================
@@ -119,7 +120,6 @@ VARIABLE LIVES-LEFT
 \ Inside a colon-definition TO compiles a store at compile time:
 \   : NEXT-LEVEL  ( -- )  LEVEL 1+ TO LEVEL ;
 
-NEEDS TO                            \ TO is not in the core
 10 VALUE LEVEL
 
 

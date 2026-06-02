@@ -1,0 +1,6 @@
+    (+loop)  n --
+
+Runtime word compiled by +LOOP.
+Adds n to the loop index on the return stack;
+branches back if the boundary has not been crossed,
+exits the loop otherwise.

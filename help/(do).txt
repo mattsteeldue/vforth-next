@@ -1,0 +1,5 @@
+    (do)  lim ind --
+
+Runtime word compiled by DO.
+Pushes ind and lim onto the return stack and enters the loop.
+Simpler than (?do): does not check for a zero-trip condition.

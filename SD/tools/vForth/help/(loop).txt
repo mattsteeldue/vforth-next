@@ -1,0 +1,6 @@
+    (loop)  --
+
+Runtime word compiled by LOOP.
+Increments the loop index by 1 on the return stack;
+branches back if the boundary has not been crossed,
+exits the loop otherwise.

@@ -1,0 +1,7 @@
+    (?emit)  c1 -- c2
+
+Decode character c1 for output via EMIT.
+Searches the EMIT-C table for control-character translations (CR, LF, BS, TAB,
+BEL); if found, dispatches to the corresponding handler vector.
+Returns the translated character, or 0 for non-printable characters
+that have no handler.

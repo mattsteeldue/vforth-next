@@ -1,0 +1,6 @@
+    (sgn)  a -- a f
+
+Check for a sign character (+  or -) at address a+1.
+If found, advances a past the sign and increments DPL.
+Returns f as true for negative (-), false for positive or no sign.
+Called internally by NUMBER and (EXP).

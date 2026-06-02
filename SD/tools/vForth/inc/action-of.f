@@ -3,14 +3,18 @@
 \
 .( ACTION-OF ) 
 \
-\ Return xt of DEFER define word.
+\ Return xt of DEFER defined word.
 \
 \ Used in the form
 \  ACTION-OF nnnn
 \
+
+NEEDS DEFER@
+
+
 : ACTION-OF ( -- xt )
    STATE @ IF
-     POSTPONE ['] COMPILE DEFER@
+     [COMPILE] ['] COMPILE DEFER@
    ELSE
      ' DEFER@
    THEN ; IMMEDIATE

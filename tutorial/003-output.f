@@ -15,17 +15,17 @@
 \ Reference: sec.2.12.4, 2.9
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/003-output.f
+\   NEEDS TUTORIAL
+\   003 TUTORIAL
 \ To unload and reload interactively:
-\   NO-OUTPUT
-\   INCLUDE tutorial/003-output.f
+\   NEWTASK 003 TUTORIAL
 \
 
-MARKER NO-OUTPUT
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 003: output loaded. ) CR
-.(     Type NO-OUTPUT to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
 
 
 \ ===========================================================================

@@ -1,3 +1,5 @@
     COMPILE,  xt --
 
-Compile execution token into dict.
+Used within a colon-definition to put xt in the following 
+cell of the dictionary. The dictionary pointer (DP) is 
+incremented by 2 locations.

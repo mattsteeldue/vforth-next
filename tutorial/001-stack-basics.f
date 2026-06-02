@@ -10,21 +10,21 @@
 \ Reference: sec.2.2, 2.9, 2.12.2, 2.12.4, 2.12.5
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/001-stack-basics.f
+\   NEEDS TUTORIAL
+\   001 TUTORIAL
 \ To unload and reload interactively:
-\   NO-STACK-BASICS
-\   INCLUDE tutorial/001-stack-basics.f
+\   NEWTASK 001 TUTORIAL
 \
 
-MARKER NO-STACK-BASICS
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 001: stack basics loaded. ) CR
-.(     Type NO-STACK-BASICS to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
 
 
 \ ===========================================================================
-\ 0. Comments
+\ 1. Comments
 \ ===========================================================================
 \
 \ Forth has two comment forms.  You are reading them right now.
@@ -44,10 +44,13 @@ CR
 \
 \ By convention all tutorials use => to show expected output in examples:
 \   42 .    => 42
+\
+\ Any error situation empties the stack.
+\ For example, you can use purposedly  XXX  to empty the stack.
 
 
 \ ===========================================================================
-\ 1. Pushing numbers and printing them
+\ 2. Pushing numbers and printing them
 \ ===========================================================================
 \
 \ Typing a number pushes it onto the stack.
@@ -60,6 +63,7 @@ CR
 \
 \ .S ( -- ) prints the whole stack without consuming it, useful for
 \ inspecting intermediate state during interactive exploration.
+\ You have to give  NEEDS .S  before using it.
 \
 \   1 2 3 .S      => 1 2 3    (stack contents, bottom to top)
 \
@@ -69,7 +73,7 @@ CR
 
 
 \ ===========================================================================
-\ 2. Numeric base prefixes (see sec.2.9)
+\ 3. Numeric base prefixes (see sec.2.9)
 \ ===========================================================================
 \
 \ The default base is DECIMAL.  Prefix characters let you mix bases
@@ -87,7 +91,7 @@ CR
 
 
 \ ===========================================================================
-\ 3. Basic arithmetic
+\ 4. Basic arithmetic
 \ ===========================================================================
 \
 \ All operators consume their arguments from the stack and push the result.
@@ -101,12 +105,12 @@ CR
 \
 \ 2* and 2/ are faster shift-based alternatives for 2 * and 2 /:
 \
-\   5 2* .        => 10
-\   10 2/ .       => 5
+\     5 2* .      => 10
+\   -10 2/ .      => -5
 
 
 \ ===========================================================================
-\ 4. Signed vs unsigned: ABS and NEGATE
+\ 5. Signed vs unsigned: ABS and NEGATE
 \ ===========================================================================
 \
 \   -7 ABS  .     => 7
@@ -114,7 +118,7 @@ CR
 
 
 \ ===========================================================================
-\ 5. Demonstration words
+\ 6. Demonstration words
 \ ===========================================================================
 
 : SHOW-SUM   ( a b -- )
@@ -138,7 +142,7 @@ CR
 
 
 \ ===========================================================================
-\ 6. Simple tests (requires lib/testing.f  --  skip if not loaded)
+\ 7. Simple tests (requires lib/testing.f  --  skip if not loaded)
 \ ===========================================================================
 \
 \ Uncomment the block below after:  NEEDS TESTING

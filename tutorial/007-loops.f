@@ -22,21 +22,21 @@
 \ Reference: sec.2.12.7
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/007-loops.f
+\   NEEDS TUTORIAL
+\   007 TUTORIAL
 \ To unload and reload interactively:
-\   NO-LOOPS
-\   INCLUDE tutorial/007-loops.f
+\   NEWTASK 007 TUTORIAL
 \
 
-MARKER NO-LOOPS
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 007: loops loaded. ) CR
-.(     Type NO-LOOPS to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
 
 
 \ ===========================================================================
-\ 0. BOUNDS  --  converting addr+len to end+start for DO loops
+\ 1. BOUNDS  --  converting addr+len to end+start for DO loops
 \ ===========================================================================
 \
 \ BOUNDS  ( addr len -- addr+len addr )
@@ -59,15 +59,13 @@ CR
 
 
 \ ===========================================================================
-\ 1. DO ... LOOP  (index increments by 1)
+\ 2. DO ... LOOP  (index increments by 1)
 \ ===========================================================================
 \
 \ limit index DO  ... body ...  LOOP
 \
 \ I  ( -- n )   copies the current index to TOS (does not remove it).
 \ I' ( -- n )   copies the loop *limit* to TOS.
-\               The manual states NEEDS I' but the core source suggests it
-\               may already be compiled in  --  verify with: ' I' DROP
 \
 \   : .RANGE  ( limit -- )
 \       0 DO  I .  LOOP  CR ;
@@ -86,7 +84,7 @@ CR
 
 
 \ ===========================================================================
-\ 2. DO with non-zero start index
+\ 3. DO with non-zero start index
 \ ===========================================================================
 \
 \ limit and index can be any values; the loop runs while index has not
@@ -105,7 +103,7 @@ CR
 
 
 \ ===========================================================================
-\ 3. DO ... n +LOOP  (variable step)
+\ 4. DO ... n +LOOP  (variable step)
 \ ===========================================================================
 \
 \ n +LOOP adds n (signed) to the index each iteration.
@@ -136,7 +134,7 @@ CR
 
 
 \ ===========================================================================
-\ 4. LEAVE  (early exit)
+\ 5. LEAVE  (early exit)
 \ ===========================================================================
 \
 \ LEAVE exits the innermost DO loop immediately, jumping to the instruction
@@ -161,16 +159,16 @@ CR
 
 
 \ ===========================================================================
-\ 5. ?DO  (zero-trip guard)
+\ 6. ?DO  (zero-trip guard)
 \ ===========================================================================
 \
-\ ?DO behaves like DO but skips the entire loop body when limit = index.
-\ Use it whenever the iteration count may be zero.
+\ ?DO behaves like DO but skips the entire loop body when limit = index
+\ and no iteration has to be performed.
 \
 \   : .SAFE-RANGE  ( limit -- )
 \       0 ?DO  I .  LOOP  CR ;
 \
-\   0 .SAFE-RANGE       =>             (silent  --  DO would execute once!)
+\   0 .SAFE-RANGE       =>             (silent -- DO would execute 65536 times)
 \   3 .SAFE-RANGE       => 0 1 2
 
 : .SAFE-RANGE  ( limit -- )
@@ -181,14 +179,14 @@ CR
 
 
 \ ===========================================================================
-\ 6. Nested loops and J  (requires NEEDS J)
+\ 7. Nested loops and J  (requires NEEDS J)
 \ ===========================================================================
 \
 \ Inside a nested DO loop, I returns the inner index, J the outer index.
 \ K (NEEDS K) gives the second outer index in triple nesting.
 \
 \ As the manual notes, nesting DO loops more than two levels deep is poor
-\ Forth style  --  the inner body should be factored into a separate word.
+\ Forth style -- the inner body should be factored into a separate definitions.
 \
 \ NEEDS J
 \   : MULTIPLICATION-TABLE  ( n -- )
@@ -203,7 +201,7 @@ CR
 
 
 \ ===========================================================================
-\ 7. Practical example: SUM and FILL-ARRAY
+\ 8. Practical example: SUM and FILL-ARRAY
 \ ===========================================================================
 
 : SUM-1-TO  ( n -- sum )
@@ -214,7 +212,7 @@ CR
 : FILL-ARRAY  ( addr n val -- )
     \ Store val into n consecutive cells starting at addr.
     SWAP 0 ?DO                  \ ?DO guards against n=0
-        2DUP OVER I CELLS + !   \ store val at addr+I*2
+        2DUP SWAP I CELLS + !   \ store val at addr+I*2
     LOOP
     2DROP ;
 
@@ -222,7 +220,7 @@ CR
 
 
 \ ===========================================================================
-\ 8. Simple tests (requires NEEDS TESTING)
+\ 9. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
 \ NEEDS TESTING

@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2026-05-25 ", $0D  // 33
+                db      " Dot-command - build 2026-05-31 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -699,52 +699,54 @@ C_Map_Then:
                 exx
                 next
 
-//  ______________________________________________________________________ 
+//  ______________________________________________________________________
 //
-// (compare)    a1 a2 n -- b 
-// this word performs a lexicographic compare of n bytes of text at address a1 
-// with n bytes of text at address a2. It returns numeric a value: 
+// (compare)    a1 a2 n -- b
+// this word performs a lexicographic compare of n bytes of text at address a1
+// with n bytes of text at address a2. It returns a numeric value:
 //  0 : if strings are equal
-// +1 : if string at a1 greater than string at a2 
-// -1 : if string at a1 less than string at a2 
-// strings can be 256 bytes in length at most.
+// +1 : if string at a1 greater than string at a2
+// -1 : if string at a1 less than string at a2
                 New_Def C_COMPARE, "(COMPARE)", is_code, is_normal
-                exx
-                pop     hl                  // Number of bytes
-                ld      a, l
-                pop     hl                  // hl points string a2
-                pop     de                  // hl points string a1
-//              push    bc                  // Instruction pointer on stack
-                ld      b, a
+                pop     hl                  // n -> W  (16-bit counter to HL before exx)
+                ld      a, h
+                or      l                   // Z = 1 if n = 0  (flag survives exx, pop)
+                exx                         // alt HL' = n;  main = old alt
+                pop     hl                  // hl = a2
+                pop     de                  // de = a1
+                jr      z, C_Compare_Return_Equal   // n = 0: HL' already zero, stack already clean
+                                            // BC free: C available as temp char    
 C_Compare_Loop:
                     ld      a, (hl)
                     call    Case_Sensitive
-                    ld      c, a
+                    ld      c, a                // C = upper(a2[i])
                     ld      a, (de)
-                    call    Case_Sensitive
-                    cp      c
+                    call    Case_Sensitive      // A = upper(a1[i])
+                    cp      c                   // A(a1) - C(a2)
                     inc     de
                     inc     hl
                     jr      z, C_Compare_Equal
-                        jr      c, C_Compare_NotLessThan  // If LessThan
+                        jr      c, C_Compare_NotLessThan  // carry: a1 < a2
                             ld      hl, 1               // a1 gt a2
-                        jr      C_Compare_Then      // Else
-C_Compare_NotLessThan:                
+                        jr      C_Compare_Then
+C_Compare_NotLessThan:
                             ld      hl, -1              // a1 lt a2
-C_Compare_Then:                                 // Endif
-//                      pop     bc              // restore Instruction Pointer
+C_Compare_Then:
                         push    hl
                         exx
-
                         next
-                
-C_Compare_Equal:
-                djnz    C_Compare_Loop
-                ld      hl, 0               // a1 eq a2
-//              pop     bc                  // restore Instruction Pointer
-                push    hl
-                exx
 
+C_Compare_Equal:
+                exx                         // bring counter in HL (main)
+                dec     hl                  // decrement counter 16-bit
+                ld      a, h
+                or      l                   // Z = 1 if counter is zero
+                exx                         // restore a1/a2;  Z survives a exx
+                jr      nz, C_Compare_Loop
+
+C_Compare_Return_Equal:
+                exx                         // HL' = 0 -> main HL;  restore IP and RP
+                push    hl                  // push 0
                 next
 
 //  ______________________________________________________________________ 

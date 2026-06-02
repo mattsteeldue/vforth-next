@@ -1,7 +1,7 @@
 \
 \ AY.F
 \
-\ .( AY definitions )
+\ .( AY support definitions )
 
 NEEDS SPLIT             \ split an integer into two bytes, low, high.
 
@@ -24,11 +24,11 @@ $FFFD  CONSTANT AY-register-port
 \ when bit 7 is 0
 \ 6-0   selects given AY register number for read or write from active sound chip
 \  0 - Channel A tone, low byte
-\  1 - Channel A tone, high 4 bits    
+\  1 - Channel A tone, high 4 bits
 \  2 - Channel B tone, low byte
-\  3 - Channel B tone, high 4 bits    
+\  3 - Channel B tone, high 4 bits
 \  4 - Channel C tone, low byte
-\  5 - Channel C tone, high 4 bits    
+\  5 - Channel C tone, high 4 bits
 \  6 - Noise period (between 0 and 31)
 \  7 - Flags   0 0  noise [  C B A  ] tone [  C B A  ]
 \  8 - Channel A volume/envelope (between 0 and 15)
@@ -43,10 +43,10 @@ $FFFD  CONSTANT AY-register-port
 \
     $BFFD  CONSTANT AY-data-port
 
-\ 
-\ Peripheal 2 Register 
 \
-    06     CONSTANT Peripheal-2-register 
+\ Peripheal 2 Register
+\
+    06     CONSTANT Peripheal-2-register
 \
 \   7   1 to enable F8 key CPU speed mode
 \   6   1 to divert BEEP to internal beeper
@@ -56,27 +56,27 @@ $FFFD  CONSTANT AY-register-port
 \   2   1 to set primary device to mouse PS/2, 0 keyboard
 \ 1-0   Audio chip mode. 00:YM, 01:AY, 10:Disabled, 11:Hold all AY in reset
 
-\ 
-\ Peripheal 3 Register 
 \
-    08     CONSTANT Peripheal-3-register 
+\ Peripheal 3 Register
+\
+    08     CONSTANT Peripheal-3-register
 \
 \   7   1 unlock / 0 lock  port 7FFD paging
-\   6   1 to disable RAM and I/O port contention 
+\   6   1 to disable RAM and I/O port contention
 \   5   AY stereo mode (0:ABC, 1:ACB)
 \   4   enable internal speaker
 \   3   enable 8-bit DACs (A,B,C,D)
 \   2   enable port FF Timex video mode
-\   1   enable Turbosound 
+\   1   enable Turbosound
 \   0   implement Issue 2 keyboard
 
-\ 
-\ Peripheal 4 Register 
 \
-    09     CONSTANT Peripheal-4-register 
+\ Peripheal 4 Register
+\
+    09     CONSTANT Peripheal-4-register
 \
 \   7   1 to enable AY2 "mono" output (A+B+C)
-\   6   1 to enable AY1 "mono" 
+\   6   1 to enable AY1 "mono"
 \   5   1 to enable AY0 "mono"
 \   4   1 to lockstep Sprite
 \   3   1 to reset mapram bit in DivMMC
@@ -100,7 +100,7 @@ VARIABLE  AY
 
 \ ayreg must be between 0 and 16
 : AY!     ( b ayreg -- )
-    AY-register-port P!  
+    AY-register-port P!
     AY-data-port     P!
 ;
 
@@ -119,7 +119,7 @@ VARIABLE  AY
 ;
 
 
-\ general enabling 
+\ general enabling
 : ENABLE-TURBOSOUND
     \ setup mapping of chip channels to stereo channels
     8 REG@

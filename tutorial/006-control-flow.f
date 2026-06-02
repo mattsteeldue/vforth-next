@@ -18,17 +18,17 @@
 \ Reference: sec.2.12.7
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/006-control-flow.f
+\   NEEDS TUTORIAL
+\   006 TUTORIAL
 \ To unload and reload interactively:
-\   NO-CONTROL-FLOW
-\   INCLUDE tutorial/006-control-flow.f
+\   NEWTASK 006 TUTORIAL
 \
 
-MARKER NO-CONTROL-FLOW
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 006: control flow loaded. ) CR
-.(     Type NO-CONTROL-FLOW to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
 
 
 \ ===========================================================================
@@ -98,10 +98,10 @@ CR
 \
 \   : BLINK  ( -- )
 \       BEGIN
-\           ... toggle LED ...
+\           ?TERMINAL IF QUIT THEN
 \       AGAIN ;
 \
-\ Not demonstrated here because it would hang the interpreter.
+\ The only way to stop this infinite loop is pressing [BREAK] key
 
 
 \ ===========================================================================
@@ -167,23 +167,30 @@ CR
 
 
 \ ===========================================================================
-\ 7. ABORT"  (conditional abort with message)
+\ 7. ?ERROR  (conditional error with standard message)
 \ ===========================================================================
 \
-\ f ABORT" message"
+\ f n ?ERROR
 \
-\ If f is true, prints message and aborts to the command prompt.
-\ Useful for defensive checks inside definitions.
-
-NEEDS ABORT"
+\ If f is true, displays standard error message n and aborts to the prompt.
+\ Error messages are stored in Screen# 4-7 (BLOCK 8-15): they are part of
+\ the block file and shared by all library code.  No string is compiled into
+\ the definition -- just a one-cell error number.  This saves dictionary space
+\ compared to ABORT" .
+\
+\   : SAFE-DIVIDE  ( n1 n2 -- n3 )
+\       DUP 0=  13 ?ERROR
+\       / ;
+\
+\   10 2 SAFE-DIVIDE .    => 5
+\   10 0 SAFE-DIVIDE .    => error 13, abort to prompt
 
 : SAFE-DIVIDE  ( n1 n2 -- n3 )
-    DUP 0= ABORT" division by zero"
+    DUP 0=  13 ?ERROR
     / ;
 
 .( Try: 10 2 SAFE-DIVIDE .  ) CR
-.( Try: 10 0 SAFE-DIVIDE .  ) CR    \ triggers abort
-
+.( Try: 10 0 SAFE-DIVIDE .  ) CR    \ triggers error message 13
 
 \ ===========================================================================
 \ 8. Simple tests (requires NEEDS TESTING)

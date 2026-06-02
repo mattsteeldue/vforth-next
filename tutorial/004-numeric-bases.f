@@ -15,17 +15,19 @@
 \ Reference: sec.2.9, 2.12.5, 2.12.11
 \
 \ Load from a clean session:
-\   INCLUDE tutorial/004-numeric-bases.f
+\   NEEDS TUTORIAL
+\   004 TUTORIAL
 \ To unload and reload interactively:
-\   NO-NUMERIC-BASES
-\   INCLUDE tutorial/004-numeric-bases.f
+\   NEWTASK 004 TUTORIAL
 \
 
-MARKER NO-NUMERIC-BASES
+MARKER NEWTASK
 
 CR
 .( --- Tutorial 004: numeric bases loaded. ) CR
-.(     Type NO-NUMERIC-BASES to unload.   ) CR
+.(     Type NEWTASK to unload.   ) CR
+
+NEEDS BINARY                        \ for BINARY in demonstration words
 
 
 \ ===========================================================================
@@ -85,7 +87,7 @@ CR
 \ The clean pattern: push the number, switch, print, restore.
 \
 \   255 HEX . DECIMAL       => FF
-\   255 HEX U. DECIMAL      => FF   (unsigned  --  same here, matters near 32767)
+\   255 HEX U. DECIMAL      => FF   (unsigned -- same here, matters near 32767)
 \
 \ Inside definitions, prefer the prefix form to avoid a forgotten restore:
 \
@@ -118,15 +120,12 @@ CR
 \
 \   120,000 D.      => 120000
 \
-\ A lone punctuation character produces 0. 0 (double zero):
-\   , .S            => 0  0
 
 
 \ ===========================================================================
 \ 5. Demonstration words
 \ ===========================================================================
 
-NEEDS BINARY                        \ must be interpreted before .BASES is called
 : .BASES  ( n -- )
     \ Print n in decimal, binary, and hex on one line.
     ." dec=" DUP DECIMAL .
@@ -152,7 +151,7 @@ NEEDS BINARY                        \ must be interpreted before .BASES is calle
 \ 2. Push the number *before* switching base for output.
 \ 3. Sign prefix goes after the base prefix: #-33 not -#33.
 \ 4. $ and % alone are zero; # alone is a word.
-\ 5. Any punctuation in a number makes it double (two cells on stack).
+\ 5. Punctuation , . / - : in a number makes it double (two cells on stack).
 \ 6. BINARY and OCTAL require NEEDS  --  they are not in the core.
 
 

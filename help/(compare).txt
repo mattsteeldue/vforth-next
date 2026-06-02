@@ -1,0 +1,6 @@
+    (compare)  a1 a2 n -- b
+
+Lexicographic comparison of n bytes at a1 against n bytes at a2,
+case-insensitive depending on CASEON and CASEOFF.
+Returns 0 if equal, +1 if a1 > a2, -1 if a1 < a2.
+

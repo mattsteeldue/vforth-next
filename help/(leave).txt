@@ -1,0 +1,5 @@
+    (leave)  --
+
+Runtime word compiled by LEAVE.
+Discards index and limit from the return stack (4 bytes)
+and branches to the word after LOOP, exiting the loop immediately.

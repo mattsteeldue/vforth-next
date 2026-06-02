@@ -1,0 +1,6 @@
+    (find)  addr voc -- ff | cfa b tf
+
+Search vocabulary voc for the counted string at addr.
+On success returns cfa (execution token), b (NFA length byte) and true.
+On failure returns false only.
+Handles both dictionary and heap-based entries; restores MMU7 on exit.

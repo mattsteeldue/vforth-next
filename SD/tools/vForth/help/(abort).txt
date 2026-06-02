@@ -1,0 +1,6 @@
+    (abort)  --
+
+Forward-patchable abort stub compiled into the core.
+At startup it executes ABORT; after full initialisation the body cell
+is patched to call the final ABORT implementation.
+Called by ERROR when WARNING is -1.

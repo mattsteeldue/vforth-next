@@ -1,9 +1,9 @@
 File: ..\!Blocks-64.bin
-Created: Mon May 25 23:25:26 2026
+Created: Tue Jun  2 11:43:41 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-05-25
+\ v-Forth 1.8 - NextZXOS versione - build 2026-05-31
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
@@ -30,7 +30,7 @@ Scr# 1
  12 (  error messages and should remain such.
  13 (  Screen #11 is used by AUTOEXEC and can be modified for
  14 (  your purposes.
- 15 ..
+ 15 
 
 Scr# 2 
   0 ( Error messages    from -31 to -17 )

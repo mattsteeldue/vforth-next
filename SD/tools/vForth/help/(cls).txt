@@ -1,0 +1,4 @@
+    (cls)  --
+
+Clear the screen.
+Uses NextZXOS M_P3DOS call; works for both ULA (layer 0) and Layer 2.

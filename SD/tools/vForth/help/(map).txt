@@ -1,0 +1,5 @@
+    (map)  a2 a1 n c1 -- c2
+
+Translate character c1 using two parallel strings of length n:
+searches for c1 in string a1; if found, returns the corresponding
+character from string a2.  If c1 is not in a1, returns c1 unchanged.

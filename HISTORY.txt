@@ -606,3 +606,5 @@ Core-Binary hasn't changed: this is just a release for renew libraries.
 \ build 20260525
 there was a bug in (COMPARE) primitive that prevented DIR to sort correctly. This seems the only affected definition.
 
+\ build 20260531
+improvement in (COMPARE), now it can handle arbitrarily-long strings (i.e. >256)

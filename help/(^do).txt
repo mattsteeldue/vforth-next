@@ -1,0 +1,5 @@
+    (?do)  lim ind --
+
+Runtime word compiled by ?DO.
+If lim equals ind, branches past the loop body (zero-trip loop).
+Otherwise pushes ind and lim onto the return stack and enters the loop.

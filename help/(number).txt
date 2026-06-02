@@ -1,0 +1,5 @@
+    (number)  ( d1 a -- d2 a2 )
+
+Using current BASE, accumulates in d a number-string at a+1,
+a2 is the address of the first non-converted character.
+

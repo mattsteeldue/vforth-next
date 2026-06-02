@@ -1,3 +1,5 @@
     COMPILE  --
-
-Compile last word (immediate word use).
+Used in the form
+    COMPILE cccc
+At compile-time, it determines the xt of the definition that 
+follows COMPILE and compile it in the next dictionary cell.
