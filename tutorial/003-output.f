@@ -149,7 +149,7 @@ CR
 : .RULER  ( n -- )
     \ Print a simple ruler of n dashes.
     0 ?DO  [CHAR] - EMIT  LOOP CR ;   \ [CHAR] compiles the ASCII of -
-
+CR
 .( Try: 42 .LABELED          ) CR
 .( Try: 255 .HEX-AND-DEC     ) CR
 .( Try: 20 .RULER            ) CR

@@ -53,7 +53,7 @@ CR
 
 : .STATE  ( -- )
     STATE @ IF  ." compiling"  ELSE  ." interpreting"  THEN  CR ;
-
+CR
 .( Try: .STATE   ) CR               \ => interpreting
 .( Try: : FOO  .STATE ;  FOO  ) CR  \ => interpreting (runs at runtime)
 
@@ -154,7 +154,8 @@ IMMEDIATE
 : UDG+ ( c -- c' )
     UPPER 79 + ;    \ convert letter A-Z to UDG code 165-190
 \
-\ Compile a UDG character: read char at compile-time, convert, compile as literal
+\ Compile a UDG character: read char at compile-time,
+\ convert to UDG code, compile as literal.
 : [UDG]  ( -- )
     CHAR UDG+ [COMPILE] LITERAL ;
     IMMEDIATE

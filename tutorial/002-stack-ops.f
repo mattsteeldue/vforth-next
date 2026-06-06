@@ -122,7 +122,7 @@ CR
 : MIN-MAX  ( n1 n2 -- min max )
     \ leave both min and max without losing either value
     2DUP < IF SWAP THEN ;  \ if n1 < n2 already ordered; else swap
-
+CR
 .( Try: 7 SQUARE .          ) CR
 .( Try: 10 20 AVERAGE .     ) CR
 .( Try: 30 10 MIN-MAX . .   ) CR

@@ -124,7 +124,7 @@ CREATE INPUT-BUF  32 ALLOT
     ELSE
         ." (not a number)" CR
     THEN ;
-
+CR
 .( Try: ASK-NUMBER D. ) CR
 
 

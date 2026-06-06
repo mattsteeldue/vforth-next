@@ -33,6 +33,7 @@ NEEDS .TAB
 NEEDS CASE
 NEEDS LAYER0
 NEEDS LAYER12    
+NEEDS WAIT-KEY  
 
 
 \ ===========================================================================
@@ -144,7 +145,6 @@ NEEDS LAYER12
 ;
 
 : .COLOR-DEMO  ( -- )
-    CLS
     0 2 .AT
     7 .PAPER  0 .INK
     ."  Color swatches (ink=paper): " CR
@@ -184,7 +184,6 @@ NEEDS LAYER12
 
 \ Demo: show colors at different screen positions.
 : COLOR-POS-DEMO  ( -- )
-    CLS
     TITLE-BAR
     8 0 DO
         2 I + I 3 * .AT
@@ -198,11 +197,9 @@ NEEDS LAYER12
 
 
 : DEMO
-    LAYER0
-    COLOR-POS-DEMO
-    CURS KEY 
-    .COLOR-DEMO
-    CURS KEY 
+    LAYER0 CLS
+    COLOR-POS-DEMO  WAIT-KEY
+    .COLOR-DEMO     WAIT-KEY
     LAYER12 1 .PAPER
 ;
 

@@ -74,7 +74,7 @@ NEEDS S>D
     $FF AND  HEX
     0  <#  #  #  [CHAR] $ HOLD  #>
     DECIMAL  TYPE  CR ;
-
+CR
 .( Try: $1234 .HEX4  ) CR    \ => $1234
 .( Try: $41   .HEX2  ) CR    \ => $41
 

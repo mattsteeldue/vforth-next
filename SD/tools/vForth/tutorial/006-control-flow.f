@@ -84,7 +84,7 @@ CR
         THEN
     THEN
     DROP CR ;
-
+CR
 .( Try: -7 .CLASSIFY  0 .CLASSIFY  42 .CLASSIFY ) CR
 
 

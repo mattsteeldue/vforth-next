@@ -88,7 +88,7 @@ CR
     MAX             ( n|lo )
     R>              ( n|lo hi )
     MIN ;           ( n' )
-
+CR
 .( Try: -5 0 10 CLAMP .   ) CR    \ => 0
 .( Try: 15 0 10 CLAMP .   ) CR    \ => 10
 .( Try:  7 0 10 CLAMP .   ) CR    \ => 7

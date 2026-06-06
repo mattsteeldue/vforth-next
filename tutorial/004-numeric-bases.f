@@ -29,8 +29,6 @@ CR
 
 NEEDS BINARY                        \ for BINARY in demonstration words
 
-NEEDS BINARY                        \ for BINARY in demonstration words
-
 
 \ ===========================================================================
 \ 1. BASE and the global switching words
@@ -139,7 +137,7 @@ NEEDS BINARY                        \ for BINARY in demonstration words
     HEX
     S>D <#  #  #  [CHAR] $ HOLD  #>  TYPE
     DECIMAL CR ;
-
+CR
 .( Try: 65 .BASES   ) CR
 .( Try: $41 .BYTE   ) CR
 .( Try: 120,000 D.  ) CR

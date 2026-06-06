@@ -918,42 +918,48 @@ CODE (map) ( a2 a1 n c1 -- c2 )
 \  0 : if strings are equal
 \ +1 : if string at a1 greater than string at a2 
 \ -1 : if string at a1 less than string at a2 
-\ strings can be 256 bytes in length at most.
+
 CODE (compare) ( a1 a2 n -- b )
-        EXX
         POP     HL| 
         LD      A'|    L|
+        ORA      L|
+        EXX
         POP     HL|         \ string a2
         POP     DE|         \ string a1
-        \ PUSH    BC|
-        LD      B'|    A|
-        HERE                \ begin
-\           LDA(X)  DE| 
-\           CPA   (HL)|
-            LD      A'|   (HL)|
-            CALL    upper^ AA,  \ uppercase routine
-            LD      C'|      A|
-            LDA(X)  DE|
-            CALL    upper^ AA,  \ uppercase routine
-            CPA      C|         \ compare both uppercased chars
-            INCX    DE| 
-            INCX    HL|
-            JRF Z'| HOLDPLACE   \ match
-                JRF CY'| HOLDPLACE
-                      LDX   HL|     1   NN,
-                JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
-                      LDX   HL|    -1   NN,
+        JRF Z'|   HOLDPLACE \ IF,
+
+            HERE                \ begin
+                LD      A'|   (HL)|
+                CALL    upper^ AA,  \ uppercase routine
+                LD      C'|      A|
+                LDA(X)  DE|
+                CALL    upper^ AA,  \ uppercase routine
+                CPA      C|         \ compare both uppercased chars
+                INCX    DE| 
+                INCX    HL|
+
+                JRF Z'| HOLDPLACE   \ match
+                    JRF CY'| HOLDPLACE
+                          LDX   HL|     1   NN,
+                    JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
+                          LDX   HL|    -1   NN,
+                    HERE DISP, \ THEN,
+                    PUSH    HL|
+                    EXX  \ POP     BC| 
+                    Next
                 HERE DISP, \ THEN,
-                PUSH    HL|
-                EXX  \ POP     BC| 
-                Next
+    
+                EXX
+                DECX    HL|
+                LD      A'|    L|
+                ORA      L|
+                EXX
+            JRF NZ'|   BACK,    \ until,
 
-            HERE DISP, \ THEN,
-
-        DJNZ BACK,          \ until
-        LDX     HL|     0   NN,
+\ common ending
+        HERE DISP, \ THEN,
+        EXX  
         PUSH    HL|
-        EXX  \ POP     BC| 
         Next
         C; 
 

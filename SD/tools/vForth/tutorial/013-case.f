@@ -70,7 +70,7 @@ NEEDS CASE
         7 OF  ." white"   ENDOF
         ." unknown ( " DUP . ." )"    \ default: n still on stack
     ENDCASE  CR ;
-
+CR
 .( Try: 2 .COLOR-NAME   ) CR    \ => red
 .( Try: 5 .COLOR-NAME   ) CR    \ => cyan
 .( Try: 9 .COLOR-NAME   ) CR    \ => unknown(9)

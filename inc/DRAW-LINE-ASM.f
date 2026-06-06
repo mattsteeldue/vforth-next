@@ -1,5 +1,5 @@
 \
-\ draw-line-asm.f  
+\ draw-line-asm.f
 \
 .( DRAW-LINE-ASM )
 \
@@ -13,59 +13,59 @@ MARKER TASK
 
 .( ROUT-DELTA-X0 )
 CODE ROUT-DELTA-X0
-    INCX    DE| \ this instruction must be INC DE when SX > 0, 
-                \ or DEC DE when SX < 0, 
+    incx    de| \ this instruction must be INC DE when SX > 0,
+                \ or DEC DE when SX < 0,
                 \ modified at runtime...
-    RET
+    ret
     C;
 
 \ ____________________________________________________________________
 
 .( ROUT-DELTA-Y0 )
 CODE ROUT-DELTA-Y0
-    INC     C'| \ this instruction must be INC C when SY > 0, 
-                \ or DEC C when SY < 0, 
+    inc     c'| \ this instruction must be INC C when SY > 0,
+                \ or DEC C when SY < 0,
                 \ modified at runtime...
-    RET
+    ret
     C;
 
 \ ____________________________________________________________________
 
 .( ROUT-DELTA-PAGE )
 CODE ROUT-DELTA-PAGE
-    INC     A'| \ this instruction must be INC A when SX > 0, 
-                \ or DEC A when SX < 0, 
+    inc     a'| \ this instruction must be INC A when SX > 0,
+                \ or DEC A when SX < 0,
                 \ modified at runtime...
-    RET
+    ret
     C;
 
 \ ____________________________________________________________________
 
 .( ROUT-MASK-BOUNDARY )
 CODE ROUT-MASK-BOUNDARY
-    ANDN    $1F   N,
-    RET
+    andn    $1F   N,
+    ret
     C;
 
 \ ____________________________________________________________________
 
 .( ROUT-PASS-BOUNDARY )
 CODE ROUT-PASS-BOUNDARY
-    CPN     0     N,
-    RET
+    cpn     0     N,
+    ret
     C;
 
 \ ____________________________________________________________________
 
-\ Input: 
+\ Input:
 \   BC  : Y0 pixel coord
 \   DE  : X0 pixel coord
 \    H  : MX mask for boundary-page check
 \    L  : Y1 pixel coord
-\   IX  : X1 pixel coord   
-\  B'C' : DY delta y  
+\   IX  : X1 pixel coord
+\  B'C' : DY delta y
 \  D'E' : DX delta x
-\  H'   : SX sign x   
+\  H'   : SX sign x
 \  L'   : SY sign y
 
 .( ROUT-1 )
@@ -73,229 +73,229 @@ CODE ROUT-1
 
 \ compute boundary value for X to check for paging
 \   SX 0< IF 0 ELSE MX THEN TO PX
-    LD      A'|     H|          \ MX
-    LD()A   ' ROUT-MASK-BOUNDARY 1+  AA,  \ Always MX
-    LD()A   ' ROUT-PASS-BOUNDARY 1+  AA,  \ defaults PX equals MX when SX>0
+    ld      a'|     h|          \ MX
+    ld()a   ' ROUT-MASK-BOUNDARY 1+  AA,  \ Always MX
+    ld()a   ' ROUT-PASS-BOUNDARY 1+  AA,  \ defaults PX equals MX when SX>0
 
 \ Patch instructions "inc de" and "inc c" above, to increment X0 and Y0
-    EXX
+    exx
      \ check SX
-     LD      A'|     H|         \ get SX, then H is free to use
-     RLA
-     LDN     A'|   $13   N,     \ "inc de" when SX>0
-     LDN     H'|   $3C   N,     \ "inc a"  when SX>0
+     ld      a'|     h|         \ get SX, then H is free to use
+     rla
+     ldn     a'|   $13   N,     \ "inc de" when SX>0
+     ldn     h'|   $3C   N,     \ "inc a"  when SX>0
      \ if SX < 0
-     JRF    NC'|  HOLDPLACE
-         XORA    A|             \ PX zero  when SX<0
-         LD()A   ' ROUT-PASS-BOUNDARY 1+  AA,
-         LDN    A'|   $1B   N,  \ "dec de" when SX<0
-         INC    H'|             \ "dec a"  when SX<0
-     HERE DISP,        
-     LD()A    ' ROUT-DELTA-X0 AA, 
-     LD     A'|      H|
-     LD()A    ' ROUT-DELTA-PAGE AA, 
-    
+     jrf    nc'|  HOLDPLACE
+         xora    a|             \ PX zero  when SX<0
+         ld()a   ' ROUT-PASS-BOUNDARY 1+  AA,
+         ldn    a'|   $1B   N,  \ "dec de" when SX<0
+         inc    h'|             \ "dec a"  when SX<0
+     HERE DISP,
+     ld()a    ' ROUT-DELTA-X0 AA,
+     ld     a'|      h|
+     ld()a    ' ROUT-DELTA-PAGE AA,
+
     \ check SY
-     LD      A'|     L|         \ get SY, alternate H'L' are free to use now
-     RLA
-     LDN     A'|   $03   N,     \ inc bc when SY is +1
-     JRF    NC'|  HOLDPLACE  
-         LDN     A'|   $0B   N, \ dec bc when SY is -1
-     HERE DISP,        
-     LD()A     ' ROUT-DELTA-Y0 AA,
+     ld      a'|     l|         \ get SY, alternate H'L' are free to use now
+     rla
+     ldn     a'|   $03   N,     \ inc bc when SY is +1
+     jrf    nc'|  HOLDPLACE
+         ldn     a'|   $0B   N, \ dec bc when SY is -1
+     HERE DISP,
+     ld()a     ' ROUT-DELTA-Y0 AA,
 
     \ save X1 on top of stack.
-     PUSH    IX|
+     push    ix|
 
-    \ compute DIFF := DX + DY    
-     LDX     IX|  0  NN,
-     ADDIX   DE|
-     ADDIX   BC|
-    EXX
+    \ compute DIFF := DX + DY
+     ldx     ix|  0  NN,
+     addix   de|
+     addix   bc|
+    exx
 
     \ keep Y1 in alternate accumulator, HL are free to use now
-    LD      A'|     L|
-    EXAFAF
+    ld      a'|     l|
+    exafaf
 
 \ --BEGIN \ main loop
     HERE  \ resolved by JR BACK, at AGAIN
- 
-\ --    ?TERMINAL IF QUIT THEN 
+
+\ --    ?TERMINAL IF QUIT THEN
 
 \ X0 Y0 PLOT plot current position via MMU7!
 \ --    ATTRIB X0 FLIP Y0 + $E000 OR C!
-        LD      A'|     E|
-        ORN     $E0      N,
-        LD      H'|     A|
-        LD      L'|     C|
-        LDA()   ' ATTRIB >BODY AA,          
-        LD   (HL)'|     A|
+        ld      a'|     e|
+        orn     $E0      N,
+        ld      h'|     a|
+        ld      l'|     c|
+        lda()   ' ATTRIB >BODY AA,
+        ld   (hl)'|     a|
 
-\ take twice error and compare with deltas        
-\ --    DIFF 2* TO ERR          
-        PUSH    IX|
-        EXX
-         POP     HL|
-         ADDHL   HL|
+\ take twice error and compare with deltas
+\ --    DIFF 2* TO ERR
+        push    ix|
+        exx
+         pop     hl|
+         addhl   hl|
 
-         PUSH    BC|
-         ADDBC, $8000 NN,   
-         ADDHL, $8000 NN,   
-       
-\ --    ERR DY < NOT IF    
-         ANDA     A|
-         SBCHL   BC|
-         POP     BC|
-        EXX
-        JRF     CY'| HOLDPLACE \ PASS1 
- 
+         push    bc|
+         addbc, $8000 NN,
+         addhl, $8000 NN,
+
+\ --    ERR DY < NOT IF
+         anda     a|
+         sbchl   bc|
+         pop     bc|
+        exx
+        jrf     cy'| HOLDPLACE \ PASS1
+
 \ verify final x is reached
 \ --        X0 X1 = IF EXIT THEN
-            POP     HL|
-            PUSH    HL|
-            ANDA     A|
-            SBCHL   DE|
+            pop     hl|
+            push    hl|
+            anda     a|
+            sbchl   de|
 
-            POP     HL|
-            RETF     Z|
-            PUSH    HL|
+            pop     hl|
+            retf     z|
+            push    hl|
 
 \ decrement error by DY
-\ --        DY +TO DIFF     
-            EXX
-             ADDIX   BC|
-            EXX
+\ --        DY +TO DIFF
+            exx
+             addix   bc|
+            exx
 
 \ check for X0 crossing page-bound
-\ --        X0 MX AND PX = IF 
-            LD      A'|     E|
-            CALL  ' ROUT-MASK-BOUNDARY  AA,  \ and $1f  for LAYER2 one 8kpage
-            CALL  ' ROUT-PASS-BOUNDARY  AA,  \ cp  0    OR $ff
-            JRF    NZ'| HOLDPLACE \ NOPAGE
-    
-                \ read current page 
-                LDN     A'| #87 N,
+\ --        X0 MX AND PX = IF
+            ld      a'|     e|
+            call  ' ROUT-MASK-BOUNDARY  AA,  \ and $1f  for LAYER2 one 8kpage
+            call  ' ROUT-PASS-BOUNDARY  AA,  \ cp  0    OR $ff
+            jrf    nz'| HOLDPLACE \ NOPAGE
+
+                \ read current page
+                ldn     a'| #87 N,
                 \ read current MMU7 paging status
-                PUSH    BC|
-                LDX     BC| HEX 243B NN, 
-                OUT(C)  A'|
-                INC     B'|
-                IN(C)   A'|
-                POP     BC|
-                \   MMU7@ SX + 
-                CALL ' ROUT-DELTA-PAGE AA,
+                push    bc|
+                ldx     bc| HEX 243B NN,
+                out(c)  a'|
+                inc     b'|
+                in(c)   a'|
+                pop     bc|
+                \   MMU7@ SX +
+                call ' ROUT-DELTA-PAGE AA,
 
                 \   L2-RAM-PAGE MAX
-                CPN     L2-RAM-PAGE  N,
-                POP     HL|
-                RETF    CY|
-                PUSH    HL|
+                cpn     L2-RAM-PAGE  N,
+                pop     hl|
+                retf    cy|
+                push    hl|
                 \   L2-MAX-PAGE MIN
-                CPN     L2-RAM-PAGE #10 +  N,
-                POP     HL|
-                RETF    NC|
-                PUSH    HL|
+                cpn     L2-RAM-PAGE #10 +  N,
+                pop     hl|
+                retf    nc|
+                push    hl|
 
-                \   MMU7! 
-                NEXTREGA DECIMAL 87 P,   \ nextreg 87,a
+                \   MMU7!
+                nextrega DECIMAL 87 P,   \ nextreg 87,a
 \ --        THEN
 \ NOPAGE:
-            HERE DISP, \ THEN,     
- 
+            HERE DISP, \ THEN,
+
 \ --        SX +TO X0 THEN
-            CALL  ' ROUT-DELTA-X0  AA,
-        
-\ PASS1:                
-        HERE DISP, \ THEN, 
- 
+            call  ' ROUT-DELTA-X0  AA,
+
+\ PASS1:
+        HERE DISP, \ THEN,
+
 \ --    DIFF 2* TO ERR          \ take twice error and compare with deltas
-        PUSH    IX|
-        EXX
-         POP     HL|
-         ADDHL   HL|
+        push    ix|
+        exx
+         pop     hl|
+         addhl   hl|
 
-         PUSH    DE|
-         ADDHL, $8000 NN,       
-         ADDDE, $8000 NN,   
+         push    de|
+         addhl, $8000 NN,
+         addde, $8000 NN,
 
-\ --    ERR DX > NOT IF         \ 
-         EXDEHL
-         ANDA     A|
-         SBCHL   DE|
-         POP     DE|
-        EXX
-        JRF     CY'| HOLDPLACE \ PASS2
- 
+\ --    ERR DX > NOT IF         \
+         exdehl
+         anda     a|
+         sbchl   de|
+         pop     de|
+        exx
+        jrf     cy'| HOLDPLACE \ PASS2
+
 \ --        Y0 Y1 = IF EXIT THEN
-            EXAFAF
-            ANDA     A|
-            SBCHL   HL|
-            LD      L'|     A|
-            SBCHL   BC|
+            exafaf
+            anda     a|
+            sbchl   hl|
+            ld      l'|     a|
+            sbchl   bc|
 
-            POP     HL|
-            RETF     Z|
-            PUSH    HL|
-            EXAFAF
-                                
+            pop     hl|
+            retf     z|
+            push    hl|
+            exafaf
+
 \ --        DX +TO DIFF     \ increment error by DX
-            EXX
-             ADDIX  DE|
-            EXX
+            exx
+             addix  de|
+            exx
 
 \ --        SY +TO Y0 THEN
-            CALL  ' ROUT-DELTA-Y0  AA,
+            call  ' ROUT-DELTA-Y0  AA,
 
 \ PASS2:
-        HERE DISP, \ THEN, 
- 
+        HERE DISP, \ THEN,
+
 \ --AGAIN
-    
-    JR      BACK,
+
+    jr      BACK,
 
     C;
-        
+
 \ ____________________________________________________________________
 
 .( ROUT-0 )
 CODE ROUT-0
-    PUSH    BC|
-    PUSH    DE|
-    PUSH    IX|
+    push    bc|
+    push    de|
+    push    ix|
 
 \ Prepares register for call
-\   BC  : Y0   
-\   DE  : X0 
+\   BC  : Y0
+\   DE  : X0
 \    H  : MX mask for boundary check
-\    L  : Y1 
-\   IX  : X1    
-\  B'C' : DY   
+\    L  : Y1
+\   IX  : X1
+\  B'C' : DY
 \  D'E' : DX
-\  H'   : SX    
-\  L'   : SY 
+\  H'   : SX
+\  L'   : SY
 
-    LDX()   BC|     ' Y0   >BODY AA, 
-    LDX()   DE|     ' X0   >BODY AA, 
-    LDIX()          ' X1   >BODY AA, 
-    LDA()           ' MX   >BODY AA, 
-    LD      H'|    A|
-    LDA()           ' Y1   >BODY AA, 
-    LD      L'|    A|
+    ldx()   bc|     ' Y0   >BODY AA,
+    ldx()   de|     ' X0   >BODY AA,
+    ldix()          ' X1   >BODY AA,
+    lda()           ' MX   >BODY AA,
+    ld      h'|    a|
+    lda()           ' Y1   >BODY AA,
+    ld      l'|    a|
 
-    EXX
-     LDX()   BC|    ' DY   >BODY AA, 
-     LDX()   DE|    ' DX   >BODY AA, 
-     LDA()          ' SX   >BODY AA, 
-     LD      H'|    A|               
-     LDA()          ' SY   >BODY AA, 
-     LD      L'|    A|
-    EXX
+    exx
+     ldx()   bc|    ' DY   >BODY AA,
+     ldx()   de|    ' DX   >BODY AA,
+     lda()          ' SX   >BODY AA,
+     ld      h'|    a|
+     lda()          ' SY   >BODY AA,
+     ld      l'|    a|
+    exx
 
-    CALL    ' ROUT-1 AA,   
+    call    ' ROUT-1 AA,
 
-    POP     IX|
-    POP     DE| 
-    POP     BC|
+    pop     ix|
+    pop     de|
+    pop     bc|
     NEXT
     C;
 
@@ -304,7 +304,7 @@ CODE ROUT-0
 \ given two points (x1,y1) and (x0,y0) and ATTRIB preset to c
 \ draw a line using Bresenham's line algorithm
 \ Coordinates out-of-range are ignored without error.
-\ 
+\
 .( DRAW-LINE-ASM )
 : DRAW-LINE-ASM  ( x1 y1 x0 y0 -- )
     TO Y0 \ -- de
@@ -312,10 +312,10 @@ CODE ROUT-0
     TO Y1 \ --  a'
     TO X1 \ -- (sp)
     \ compute sign SX, delta DX, sign SY, delta DY and total DIFF
-    1 X1 X0 - 
+    1 X1 X0 -
     DUP ABS         TO DX
     +-              TO SX
-    1 Y1 Y0 - 
+    1 Y1 Y0 -
     DUP ABS NEGATE  TO DY
     +-              TO SY
     DX DY +         TO DIFF

@@ -1,13 +1,13 @@
 \ ______________________________________________________________________ 
 \
 .( v-Forth 1.6 MDR/MGT version ) CR
-.( build 20240815 ) CR
+.( build 20260101 ) CR
 .( ZX Microdrive version + MGT DISCiPLE version ) CR
 \ ______________________________________________________________________ 
 \
 \ MIT License
 \ 
-\ Copyright (c) 1990-2024 Matteo Vitturi
+\ Copyright (c) 1990-2026 Matteo Vitturi
 \ 
 \ Permission is hereby granted, free of charge, to any person obtaining a copy
 \ of this software and associated documentation files (the "Software"), to deal
@@ -918,42 +918,48 @@ CODE (map) ( a2 a1 n c1 -- c2 )
 \  0 : if strings are equal
 \ +1 : if string at a1 greater than string at a2 
 \ -1 : if string at a1 less than string at a2 
-\ strings can be 256 bytes in length at most.
+
 CODE (compare) ( a1 a2 n -- b )
-        EXX
         POP     HL| 
         LD      A'|    L|
+        ORA      L|
+        EXX
         POP     HL|         \ string a2
         POP     DE|         \ string a1
-        \ PUSH    BC|
-        LD      B'|    A|
-        HERE                \ begin
-\           LDA(X)  DE| 
-\           CPA   (HL)|
-            LD      A'|   (HL)|
-            CALL    upper^ AA,  \ uppercase routine
-            LD      C'|      A|
-            LDA(X)  DE|
-            CALL    upper^ AA,  \ uppercase routine
-            CPA      C|         \ compare both uppercased chars
-            INCX    DE| 
-            INCX    HL|
-            JRF Z'| HOLDPLACE   \ match
-                JRF CY'| HOLDPLACE
-                      LDX   HL|     1   NN,
-                JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
-                      LDX   HL|    -1   NN,
+        JRF Z'|   HOLDPLACE \ IF,
+
+            HERE                \ begin
+                LD      A'|   (HL)|
+                CALL    upper^ AA,  \ uppercase routine
+                LD      C'|      A|
+                LDA(X)  DE|
+                CALL    upper^ AA,  \ uppercase routine
+                CPA      C|         \ compare both uppercased chars
+                INCX    DE| 
+                INCX    HL|
+
+                JRF Z'| HOLDPLACE   \ match
+                    JRF CY'| HOLDPLACE
+                          LDX   HL|     1   NN,
+                    JR   HOLDPLACE  SWAP HERE DISP, \ ELSE,
+                          LDX   HL|    -1   NN,
+                    HERE DISP, \ THEN,
+                    PUSH    HL|
+                    EXX  \ POP     BC| 
+                    Next
                 HERE DISP, \ THEN,
-                PUSH    HL|
-                EXX  \ POP     BC| 
-                Next
+    
+                EXX
+                DECX    HL|
+                LD      A'|    L|
+                ORA      L|
+                EXX
+            JRF NZ'|   BACK,    \ until,
 
-            HERE DISP, \ THEN,
-
-        DJNZ BACK,          \ until
-        LDX     HL|     0   NN,
+\ common ending
+        HERE DISP, \ THEN,
+        EXX  
         PUSH    HL|
-        EXX  \ POP     BC| 
         Next
         C; 
 
@@ -5112,13 +5118,15 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
 \ 7e86
 .( CLS or PAGE )
 CODE cls
-        PUSH    BC| 
-        PUSH    DE|
-        PUSH    IX|
+\       PUSH    BC| 
+\       PUSH    DE|
+\       PUSH    IX|
+        EXX
         CALL    hex 0DAF AA,
-        POP     IX|
-        POP     DE|
-        POP     BC|
+        EXX
+\       POP     IX|
+\       POP     DE|
+\       POP     BC|
         Next
         C;
 
@@ -5130,8 +5138,8 @@ CODE cls
 \   [ decimal 2 ] Literal far count type
     [compile] (.")
     [ decimal 68 here ," v-Forth 1.6 MDR/MGT version" -1 allot ]
-    [ decimal 13 here ," build 20240815" -1 allot ]
-    [ decimal 13 here ," 1990-2024 Matteo Vitturi" -1 allot ]
+    [ decimal 13 here ," build 20260101" -1 allot ]
+    [ decimal 13 here ," 1990-2026 Matteo Vitturi" -1 allot ]
     [ decimal 13 c, c! c! c! ] 
     ;
 

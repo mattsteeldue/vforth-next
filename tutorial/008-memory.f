@@ -202,7 +202,7 @@ CREATE VOWELS  $41 C, $45 C, $49 C, $4F C, $55 C,
 : BYTE-ARRAY!  ( c base-addr index -- )
     \ Store byte at index in a byte array (zero-based).
     + C! ;
-
+CR
 .( Try: PRIMES 0 CELL-ARRAY@ .   ) CR   \ => 2
 .( Try: PRIMES 4 CELL-ARRAY@ .   ) CR   \ => 11
 .( Try: VOWELS 0 BYTE-ARRAY@ EMIT ) CR  \ => A

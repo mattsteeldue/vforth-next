@@ -1,5 +1,5 @@
 \
-\ draw.f  
+\ draw.f
 \
 .( DRAW )
 \
@@ -11,7 +11,7 @@ MARKER TASK
 \ given two points (x1,y1) and (x0,y0) and an 8-bit color
 \ draw a line using Bresenham's line algorithm
 \ Out-of-range affects the fourth 16K-bank adjacent to the first three.
-\ 
+\
 
 .( ROUT-1 )
 \ Input: H=y0, L=x0, B=y1, C=x1, A=attribute byte
@@ -23,13 +23,13 @@ CODE ROUT-1
 
 \       push    bc|             \ Horizontal,verticaL
 
-        exafaf        
+        exafaf
 
         ldar                    \ remember if interrupts were enabled.
         push    af|
         di                      \ because we use MMU0.
-        
-\ compute which 8K page must be fitted in MMU7    
+
+\ compute which 8K page must be fitted in MMU7
 \ three MSB of H are added to twice register "Layer 2 Active RAM Bank"
         ld      a'|     l|      \ verticaL
 
@@ -37,22 +37,22 @@ CODE ROUT-1
 
         rlca
         rlca
-        rlca  
-        andn 7  n,
-        
+        rlca
+        andn 7  N,
+
 \ ask hardware registers for RAM Bank
         ldn     d'| $12    N,   \ Layer 2 Active RAM Bank
-        ldx     bc| $243B NN, 
+        ldx     bc| $243B NN,
         out(c)  d'|
         inc     b'|
         in(c)   e'|
         adda     e| \ add RAM Bank
         adda     e| \ twice to get 8K-RAM page
-        nextrega #80 P, 
+        nextrega #80 P,
         exafaf
 
 \ c' keep the attribute
-        ld      C'|     a|     
+        ld      c'|     a|
 
         exx
 
@@ -63,23 +63,23 @@ CODE ROUT-1
         ld      a'|     l|      \ verticaL
         andn    $1F  N,
         ld      d'|     a|
-        ld      e'|     h|      
+        ld      e'|     h|
 
 \ Plot pixel with color C'
         exx
-        ld      a'|     C|
+        ld      a'|     c|
         exx
         ld(x)a  de|
 
 \       pop     bc|
 
-        ldx     de| $0101 NN, 
+        ldx     de| $0101 NN,
 \ de holds the direction of the x and y steps
 \ d'e' holds the mask for boundary match for paging
         exx
-        ldx     DE| $1F1F NN,   
+        ldx     de| $1F1F NN,
         exx
-    
+
 \ going left (-1) or righe (+1)
         ld      a'|   b|
         suba     h|
@@ -88,53 +88,53 @@ CODE ROUT-1
             dec      d'|        \ sy
             neg
         HERE DISP,
-\ x2x1        
+\ x2x1
         ld      b'|   a|        \ b holds the number of steps in horizontal
 
 \ going up (-1) or down (+1)
         ld      a'|   c|
-        suba     l|            
+        suba     l|
         jrf     nc'| HOLDPLACE  \ y2y1
             exx
-            ldn     E'|   0 N,
+            ldn     e'|   0 N,
             exx
             dec     e'|
             dec     e'|
             neg
         HERE DISP,
-\ y2y1    
+\ y2y1
         ld      c'|   a|        \ c holds the number of steps in vertical
-        
+
 \ check that isn't a point
         ora      b|
         jrf     z'| HOLDPLACE   \ quit
 
 \ save current coord and free hl (coords are exchanged with counters)
-        push    hl|             
-        
+        push    hl|
+
 \ store the direction of a diagonal step, 0101, 01FF, FF01, FFFF
         ld      h'|   d|
-        ld      l'|   e| 
+        ld      l'|   e|
       \ ld()hl  DIASTP  AA, \    (DIASTP),hl \ salva sx sy
         push    hl|
         exx
-        pop     HL|
+        pop     hl|
         exx
 
-        ldn     l'| 0 N,  
-        
-\ decide between vertical and horizontal steps 
+        ldn     l'| 0 N,
+
+\ decide between vertical and horizontal steps
 \ depending on which is bigger between b and c
         ld      a'|   c|
         cpa      b|             \ set carry flag if b>c for later
         jrf    cy'| HOLDPLACE   \ bbc
-            ld      h'|   l|    \ 
+            ld      h'|   l|    \
             ld      l'|   e|
             ld      c'|   b|    \ swap b and c
             ld      b'|   a|
-\ bbc     
-        HERE DISP,    
-        
+\ bbc
+        HERE DISP,
+
 \ store the v/h step 0100, FF00, 0001, 00FF
       \ ld()hl   VHSTP AA, \   (VHSTP),hl
         push    hl|
@@ -148,28 +148,28 @@ CODE ROUT-1
 
 \ loop
     HERE
-\ nxtstp  
+\ nxtstp
         ld      a'|   l|
         adda     c|
 \ decide on a diagonal or a straight steps this time
         jrf    cy'| HOLDPLACE \ diag
             cpa      b|
-        
+
         jrf    cy'| HOLDPLACE \ verhor
-\ diag  
-        SWAP HERE DISP,  
-        
+\ diag
+        SWAP HERE DISP,
+
             suba     b|
             ld      l'|   a|
           \ ldx()   de|   DIASTP AA,
             exx
-            push    HL|
+            push    hl|
             exx
             pop     de|
-          
+
         jr      HOLDPLACE \ step
 
-\ verhor  
+\ verhor
         SWAP HERE DISP,
 
             ld      l'|   a|
@@ -177,25 +177,25 @@ CODE ROUT-1
             push    ix|
             pop     de|
 
-\ step    
+\ step
         HERE DISP,
 
         ex(sp)hl
 
 \ paging happens when vertical coordinate passes boundary
-        ld     a'|   l| 
+        ld     a'|   l|
         exx
-        anda    D|   \ $1F  for masking
-        cpa     E|   \ $1F or ZERO for bound check.
-        exx    
+        anda    d|   \ $1F  for masking
+        cpa     e|   \ $1F or ZERO for bound check.
+        exx
         jrf    nz'| HOLDPLACE
-    
+
             exafaf
             adda     e|
-            nextrega #80 p,
+            nextrega #80 P,
             exafaf
-        
-        HERE DISP, \ THEN,           
+
+        HERE DISP, \ THEN,
 \ end-paging
 
 \ make the step along  x - horizontal
@@ -215,7 +215,7 @@ CODE ROUT-1
         ld      a'|     l|      \ verticaL
         andn    $1F  N,
         ld      d'|     a|
-        ld      e'|     h|      
+        ld      e'|     h|
         exx
         ld      a'|     c|
         exx
@@ -225,54 +225,57 @@ CODE ROUT-1
 
 \ retrieve counter
         ex(sp)hl
-        dec     h'|             
+        dec     h'|
         jrf    nz'| BACK, \ nxtstp
         pop     hl|
-    
-\ quit   
-HERE DISP,   
+
+\ quit
+HERE DISP,
 
 \ restore ROM paging.
         nextreg #80 P, $FF N,
 
 \ restore interrupt status
         pop     af|
-        
-        jpf     PO|  HERE 3 + AA,
-        
-        ei    
-        ret                        
+
+        jpf     po|  HERE 3 + AA,
+
+        ei
+        ret
     C;
 
 
 
-    
+
 \ ____________________________________________________________________
 
 .( ROUT-0 )
 \ H=y0, L=x0, B=y1, c=x1
 CODE ROUT-0
-    PUSH    BC|
-    PUSH    DE|
-    PUSH    IX|
+    push    bc|
+    push    de|
+    push    ix|
 
-    LDA()           ' Y0   >BODY AA,    \ horizontal
-    LD      H'|     A| 
-    LDA()           ' X0   >BODY AA,    \ vertical
-    LD      L'|     A|          
-    LDA()           ' Y1   >BODY AA,    \ horozontal
-    LD      B'|     A|  
-    LDA()           ' X1   >BODY AA,    \ vertical
-    LD      C'|     A| 
-    LDA()           ' ATTRIB >BODY AA,    \ attrib
+    lda()           ' Y0   >BODY AA,    \ horizontal
+    ld      h'|     a|
+    lda()           ' X0   >BODY AA,    \ vertical
+    ld      l'|     a|
+    lda()           ' Y1   >BODY AA,    \ horozontal
+    ld      b'|     a|
+    lda()           ' X1   >BODY AA,    \ vertical
+    ld      c'|     a|
+    lda()           ' ATTRIB >BODY AA,    \ attrib
 
-    CALL    ' ROUT-1 AA,   
+    call    ' ROUT-1 AA,
 
-    POP     IX|
-    POP     DE| 
-    POP     BC|
+    pop     ix|
+    pop     de|
+    pop     bc|
     NEXT
     C;
+
+
+
 
 \ ____________________________________________________________________
 
@@ -287,10 +290,10 @@ CODE ROUT-0
     TO Y1   \ --  a'
     TO X1   \ -- (sp)
     \ compute sign SX, delta DX, sign SY, delta DY and total DIFF
-    1 X1 X0 - 
+    1 X1 X0 -
     DUP ABS         TO DX
     +-              TO SX
-    1 Y1 Y0 - 
+    1 Y1 Y0 -
     DUP ABS NEGATE  TO DY
     +-              TO SY
     DX DY +         TO DIFF
@@ -300,5 +303,5 @@ CODE ROUT-0
     \ setup page for first pixel
 \   X0 Y0 PIXELADD DROP
     ROUT-0
-; 
+;
 

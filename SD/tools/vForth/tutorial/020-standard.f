@@ -58,7 +58,7 @@ NEEDS [']
 
 : .STATE  ( -- )
     STATE @ IF  ." compiling"  ELSE  ." interpreting"  THEN  CR ;
-
+CR
 .( Try: .STATE   ) CR               \ => interpreting
 .( Try: : FOO  .STATE ;  FOO  ) CR  \ => interpreting (runs at runtime)
 
@@ -133,7 +133,8 @@ IMMEDIATE
 \   : COMPILE-DUP-V2  ( -- )   ['] DUP  COMPILE, ;  IMMEDIATE
 \
 \ Both are equivalent. Use POSTPONE when you know the word at compile-time.
-\ Use COMPILE, when the xt comes from the stack (e.g., computed or passed as parameter).
+\ Use COMPILE, when the xt comes from the stack
+\ (e.g., computed or passed as a parameter).
 
 : COMPILE-DUP-V1  ( -- )   POSTPONE DUP ;  IMMEDIATE
 
@@ -168,7 +169,7 @@ IMMEDIATE
 : END-IF  POSTPONE THEN ;  IMMEDIATE
 
 : TEST-END-IF  ( -- )
-    1 IF  ." yes"  END-IF  CR ;
+    1 IF  ." yes"  END-IF  CR ;  \ lint: ok
 
 .( Try: TEST-END-IF  ) CR   \ => yes
 

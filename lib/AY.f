@@ -84,10 +84,13 @@ $FFFD  CONSTANT AY-register-port
 \ 1-0   scanline weight
 
 
-\ Latest AY selected minus 1.
+\ Currently selected AY chip number (1, 2 or 3).
 VARIABLE  AY
 
-\ Select one of the three AY available. 0:AY1, 1:AY2, 2:AY3.
+\ Select one of the three AY available. 1:AY1, 2:AY2, 3:AY3.
+\ Argument is the 1-based chip number: the negation -n yields the port
+\ byte $FF/$FE/$FD (see $FFFD table above). Passing 0 is a no-op (writes
+\ nothing) and leaves the previously selected chip active.
 : AYSELECT ( n -- )
     3 AND DUP               \ n n
     0 SWAP -                \ n -n
@@ -98,7 +101,7 @@ VARIABLE  AY
 ;
 
 
-\ ayreg must be between 0 and 16
+\ ayreg must be between 0 and 13
 : AY!     ( b ayreg -- )
     AY-register-port P!
     AY-data-port     P!

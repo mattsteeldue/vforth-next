@@ -49,7 +49,7 @@ NEEDS EVALUATE
 
 : NEXT-TOKEN  ( -- addr len )
     BL WORD  COUNT ;
-
+CR
 .( Try: NEXT-TOKEN Hello! .S ) CR \ => nnnn 6
 
 

@@ -8,7 +8,7 @@ NEEDS INVERT
 
 BASE @ HEX \ save base status
 
-: WAIT-KEY
+: WAIT-KEY ( -- ) 
     \ wait for no-key is pressed
     BEGIN
       0FE P@ 01F AND

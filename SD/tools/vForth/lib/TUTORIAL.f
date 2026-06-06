@@ -78,7 +78,7 @@ CREATE TUT-TABLE
     H" tutorial/024-floating-point.f"  ,
     H" tutorial/025-memory-advanced.f" ,
     H" tutorial/026-catch-throw.f"     ,
-    H" tutorial/027-reserved.f"        ,
+    H" tutorial/027-assembler.f"       ,
     H" tutorial/028-reserved.f"        ,
     H" tutorial/029-reserved.f"        ,
     H" tutorial/030-ula-display.f"     ,

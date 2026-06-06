@@ -165,6 +165,7 @@ VARIABLE LIVES-LEFT
     ." Score=" SCORE ? ."  Lives=" LIVES-LEFT ? ."  Level=" LEVEL . CR ;
 
 INIT-GAME
+CR
 .( Try: 250 AWARD-POINTS  SHOW-STATUS ) CR
 .( Try: 2 TO LEVEL  SHOW-STATUS       ) CR
 

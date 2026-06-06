@@ -10,7 +10,7 @@ To be saved as a project file so Claude can reference it in future sessions.
 - All source code, comments, and documentation: English only.
 - Character encoding: 7-bit ASCII strictly.
   Allowed bytes: 0x20-0x7E, tab (0x09), LF (0x0A), CR (0x0D), 0x7F.
-  No UTF-8, no BOM, no smart quotes, no em-dash (use --).
+  No UTF-8, no BOM, no smart quotes, no em-dash (use -).
 - Line width: maximum 80 columns. Enforced with:
     awk 'length > 80 {print NR": "length" cols: "$0}' filename.f
 - ASCII check enforced with Python:
@@ -39,12 +39,15 @@ a) Header block (backslash comments):
    - Load and unload instructions
 
 b) MARKER immediately after header:
-     MARKER NO-SLUG-NAME
+     MARKER NEWTASK
+   The name NEWTASK is fixed across all tutorials (not per-tutorial).
+   Rationale: the Spectrum keyboard is cumbersome; a short, fixed name
+   minimises mis-typing.
 
 c) CR before banner (for clean output when INCLUDEd):
      CR
      .( --- Tutorial NNN: title loaded. ) CR
-     .(     Type NO-SLUG-NAME to unload.   ) CR
+     .(     Type NEWTASK to unload.   ) CR
 
 d) NEEDS lines (if required) immediately after MARKER banner.
    NEEDS is always at interpreter level -- never inside a definition.
@@ -71,15 +74,16 @@ h) Commented-out test block at end:
 - Inline stack comments on non-obvious lines, using the style:
     word    ( before -- after )
 - Step-by-step stack comments on complex definitions, one per line:
-    : SAME-STRING?  ( a1 n1 a2 n2 -- f )
-        ROT         ( a1 a2 n2 n1 )
-        OVER        ( a1 a2 n2 n1 n2 )
-        <> IF       ( a1 a2 n2 )
-            2DROP   ( a1 )
-            DROP    ( )
-            FALSE   ( ff )
-        ELSE
-            (COMPARE) 0=
+    : SAME-STRING?    ( a1 n1 a2 n2 -- f )
+        ROT           ( a1 a2 n2 n1 )
+        OVER          ( a1 a2 n2 n1 n2 )
+        - IF          ( a1 a2 n2 )
+            2DROP     ( a1 )
+            DROP      ( )
+            0         ( ff )
+        ELSE          ( a1 a2 n2 )
+            (COMPARE) ( f )
+            0=        ( f )
         THEN ;
 - Line comments only on obscure lines, not on self-evident ones.
 - Reference to PDF section in file header, not on individual words.

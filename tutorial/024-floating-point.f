@@ -10,6 +10,14 @@
 \   NEEDS FLOATING    -- load the library
 \   FLOATING          -- switch number input to accept decimals (e.g. 3.14)
 \   INTEGER           -- switch back to integer input
+\ These two words modify NMODE user variable setting 1 or 0 respectively.
+\ The NUMBER interpreter checks this variable to decide whether interpret
+\ a string as a floating-point or as a double integer.
+\
+\ WARNING: 
+\ forgetting FLOATING before entering fp numbers causes silent misparsing
+\ (they are interpreted as double integers instead). Always pair FLOATING with
+\ INTEGER before and after interactive fp work.
 \
 \ Because fp values occupy two cells, most fp words use the same
 \ stack depth as their double-integer equivalents (D+, DABS, etc.).
@@ -33,12 +41,11 @@
 \   NEWTASK 024 TUTORIAL
 \
 
-\ MARKER NEWTASK
+: NEWTASK  NO-FLOATING ;
 
 CR
 .( --- Tutorial 024: floating point loaded. ) CR
-.(     This tutorial examples cannot be discarded via NEWTASK ) CR
-.(     Type NO-FLOATING to unload.        ) CR
+.(     Type NEWTASK to restore integer mode. ) CR
 
 NEEDS FLOATING
 
@@ -79,7 +86,7 @@ FLOATING
 \
 \   -3.0  FNEGATE  F.    => 3.0000e0
 \   -2.5  FABS     F.    => 2.5000e0
-
+CR
 .( Try: 3.0 2.0 F+ F. ) CR     \ => 5.0000e0
 .( Try: 7.0 2.0 F/ F. ) CR     \ => 3.5000e0
 .( Try: -3.0 FNEGATE F. ) CR   \ => 3.0000e0
@@ -112,10 +119,10 @@ FLOATING
 \ F>D   ( fp -- d )   convert fp to double (truncates)
 \
 \   42  FLOAT  F.    => 4.2000e1
-\   3.7  F>D   D.    => 3  (truncated)
+\s   3.7  F>D   D.    => 3  (truncated)
 
-.( Try: 42 FLOAT F. ) CR      \ => 42.
-\ .( Try: 3.7 F>D D.  ) CR      \ => 3
+.( Try: 42  FLOAT F. ) CR      \ => 42.
+.( Try: 3.7 F>D   D. ) CR      \ => 3
 
 
 \ ===========================================================================

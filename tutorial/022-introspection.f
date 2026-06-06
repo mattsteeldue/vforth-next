@@ -91,6 +91,7 @@ NEEDS SEE
 \   WORDS              \ list all words
 \   DEMO-VOC WORDS     \ list words of a specific vocabulary
 \
+CR
 .( Try: WORDS ) CR
 
 

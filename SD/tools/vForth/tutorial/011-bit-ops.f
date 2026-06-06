@@ -142,7 +142,7 @@ $0080 CONSTANT BIT7
         DUP $8000 AND IF  [CHAR] 1  ELSE  [CHAR] 0  THEN  EMIT
         2*
     LOOP  DROP  CR ;
-
+CR
 .( Try: $41   BIT0 BIT-SET?  .    ) CR
 .( Try: $40   BIT0 BIT-SET   U.   ) CR
 .( Try: $41   BIT0 BIT-CLEAR U.   ) CR

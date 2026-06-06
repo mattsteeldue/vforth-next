@@ -187,7 +187,7 @@ CREATE S2  ," Hello?"
 : .COUNTED  ( addr -- )
     \ Print a counted string with a trailing CR.
     COUNT TYPE CR ;
-
+CR
 .( Try: GREETING .COUNTED                         ) CR
 .( Try: S1 COUNT S2 COUNT SAME-STRING? .          ) CR
 .( Try: S1 COUNT 1- S1 COUNT 1- SAME-STRING? .    ) CR
