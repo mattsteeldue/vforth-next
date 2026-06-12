@@ -1,0 +1,6 @@
+    GET-KEY  -- n
+
+Debounced read: wait for release, then for a fresh
+press; return that key index. (WAIT-NOKEY WAIT-NEWKEY.)
+
+Available after NEEDS KEYBOARD

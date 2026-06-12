@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  Basic Loader version
-//  build 20260531
+//  build 20260612
 // 
 //  Direct-Threaded version.
 // 

@@ -1,0 +1,6 @@
+    KEYBOARD  -- a
+
+Address of the 8-byte table of half-row select bytes
+($FE..$7F) used for direct port $FE matrix scanning.
+
+Available after NEEDS KEYBOARD

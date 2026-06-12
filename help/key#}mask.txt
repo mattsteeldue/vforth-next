@@ -1,0 +1,6 @@
+    KEY#>MASK  n -- mask
+
+Map key index n (0..39) to its single-bit column mask
+within the row ($01,$02,$04,$08,$10).
+
+Available after NEEDS KEYBOARD

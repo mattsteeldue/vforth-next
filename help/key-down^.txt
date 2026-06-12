@@ -1,0 +1,6 @@
+    KEY-DOWN?  n -- f
+
+True if key index n is held now. Non-blocking; test
+several indices to detect simultaneous keys.
+
+Available after NEEDS KEYBOARD

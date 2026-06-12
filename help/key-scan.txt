@@ -1,0 +1,6 @@
+    KEY-SCAN  -- n
+
+Return the lowest pressed key index (0..39), or NO-KEY
+(255) if none is down. Non-blocking.
+
+Available after NEEDS KEYBOARD

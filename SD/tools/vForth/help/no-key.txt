@@ -1,0 +1,6 @@
+    NO-KEY  -- n
+
+Constant 255: the value KEY-SCAN returns when no key
+is being pressed.
+
+Available after NEEDS KEYBOARD

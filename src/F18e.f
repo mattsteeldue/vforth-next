@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-05-31
+\ v-Forth 1.8 - NextZXOS version - build 2026-06-12
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -148,6 +148,9 @@ DECIMAL
      0  VALUE     emitc^        \ entry-point for EMITC
      0  VALUE     upper^        \ entry-point for UPPER
      0  VALUE     mmu7@^        \ entry-point for mmu7@
+     0  VALUE     mmu7sav^      \ MMU7_Saved one-byte buffer in (EMITC)
+     0  VALUE     clsnol0^      \ CLS_No_Layer_0: the rst $10 in (EMITC)
+     0  VALUE     clsl0^        \ CLS_Layer_0: the MMU7 restore in (EMITC)
      0  VALUE     tofar^        \ entry-point for >far
      0  VALUE     store_end^    \ ending part of !
 
@@ -1089,20 +1092,34 @@ CODE (compare) ( a1 a2 n -- b )
 
 \ 62BDh 
 ." (EMITC) "
-\ low level emit, calls ROM routine at #10 to send a character to 
+\ low level emit, calls ROM routine at #10 to send a character to
 \ the the current channel (see SELECT to change stream-channel)
+\ A rst $10 sent to a file-attached stream goes through +3DOS, which
+\ restores the OS default banking on exit and so unmaps the heap page
+\ from MMU7: the current page is saved before the ROM call and put
+\ back right after, otherwise any word that walks the heap while it
+\ prints (e.g. WORDS after 13 SELECT) reads garbage.
+    HERE TO mmu7sav^
+    0 C,                        \ saved MMU7 page during ROM/OS call
 CODE (emitc)     ( c -- )
         POP     HL|
         LD      A'|    L|
-    HERE TO emitc^    
+    HERE TO emitc^
         PUSH    BC|
         PUSH    DE|
         PUSH    IX|
-\       PUSH    IX|
-\       EXX
-\       POP     HL|
-\       EXX
+
+        PUSH    AF|
+        CALL    mmu7@^ AA,
+        LD()A   mmu7sav^ AA,
+        POP     AF|
+
+    HERE TO clsnol0^
         RST     10|             \ standard ROM current-channel print routine
+    HERE TO clsl0^
+        LDA()   mmu7sav^ AA,
+        NEXTREGA DECIMAL 87 P,  \ nextreg 87,a
+
         POP     IX|
         POP     DE|
         POP     BC|
@@ -1114,19 +1131,21 @@ CODE (emitc)     ( c -- )
 
 \ clear screen
 CODE (cls) ( -- )
-         
+
         PUSH    BC|
         PUSH    DE|
         PUSH    IX|
-        LDX     DE| $01D5  NN,  \ on success set carry-flag   
+        CALL    mmu7@^ AA,      \ both exit paths below restore MMU7
+        LD()A   mmu7sav^ AA,
+        LDX     DE| $01D5  NN,  \ on success set carry-flag
         LDN     C'|     7   N,  \ necessary to call M_P3DOS
         XORA     A|
         RST     08|     $94  C,
-        ANDA     A|             \ zero in case of LAYER 0    
+        ANDA     A|             \ zero in case of LAYER 0
         LDN     A'|   $0E   N,
-        JRF    NZ'| $E1 D, \ ####
+        JRF    NZ'| clsnol0^ HERE 1 + - D,
             CALL    $0DAF  AA,
-        JR $DD D, \ ####
+        JR  clsl0^ HERE 1 + - D,
         
 \       JR  HOLDPLACE  SWAP HERE DISP, \ ELSE,
 \           RST     10|
@@ -6032,7 +6051,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-05-31" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-06-12" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2026 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 

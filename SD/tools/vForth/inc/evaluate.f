@@ -37,9 +37,9 @@ DECIMAL
 \ \         ."  from file" 
             SOURCE-ID @ F_FGETPOS   \ a u d f
             [ 36 ] LITERAL ?ERROR   \ a u d
-            \ but must rewind to the beginning of the current line
-            >IN @ 2-  SPAN @  -  S>D D+
-            >R >R                   \ a u       - R: in blk d 
+            \ rewind to the read-start of the current line
+            SPAN @ NEGATE S>D D+    \ a u d'
+            >R >R                   \ a u       - R: in blk d'
         THEN
     THEN 
     SOURCE-ID @ >R                  \ a u       - R: in blk d src
@@ -80,8 +80,10 @@ DECIMAL
             SOURCE-ID @             \ d fh
             F_SEEK                  \ f
             [ 35 ] LITERAL ?ERROR
+            \ re-read the whole line, same shape as the F_INCLUDE loop
             1 BLOCK B/BUF           \ a m
             2DUP BLANK              \ a m
+            SWAP 1+ SWAP CELL-      \ a+1 m-2
             SOURCE-ID @ F_GETLINE   \ n
             DROP                    \     ignore bytes read
         THEN

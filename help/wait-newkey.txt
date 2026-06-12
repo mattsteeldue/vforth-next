@@ -1,0 +1,6 @@
+    WAIT-NEWKEY  -- n
+
+Block until any key is pressed, then return its index.
+Blocking counterpart of KEY-SCAN.
+
+Available after NEEDS KEYBOARD

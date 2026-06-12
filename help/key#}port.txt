@@ -1,0 +1,6 @@
+    KEY#>PORT  n -- port
+
+Map key index n (0..39) to the 16-bit port that selects
+its keyboard half-row, e.g. 12 -> $FBFE.
+
+Available after NEEDS KEYBOARD

@@ -1,0 +1,6 @@
+    KEY-PRESSED?  port mask -- f
+
+True if the key picked out by a stored (port mask) pair
+is held now. Non-blocking; reads the port once.
+
+Available after NEEDS KEYBOARD

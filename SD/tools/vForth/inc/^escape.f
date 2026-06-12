@@ -12,7 +12,7 @@
 BASE @ HEX \ save base status
 
 HEX
-CODE ?ESCAPE ( -- )
+CODE ?ESCAPE ( -- f )
 
     3E C, FE C,             \ ldn     a'|  HEX FE N,  
     DB C, FE C,             \ ina     FE P,

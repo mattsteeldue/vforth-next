@@ -341,7 +341,7 @@ TESTING \ F.3.17 Evaluate
 \ As with the defining words, F.6.1.1360 EVALUATE has already been used, but it
 \ must still be tested fully.
 
-    INCLUDE  test/evaluate.f       \ *** N.B. nested EVALUATE still has bug ***
+    INCLUDE  test/evaluate.f       \ *** N.B. nested EVALUATE still has a latent bug ***
     
 
 TESTING \ F.3.18 Parser Input Source Control

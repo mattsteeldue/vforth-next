@@ -1,0 +1,6 @@
+    KEY-NAMES  -- a
+
+Address of the 40-byte table of key labels read by .KEY
+(char per key; $00,$01,$0D,$20 = CAPS,SYMB,ENTER,SPACE).
+
+Available after NEEDS KEYBOARD

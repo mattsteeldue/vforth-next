@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      111
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2026-05-31 ", $0D  // 37
+                db      " Heap Vocabulary - build 2026-06-12 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -750,20 +750,35 @@ C_Compare_Return_Equal:
 
 //  ______________________________________________________________________ 
 //
-// (emitc)        c -- 
-// low level emit, calls ROM routine at #10 to send a character to 
+// (emitc)        c --
+// low level emit, calls ROM routine at #10 to send a character to
 // the the current channel (see SELECT to change stream-channel)
+// A rst $10 sent to a file-attached stream goes through +3DOS, which
+// restores the OS default banking on exit and so unmaps the heap page
+// from MMU7: the current page is saved before the ROM call and put
+// back right after, otherwise any word that walks the heap while it
+// prints (e.g. WORDS after 13 SELECT) reads garbage.
+MMU7_Saved:     db      $00                 // Saved MMU7 page during ROM/OS call
+
                 New_Def CEMITC, "(EMITC)", is_code, is_normal
                 pop     hl
                 ld      a, l
-Emitc_Ptr:      
+Emitc_Ptr:
                 push    bc
                 push    de
                 push    ix
 
+                push    af
+                call    MMU7_read
+                ld      (MMU7_Saved), a
+                pop     af
+
 CLS_No_Layer_0:
                 rst     $10
 CLS_Layer_0:
+                ld      a, (MMU7_Saved)
+                nextreg 87, a
+
                 pop     ix
                 pop     de
                 pop     bc
@@ -783,7 +798,9 @@ CLS_Layer_0:
                 push    bc
                 push    de
                 push    ix
-                ld      de, $01D5   // on success set carry-flag  
+                call    MMU7_read   // both exit paths below restore MMU7
+                ld      (MMU7_Saved), a
+                ld      de, $01D5   // on success set carry-flag
                 ld      c, 7        // necessary to call M_P3DOS
                 xor     a           // query current status
                 rst     8

@@ -1,3 +1,3 @@
     .  n --
 
-Print number as signed decimal.
+Print number as signed integer, using current BASE.

@@ -1,0 +1,6 @@
+    KEY#>RM  n -- port mask
+
+Split key index n into the (port mask) pair used for
+fast per-frame polling and for storing redefined keys.
+
+Available after NEEDS KEYBOARD

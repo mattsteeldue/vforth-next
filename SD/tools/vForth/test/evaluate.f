@@ -23,15 +23,17 @@ T{ GE4          -> 345 }T
 
 ( TEST EVALUATE IN COMPILE STATE )
 
-\ *** N.B. nested EVALUATE still has bug ***
-\ *** We need to split the test in two lines ***
+\ Regression: EVALUATE run during a file INCLUDE used to drop the rest of
+\ the source line (here the closing `;`), so these had to be split across
+\ two lines. Fixed 2026-06-11 (doc/EVALUATE-bug-analysis.md): a single line
+\ now works again -- this is the regression test for that fix.
+\ N.B. nested EVALUATE (EVALUATE inside EVALUATE) is a separate latent
+\ issue and is still unaddressed.
 
-T{ : GE6 GE1 GE5 
-; -> }T  
+T{ : GE6 GE1 GE5 ; -> }T
 T{ GE6 -> 123 }T
 
-T{ : GE7 GE2 GE5 
-; -> }T
+T{ : GE7 GE2 GE5 ; -> }T
 T{ GE7 -> 124 }T
 
 \ my custom test...

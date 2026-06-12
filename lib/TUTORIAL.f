@@ -102,8 +102,9 @@ CREATE TUT-TABLE
     H" tutorial/048-rpi0.f"            ,
     H" tutorial/049-interrupts.f"      ,
     H" tutorial/050-afxframe.f"        ,
+    H" tutorial/051-keyboard-matrix.f" ,
 
-50 CONSTANT TUT-MAX
+51 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------
