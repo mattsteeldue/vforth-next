@@ -85,11 +85,11 @@ NEEDS CASE
 \ returns immediately.  Its typical use is to pause or abort a long
 \ scrolling listing (see lib/DIR.f), e.g.:
 \
-\   BEGIN  ?ESCAPE NOT  UNTIL     \ wait here until [EDIT] is pressed
+\   BEGIN  ?ESCAPE  UNTIL     \ wait here until [EDIT] is pressed
 \
 \ For a real "stop now" signal, use the core word ?TERMINAL, which
 \ returns true when [BREAK] (CAPS SHIFT + SPACE) is pressed.  ?TERMINAL
-\ needs no NEEDS and is what the drawing primitives use internally.
+\ needs no NEEDS and is what the interpreter and many words use internally.
 
 \ ===========================================================================
 \ 4. Key codes reference
@@ -103,11 +103,21 @@ NEEDS CASE
 \   $0B  CAPS SHIFT + 7  (cursor up)
 \   $0C  DELETE / backspace
 \   $0D  ENTER
-\   $1B  ESCAPE  (if available)
+\   $07  CAPS SHIFT + 1 (EDIT)
+\   $0E  CAPS SHIFT + SYMBOL SHIFT (EXTENDED)
 \   $20  SPACE
 \   $41..$5A  A..Z
 \   $61..$7A  a..z  (CAPS LOCK active)
 \   $30..$39  0..9
+
+: HELPER
+CR
+.( Try: ECHO-KEYS ) CR
+.( Try: DO-MENU ) CR
+.( Try: WAIT-ENTER ) CR
+.( Try: YES-OR-NO . ) CR
+;
+HELPER
 
 \ ===========================================================================
 \ 5. Demo: echo keys until BREAK
@@ -119,13 +129,14 @@ NEEDS CASE
     BEGIN
         KEY
         DUP EMIT
-        SPACE
-        DUP .
+        SPACE .
         CR
         ?TERMINAL
     UNTIL
     CR ." Done." CR
+    HELPER
 ;
+
 
 \ ===========================================================================
 \ 6. Demo: simple text menu
@@ -153,10 +164,13 @@ NEEDS CASE
             [CHAR] Q OF  CR ." Goodbye!"                ENDOF
             CR ." Unknown key."
         ENDCASE
+        WAIT-KEY
         CR
         [CHAR] Q =             ( f )   \ ENDCASE consumed one copy; exit on Q
     UNTIL
+    HELPER
 ;
+
 
 \ ===========================================================================
 \ 7. Demo: wait for a specific key
@@ -170,6 +184,7 @@ NEEDS CASE
     UNTIL
 ;
 
+
 \ ===========================================================================
 \ 8. Demo: yes/no prompt
 \ ===========================================================================
@@ -177,13 +192,16 @@ NEEDS CASE
 : YES-OR-NO  ( -- f )
     \ Returns true for Y, false for N (case-insensitive).
     ." (Y/N)? "
+    0
     BEGIN
+        DROP  
         KEY UPPER              ( c )   \ fold the key to uppercase
         DUP [CHAR] Y =         ( c f )
         OVER [CHAR] N = OR     ( c f ) \ loop until Y or N is pressed
     UNTIL                      ( c )
     [CHAR] Y =                 ( f )   \ true iff the key was Y
 ;
+
 
 \ ===========================================================================
 \ 9. Simple tests (requires NEEDS TESTING)

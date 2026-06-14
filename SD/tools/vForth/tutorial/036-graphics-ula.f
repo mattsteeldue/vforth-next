@@ -2,17 +2,19 @@
 \ 036-graphics-ula.f
 \ ULA pixel graphics: PLOT, DRAW-LINE, and DRAW-CIRCLE.
 \
-\ The ULA pixel display area covers 256x192 pixels stored at
+\ The Standard Spectrum display area covers 256x192 pixels stored at
 \ $4000-$57FF in a non-linear (third-by-third) layout.  In vForth,
 \ the GRAPHICS library (NEEDS GRAPHICS) provides vectored primitives
 \ PLOT, DRAW-LINE, and CIRCLE that work across all supported display
-\ modes.  Use LAYER0 for the classic monochrome-pixel ULA mode.
+\ modes.  The Standard Spectrum ULA Layer 0 is kept just for legacy.
+\ Here we use Layer 1,1 (LAYER11) which is equivalent to Layer 0.
+\ Use LAYER12 to go back to default 64 column monochrome mode.
 \
 \ Coordinate convention in GRAPHICS.f:
 \   x = vertical coordinate  (row from top, 0 = top, 191 = bottom)
 \   y = horizontal coordinate (col from left, 0 = left, 255 = right)
 \
-\ Reference: sec.7.2
+\ Reference: sec.3.2    
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -28,21 +30,24 @@ CR
 .(     Type NEWTASK to unload.          ) CR
 
 NEEDS GRAPHICS
+NEEDS .BORDER
 NEEDS J
 NEEDS TO
+NEEDS WAIT-KEY
+
 
 \ ===========================================================================
 \ 1. Switching to ULA (Layer 0) mode
 \ ===========================================================================
 \
-\   LAYER0  ( -- )   switch to ULA mode: 256x192 monochrome pixels,
-\                    8-color attributes per 8x8 cell
+\   LAYER11  ( -- )   switch to Standard Res (Enhanced ULA) mode: 
+\       256x192 monochrome pixels, 8-color attributes per 8x8 cell
 \
-\ Call LAYER0 after loading GRAPHICS to set the vectored primitives
+\ Call LAYER11 after loading GRAPHICS to set the vectored primitives
 \ (PLOT, POINT, PIXELADD, etc.) to ULA behavior.
 \
-\ To return to standard Spectrum ULA mode from any other mode,
-\ call LAYER0 or equivalently  0 LAYER!
+\ To return default momochrome mode from any other mode,
+\ call LAYER12 or equivalently  12 LAYER!
 \
 \ The GRAPHICS library sets up the current mode automatically on
 \ load by calling SETUP, which reads IDE_MODE@.
@@ -51,13 +56,13 @@ NEEDS TO
 \ 2. ATTRIB -- the current drawing color
 \ ===========================================================================
 \
-\ In ULA mode, ATTRIB is a VALUE that holds the attribute byte used
-\ by PLOT when setting the cell color.  Set it before plotting:
+\ In Standard Spectrum (ULA) mode, ATTRIB is a VALUE that holds 
+\ the attribute byte used by PLOT when setting the cell color.  
+\ Set it before plotting:
 \
-\   ink  paper * 8 +  bright * 64 +  flash * 128 +  TO ATTRIB
+\   _WHITE .INK  _BLUE .PAPER   ATTRIB  .   --> 15
 \
-\ Example: white ink on blue paper:
-\   7  1 8 * +  TO ATTRIB      \ white(7) + blue-paper(8) = 15
+\ white (7) + blue-paper (8) = 15
 \
 \ After changing ATTRIB, each subsequent PLOT call will use the new
 \ color when writing the cell attribute byte.
@@ -121,15 +126,36 @@ NEEDS TO
 \ 7. Demo: switch to ULA and draw a star pattern
 \ ===========================================================================
 
+: SETUP
+    LAYER11
+    _BLUE  .PAPER 
+    _BLUE  .BORDER
+    _WHITE .INK  
+    CLS
+;
+
+: UNSETUP
+    LAYER12
+    _BLUE .PAPER
+    CR .( Try DOT-PATTERN )  
+    CR .( Try DRAW-GRID )
+    CR .( Try CONCENTRIC )
+    CR .( Try CORNER-LINES )
+    CR .( Try DEMO for cumulative demo )
+    CR .(     press a key to return.)
+;
+
+
 : DOT-PATTERN  ( -- )
-    CLS LAYER0
-    7 1 8 * + TO ATTRIB   \ white ink, blue paper
+    SETUP
     192 0 DO              \ rows 0..191
         256 0 DO          \ cols 0..255
             I J AND       \ simple pattern condition
-            IF  I J PLOT  THEN
-        8 +LOOP
-    8 +LOOP
+            IF  I J PLOT     THEN
+        2 +LOOP
+    2 +LOOP
+    WAIT-KEY
+    UNSETUP
 ;
 
 \ ===========================================================================
@@ -137,8 +163,7 @@ NEEDS TO
 \ ===========================================================================
 
 : DRAW-GRID  ( -- )
-    CLS LAYER0
-    7 TO ATTRIB
+    SETUP
     \ horizontal lines every 24 rows
     192 0 DO
         I 0 I 255 DRAW-LINE
@@ -147,6 +172,8 @@ NEEDS TO
     256 0 DO
         0 I 191 I DRAW-LINE
     32 +LOOP
+    WAIT-KEY
+    UNSETUP
 ;
 
 \ ===========================================================================
@@ -154,11 +181,13 @@ NEEDS TO
 \ ===========================================================================
 
 : CONCENTRIC  ( -- )
-    CLS LAYER0
+    SETUP
     7 1 8 * + TO ATTRIB
     90 0 DO
         96 128 I CIRCLE
     10 +LOOP
+    WAIT-KEY
+    UNSETUP
 ;
 
 \ ===========================================================================
@@ -166,12 +195,23 @@ NEEDS TO
 \ ===========================================================================
 
 : CORNER-LINES  ( -- )
-    CLS LAYER0
-    7 TO ATTRIB
+    SETUP
     32 0 DO
         0 I 6 * 191 255 DRAW-LINE
     LOOP
+    WAIT-KEY
+    UNSETUP
 ;
+
+UNSETUP
+
+: DEMO 
+    DOT-PATTERN
+    DRAW-GRID 
+    CONCENTRIC 
+    CORNER-LINES 
+;
+
 
 \ ===========================================================================
 \ 11. Simple tests (requires NEEDS TESTING)
@@ -182,3 +222,4 @@ NEEDS TO
 \
 \ NEEDS TESTING
 \ T{  ATTRIB 255 AND  ->  ATTRIB 255 AND  }T   \ ATTRIB is well-formed
+

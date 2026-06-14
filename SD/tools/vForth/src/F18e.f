@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-06-12
+\ v-Forth 1.8 - NextZXOS version - build 2026-06-14
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -63,7 +63,9 @@
 \ IX - Inner interpreter next-address pointer. This is 2T-state faster than JP
 \      it must be preserved during ROM/OS calls
 \ IY - (ZX System: must be preserved to use standard Interrupts )
-
+\
+\ MMU7 configuragion should be preserved across ROM/OS calls in some cases.
+\
 \ From this version vForth is a "direct-thread" instead of an "indirect-thread" 
 \ Forth system. It brings a +25% speed improvement. 
 \ Any Low-Level definition saves two bytes, but any non Low-Level definitions 
@@ -148,7 +150,7 @@ DECIMAL
      0  VALUE     emitc^        \ entry-point for EMITC
      0  VALUE     upper^        \ entry-point for UPPER
      0  VALUE     mmu7@^        \ entry-point for mmu7@
-     0  VALUE     mmu7sav^      \ MMU7_Saved one-byte buffer in (EMITC)
+\    0  VALUE     mmu7sav^      \ removed: MMU7 page now saved on the hardware stack
      0  VALUE     clsnol0^      \ CLS_No_Layer_0: the rst $10 in (EMITC)
      0  VALUE     clsl0^        \ CLS_Layer_0: the MMU7 restore in (EMITC)
      0  VALUE     tofar^        \ entry-point for >far
@@ -1099,25 +1101,25 @@ CODE (compare) ( a1 a2 n -- b )
 \ from MMU7: the current page is saved before the ROM call and put
 \ back right after, otherwise any word that walks the heap while it
 \ prints (e.g. WORDS after 13 SELECT) reads garbage.
-    HERE TO mmu7sav^
-    0 C,                        \ saved MMU7 page during ROM/OS call
+\ Let's use the hardware stack instead of the following buffer.
+\   HERE TO mmu7sav^
+\   0 C,                        \ saved MMU7 page during ROM/OS call
 CODE (emitc)     ( c -- )
         POP     HL|
-        LD      A'|    L|
     HERE TO emitc^
         PUSH    BC|
         PUSH    DE|
         PUSH    IX|
 
-        PUSH    AF|
         CALL    mmu7@^ AA,
-        LD()A   mmu7sav^ AA,
-        POP     AF|
+        PUSH    AF|
+
+        LD      A'|    L|
 
     HERE TO clsnol0^
         RST     10|             \ standard ROM current-channel print routine
     HERE TO clsl0^
-        LDA()   mmu7sav^ AA,
+        POP     AF|
         NEXTREGA DECIMAL 87 P,  \ nextreg 87,a
 
         POP     IX|
@@ -1135,8 +1137,10 @@ CODE (cls) ( -- )
         PUSH    BC|
         PUSH    DE|
         PUSH    IX|
+
         CALL    mmu7@^ AA,      \ both exit paths below restore MMU7
-        LD()A   mmu7sav^ AA,
+        PUSH    AF|
+
         LDX     DE| $01D5  NN,  \ on success set carry-flag
         LDN     C'|     7   N,  \ necessary to call M_P3DOS
         XORA     A|
@@ -6051,7 +6055,7 @@ decimal
     [ decimal 2 ] Literal far count type
 \    [compile] (.")
 \    [ decimal 113 here ,"  v-Forth 1.7 NextZXOS version" -1 allot ]
-\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-06-12" -1 allot ]
+\    [ decimal  13 here ,"  Heap Vocabulary - build 2026-06-14" -1 allot ]
 \    [ decimal  13 here ,"  MIT License "
 \    [ decimal 127 here ," 1990-2026 Matteo Vitturi" -1 allot ]
 \    [ decimal  13 c, c! c! c! c! ] 

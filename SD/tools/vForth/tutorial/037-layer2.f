@@ -7,13 +7,13 @@
 \ numbers depend on the Next hardware revision).  vForth provides
 \ the GRAPHICS library with LAYER2 mode support: LAYER2 activates the
 \ vectored primitives for this mode; PLOT, DRAW-LINE, CIRCLE, and
-\ XPLOT all work in Layer2 the same way as in ULA mode.
+\ XPLOT all work in Layer 2 the same way as in Standard Spectrum  mode.
 \
 \ Coordinate convention (same as GRAPHICS.f throughout):
 \   x = vertical   (row 0 = top,   191 = bottom)
 \   y = horizontal (col 0 = left,  255 = right)
 \
-\ Reference: sec.7.2
+\ Reference: sec.3.2
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -29,8 +29,11 @@ CR
 .(     Type NEWTASK to unload.              ) CR
 
 NEEDS GRAPHICS
+NEEDS .BORDER
 NEEDS J
 NEEDS TO
+NEEDS WAIT-KEY
+NEEDS FLIP
 
 \ ===========================================================================
 \ 1. Activating Layer 2
@@ -59,22 +62,26 @@ NEEDS TO
 \
 \   RRRGGGBB format (3 bits red, 3 bits green, 2 bits blue)
 \   Index   0 : black
-\   Index   7 : blue    ( %00000111 )
-\   Index  56 : green   ( %00111000 )
+\   Index   3 : blue    ( %00000011 )
+\   Index  28 : green   ( %00011100 )
 \   Index 224 : red     ( %11100000 )
 \   Index 255 : white   ( %11111111 )
 \
 \ Common palette values:
-\   0   black         1   dark blue      7   blue
-\   8   dark green    56  green          64  dark red
-\   224 red           255 white
+\   
+\   1   dark blue    3   blue       0   black
+\   8   dark green   28  green          
+\   64  dark red     224 red      
+\   37  dark grey    109 grey      255 white
 \
 \ To change the drawing color:
-\   color-index  TO ATTRIB
+\   color-index  .INK
 \
 \ Example: draw in red (palette index 224):
 \   LAYER2
-\   224 TO ATTRIB
+\     1 .PAPER
+\   218 .INK
+\   224 TO ATRIB
 \   96 128 40 CIRCLE
 
 \ ===========================================================================
@@ -84,8 +91,7 @@ NEEDS TO
 \   PLOT ( x y -- )   plot one pixel using current ATTRIB
 \
 \ Layer2 PLOT is implemented in machine code for speed.  It maps the
-\ correct 8K RAM page into MMU slot 7 ($E000-$FFFF) for each write,
-\ then restores the dictionary page.
+\ correct 8K RAM page into MMU slot 7 ($E000-$FFFF) for each write.
 \
 \ Coordinates: x=row 0..191, y=column 0..255.
 \ Coordinates outside range are silently ignored (ULA PLOT) or may
@@ -95,26 +101,46 @@ NEEDS TO
 \ 4. DRAW-LINE and CIRCLE in Layer 2
 \ ===========================================================================
 \
-\   DRAW-LINE ( x2 y2 x1 y1 -- )  Bresenham line, ATTRIB color
+\   DRAW-LINE ( x2 y2 x1 y1 -- )   Bresenham line, ATTRIB color
 \   CIRCLE    ( x y r -- )         Bresenham circle, ATTRIB color
 \   XPLOT     ( x y -- )           invert pixel (store NOT current)
 \
 \ These work identically to ULA mode; the mode-specific primitives
 \ are selected automatically after calling LAYER2.
 
+: UNSETUP
+    LAYER12
+    _BLUE .PAPER
+;
+
+UNSETUP
+
+: SETUP
+    LAYER2
+    _BLUE .BORDER
+    %00000001   .PAPER    \ dark-blue
+    %11011011   .INK      \ white
+    CLS
+    CR .(     press a key to return.)
+;
+
 \ ===========================================================================
 \ 5. Demo: color gradient fill
 \ ===========================================================================
 
 : L2-GRADIENT  ( -- )
-    LAYER2
-    CLS
-    192 0 DO              \ rows
-        I TO ATTRIB
-        256 0 DO          \ cols
+    SETUP
+    256 0 DO              \ horizontal
+        192 0 DO          \ vertical
+            I 5 RSHIFT 7 AND 2 LSHIFT \ red
+            J 3 RSHIFT 7 AND 5 LSHIFT \ green
+            J 6 RSHIFT 3 AND          \ blue
+            + + TO ATTRIB
             I J PLOT
         LOOP
     LOOP
+    WAIT-KEY
+    UNSETUP
 ;
 
 \ ===========================================================================
@@ -122,12 +148,13 @@ NEEDS TO
 \ ===========================================================================
 
 : L2-CIRCLES  ( -- )
-    LAYER2
-    CLS
+    SETUP
     8 1 DO
         I 32 * TO ATTRIB
         96  128  I 20 *  CIRCLE
     LOOP
+    WAIT-KEY
+    UNSETUP
 ;
 
 \ ===========================================================================
@@ -135,15 +162,26 @@ NEEDS TO
 \ ===========================================================================
 
 : L2-BARS  ( -- )
-    LAYER2
-    CLS
-    192 0 DO
-        256 0 DO
+    SETUP
+    256 0 DO
+        192 0 DO
             J I + 32 / 32 * TO ATTRIB
             I J PLOT
         LOOP
+        ?TERMINAL IF LEAVE THEN
     LOOP
+    WAIT-KEY
+    UNSETUP
 ;
+
+
+: DEMO 
+    L2-GRADIENT
+    L2-CIRCLES
+    L2-BARS
+;
+
+.( Try DEMO for cumulative demo )
 
 \ ===========================================================================
 \ 8. Loading a BMP into Layer 2

@@ -9,7 +9,7 @@
 \ (PLOT, XPLOT, POINT, DRAW-LINE, CIRCLE, PAINT) but different
 \ hardware implementations selected via DEFER/IS.
 \
-\ Reference: sec.7.2
+\ Reference: sec.3.2
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -25,8 +25,11 @@ CR
 .(     Type NEWTASK to unload.    ) CR
 
 NEEDS GRAPHICS
+NEEDS .BORDER
 NEEDS J
+NEEDS VALUE
 NEEDS TO
+NEEDS ms
 
 \ ===========================================================================
 \ 1. Mode summary
@@ -145,6 +148,13 @@ NEEDS TO
 \   7 TO ATTRIB     \ blue
 \   96 128 PAINT    \ fill interior
 
+: UNSETUP
+    LAYER12
+    _BLUE .PAPER
+;
+
+UNSETUP
+
 \ ===========================================================================
 \ 7. Demo: LAYER10 LoRes 256-color plot
 \ ===========================================================================
@@ -163,29 +173,86 @@ NEEDS TO
 \ ===========================================================================
 \ 8. Demo: rubber-band box using XPLOT
 \ ===========================================================================
+\
+\ A rubber-band box is the outline of a rectangle drawn with XPLOT
+\ instead of PLOT.  Because XPLOT toggles each pixel (section 3),
+\ drawing the same box a second time over the same coordinates
+\ restores the background exactly -- the classic "rubber band" that
+\ a selection rectangle leaves while the user drags a corner.
+\
+\ The rectangle is axis-aligned, so its four sides are plain
+\ horizontal and vertical runs of XPLOT: no line algorithm is
+\ needed.  Recall the coordinate convention: x = row (vertical,
+\ 0 = top), y = column (horizontal, 0 = left).
+\
+\ Care is needed at the corners.  If every side ran full length the
+\ four corner pixels would be toggled twice and end up cleared.  So
+\ the horizontal sides span the full width (and own the corners) and
+\ the vertical sides cover only the interior rows -- every outline
+\ pixel is then toggled exactly once.  ?DO (not DO) guards the empty
+\ range: a box thinner than 3 rows simply skips the vertical loop
+\ instead of wrapping around 65536 times.
 
-NEEDS ms
+\ HLINE: toggle row x across columns ya..yb (inclusive).
+: HLINE  ( x ya yb -- )
+    1+ SWAP ?DO               ( x )   \ I = ya .. yb
+        DUP I XPLOT
+    LOOP DROP ;
+
+\ VLINE: toggle column y across rows xa..xb (inclusive).
+: VLINE  ( y xa xb -- )
+    1+ SWAP ?DO               ( y )   \ I = xa .. xb
+        I OVER XPLOT
+    LOOP DROP ;
+
+\ Corners of the current box, kept in VALUEs so RUBBER-BOX stays flat.
+0 VALUE BX1   0 VALUE BY1   0 VALUE BX2   0 VALUE BY2
 
 : RUBBER-BOX  ( x1 y1 x2 y2 -- )
-    2OVER 2OVER               \ x1 y1 x2 y2  x1 y1 x2 y2
-    \ top side: (x1,y1)..(x1,y2)
-    OVER ROT SWAP DRAW-LINE
-    \ TODO: full box for demo purposes we just draw two sides
-    2DROP 2DROP
+    TO BY2  TO BX2  TO BY1  TO BX1
+    BX1 BY1 BY2 HLINE          \ top    (full width, owns corners)
+    BX2 BY1 BY2 HLINE          \ bottom (full width, owns corners)
+    BY1 BX1 1+ BX2 1- VLINE    \ left   (interior rows only)
+    BY2 BX1 1+ BX2 1- VLINE    \ right  (interior rows only)
+;
+
+\ Draw the outline, hold, then redraw the SAME box to erase it,
+\ leaving the screen exactly as it was -- the rubber-band effect.
+: RUBBER-DEMO  ( -- )
+    LAYER0
+    _BLUE .PAPER
+    _CYAN .INK
+    CLS
+    ."  press BREAK to exit"
+    BEGIN
+        40 40 150 200 RUBBER-BOX   \ draw
+        500 ms
+        40 40 150 200 RUBBER-BOX   \ same coords toggle back -> erase
+        500 ms
+        ?TERMINAL
+   UNTIL
 ;
 
 \ ===========================================================================
 \ 9. Demo: mode switching sequence
 \ ===========================================================================
 
-NEEDS WAIT-KEY
-
 : MODE-TOUR  ( -- )
-    LAYER0   CLS  ." Layer 0  (ULA)      " 500 ms  WAIT-KEY
-    LAYER11  CLS  ." Layer 11 (Enh ULA)  " 500 ms  WAIT-KEY
-    LAYER2   CLS  ." Layer 2  (256-color)" 500 ms  WAIT-KEY
-    LAYER0   CLS
+    LAYER0   CLS  ." Layer 0  (Standard ULA)  "     700 ms
+    LAYER11  CLS  ." Layer 11 (Enhanced ULA)  "     700 ms
+    LAYER2   CLS  ." Layer 2  (HiRes 256-color)"    700 ms
+    UNSETUP
 ;
+
+: DEMO
+    L10-DEMO
+    MODE-TOUR
+    RUBBER-DEMO
+    UNSETUP
+;
+
+
+.( Try DEMO for cumulative demo )
 
 \ ===========================================================================
 \ 10. Simple tests (requires NEEDS TESTING)
@@ -194,4 +261,5 @@ NEEDS WAIT-KEY
 \ NEEDS TESTING
 \ T{  0 0 COORD-CHECK  ->  0 0 -1  }T   \ top-left is in range
 \ T{  191 255 COORD-CHECK  ->  191 255 -1  }T
-\ T{  192 0 COORD-CHECK  ->  192 0  0  }T   \ row 192 out of range
+\ T{  192 0 COORD-CHECK  ->  192 0  0  }T   \ row 192 out of range 
+

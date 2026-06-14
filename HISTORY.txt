@@ -611,12 +611,16 @@ improvement in (COMPARE), now it can handle arbitrarily-long strings (i.e. >256)
 
 
 \ build 20260612
-Removed a nasty MMU7 bug: +3DOS clobbers the 8K page at $E000-$FFFF after any
-rst $10, so (EMITC) now saves and restores the current MMU7 page on each
-character it emits. This cures "13 SELECT WORDS" that derailed into a garbled
-screen. Fix verified on both DOES and DOT versions.
+Removed a nasty MMU7 bug: output to file clobbers the 8K page at $E000-$FFFF 
+after any rst $10, so (EMITC) now saves and restores the current MMU7 page on 
+each character it emits. This cures "13 SELECT WORDS" that derailed into a 
+garbled screen. Fix verified on both DOES and DOT versions.
 Fixed EVALUATE to correctly resume the rest of the line when used inside an
 INCLUDEd file.
 New KEYBOARD matrix facility (NEEDS KEYBOARD) complete with its help files.
 A full set of guided TUTORIALs is now available in the tutorial/ directory,
 as announced on Facebook and Discord.
+
+\ build 20260614
+refinement of previous build.
+tested a few more tutorial.

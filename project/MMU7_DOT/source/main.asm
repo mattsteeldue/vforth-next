@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  DOT-command version
-//  build 20260612
+//  build 20260614
 // 
 //  Direct-Threaded version.
 // 
