@@ -25,6 +25,8 @@ CR
 .(     Type NEWTASK to unload.         ) CR
 
 NEEDS COPPER
+NEEDS ms
+
 
 \ ===========================================================================
 \ 1. Copper hardware overview
@@ -109,8 +111,6 @@ NEEDS COPPER
 \ For a real border effect on the Next, you write to the ULA ink/
 \ paper registers, or set palette entries.  Here we change the
 \ background palette entry (index 0) for visual effect.
-
-NEEDS ms
 
 : COPPER-RAINBOW  ( -- )
     COP-STOP

@@ -10,6 +10,10 @@
 \ Here we use Layer 1,1 (LAYER11) which is equivalent to Layer 0.
 \ Use LAYER12 to go back to default 64 column monochrome mode.
 \
+\ See also tutorial 052 (modular graphics): to save dictionary space
+\ you can load just this one mode with  NEEDS LAYER11-GRAPHICS  instead
+\ of the whole library, getting the same PLOT/DRAW-LINE/CIRCLE here.
+\
 \ Coordinate convention in GRAPHICS.f:
 \   x = vertical coordinate  (row from top, 0 = top, 191 = bottom)
 \   y = horizontal coordinate (col from left, 0 = left, 255 = right)

@@ -5,11 +5,11 @@
 \ The ZX Next has 2 MB of RAM organized as 256 banks of 8K (pages
 \ numbered 0-255).  The Z80 sees a 64K address space divided into
 \ eight 8K slots (MMU0-MMU7, addresses $0000-$FFFF).  vForth uses
-\ slot 7 ($E000-$FFFF) for its dictionary (heap).  MMU7! maps a
-\ different 8K page into that window temporarily; it must be restored
-\ immediately after use to avoid corrupting the dictionary.
+\ slot 7 ($E000-$FFFF) for its dictionary (in heap).  MMU7! maps a
+\ different 8K page into that window temporarily; it is restored 
+\ automatically at Forth prompt, but at run-time is your responsibility.
 \
-\ Reference: sec.4
+\ Reference: sec.5.3
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -30,6 +30,8 @@ NEEDS MMU0!
 NEEDS MMU1!
 NEEDS REG!
 NEEDS REG@
+NEEDS ms
+
 
 \ ===========================================================================
 \ 1. The Z80 address space and MMU slots
@@ -63,7 +65,7 @@ NEEDS REG@
 \ MMU7@ reads register $57 (= decimal 87).
 \
 \ WARNING: Slot 7 holds the vForth dictionary.  Mapping a different
-\ page there makes HERE and all dictionary words inaccessible until
+\ page there makes dictionary data inaccessible until the
 \ the original page is restored.  Always save and restore:
 \
 \   MMU7@ >R          \ save current page
@@ -79,7 +81,7 @@ NEEDS REG@
 \   MMU1! ( n -- )   map 8K page n into slot 1 ($2000-$3FFF)
 \
 \ These words use NEXTREG $50/$51.  Slot 0 normally holds the ZX ROM.
-\ Remapping slot 0 to RAM allows writing to the ROM area.
+\ Remapping slot 0 to RAM allows writing via ROM addresses.
 
 \ ===========================================================================
 \ 4. The Layer 2 frame buffer pages
@@ -96,7 +98,7 @@ NEEDS REG@
 \   Row r is stored at page  L2-RAM-PAGE + r/32
 \   within that page at offset  (r mod 32) * 256 + col
 
-HEX $12 REG@ 2 * DECIMAL CONSTANT L2-FIRST-PAGE
+$12 REG@ 2 * CONSTANT L2-FIRST-PAGE
 
 : L2-ROW-PAGE  ( row -- page )
     32 /           \ 0-5
@@ -145,14 +147,12 @@ HEX $12 REG@ 2 * DECIMAL CONSTANT L2-FIRST-PAGE
 \ 6. Demo: peek at Layer 2 page contents
 \ ===========================================================================
 
-NEEDS ms
-
 : PEEK-L2-ROW  ( row -- )
     \ Read first 8 bytes of the given row from Layer 2
-    DUP L2-ROW-PAGE                  \ row page
-    MMU7@ >R MMU7!                   \ map page, save dict-page
-    OVER L2-OFFSET [ HEX $E000 DECIMAL ] LITERAL +  \ addr
-    NIP                              \ addr
+    DUP L2-ROW-PAGE                  \ ( row page )
+    MMU7@ >R MMU7!                   \ ( row )  R: dict-page
+    0 L2-OFFSET                      \ ( offset )  column 0
+    $E000 +                          \ ( addr )
     8 0 DO
         DUP I + C@ .
     LOOP

@@ -25,6 +25,13 @@ CR
 .(     Type NEWTASK to unload.                    ) CR
 
 NEEDS INTERRUPTS
+NEEDS .BORDER
+NEEDS .PAPER
+NEEDS .AT
+NEEDS ms
+NEEDS LAYER0
+NEEDS LAYER12
+NEEDS [']
 
 \ ===========================================================================
 \ 1. Overview of the interrupt facility
@@ -43,12 +50,15 @@ NEEDS INTERRUPTS
 \   - After the user word returns, ISR-RET restores all registers
 \     and returns from interrupt with EI and RET
 \
-\ Usage template:
+\ Usage template (at the interpreter -- typed at the prompt or run as
+\ top-level code, NOT inside a definition):
 \   ISR-OFF                  \ disable interrupts while configuring
-\   ' MY-WORD  ISR-XT !      \ install handler word
+\   ' MY-WORD  ISR-XT !      \ install handler word (' is ok here)
 \   ISR-ON                   \ enable Z80 IM2 interrupts
 \   ...
 \   ISR-OFF                  \ disable when done
+\ Inside a colon definition use ['] instead of ' -- see the note in
+\ section 2 and the demos in sections 5-7.
 
 \ ===========================================================================
 \ 2. ISR-XT -- the interrupt handler pointer
@@ -63,6 +73,17 @@ NEEDS INTERRUPTS
 \
 \ To reset to no-op:
 \   ' NOOP  ISR-XT !
+\
+\ NOTE -- ' (tick) vs ['] :  the two snippets just above are
+\ interpret-level (type them at the prompt, or run as top-level code).
+\ There ' is correct: it parses the next word and returns its xt.
+\ INSIDE a colon definition you must use ['] -- ' is not immediate, so
+\ ' MY-HANDLER would compile a run-time parse of the input stream
+\ (the wrong word, or an error) plus a stray call to MY-HANDLER.  The
+\ demos in sections 5-7 install from inside definitions, so they use
+\   ['] WORD  ISR-XT !       ( NEEDS ['] is loaded at the top ).
+\ Counter-example at interpret level: lib/MOUSE.f ends with
+\   ' MOUSE-DELTA ISR-XT !   at load time -- no brackets needed.
 \
 \ The user handler word must:
 \   - Have no net stack effect  ( -- )
@@ -82,7 +103,8 @@ NEEDS INTERRUPTS
 \ ISR-OFF restores the standard Spectrum interrupt mode 1 (ROM
 \ handler at $38).  The keyboard and FRAMES counter still work.
 \
-\ Always bracket ISR setup with ISR-OFF ... ISR-ON:
+\ Always bracket ISR setup with ISR-OFF ... ISR-ON (interpreter form;
+\ inside a definition use ['], see section 2):
 \   ISR-OFF
 \   ' MY-HANDLER ISR-XT !
 \   ISR-ON
@@ -116,21 +138,18 @@ VARIABLE FRAME-COUNT
 
 : INSTALL-COUNTER  ( -- )
     ISR-OFF
-    ' COUNT-FRAMES  ISR-XT !
+    ['] COUNT-FRAMES  ISR-XT !
     ISR-ON
 ;
 
 : REMOVE-COUNTER  ( -- )
     ISR-OFF
-    ' NOOP  ISR-XT !
+    ['] NOOP  ISR-XT !
 ;
 
 \ ===========================================================================
 \ 6. Demo: frame-based animation
 \ ===========================================================================
-
-NEEDS .AT
-NEEDS ms
 
 : FRAME-ANIM  ( -- )
     0 FRAME-COUNT !
@@ -154,28 +173,29 @@ VARIABLE FLASH-STATE
 
 : BORDER-FLASH  ( -- )
     FLASH-STATE @ IF
-        7 .BORDER  0 FLASH-STATE !
+        7 .BORDER  
+        0 FLASH-STATE !
     ELSE
-        0 .BORDER  1 FLASH-STATE !
+        0 .BORDER  
+        1 FLASH-STATE !
     THEN
 ;
 
-NEEDS .BORDER
-
 : INSTALL-FLASH  ( -- )
     ISR-OFF
-    ' BORDER-FLASH  ISR-XT !
+    [']  BORDER-FLASH  ISR-XT !
     ISR-ON
 ;
 
 : FLASH-DEMO  ( -- )
+    LAYER0
     0 FLASH-STATE !
     INSTALL-FLASH
     ." Border flashing at 50 Hz. BREAK to stop." CR
     BEGIN  ?TERMINAL  UNTIL
     ISR-OFF
-    ' NOOP  ISR-XT !
-    0 .BORDER
+    [']  NOOP  ISR-XT !
+    LAYER12
 ;
 
 \ ===========================================================================

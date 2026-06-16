@@ -8,8 +8,9 @@
 \ written via port $005B; attribute data (position, visibility, slot)
 \ is written via port $0057.  The MOUSE library (lib/MOUSE.f) shows
 \ a working example of sprite use for the mouse cursor.
+\ This tutorial just show a motion-less arrow.
 \
-\ Reference: sec.7.2
+\ Reference: sec.3.4
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -27,7 +28,7 @@ CR
 NEEDS REG!
 NEEDS REG@
 NEEDS SPLIT
-NEEDS J
+
 
 \ ===========================================================================
 \ 1. Sprite hardware overview
@@ -37,11 +38,11 @@ NEEDS J
 \   Next reg $15  : sprite/layer control
 \                   bit 1 = sprites visible over border
 \                   bit 0 = sprites enabled
-\   Port $303B    : SPRITE-SLOT-SELECT-PORT
+\   Port $303B    : SPRITE-SLOT-PORT
 \                   write n to select sprite slot 0-127
-\   Port $0057    : SPRITE-ATTRIBUTE-PORT
+\   Port $0057    : SPRITE-ATTR-PORT
 \                   write 4 bytes for position and flags
-\   Port $005B    : SPRITE-PATTERN-PORT
+\   Port $005B    : SPRITE-PAT-PORT
 \                   write 256 bytes of pattern data for current slot
 \
 \ Sprite attribute bytes (4 bytes per sprite):
@@ -59,26 +60,23 @@ NEEDS J
 \ 2. Port constants
 \ ===========================================================================
 
-HEX
+$303B  CONSTANT  SPRITE-SLOT-PORT      \ write: select slot 0-127
+$0057  CONSTANT  SPRITE-ATTR-PORT      \ write: 4-byte attribute
+$005B  CONSTANT  SPRITE-PAT-PORT       \ write: 256-byte pattern
 
-$303B  CONSTANT  SPRITE-SLOT-PORT    \ write: select slot 0-127
-$0057  CONSTANT  SPRITE-ATTR-PORT    \ write: 4-byte attribute
-$005B  CONSTANT  SPRITE-PAT-PORT     \ write: 256-byte pattern
-
-DECIMAL
 
 \ ===========================================================================
 \ 3. Sprite global control
 \ ===========================================================================
 \
 \ Enable sprites:
-\   3 HEX $15 REG!    \ bit1=visible-over-border, bit0=sprites-on
+\   3 $15 REG!    \ bit1=visible-over-border, bit0=sprites-on
 \
 \ Disable sprites:
-\   0 HEX $15 REG!
+\   0 $15 REG!
 
-: SPRITES-ON   ( -- )  3 HEX $15 REG!   ;
-: SPRITES-OFF  ( -- )  0 HEX $15 REG!   ;
+: SPRITES-ON   ( -- )  3 $15 REG!   ;
+: SPRITES-OFF  ( -- )  0 $15 REG!   ;
 
 \ ===========================================================================
 \ 4. Upload pattern data to a sprite slot
@@ -90,15 +88,47 @@ DECIMAL
 \
 \ Select the slot, then write 256 bytes to SPRITE-PAT-PORT.
 
-DECIMAL
-: SPRITE-PAT-UPLOAD  ( a n -- )
-    HEX
-    SPRITE-SLOT-PORT P!        \ select slot
-    256 OVER + SWAP            \ a+256 a
+$14 REG@ CONSTANT E3 \ Global Transparency Colour
+: " $00 C, ; \ Black
+: | $6D C, ; \ Dark-Grey
+: v $B6 C, ; \ Light-Gray
+: M $FF C, ; \ White
+: _ $E3 C, ; \ Transparency
+
+
+\ Semi-graphical mouse-face definition 
+CREATE MOUSE-FACE
+
+\ 0 1 2 3 4 5 6 7 8 9 A B C D E F \
+\ ------------------------------- \
+M | " " _ _ _ _ _ _ _ _ _ _ _ _ \ 0
+M M | " " _ _ _ _ _ _ _ _ _ _ _ \ 1
+M M M | " " _ _ _ _ _ _ _ _ _ _ \ 2
+M M M M | " " _ _ _ _ _ _ _ _ _ \ 3
+M M M M M | " " _ _ _ _ _ _ _ _ \ 4
+M M M M M M | " " _ _ _ _ _ _ _ \ 5
+M M M M M M M | " " _ _ _ _ _ _ \ 6
+M M M M M M M M | " " _ _ _ _ _ \ 7
+M M M M M M M M M | " " _ _ _ _ \ 8
+M M M M M M | " " " " " " _ _ _ \ 9
+M M | v M M | " " " _ _ _ _ _ _ \ A
+M | " v M M v | " " _ _ _ _ _ _ \ B
+| " _ _ v M M | " " _ _ _ _ _ _ \ C
+_ _ _ _ v M M v | " " _ _ _ _ _ \ D
+_ _ _ _ _ M M v | " " _ _ _ _ _ \ E
+_ _ _ _ _ v v | " " " _ _ _ _ _ \ F
+
+
+: SPRITE-PAT-UPLOAD ( a n -- )
+    SPRITE-SLOT-PORT   P!    \ a 
+    256 OVER + SWAP          \ a+80 a 
     DO
-        I C@ SPRITE-PAT-PORT P!
-    LOOP
-;
+        16 I + I 
+        DO
+            I C@  SPRITE-PAT-PORT P!
+        LOOP
+    16 +LOOP
+;    
 
 \ ===========================================================================
 \ 5. Set sprite position and visibility
@@ -113,7 +143,6 @@ DECIMAL
 \ X=0 hides the sprite off the left edge; X=8 is the normal left edge.
 \ Y=0 is the top edge.
 
-HEX
 : SPRITE-SHOW  ( x y slot -- )
     SPRITE-SLOT-PORT P!         \ select slot
     SWAP SPLIT SWAP             \ y_hi y_lo x
@@ -123,11 +152,8 @@ HEX
     $C0 SPRITE-ATTR-PORT P!     \ byte 3 : $C0 = visible
 ;
 
-DECIMAL
-
 \ Hide a sprite by writing 0 to byte 3 (disabled).
 : SPRITE-HIDE  ( slot -- )
-    HEX
     SPRITE-SLOT-PORT P!
     0 SPRITE-ATTR-PORT P!   \ x
     0 SPRITE-ATTR-PORT P!   \ y
@@ -136,40 +162,27 @@ DECIMAL
 ;
 
 \ ===========================================================================
-\ 6. Demo: create a simple sprite pattern (8x8 block)
+\ 6. Demo: create a simple sprite 
 \ ===========================================================================
 \
-\ This example uses sprite slot 1.  The pattern is a 16x16 solid block.
+\ This example uses sprite slot 0.  The pattern is a 16x16 mouse-arrow.
 \ Pixel color 255 = white in the default palette.
 \ Pixel color 0 = usually the global transparency color.
 
-HEX
-$14 REG@ CONSTANT TRANS-COLOR   \ get current transparency index
+\ directly change Sprite #0
 
-CREATE BLOCK-PAT  256 ALLOT
-
-: MAKE-BLOCK-PAT  ( -- )
-    BLOCK-PAT 256 ERASE   \ fill with transparency (0 = transparent)
-    \ fill inner 8x8 area with color 255 (white)
-    16 4 DO              \ rows 4..11
-        16 4 DO          \ cols 4..11
-            255 BLOCK-PAT I 16 * J + + C!
-        LOOP
-    LOOP
-;
-
-DECIMAL
-
-: BLOCK-SPRITE-DEMO  ( -- )
-    MAKE-BLOCK-PAT
+: SPRITE-DEMO  ( -- )
+    MOUSE-FACE  0  SPRITE-PAT-UPLOAD   \ upload pattern to slot 1
     SPRITES-ON
-    BLOCK-PAT 1 SPRITE-PAT-UPLOAD   \ upload pattern to slot 1
-    100 80 1 SPRITE-SHOW            \ show at (100, 80)
-    ." Block sprite at (100,80).  Press BREAK." CR
-    BEGIN  ?TERMINAL  UNTIL
+    5120 0 DO    
+        I 20 / DUP 2/
+        0 SPRITE-SHOW    
+    LOOP
     1 SPRITE-HIDE
     SPRITES-OFF
 ;
+
+.( Try SPRITE-DEMO )
 
 \ ===========================================================================
 \ 7. Simple tests (requires NEEDS TESTING)

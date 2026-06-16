@@ -8,7 +8,7 @@
 \ clock speed is controlled via register $07 through the SPEED! and
 \ SPEED@ wrapper words.
 \
-\ Reference: sec.8
+\ Reference: sec.3
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -27,6 +27,8 @@ NEEDS REG!
 NEEDS REG@
 NEEDS SPEED!
 NEEDS SPEED@
+NEEDS ms
+
 
 \ ===========================================================================
 \ 1. REG! and REG@ -- access Next registers
@@ -41,7 +43,7 @@ NEEDS SPEED@
 \   Read  value from port $253B               -- for REG@
 \
 \ Example: read machine ID (should return $08 for ZX Next)
-\   HEX $00 REG@ .      \ should print 8
+\   $00 REG@ .      \ should print 8
 \
 \ Example: write then read (round-trip test on reg $05, LED reg)
 \   $AA $05 REG!
@@ -96,7 +98,6 @@ NEEDS SPEED@
 \ 4. Demo: read and display system information
 \ ===========================================================================
 
-HEX
 
 : .NEXT-INFO  ( -- )
     CLS
@@ -110,13 +111,12 @@ HEX
     ." Trans. color(reg $14): " $14 REG@ U. CR
 ;
 
-DECIMAL
+.( Try .NEXT-INFO )
 
 \ ===========================================================================
 \ 5. Demo: speed switching with timing measurement
 \ ===========================================================================
 
-NEEDS ms
 
 : SPEED-DEMO  ( -- )
     ." Current speed: " SPEED@ . CR
@@ -139,7 +139,6 @@ NEEDS ms
 \ Example: enable Turbosound (bit 1 of reg $08) without
 \ affecting other bits:
 
-HEX
 : ENABLE-TURBOSOUND  ( -- )
     $08 REG@          \ read current value
     %00000010 OR      \ set bit 1
@@ -151,7 +150,7 @@ HEX
     %11111101 AND     \ clear bit 1
     $08 REG!
 ;
-DECIMAL
+
 
 \ ===========================================================================
 \ 7. Demo: read/write round-trip test
@@ -161,7 +160,6 @@ DECIMAL
 \ saves the current value, writes a test pattern, reads it back,
 \ then restores the original.
 
-HEX
 : REG-ROUNDTRIP  ( -- )
     $06 REG@ >R               \ save current value
     $55 $06 REG!              \ write test pattern
@@ -170,7 +168,7 @@ HEX
     $06 REG@ ." Wrote $AA, read: " U. CR
     R> $06 REG!               \ restore
 ;
-DECIMAL
+
 
 \ ===========================================================================
 \ 8. Simple tests (requires NEEDS TESTING)

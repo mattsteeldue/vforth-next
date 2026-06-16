@@ -18,7 +18,10 @@
 \   NEWTASK 044 TUTORIAL
 \
 
-MARKER NEWTASK
+\ Auxiliary forget-anchor (NOT named NEWTASK).  It is placed before
+\ NEEDS MOUSE so it survives the FORGET-MOUSE marker that NO-MOUSE
+\ runs, and can therefore clean up the tutorial afterwards.
+MARKER FORGET-TUT
 
 CR
 .( --- Tutorial 044: Mouse input loaded. ) CR
@@ -26,6 +29,16 @@ CR
 
 NEEDS MOUSE
 NEEDS TO
+
+\ Unload word.  Unlike the other tutorials, NEWTASK here is a colon
+\ word, not the marker itself.  It first calls NO-MOUSE -- which hides
+\ the cursor (0 MOUSE!), disables the custom Forth ISR (ISR-OFF, so the
+\ per-frame mouse interrupt no longer fires) and forgets the MOUSE
+\ module -- then runs the auxiliary marker FORGET-TUT to forget the
+\ rest of this tutorial (and the anchor itself), leaving a clean state.
+: NEWTASK  ( -- )
+    NO-MOUSE
+    FORGET-TUT ;
 
 \ ===========================================================================
 \ 1. Initialisation
@@ -179,16 +192,24 @@ NEEDS GRAPHICS
 ;
 
 \ ===========================================================================
-\ 9. NO-MOUSE cleanup
+\ 9. Unloading: NEWTASK and NO-MOUSE
 \ ===========================================================================
 \
-\ When you run NO-MOUSE, the MARKER runs FORGET-MOUSE which:
-\   - calls ISR-OFF to disable interrupts
-\   - forgets all mouse definitions
-\   - sprite slot 0 remains with the arrow pattern but is hidden
+\ NO-MOUSE (defined in lib/MOUSE.f) performs the mouse-side cleanup:
+\   - 0 MOUSE!   hides the cursor sprite
+\   - ISR-OFF    disables the custom Forth ISR (the per-frame mouse
+\                interrupt stops firing; interrupts return to mode 1,
+\                the standard ROM keyboard interrupt)
+\   - FORGET-MOUSE  forgets all mouse definitions (and everything
+\                loaded after them, i.e. this tutorial's demos)
 \
-\ After NO-MOUSE, interrupts are in mode 1 (standard ROM keyboard
-\ interrupt) and the Forth ISR is disabled.
+\ NEWTASK (defined near the top of this file) wraps that: it calls
+\ NO-MOUSE first, so the mouse is powered down and the custom
+\ interrupts are inhibited, then runs the auxiliary marker FORGET-TUT
+\ to forget the remaining tutorial words and the anchor itself.  So a
+\ single NEWTASK both shuts the mouse off and unloads the tutorial,
+\ leaving the dictionary as it was before 044 was loaded.  Reload with
+\ 044 TUTORIAL.
 
 \ ===========================================================================
 \ 10. Simple tests (requires NEEDS TESTING)

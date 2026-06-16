@@ -103,8 +103,10 @@ CREATE TUT-TABLE
     H" tutorial/049-interrupts.f"      ,
     H" tutorial/050-afxframe.f"        ,
     H" tutorial/051-keyboard-matrix.f" ,
+    H" tutorial/052-modular-graphics.f" ,
+    H" tutorial/053-more-sprites.f"    ,
 
-51 CONSTANT TUT-MAX
+53 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------

@@ -61,7 +61,7 @@ NEEDS SAVE-BYTES
 \
 \ Example: load 4096 bytes at $8000 from "data.bin":
 \   PAD" data.bin"
-\   HEX $8000 $1000 LOAD-BYTES
+\   $8000 $1000 LOAD-BYTES
 \
 \ Example: load a file to PAD (careful -- PAD is small):
 \   PAD" config.txt"
@@ -85,7 +85,7 @@ NEEDS SAVE-BYTES
 \
 \ Example: save the first 256 bytes of screen memory to "snap.bin":
 \   PAD" snap.bin"
-\   HEX $4000 $100 SAVE-BYTES
+\   $4000 $100 SAVE-BYTES
 
 \ ===========================================================================
 \ 4. SAVE -- flush modified Forth screens to disk
@@ -103,7 +103,6 @@ NEEDS SAVE-BYTES
 \ 5. Demo: save and reload a buffer
 \ ===========================================================================
 
-DECIMAL
 
 CREATE DATA-BUF  256 ALLOT
 

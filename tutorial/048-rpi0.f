@@ -24,7 +24,7 @@ CR
 .( --- Tutorial 048: Raspberry Pi Zero bridge loaded. ) CR
 .(     Type NEWTASK to unload.                        ) CR
 
-NEEDS UART-SYS
+NEEDS RPi0
 
 \ ===========================================================================
 \ 1. Hardware setup
@@ -134,14 +134,19 @@ NEEDS UART-SYS
 \ The following definition sends "uname -a" to the RPi0, waits for
 \ the response, and returns.
 
-NEEDS MS
-
-: SEND-LINUX  ( -- )
-    ." Sending 'uname -a' to RPi0..." CR
+: PREPARE-LINUX  ( -- a n )
     RPI0-INIT
-    S" uname -a" UART-SEND-TEXT
+    S" uname -a" 
+;
+
+: SEND-LINUX  ( a n -- )
+    ." Sending 'uname -a' to RPi0..." CR
+    UART-SEND-TEXT
     UART-SEND-CR
-    200 ms                     \ wait for response
+;
+
+: RECEIVE-LINUX ( -- )
+    CR CR ." Press [BREAK] to stop" CR CR
     BEGIN
         ?UART-BYTE-READY IF
             UART-RX-BYTE EMIT
@@ -150,6 +155,14 @@ NEEDS MS
     UNTIL
     CR
 ;
+
+
+: DEMO
+    PREPARE-LINUX
+    SEND-LINUX
+    RECEIVE-LINUX
+;
+
 
 \ ===========================================================================
 \ 7. UART variables and buffers

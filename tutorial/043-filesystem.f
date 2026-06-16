@@ -9,7 +9,7 @@
 \ important when using NEEDS, INCLUDE, LOAD-BYTES, and BMP-LOAD,
 \ all of which resolve filenames relative to the current directory.
 \
-\ Reference: sec.9
+\ Reference: sec.3.3
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -26,6 +26,7 @@ CR
 
 NEEDS CD
 NEEDS PWD
+NEEDS DIR
 
 \ ===========================================================================
 \ 1. PWD -- print working directory
@@ -72,6 +73,13 @@ NEEDS PWD
 \ Usage:
 \   NEEDS DIR
 \   DIR
+\
+\ When a directory holds many entries, the listing scrolls and the
+\ first lines roll off the top of the screen.  Between entries DIR
+\ polls ?ESCAPE (one of the first NEEDS in lib/DIR.f): while EDIT
+\ (SHIFT+1) is held, ?ESCAPE stays true and DIR spins in place, so
+\ scrolling is suspended and the first entries stay in view; release
+\ the key and the listing continues.
 
 \ ===========================================================================
 \ 4. Filesystem layout on a typical ZX Next SD card

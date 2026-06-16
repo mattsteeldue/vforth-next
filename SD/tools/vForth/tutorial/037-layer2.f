@@ -9,6 +9,10 @@
 \ vectored primitives for this mode; PLOT, DRAW-LINE, CIRCLE, and
 \ XPLOT all work in Layer 2 the same way as in Standard Spectrum  mode.
 \
+\ See also tutorial 052 (modular graphics): to save dictionary space
+\ you can load only this mode with  NEEDS LAYER2-GRAPHICS  instead of
+\ the whole library, getting the same PLOT/DRAW-LINE/CIRCLE here.
+\
 \ Coordinate convention (same as GRAPHICS.f throughout):
 \   x = vertical   (row 0 = top,   191 = bottom)
 \   y = horizontal (col 0 = left,  255 = right)

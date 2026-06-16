@@ -3,5 +3,11 @@
 NEEDS GRAPHICS includes a few definitions.
   LAYER0  LAYER10  LAYER11  LAYER12  LAYER13  LAYER2
   ATTRIB  CIRCLE   PLOT     PAINT    DRAW-LINE
-  .INK    .PAPER   .BRIGHT  .FLASH 
+  .INK    .PAPER   .BRIGHT  .FLASH
   .OVER   .BORDER  .INVERSE
+
+To load just one mode (smaller dictionary use)
+NEEDS LAYERxx-GRAPHICS instead, e.g.
+  NEEDS LAYER2-GRAPHICS
+See HELP GRAPHICS-COMMON.
+

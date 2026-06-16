@@ -321,8 +321,13 @@ HEX
 \ ____________________________________________________________________
 \
 \ This is valid for Layer 1,0 and Layer 2 mode
+\ out-of-range coordinates return -1 (and never map a wrong MMU7 page)
 : L1-POINT  ( x y -- c )
-    PIXELADD C@
+    COORD-CHECK IF
+        PIXELADD C@
+    ELSE
+        2DROP -1    \ becasuse 0 is a valid color (black) 
+    THEN
 ;
 
 \ ____________________________________________________________________
@@ -433,12 +438,21 @@ HEX
 \
 \ Layer 2 PLOT
 \ ported in machine code for fast execution
-\ no coord-checking is done.
+\ out-of-range coordinates are silently skipped (no wrap, no corruption)
 CODE L2-PLOT  ( x y -- )
     HEX
     D9 C,             \ exx
     E1 C,             \ pop  hl|    \ horizontal y-coord, only L is significant
     D1 C,             \ pop  de|    \ vertical x-coord, only E is significant
+    7C C,             \ ld   a'| h| \ y high byte
+    B7 C,             \ ora  a|     \ y in 0..255 ?
+    20 C, 1C C,       \ jrnz SKIP   \ out of range -> skip plot
+    7A C,             \ ld   a'| d| \ x high byte
+    B7 C,             \ ora  a|     \ x in 0..255 ?
+    20 C, 18 C,       \ jrnz SKIP
+    7B C,             \ ld   a'| e| \ x low byte
+    FE C, 0C0 C,      \ cp   0C0    \ x < 192 ?
+    30 C, 13 C,       \ jrnc SKIP   \ x >= 192 -> skip plot
     7B C,             \ ld   a'| e| \ calc which 8K page must be fitted in MMU7
     07 C,             \ rlca
     07 C,             \ rlca
@@ -451,10 +465,10 @@ CODE L2-PLOT  ( x y -- )
     67 C,             \ ld   h'| a|
     3A C,             \ lda()
     ' ATTRIB >BODY ,  \     address
-    77 C,
-    D9 C,             \ exx
+    77 C,             \ ld(hl)a
+    D9 C,             \ SKIP: exx
     DD C, E9 C,       \ next
-    SMUDGE            \ c; 
+    SMUDGE            \ c;
 
 \ ____________________________________________________________________
 \
@@ -496,14 +510,23 @@ DECIMAL
 
 \ ____________________________________________________________________
 \
-\ Layer 2 PLOT
+\ Layer 2 XPLOT
 \ ported in machine code for fast execution
-\ no coord-checking is done.
+\ out-of-range coordinates are silently skipped (no wrap, no corruption)
 CODE L2-XPLOT  ( x y -- )
     HEX
     D9 C,             \ exx
     E1 C,             \ pop  hl|    \ horizontal y-coord, only L is significant
     D1 C,             \ pop  de|    \ vertical x-coord, only E is significant
+    7C C,             \ ld   a'| h| \ y high byte
+    B7 C,             \ ora  a|     \ y in 0..255 ?
+    20 C, 1D C,       \ jrnz SKIP   \ out of range -> skip plot
+    7A C,             \ ld   a'| d| \ x high byte
+    B7 C,             \ ora  a|     \ x in 0..255 ?
+    20 C, 19 C,       \ jrnz SKIP
+    7B C,             \ ld   a'| e| \ x low byte
+    FE C, 0C0 C,      \ cp   0C0    \ x < 192 ?
+    30 C, 14 C,       \ jrnc SKIP   \ x >= 192 -> skip plot
     7B C,             \ ld   a'| e| \ calc which 8K page must be fitted in MMU7
     07 C,             \ rlca
     07 C,             \ rlca
@@ -517,10 +540,10 @@ CODE L2-XPLOT  ( x y -- )
     3A C,             \ lda()
     ' ATTRIB >BODY ,  \     address
     2F C,             \ cpl
-    77 C,
-    D9 C,             \ exx
+    77 C,             \ ld(hl)a
+    D9 C,             \ SKIP: exx
     DD C, E9 C,       \ next
-    SMUDGE            \ c; 
+    SMUDGE            \ c;
 
 \ ____________________________________________________________________
 
