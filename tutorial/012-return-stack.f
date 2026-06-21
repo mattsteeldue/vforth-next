@@ -24,6 +24,7 @@
 \
 \ All three words (>R, R>, R@) are in the core; no NEEDS required.
 \
+\ Starting FORTH (Brodie): no direct counterpart in screens 800-905
 \ Reference: sec.2.12.2
 \
 \ Load from a clean session:

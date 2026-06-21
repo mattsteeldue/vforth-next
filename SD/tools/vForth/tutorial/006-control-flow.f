@@ -15,6 +15,7 @@
 \   THEN  =  ENDIF   (both close an IF structure)
 \   END   =  UNTIL   (both close a BEGIN ... f loop)
 \
+\ Starting FORTH (Brodie): Ch.4  |  vForth screens 816-820
 \ Reference: sec.2.12.7
 \
 \ Load from a clean session:

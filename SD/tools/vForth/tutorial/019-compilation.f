@@ -24,6 +24,7 @@
 \ Alternative: tutorial/020-standard.f shows the standard Forth approach
 \ using POSTPONE and COMPILE, for those who prefer higher-level abstractions.
 \
+\ Starting FORTH (Brodie): Ch.11  |  vForth screens 898-905
 \ Reference: sec.2.12.4
 \
 \ Load from a clean session:

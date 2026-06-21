@@ -16,6 +16,7 @@
 \ the last ENDOF, the test value is still on the stack and is
 \ available in the default section.  ENDCASE always drops it.
 \
+\ Starting FORTH (Brodie): no Brodie counterpart (Brodie uses nested IF)
 \ Reference: sec.2.12.7
 \
 \ Load from a clean session:

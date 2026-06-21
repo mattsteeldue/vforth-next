@@ -19,6 +19,7 @@
 \ itself warns that deeply nested DO loops are poor Forth style  --  factor
 \ instead.
 \
+\ Starting FORTH (Brodie): Ch.6  |  vForth screens 826-837
 \ Reference: sec.2.12.7
 \
 \ Load from a clean session:

@@ -25,6 +25,7 @@
 \ All four require NEEDS: CATCH, THROW, ABORT" (already in 006),
 \ and ABORT is core.
 \
+\ Starting FORTH (Brodie): no Brodie counterpart (vForth extension)
 \ Reference: sec.5
 \
 \ Load from a clean session:

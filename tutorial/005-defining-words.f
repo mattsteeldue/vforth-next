@@ -14,6 +14,7 @@
 \   - VALUE and TO require NEEDS VALUE and NEEDS TO respectively.
 \   - +! (add-to-memory) is a built-in useful shorthand for many patterns.
 \
+\ Starting FORTH (Brodie): Ch.1, Ch.8  |  vForth screens 800-804, 850-867
 \ Reference: sec.2.12.9, 6.1 (CONSTANT, VARIABLE, VALUE)
 \
 \ Load from a clean session:

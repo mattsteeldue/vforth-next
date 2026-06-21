@@ -13,6 +13,7 @@
 \ These are the building blocks of any Forth meta-interpreter, REPL
 \ extension, or scripting layer.
 \
+\ Starting FORTH (Brodie): Ch.11 (partial)  |  vForth screen 905 (LOOPS)
 \ Reference: sec.2.12.6
 \
 \ Load from a clean session:

@@ -24,6 +24,7 @@
 \   : select  ( n -- )
 \       0= IF  ['] action1  ELSE  ['] action2  THEN  IS HOOK ;
 \
+\ Starting FORTH (Brodie): Ch.9  |  vForth screens 868-876
 \ Reference: sec.2.12.9
 \
 \ Load from a clean session:

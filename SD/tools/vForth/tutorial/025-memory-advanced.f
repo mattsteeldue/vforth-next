@@ -24,6 +24,7 @@
 \   UNUSED   -- free dictionary bytes
 \   ROOM     -- print free dictionary bytes
 \
+\ Starting FORTH (Brodie): no direct counterpart in screens 800-905
 \ Reference: sec.2.12.7, 4.5, 6.3
 \
 \ Load from a clean session:

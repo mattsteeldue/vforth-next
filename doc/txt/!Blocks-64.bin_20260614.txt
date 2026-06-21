@@ -1,5 +1,5 @@
 File: ..\!Blocks-64.bin
-Created: Sun Jun 14 19:19:22 2026
+Created: Sun Jun 21 22:15:22 2026
 
 See index at end of file.
 
@@ -10395,14 +10395,14 @@ Scr# 877
 Scr# 878 
   0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   1 
-  2 \    |       |      |      |      |       |
+  2 \    |       |       |       |       |       |
   3   : "LABEL"
-  4   ." REJECT  SMALL  MEDIUM LARGE  XTRA LRGERROR   " ;
+  4   ." REJECT  SMALL   MEDIUM  LARGE   XTRA LRGERROR   " ;
   5 
-  6 ' "LABEL"  5 +
+  6 ' "LABEL"  >BODY  3 +
   7 16 + 8 TYPE         \ MEDIUM
   8 
-  9   : LABEL   8 *  ['] "LABEL" 5 + + 8 TYPE SPACE ;
+  9   : LABEL  8 *  ['] "LABEL" >BODY 3 + + 8 TYPE SPACE ;
  10 
  11   : LABEL  0 MAX 5 MIN  LABEL ;
  12 
@@ -10412,20 +10412,20 @@ Scr# 878
 
 Scr# 879 
   0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
-  1 
-  2 \ CR 214 BLOCK  512 + 64 TYPE
-  3 
-  4 CR 214 BLOCK 64 -TRAILING TYPE
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
+  1 \
+  2 \ In vForth a BLOCK is 512 bytes (instead of 1024) and
+  3 \ two BLOCKS forms a Screen. To access a Screen' BLOCKs
+  4 \ you must simply double the Screen number.
+  5 \
+  6 \ Screen #n uses BLOCKs  2n and 2n+1
+  7 \
+  8 \ To print the first line of this Screen you can use:
+  9 \
+ 10   CR  879 2*    BLOCK  64 -TRAILING TYPE
+ 11 \
+ 12 \ but see what does the following:
+ 13 \
+ 14   CR  879 2* 1+ BLOCK  64 -TRAILING TYPE
  15 
 
 Scr# 880 
@@ -10438,7 +10438,7 @@ Scr# 880
   6   : 2adj   20  buzzword ;
   7   : noun   40  buzzword ;
   8   : phrase     1adj SPACE 2adj SPACE noun ;
-  9   : paragraph  CR  ." by using "
+  9   : paragraph  CR  ." By using "
  10     phrase    ."  coordinated with "
  11     phrase    ."  it is possible for even the most "
  12     phrase    ."  to function as "
@@ -10464,52 +10464,250 @@ Scr# 881
  14 
  15 
 
-Scr# 887 
-  0 ( UART Raspberry PI Zero - protocol )
-  1 \ fast read from rpi0
-  2 \ read up to n  non-null bytes to address a
-  3 \
-  4 needs assembler
-  5 needs uart-sys
+Scr# 882 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \
+  2 \ Screen #n uses BLOCKs  2n and 2n+1
+  3 : SCREENS ( count -- )
+  4    SCR @ +  SCR @  DO  I LIST  KEY DROP
+  5    LOOP ;
   6 \
-  7 code uart-get-block ( a n -- )
-  8   di
-  9   exx
- 10   pop     de|   \ number of bytes
- 11   pop     hl|   \ memory address
- 12   ldx     bc|   uart-rx-port  nn,
- 13 \
- 14 -->
+  7 : BLOCKS  ( count -- )
+  8    CR 2/ SCR @ +  SCR @  DO
+  9      I 2*    BLOCK 512 TYPE
+ 10      I 2* 1+ BLOCK 512 TYPE
+ 11      KEY DROP
+ 12    LOOP ;
+ 13 
+ 14 
  15 
 
+Scr# 883 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \
+  2 \ Screen #n uses BLOCKs  2n and 2n+1
+  3 : SCREENS ( count -- )
+  4    SCR @ +  SCR @  DO  I LIST
+  5      KEY 13 = IF LEAVE THEN
+  6    LOOP ;
+  7 \
+  8 NEEDS TEXT \ accepts text to PAD as counted-string
+  9 CREATE MY-NAME  40 ALLOT
+ 10 : I'M   BL TEXT  PAD MY-NAME 40 CMOVE ;
+ 11 \
+ 12 : GREET  ." HELLO, " MY-NAME COUNT TYPE
+ 13          ." , I SPEAK FORTH." ;
+ 14 
+ 15 
+
+Scr# 884 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Form love letter
+  2 VARIABLE NAME 12 ALLOT    VARIABLE EYES 10 ALLOT
+  3 VARIABLE ME   12 ALLOT    NEEDS TEXT
+  4 : VITALS   [CHAR] , TEXT  PAD NAME 14 CMOVE
+  5            [CHAR] , TEXT  PAD EYES 12 CMOVE
+  6                   1 TEXT  PAD  ME  14 CMOVE ;
+  7 : LETTER   CLS
+  8      ." DEAR " NAME COUNT TYPE  [CHAR] , EMIT
+  9   CR ." I GO TO HEAVEN WHENEVER I SEE YOUR DEEP "
+ 10                EYES COUNT TYPE ." EYES.  CAN "
+ 11   CR ." YOU GO TO THE MOVIES FRIDAY? "
+ 12   CR       30 SPACES  ." LOVE,"
+ 13   CR       30 SPACES  ME COUNT TYPE
+ 14   CR ." P.S.  WEAR SOMETHING " EYES COUNT TYPE
+ 15      ." TO SHOW OFF THOSE EYES! " ;
+
+Scr# 885 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \
+  2 NEEDS TEXT   NEEDS EXPECT
+  3 \
+  4 : GREET  CR ." WHAT'S YOUR NAME? " S0 @  40 EXPECT
+  5        0 >IN !  1 TEXT  CR ." HELLO, "
+  6     PAD COUNT TYPE  ." , I SPEAK FORTH. " ;
+  7 \
+  8 \ vForth has (COMPARE) that is quite similar to -TEXT
+  9 : -TEXT        ( a1 u a2 -- f )
+ 10   SWAP (COMPARE) ;
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 886 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 1. Enter some famous quotation into an available
+  2 \ screen# say 887. Now define a word caled CHANGE which takes
+  3 \ two ASCII values and change all the occurrence within such a
+  4 \ screen of the first character into the second character.
+  5 \ For example:  CHAR a CHAR A CHANGE
+  6 
+  7 : CHANGE-BLK ( c1 c2 n -- )
+  8   >R SWAP R> BLOCK 512 OVER + SWAP
+  9   DO
+ 10     2DUP I C@ = IF I C! ELSE DROP THEN
+ 11   LOOP 2DROP ;
+ 12 : CHANGE ( c1 c2 -- )
+ 13   2DUP 999 2*    CHANGE-BLK
+ 14        999 2* 1+ CHANGE-BLK ;
+ 15 
+
+Scr# 887 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 And therefore as a stranger give it welcome.
+  2 There are more things in heaven and earth, Horatio,
+  3 Than are dreamt of in your philosophy. But come;
+  4 Here, as before, never, so help you mercy,
+  5 How strange or odd soe'er I bear myself,
+  6 As I perchance hereafter shall think meet
+  7 To put an antic disposition on,
+  8 That you, at such times seeing me, never shall,
+  9 With arms encumber'd thus, or this headshake,
+ 10 Or by pronouncing of some doubtful phrase,
+ 11 As 'Well, well, we know,' or 'We could, an if we would,'
+ 12 Or 'If we list to speak,' or 'There be, an if they might,'
+ 13 Or such ambiguous giving out, to note
+ 14 That you know aught of me: this not to do,
+ 15 So grace and mercy at your most need help you, Swear.
+
 Scr# 888 
-  0 ( UART Raspberry PI Zero - protocol )
-  1 here
-  2   in(c)   a'|
-  3   ora      a|
-  4   jrf     z'|   holdplace
-  5     ld   (hl)'|   a|
-  6     incx    hl|
-  7 here disp,
-  8   decx    de|
-  9   ld      a'|   d|
- 10   ora      e|
- 11   jrf    nz'|   back,
- 12   exx
- 13   ei
- 14   next
- 15 c;
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 2. Define a word called FORTUNE which will print a
+  2 \ prediction at your terminal, such as "You will receive a
+  3 \ good news in the mail". The prdiction should be chosen at
+  4 \ random from a list of sixteen or fewer predictions.
+  5 NEEDS CHOOSE
+  6 : FORTUNE   CR  8 CHOOSE 64 *  888 2* 1+ BLOCK +
+  7             64 -TRAILING TYPE SPACE ;   EXIT ( ! )
+  8  A wonderful surprise awaits you soon.
+  9  Embrace the new opportunities ahead.
+ 10  Your kindness will return multiplied.
+ 11  Success is closer than you think.
+ 12  Love and joy are entering your life.
+ 13  A happy journey begins with one step.
+ 14  Great things are coming your way.
+ 15  Your hard work will soon be rewarded.
 
 Scr# 889 
-  0 ( UART Raspberry PI Zero - protocol )
-  1 sh . go
-  2 test
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 3. According to Oriental legend, [... snipped ...]
+  2 \ Here is the orde of the cycle:
+  3 \    Rat Ox Tiger Rabbit Dragon Snake
+  4 \    Horse Ram Monkey Cock Dog Boar
+  5 \ Write a word called .ANIMAL that types the name of the
+  6 \ animal corresponding to its position in the cycle as
+  7 \ listed here e.g. 0 .ANIMAL RAT ok  [... snipped ...]
+  8 NEEDS EXPECT   CREATE ANIMALS    ," RAT   OX    TIGER RABBITDRAG
+  9 ONSNAKE HORSE RAM   MONKEYCOCK  DOG   BOAR  "
+ 10 : .ANIMAL 6 *  ['] ANIMALS 4 +  + 6 -TRAILING TYPE ;
+ 11 : (JUNEESHEE) ( yr -- )
+ 12    ." YOU WERE BORN IN THE YEAR OF THE "
+ 13    1900 - 12 MOD .ANIMAL  [CHAR] . EMIT  CR ;
+ 14 : JUNEESHEE  CR ." IN WHAT YEAR WERE YOU BORN? "
+ 15   S0 @ 4 EXPECT  0 >IN  ! 1 WORD  NUMBER +- CR (JUNEESHEE) ;
+
+Scr# 890 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 4. Rewrite the definition of LETTER that appears
+  2 \ in this chapter so that it uses names and pesonal descriptions
+  3 \ that have been edited into a block, rather than entered into
+  4 \ character arrays. In this way, you can keep a file on many
+  5 \ "prospects" and produce a letter for any one person with the
+  6 \ appropriate descriptions, just by supplying an argument to
+  7 \ LETTER, as in 1 LETTER
+  8 \ Now define LETTERS so that it prints one letter for each
+  9 \ person in your file.
+ 10 \
+ 11 : NAME   64 *  891 2* 1+ BLOCK +      24 -TRAILING TYPE ;
+ 12 : HAIR   64 *  891 2* 1+ BLOCK + 24 + 20 -TRAILING TYPE ;
+ 13 : EYES   64 *  891 2* 1+ BLOCK + 44 + 20 -TRAILING TYPE ;
+ 14 -->  \ continue compiling to the next Screen
+ 15 
+
+Scr# 891 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 : LETTER   CR CR DUP DUP
+  2      ." DEAR " NAME ." ," CR
+  3 CR ." YOU'RE THE ONLY ONE FOR ME.  LET ME RUN MY FINGERS "
+  4 CR ." THROUGH YOUR NICE " HAIR ."  HAIR.  LET ME LOOK INTO "
+  5 CR ." YOUR DEEP " EYES ."  EYES. " ;
+  6 : LETTERS  4 0 DO I LETTER LOOP ; EXIT
+  7 \
+  8 LATICIA                 BLACK               BROWN
+  9 ALICE                   BLONDE              BLUE
+ 10 STACEY                  BROWN               HAZEL
+ 11 BARBARA                 BROWN               GREEN
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 892 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 5. In this exercise you will create and use a
+  2 \ virtual array, that is, an array which resides on the disk
+  3 \ but which is referenced like a memory-resident array (with
+  4 \ @ and !).
+  5 \ Firt select an unused block in your range of assigned blo-
+  6 \ cks.  There can be no text on this block; binary data will
+  7 \ be stored in it. Put this block number in a variable. Then
+  8 \ define an access  word which accepts a cell subscript from
+  9 \ the stack, then computes the block number corresponding to
+ 10 \ this subscripted cell. This access word should also call
+ 11 \ UPDATE. Test your work so far.
+ 12 VARIABLE #START    15000 2* #START !
+ 13 : ELEMENT ( n -- a ) 2* 512 /MOD #START @ + BLOCK + UPDATE ;
+ 14 : INIT-ARRAY ( -- ) 500 0 DO  I  I ELEMENT   ! LOOP ;
+ 15 : .ARRAY ( n -- )  0 DO  CR I . SPACE  I ELEMENT ?  LOOP ;
+
+Scr# 893 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 5. (continued from previous screen)
+  2 \ Next use the first cell as a count of how many data items
+  3 \ are stored in the array. Define a word PUT which will
+  4 \ store a value into the next available cell of the array.
+  5 \ Define a display routine which will print the stored
+  6 \ in the array.
+  7 \
+  8 VARIABLE #START    15000 2* #START !
+  9 : AVAILABLE  ( -- addr ) #START @ BLOCK UPDATE ;
+ 10 0 AVAILABLE !
+ 11 : ELEMENT ( index -- addr )
+ 12   1+ CELLS B/BUF /MOD #START @ + BLOCK + UPDATE ;
+ 13 : PUT ( value -- ) AVAILABLE @ ELEMENT ! 1 AVAILABLE +! ;
+ 14 : SHOW ( -- ) AVAILABLE @ 0 DO CR I . I ELEMENT ? LOOP ;
+ 15 -->
+
+Scr# 894 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 5. (continued from previous screen)
+  2 \ Now use this virtual array facility to define a word
+  3 \ ENTER which will accept pairs of numbers and store them in
+  4 \ the array. Finally, define TABLE to print the data entered
+  5 \ above, eight numbers per line.
+  6 \
+  7 NEEDS U.R
+  8 \
+  9 : ENTER ( value1 value2 -- ) SWAP PUT PUT ;
+ 10 \
+ 11 : TABLE AVAILABLE @ ?DUP IF
+ 12   CR 0 DO  I 8 MOD  0= IF CR THEN
+ 13            I ELEMENT @  8 U.R  LOOP CR
+ 14   THEN ;
+ 15 
+
+Scr# 895 
+  0 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  1 \ Problem 5. (continued from previous screen)
+  2 VARIABLE #START    15000 2* #START !
+  3 : AVAILABLE  ( -- addr ) #START @ BLOCK UPDATE ;
+  4 0 AVAILABLE !
+  5 : ELEMENT ( index -- addr )
+  6   1+ CELLS B/BUF /MOD #START @ + BLOCK + UPDATE ;
+  7 : PUT ( value -- ) AVAILABLE @ ELEMENT ! 1 AVAILABLE +! ;
+  8 : SHOW ( -- ) AVAILABLE @ 0 DO CR I . I ELEMENT ? LOOP ;
   9 
  10 
  11 
@@ -10518,143 +10716,143 @@ Scr# 889
  14 
  15 
 
-Scr# 890 
-  0 ( UART Raspberry PI Zero - protocol )
-  1 code uart-get-block ( a -- )
-  2 hex f3 c, d9 c,       \ di   exx
-  3     d1 c, e1 c,       \ pop  de    pop  hl
-  4     01 c, 143B ,      \ ld   bc,   uart-rx-port  nn,
-  5     ed c, 78 c,       \ in   a,(c)
-  6     b7 c,             \ or   a
-  7     28 c, 02 c,       \ jr   z,$+2
-  8     77 c, 23 c,       \ ld (hl),a  inc hl
-  9     1b c,             \ dec  de
- 10     7a c, b3 c,       \ ld   a,d   or e
- 11     20 c, f4 c,       \ jr   nz,$-12
- 12     d9 c, fb c,       \ exx  ei
- 13     dd c, e9 c,       \ jp(ix)
- 14 smudge decimal
- 15 
-
-Scr# 891 
-  0 ( UART Raspberry PI Zero - protocol )
-  1 code halt
-  2 hex 76 c,        \ halt
-  3     dd c, e9 c,  \ jp (ix)
-  4 smudge decimal
-  5 \
-  6 : test
-  7   begin
-  8     halt halt
-  9     $4000 #64  erase
- 10     bl uart-wait-b \ wait for BL to sync
- 11     $4000 #64  uart-get-block
- 12     ?terminal
- 13   until
- 14 ;
- 15 
-
-Scr# 892 
-  0 ( trim routine )
-  1 needs assembler
-  2 code ltrim  ( a1 -- b )
-  3   exx
-  4   ldhl()  $5C0B  AA, \ DEFADD
-  5   ldx   bc|  4  NN,   addhl bc|
-  6   ld    e'|  (hl)|
-  7   incx  hl|
-  8   ld    d'|  (hl)|
-  9   incx  hl|
- 10   ld    c'|  (hl)|
- 11   incx  hl|
- 12   ld    b'|  (hl)|
- 13   exdehl
- 14   addhl bc|
- 15 -->
-
-Scr# 893 
-  0 ( trim routine )
-  1   decx  hl|
-  2   ldn   a'|  BL  N,
-  3 here
-  4   cpd
-  5   jrf   z'|  BACK,
-  6   incx  bc|
-  7   push bc|
-  8   exx
-  9   next
- 10   c;
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 895 
-  0 ( RPI0 wrapper )
-  1 needs RPi0
-  2 : this ( -- a n )
-  3   >in @ >R   -2 >in +!  [compile] \
-  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
-  5                            else  b/buf c/l -   then
-  6                            else  span @  then
-  7   blk @ if  blk @ block  else  tib @  then  R> + swap ;
-  8 : send ( a1 n1 a2 n2 -- n3 )
-  9   2dup      uart-send-text  uart-wait-for
- 10             uart-send-cr    uart-wait-cr-lf
- 11   uart-rx-burst 7 -  0 max ;
- 12 : ask  pad 1024 this send ;
- 13 : sh  here 1024 this send drop ;
- 14 : display cr pad swap type cr ;
- 15 
-
 Scr# 896 
-  0 ( RPI0 wrapper )
-  1 needs RPi0
-  2 : ask  ( -- n )
-  3   >in @ >R   -2 >in +!  [compile] \
-  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
-  5                            else  b/buf c/l -   then
-  6                            else  span @  then
-  7   blk @ if  blk @ block  else  tib @  then  R> + swap
-  8 \
-  9   2dup      uart-send-text  uart-wait-for
- 10   pad 100   uart-send-cr    uart-wait-cr-lf
- 11   uart-rx-burst 7 -  0 max ;
- 12 : sh ( -- )
- 13   ask drop ;
- 14 
+  0 \ Brodie - Starting FORTH - Ch.11 - Extending the Compiler
+  1 \ Defining Words: a word whose job is to define new words.
+  2 : CONSTANT  CREATE , DOES> @ ;
+  3 5 CONSTANT FIVE
+  4 FIVE .
+  5 \
+  6 : CHARACTERS
+  7     CREATE        \ creates a new dictionary entry.
+  8     DUP , ALLOT   \ compiles the count n, and the n bytes
+  9   DOES>           \ marks the beginning of run-time code
+ 10     DUP           \ copies the pfa.
+ 11     CELL+         \ advances the address to past the count
+ 12     SWAP @        \ swaps string address with the count
+ 13 ;
+ 14 20 CHARACTERS ME
  15 
 
 Scr# 897 
-  0 ( RPI0 wrapper )
-  1   needs s"  needs ask  needs sh
-  2 \ RPi0-init
-  3 \ uart-wait-prompt
-  4   send echo 'print 2**300' > temp.py
-  5   ask  python temp.py
-  6   pad swap type
-  7 \
-  8 : test
-  9   here 200
- 10   s"  python -c 'print 2**400'  "
- 11   send here swap type
- 12 ;
+  0 \ Brodie - Starting FORTH - Ch.11 - Extending the Compiler
+  1 \ : STRING   CREATE ALLOT  DOES> +  ;
+  2 NEEDS ABORT"
+  3 : STRING CREATE DUP , ALLOT
+  4          DOES> 2DUP @ U< NOT ABORT" RANGE ERROR " + 2+ ;
+  5 30 STRING VALVE
+  6 6 VALVE C@ .
+  7 : ERASED   HERE OVER  ERASE ALLOT ;
+  8 : 0STRING  CREATE ERASED DOES> + ;
+  9 \
+ 10 \ 2D array
+ 11 : ARRAY   ( #rows #col -- )
+ 12   CREATE OVER , * ALLOT
+ 13   DOES>  DUP @ ROT * + + 2+ ;
+ 14 4 4 ARRAY BOARD
+ 15 2 1 BOARD C@
+
+Scr# 898 
+  0 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  1 : STAR   42 EMIT ;
+  2 : .ROW   CR 8 0 DO DUP 128 AND
+  3          IF STAR ELSE SPACE THEN 2* LOOP DROP ;
+  4 : SHAPE  CREATE  8 0 DO C, LOOP
+  5          DOES> DUP 7 + DO I C@ .ROW -1 +LOOP CR ;
+  6 HEX  18 18 3C 5A 99 24 24 24  SHAPE MAN
+  7      81 42 24 18 18 24 42 81  SHAPE EQUIS
+  8      AA AA FE FE 38 38 38 FE  SHAPE CASTLE
+  9 DECIMAL
+ 10 MAN
+ 11 EQUIS
+ 12 CASTLE
  13 
  14 
  15 
 
-Scr# 898 
-  0 ( RPI0 wrapper )
-  1 \ RPi0-init
-  2 
-  3 \ uart-wait-prompt
-  4   send echo 'print 2**300' > temp.py
-  5   ask  python temp.py
-  6   pad swap type
-  7 \
-  8   ask  python -c 'print 2**400'
-  9   pad swap type
+Scr# 899 
+  0 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  1 \ IMMEDIATE marks a word to RUN while compiling.
+  2 \
+  3   : SAY-HELLO   ." HELLO "  ;  IMMEDIATE
+  4   : GREET  SAY-HELLO  ." I SPEAK FORTH " ;   \ HELLO
+  5   GREET                                      \ I SPEAK FORTH
+  6 \
+  7 \ [COMPILE] postpones an immediate word so it is compiled
+  8 \ instead, firing only when the new word later runs:
+  9   : GREETING  [COMPILE] SAY-HELLO ." I SPEAK FORTH " ;
+ 10   GREETING                  \ HELLO I SPEAK FORTH
+ 11 \ vForth also offers the standard POSTPONE ( NEEDS POSTPONE )
+ 12 \
+ 13 
+ 14 
+ 15 
+
+Scr# 900 
+  0 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  1 \ COMPILE lays down the NEXT word's xt at run time, letting
+  2 \ an immediate helper plant code into the definition it is
+  3 \ helping to build.
+  4 : FOUR-MORE  [ 2 2 + ] LITERAL + ;
+  5 10 FOUR-MORE .
+  6 \
+  7 : SAY-HELLO  ." HELLO " ;
+  8 : GREET  [  SAY-HELLO  ]  ." I SPEAK FORTH " ; \ HELLO
+  9   GREET  \ I SPEAK FORTH
+ 10 \
+ 11 : LIST-THIS  [ BLK @ ] LITERAL LIST ;
+ 12 \
+ 13 
+ 14 
+ 15 
+
+Scr# 901 
+  0 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  1 \ Problem 1. Define a defining word named LOADED-BY that
+  2 \ will define words which load a block when they are
+  3 \ executed. Example 6000 LOADED-BY CORRESPONDENCE
+  4 : LOADED-BY   CREATE ,  DOES>  @ LOAD ;
+  5 
+  6 \ Problem 2. Define a defining word BASED. which will create
+  7 \ number output words for specific bases. For example,
+  8 \  16 BASED. H.  would define  H.  to be a word which prints
+  9 \ the top of the stack in hex but does not permanently change
+ 10 \ BASE. e.g.  DECIMAL 17 DUP H. .  ->  11 17
+ 11 : BASED.   CREATE  31 AND ,
+ 12            DOES> @ BASE @ SWAP BASE ! SWAP . BASE ! ;
+ 13 
+ 14 
+ 15 
+
+Scr# 902 
+  0 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  1 \ Problem 3. Define a defining word called PLURAL which
+  2 \ will take the  xt  of a word such as CR or STAR and
+  3 \ create its plural form, such as CRS or STARS. You'll
+  4 \ provide PLURAL with the  xt  of the singular word by using
+  5 \ tick. For instance the phrase   ' CR PLURALS CRS   will
+  6 \ define CRS the same way as though you had defined it
+  7 \   : CRS 0 ?DO CR LOOP ;
+  8 : PLURAL ( adr -- )    CREATE ,
+  9   DOES> @ SWAP 0 ?DO DUP EXECUTE LOOP DROP ;
+ 10 ' CR PLURAL CRS
+ 11 5 CRS
+ 12 : BEEP  7 EMIT 20000 0 DO LOOP ;  ' BEEP PLURAL BEEPS
+ 13 4 BEEPS
+ 14 
+ 15 
+
+Scr# 903 
+  0 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  1 \ Problem 4. The French words for DO and LOOP are TOURNE
+  2 \ and RETOURNE. Using the words DO and LOOP, define TOURNE
+  3 \ and RETOURNE as French "aliases". Now test them by writing
+  4 \ yourself a French loop.
+  5 : TOURNE [COMPILE] DO ; IMMEDIATE
+  6 : RETOURNE [COMPILE] LOOP ; IMMEDIATE
+  7 : TRY  10 0 TOURNE  I .  RETOURNE ;
+  8 \
+  9 
  10 
  11 
  12 
@@ -10662,145 +10860,37 @@ Scr# 898
  14 
  15 
 
-Scr# 899 
-  0 ( Example for THIS definition )
-  1 \
-  2   ASK     echo $BASH_VERSION
-  3   DISPLAY
-  4 \
-  5   ASK     date
-  6   DISPLAY
-  7 \
-  8 \ ASK     date -s 2024-07-13
-  9 \ ASK     date -s 17:30
- 10 \ 2DROP
- 11 \
- 12   ASK     date
- 13   DISPLAY
- 14 
- 15 
-
-Scr# 900 
-  0 ( UART Raspberry PI Zero )
-  1 \ hex 300 6633 ! \ 7 emit pitch
-  2 \
-  3 NEEDS LAYERS                   NEEDS BCOPY
-  4 NEEDS TRUV    NEEDS INVV
-  5 NEEDS ASSEMBLER
-  6 \ NEEDS INTERRUPT
-  7 \
-  8 MARKER DONE
-  9 \
- 10 HEX 5C08 CONSTANT LASTK          \ system variable
- 11     143B CONSTANT UART-RX-PORT
- 12     133B CONSTANT UART-TX-PORT
- 13     153B CONSTANT UART-CT-PORT
- 14 -->
- 15 
-
-Scr# 901 
-  0 ( UART Raspberry PI Zero - setup )
-  1 \ Table of actual clock speeds depending on video mode
-  2 \ These are double precision integers you can read with 2@
-  3 HERE
-  4 DECIMAL \ values are divided by 100 to better handle them
-  5   28.0000   , ,   \ Base VGA timing   28 MHz
-  6   28.5714   , ,   \ VGA setting 1     28.571.429 Hz
-  7   29.4643   , ,   \ VGA setting 2     29.464.286 Hz
-  8   30.0000   , ,   \ VGA setting 3     30 MHz
-  9   31.0000   , ,   \ VGA setting 4     31 MHz
- 10   32.0000   , ,   \ VGA setting 5     32 MHz
- 11   33.0000   , ,   \ VGA setting 6     33 MHz
- 12   27.0000   , ,   \ Digital           27 MHz
- 13 CONSTANT SYS-CLK-ARY
- 14 DECIMAL -->
- 15 
-
-Scr# 902 
-  0 ( UART Raspberry PI Zero - setup )
-  1 HEX
-  2 \ compute actual clock speed depending on video mode
-  3 : SYS-CLOCK ( -- d )
-  4   11 REG@ 7 AND          \ Video timing register: 0-7
-  5   4 * SYS-CLK-ARY + 2@   \ fetch from array created before
-  6 ;
-  7 \ send 14-bits prescalar to UART receive port
-  8 \ prescalar = sysclock / baudrate
-  9 : UART-SET-PRESCALAR ( n -- )
- 10   DUP
- 11   7F AND UART-RX-PORT P!      \ send low 7 bits of 14 bits
- 12   7 RSHIFT                    \ presclar
- 13   80  OR UART-RX-PORT P!      \ send high 7 bits of 14 bits
- 14 ;
- 15 DECIMAL -->
-
-Scr# 903 
-  0 ( UART Raspberry PI Zero - setup )
-  1 DECIMAL
-  2 \ compute prescalar to be used with previous definition
-  3 : UART-BAUD-TO-PRESCALAR ( d -- n )
-  4   100 M/          \ divide BAUD by 100 to able to handle it
-  5   SYS-CLOCK       \ obtain actual system clock speed / 100
-  6   ROT M/
-  7 ;
-  8 \ usage is: 115200. UART-SET-BAUDRATE
-  9 : UART-SET-BAUDRATE ( d -- )
- 10   UART-BAUD-TO-PRESCALAR
- 11   UART-SET-PRESCALAR
- 12 ;
- 13 DECIMAL -->
- 14 
- 15 
-
 Scr# 904 
-  0 ( UART Raspberry PI Zero - setup )
-  1 HEX
-  2 \ Select Raspberry PI Zero UART and set Baudrate
-  3 \
-  4 : PI0-SELECT  ( d -- )
-  5   40 UART-CT-PORT P!    \ select PI Zero UART control port
-  6   UART-SET-BAUDRATE     \ uses double integer param
-  7   30 A0 REG!            \ PI Pheripeal enable
-  8 \ 91 A2 REG!            \ PI I2S Audio control
-  9 ;
- 10 DECIMAL -->
- 11 
+  0 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  1 \ Problem 5. The Forth-79 Standard Reference Word Set
+  2 \ contains a word called ASCII that can be used to make
+  3 \ certain definitions more readable. Instead of using a
+  4 \ numeric ASCII code within a definition, such as
+  5 \  : STAR 42 EMIT ;  you can use  : STAR ASCII * EMIT ;
+  6 \ The word ASCII reads the next character in the input
+  7 \ stream, then compiles its ASCII equivalent into the defi-
+  8 \ nition as a literal. When the definition of STARS is exe-
+  9 \ cuted, the ASCII value is pushed onto the stack.
+ 10 : ASCII BL WORD 1+ C@ [COMPILE] LITERAL ; IMMEDIATE
+ 11 : STAR ASCII *  EMIT ;
  12 
- 13 
- 14 
+ 13 \ N.B. vForth has a built-in [CHAR] that is equivalent
+ 14 \      to the above definition of ASCII.
  15 
 
 Scr# 905 
-  0 ( UART Raspberry PI Zero - transmit )
-  1 HEX
-  2 \ non-zero when transmitter is busy sending a byte
-  3 : ?UART-BUSY-TX ( -- f )
-  4   UART-TX-PORT P@   \ UART TX port
-  5   02 AND            \ bit is set when busy
-  6 ;
-  7 \ There is no transmit buffer so program must make sure the
-  8 \ last transmission is complete before sending another byte
-  9 : UART-TX ( b -- )
- 10   BEGIN
- 11     ?UART-BUSY-TX  0=  ?TERMINAL OR
- 12   UNTIL
- 13   UART-TX-PORT P!         \ Transmit
- 14 ;
- 15 DECIMAL -->
-
-Scr# 906 
-  0 ( UART Raspberry PI Zero - transmit )
-  1 DECIMAL
-  2 \ Utilities
-  3 \
-  4 : UART-SEND-EOT ( -- )   \ End Of Transmission
-  5   04 UART-TX
-  6 ;
-  7 \
-  8 : UART-SEND-ETX ( -- )   \ End of TeXt
-  9   03 UART-TX
- 10 ;
- 11 DECIMAL -->
+  0 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  1 \ Problem 6. Write a word called LOOPS which will cause the
+  2 \ remainder of the input stream, up to the carriage return,
+  3 \ to be executed the numbe of times specified by the value
+  4 \ on the stack. For example: 7 LOOPS  42 EMITS SPACE
+  5 \   7 LOOPS  42 EMITS SPACE
+  6 \ will print
+  7 \   * * * * * * * ok
+  8 \
+  9 : LOOPS  >IN @ SWAP  0 DO  DUP >IN !  INTERPRET  LOOP DROP ;
+ 10 \
+ 11 10 LOOPS  CR  30 SPACES  STARS
  12 
  13 
  14 
@@ -12443,6 +12533,636 @@ Scr# 1621
  13 
  14 
  15 
+
+Scr# 1887 
+  0 ( UART Raspberry PI Zero - protocol )
+  1 \ fast read from rpi0
+  2 \ read up to n  non-null bytes to address a
+  3 \
+  4 needs assembler
+  5 needs uart-sys
+  6 \
+  7 code uart-get-block ( a n -- )
+  8   di
+  9   exx
+ 10   pop     de|   \ number of bytes
+ 11   pop     hl|   \ memory address
+ 12   ldx     bc|   uart-rx-port  nn,
+ 13 \
+ 14 -->
+ 15 
+
+Scr# 1888 
+  0 ( UART Raspberry PI Zero - protocol )
+  1 here
+  2   in(c)   a'|
+  3   ora      a|
+  4   jrf     z'|   holdplace
+  5     ld   (hl)'|   a|
+  6     incx    hl|
+  7 here disp,
+  8   decx    de|
+  9   ld      a'|   d|
+ 10   ora      e|
+ 11   jrf    nz'|   back,
+ 12   exx
+ 13   ei
+ 14   next
+ 15 c;
+
+Scr# 1889 
+  0 ( UART Raspberry PI Zero - protocol )
+  1 sh . go
+  2 test
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1890 
+  0 ( UART Raspberry PI Zero - protocol )
+  1 code uart-get-block ( a -- )
+  2 hex f3 c, d9 c,       \ di   exx
+  3     d1 c, e1 c,       \ pop  de    pop  hl
+  4     01 c, 143B ,      \ ld   bc,   uart-rx-port  nn,
+  5     ed c, 78 c,       \ in   a,(c)
+  6     b7 c,             \ or   a
+  7     28 c, 02 c,       \ jr   z,$+2
+  8     77 c, 23 c,       \ ld (hl),a  inc hl
+  9     1b c,             \ dec  de
+ 10     7a c, b3 c,       \ ld   a,d   or e
+ 11     20 c, f4 c,       \ jr   nz,$-12
+ 12     d9 c, fb c,       \ exx  ei
+ 13     dd c, e9 c,       \ jp(ix)
+ 14 smudge decimal
+ 15 
+
+Scr# 1891 
+  0 ( UART Raspberry PI Zero - protocol )
+  1 code halt
+  2 hex 76 c,        \ halt
+  3     dd c, e9 c,  \ jp (ix)
+  4 smudge decimal
+  5 \
+  6 : test
+  7   begin
+  8     halt halt
+  9     $4000 #64  erase
+ 10     bl uart-wait-b \ wait for BL to sync
+ 11     $4000 #64  uart-get-block
+ 12     ?terminal
+ 13   until
+ 14 ;
+ 15 
+
+Scr# 1892 
+  0 ( trim routine )
+  1 needs assembler
+  2 code ltrim  ( a1 -- b )
+  3   exx
+  4   ldhl()  $5C0B  AA, \ DEFADD
+  5   ldx   bc|  4  NN,   addhl bc|
+  6   ld    e'|  (hl)|
+  7   incx  hl|
+  8   ld    d'|  (hl)|
+  9   incx  hl|
+ 10   ld    c'|  (hl)|
+ 11   incx  hl|
+ 12   ld    b'|  (hl)|
+ 13   exdehl
+ 14   addhl bc|
+ 15 -->
+
+Scr# 1893 
+  0 ( trim routine )
+  1   decx  hl|
+  2   ldn   a'|  BL  N,
+  3 here
+  4   cpd
+  5   jrf   z'|  BACK,
+  6   incx  bc|
+  7   push bc|
+  8   exx
+  9   next
+ 10   c;
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1895 
+  0 ( RPI0 wrapper )
+  1 needs RPi0
+  2 : this ( -- a n )
+  3   >in @ >R   -2 >in +!  [compile] \
+  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
+  7   blk @ if  blk @ block  else  tib @  then  R> + swap ;
+  8 : send ( a1 n1 a2 n2 -- n3 )
+  9   2dup      uart-send-text  uart-wait-for
+ 10             uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
+ 12 : ask  pad 1024 this send ;
+ 13 : sh  here 1024 this send drop ;
+ 14 : display cr pad swap type cr ;
+ 15 
+
+Scr# 1896 
+  0 ( RPI0 wrapper )
+  1 needs RPi0
+  2 : ask  ( -- n )
+  3   >in @ >R   -2 >in +!  [compile] \
+  4   blk @ if    blk @ 1-     if    r@ c/l 1- and c/l swap -
+  5                            else  b/buf c/l -   then
+  6                            else  span @  then
+  7   blk @ if  blk @ block  else  tib @  then  R> + swap
+  8 \
+  9   2dup      uart-send-text  uart-wait-for
+ 10   pad 100   uart-send-cr    uart-wait-cr-lf
+ 11   uart-rx-burst 7 -  0 max ;
+ 12 : sh ( -- )
+ 13   ask drop ;
+ 14 
+ 15 
+
+Scr# 1897 
+  0 ( RPI0 wrapper )
+  1   needs s"  needs ask  needs sh
+  2 \ RPi0-init
+  3 \ uart-wait-prompt
+  4   send echo 'print 2**300' > temp.py
+  5   ask  python temp.py
+  6   pad swap type
+  7 \
+  8 : test
+  9   here 200
+ 10   s"  python -c 'print 2**400'  "
+ 11   send here swap type
+ 12 ;
+ 13 
+ 14 
+ 15 
+
+Scr# 1898 
+  0 ( RPI0 wrapper )
+  1 \ RPi0-init
+  2 
+  3 \ uart-wait-prompt
+  4   send echo 'print 2**300' > temp.py
+  5   ask  python temp.py
+  6   pad swap type
+  7 \
+  8   ask  python -c 'print 2**400'
+  9   pad swap type
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1899 
+  0 ( Example for THIS definition )
+  1 \
+  2   ASK     echo $BASH_VERSION
+  3   DISPLAY
+  4 \
+  5   ASK     date
+  6   DISPLAY
+  7 \
+  8 \ ASK     date -s 2024-07-13
+  9 \ ASK     date -s 17:30
+ 10 \ 2DROP
+ 11 \
+ 12   ASK     date
+ 13   DISPLAY
+ 14 
+ 15 
+
+Scr# 1900 
+  0 ( UART Raspberry PI Zero )
+  1 \ hex 300 6633 ! \ 7 emit pitch
+  2 \
+  3 NEEDS LAYERS                   NEEDS BCOPY
+  4 NEEDS TRUV    NEEDS INVV
+  5 NEEDS ASSEMBLER
+  6 \ NEEDS INTERRUPT
+  7 \
+  8 MARKER DONE
+  9 \
+ 10 HEX 5C08 CONSTANT LASTK          \ system variable
+ 11     143B CONSTANT UART-RX-PORT
+ 12     133B CONSTANT UART-TX-PORT
+ 13     153B CONSTANT UART-CT-PORT
+ 14 -->
+ 15 
+
+Scr# 1901 
+  0 ( UART Raspberry PI Zero - setup )
+  1 \ Table of actual clock speeds depending on video mode
+  2 \ These are double precision integers you can read with 2@
+  3 HERE
+  4 DECIMAL \ values are divided by 100 to better handle them
+  5   28.0000   , ,   \ Base VGA timing   28 MHz
+  6   28.5714   , ,   \ VGA setting 1     28.571.429 Hz
+  7   29.4643   , ,   \ VGA setting 2     29.464.286 Hz
+  8   30.0000   , ,   \ VGA setting 3     30 MHz
+  9   31.0000   , ,   \ VGA setting 4     31 MHz
+ 10   32.0000   , ,   \ VGA setting 5     32 MHz
+ 11   33.0000   , ,   \ VGA setting 6     33 MHz
+ 12   27.0000   , ,   \ Digital           27 MHz
+ 13 CONSTANT SYS-CLK-ARY
+ 14 DECIMAL -->
+ 15 
+
+Scr# 1902 
+  0 ( UART Raspberry PI Zero - setup )
+  1 HEX
+  2 \ compute actual clock speed depending on video mode
+  3 : SYS-CLOCK ( -- d )
+  4   11 REG@ 7 AND          \ Video timing register: 0-7
+  5   4 * SYS-CLK-ARY + 2@   \ fetch from array created before
+  6 ;
+  7 \ send 14-bits prescalar to UART receive port
+  8 \ prescalar = sysclock / baudrate
+  9 : UART-SET-PRESCALAR ( n -- )
+ 10   DUP
+ 11   7F AND UART-RX-PORT P!      \ send low 7 bits of 14 bits
+ 12   7 RSHIFT                    \ presclar
+ 13   80  OR UART-RX-PORT P!      \ send high 7 bits of 14 bits
+ 14 ;
+ 15 DECIMAL -->
+
+Scr# 1903 
+  0 ( UART Raspberry PI Zero - setup )
+  1 DECIMAL
+  2 \ compute prescalar to be used with previous definition
+  3 : UART-BAUD-TO-PRESCALAR ( d -- n )
+  4   100 M/          \ divide BAUD by 100 to able to handle it
+  5   SYS-CLOCK       \ obtain actual system clock speed / 100
+  6   ROT M/
+  7 ;
+  8 \ usage is: 115200. UART-SET-BAUDRATE
+  9 : UART-SET-BAUDRATE ( d -- )
+ 10   UART-BAUD-TO-PRESCALAR
+ 11   UART-SET-PRESCALAR
+ 12 ;
+ 13 DECIMAL -->
+ 14 
+ 15 
+
+Scr# 1904 
+  0 ( UART Raspberry PI Zero - setup )
+  1 HEX
+  2 \ Select Raspberry PI Zero UART and set Baudrate
+  3 \
+  4 : PI0-SELECT  ( d -- )
+  5   40 UART-CT-PORT P!    \ select PI Zero UART control port
+  6   UART-SET-BAUDRATE     \ uses double integer param
+  7   30 A0 REG!            \ PI Pheripeal enable
+  8 \ 91 A2 REG!            \ PI I2S Audio control
+  9 ;
+ 10 DECIMAL -->
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1905 
+  0 ( UART Raspberry PI Zero - transmit )
+  1 HEX
+  2 \ non-zero when transmitter is busy sending a byte
+  3 : ?UART-BUSY-TX ( -- f )
+  4   UART-TX-PORT P@   \ UART TX port
+  5   02 AND            \ bit is set when busy
+  6 ;
+  7 \ There is no transmit buffer so program must make sure the
+  8 \ last transmission is complete before sending another byte
+  9 : UART-TX ( b -- )
+ 10   BEGIN
+ 11     ?UART-BUSY-TX  0=  ?TERMINAL OR
+ 12   UNTIL
+ 13   UART-TX-PORT P!         \ Transmit
+ 14 ;
+ 15 DECIMAL -->
+
+Scr# 1906 
+  0 ( UART Raspberry PI Zero - transmit )
+  1 DECIMAL
+  2 \ Utilities
+  3 \
+  4 : UART-SEND-EOT ( -- )   \ End Of Transmission
+  5   04 UART-TX
+  6 ;
+  7 \
+  8 : UART-SEND-ETX ( -- )   \ End of TeXt
+  9   03 UART-TX
+ 10 ;
+ 11 DECIMAL -->
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1907 
+  0 ( UART Raspberry PI Zero - receive )
+  1 HEX
+  2 : ?UART-BYTE-READY  ( -- f )  \ non zero when byte ready
+  3   UART-TX-PORT  P@  1 AND
+  4 ;
+  5 : UART-RX  ( -- b | 0 )       \ accept a byte
+  6   UART-RX-PORT  P@
+  7 ;
+  8 : UART-WAIT ( b -- )     \ wait for a specific byte or Break
+  9   BEGIN                       \ b
+ 10     UART-RX OVER =            \ b f
+ 11     ?TERMINAL OR              \ b f
+ 12   UNTIL DROP                  \
+ 13 ;
+ 14 DECIMAL -->
+ 15 
+
+Scr# 1908 
+  0 ( UART Raspberry PI Zero - receive )
+  1 \ wait for a byte with timeout in ms
+  2 : UART-RX-TIMEOUT ( n -- c | 0 )
+  3   0 SWAP                      \ 0 n
+  4   1+ 0                        \ 0 n+1 0
+  5   DO                          \ 0
+  6     ?UART-BYTE-READY IF       \ 0
+  7       UART-RX                 \ 0 b
+  8       SWAP DROP               \   b
+  9       LEAVE                   \   b
+ 10     THEN                      \ 0
+ 11     NOOP                      \      minimum delay
+ 12   LOOP                        \ 0
+ 13 ;
+ 14 DECIMAL -->
+ 15 
+
+Scr# 1909 
+  0 ( UART Raspberry PI Zero - receive )
+  1 HEX
+  2 : UART-WAIT-READY
+  3   BEGIN
+  4     ?UART-BYTE-READY ?TERMINAL OR
+  5   UNTIL
+  6 ;
+  7 \ simple wait for a specific string "SUP> "
+  8 : UART-WAIT-PROMPT  ( -- )
+  9   [CHAR] S UART-WAIT
+ 10   [CHAR] U UART-WAIT
+ 11   [CHAR] P UART-WAIT
+ 12   [CHAR] > UART-WAIT
+ 13         BL UART-WAIT
+ 14 ;
+ 15 DECIMAL -->
+
+Scr# 1910 
+  0 ( UART Raspberry PI Zero - receive a block )
+  1 \ Accept from I/O  up to n bytes and store them at a.
+  2 CODE UART-RX-BURST ( t a n -- )
+  3      di
+  4      pop     DE|                   \ length counter
+  5      Exx
+  6      pop     hl|                   \ address
+  7      pop     de|                   \ timeout
+  8      ldx     bc|  UART-TX-PORT  NN,  \ 133Bh
+  9 HERE                               \              a1
+ 10      decx    de|                   \ check timeout      \ 6
+ 11      ld      a'|  d|                                    \ 4
+ 12      ora      e|                                        \ 4
+ 13      jrf     z'|  HOLDPLACE        \              a1 a2 \ 7
+ 14      -->
+ 15 
+
+Scr# 1911 
+  0 ( UART Raspberry PI Zero - receive a block )
+  1      in(c)   a'|                  \ bit 0               \ 12
+  2      rra                          \ non-zero when ready \  4
+  3      jrf    nc'|  1 PICK BACK,    \ back to a1          \  7
+  4      inc     b'|                  \ RX port 143Bh       \  4
+  5      ini                          \ bc goes 133Bh       \ 16
+  6      ld      a'| (hl)|                                  \  4
+  7      anda     a|                  \ check for 0x00      \  4
+  8      jrf     z'|  HOLDPLACE       \            a1 a2 a3 \  7
+  9      exX                                                \  4
+ 10      Decx    DE|                  \ dec length counter  \  6
+ 11      Ld      A'|  D|                                    \  4
+ 12      Ora      E|                  \ check for zero      \  4
+ 13      Exx                                                \  4
+ 14 -->
+ 15 
+
+Scr# 1912 
+  0 ( UART Raspberry PI Zero - receive a block )
+  1 \ At 115200 Bauds bit duration is 8.68  micro-seconds
+  2 \ a 512 bytes-buffer is filled in less than 4.45 ms.
+  3 \ The 512 bytes burst-read takes 56832 T-states
+  4 \ plus enter-exit time that at 28 MHz is about 2.03 ms
+  5 \ so we emtpy the buffer  2 times faster than it fills up.
+  6 \
+  7      jrf    nz'|  1 PICK BACK,     \ repeat until done  \ 10
+  8 HERE DISP,    \ a3
+  9 HERE DISP,    \ a2
+ 10      DROP     \ a1
+ 11      exx
+ 12      ei
+ 13      jpix
+ 14      C;  -->
+ 15 
+
+Scr# 1913 
+  0 ( UART Raspberry PI Zero - receive a block )
+  1 HEX
+  2 \
+  3 CODE  DIS-INT
+  4   F3 C,             \ di
+  5   DD C, E9 C,       \ jp (ix)
+  6 SMUDGE
+  7 \   UART-TX-PORT P@ 1 AND
+  8 CODE  ENA-INT
+  9   FB C,             \ di
+ 10   DD C, E9 C,       \ jp (ix)
+ 11 SMUDGE
+ 12 \
+ 13 DECIMAL -->
+ 14 
+ 15 
+
+Scr# 1914 
+  0 ( UART Raspberry PI Zero - receive a block )
+  1 DECIMAL
+  2 : UART-RX-CHUNK ( t a n -- )
+  3   DIS-INT                          \ t a n
+  4   ROT 0 DO                         \ a n
+  5     UART-TX-PORT P@ 1 AND IF       \ a n f   wait ready
+  6       SWAP UART-RX-PORT P@         \ n a b   accept byte
+  7       ?DUP 0= IF LEAVE THEN        \ n a b   0x00 quits
+  8       OVER C! 1+ SWAP 1-           \ a n     store & incr
+  9       DUP 0= IF LEAVE THEN         \ a n     decr counter
+ 10     THEN
+ 11   LOOP                             \ a n
+ 12   2DROP                            \
+ 13   ENA-INT
+ 14 ;
+ 15 DECIMAL -->
+
+Scr# 1915 
+  0 ( UART Raspberry PI Zero - block receive )
+  1 DECIMAL
+  2 \ receive 1K to Screen n
+  3 : UART-RECEIVE    ( n -- )
+  4   B/SCR * DUP 1+ SWAP
+  5   BLOCK B/BUF -1 UART-RX-CHUNK
+  6   BLOCK B/BUF -1 UART-RX-CHUNK
+  7 ;
+  8 \ prepare Screen # n to accept data from UART burst read
+  9 : UART-SCREEN  ( n -- )
+ 10   B/SCR *       DUP 1+
+ 11   BLOCK B/BUF BLANK
+ 12   BLOCK B/BUF BLANK
+ 13 ;
+ 14 DECIMAL -->
+ 15 
+
+Scr# 1916 
+  0 ( UART Raspberry PI Zero - send a command )
+  1 \ send a string
+  2 HEX
+  3 : UART-SEND ( a n -- )
+  4   BOUNDS DO
+  5     I C@ UART-TX
+  6   LOOP
+  7   0D UART-TX
+  8 ;
+  9 \
+ 10 HERE
+ 11 ," perl --help"
+ 12 CONSTANT CMD
+ 13 DECIMAL -->
+ 14 
+ 15 
+
+Scr# 1917 
+  0 ( UART Raspberry PI Zero )
+  1 -->
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1918 
+  0 ( UART Raspberry PI Zero )
+  1 -->
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1919 
+  0 ( UART Raspberry PI Zero )
+  1 -->
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 1920 
+  0 ( UART Raspberry PI Zero - simple terminal )
+  1 HEX   \ map special Symbol-Shift Keys
+  2 HERE  \ stop not step to then and or
+  3 E2 C, C3 C, CD C, CC C, CB C, C5 C, C5 C, 0C C,
+  4  CONSTANT TKB1
+  5 HERE  \  ~    |   \   {  }    [   ]
+  6 7E C, 7C C, 5C C, 7B C, 7D C, 5B C, 5D C, 08 C,
+  7  CONSTANT TKB2
+  8 \
+  9 : MAP-KEYB ( c -- )
+ 10   >R TKB2 TKB1 8 R> (MAP)
+ 11   DUP 6 = IF 8 5C6A TOGGLE THEN  \ handle caps-lock
+ 12 ;
+ 13 DECIMAL -->
+ 14 
+ 15 
+
+Scr# 1921 
+  0 ( UART Raspberry PI Zero - simple terminal )
+  1 HEX
+  2 : TERM0-INIT   ( -- )
+  3   0 LASTK C! 0 5C6A C! 0D UART-TX
+  4   6 1E EMITC EMITC  \ narrow font
+  5   HEX
+  6 ;
+  7 : TERM0-DONE
+  8   8 01E EMITC EMITC \ normal font
+  9   DECIMAL
+ 10 ;
+ 11 HEX
+ 12 -->
+ 13 
+ 14 
+ 15 
+
+Scr# 1922 
+  0 ( UART Raspberry PI Zero - simple terminal )
+  1 : TERM0
+  2   TERM0-INIT
+  3   BEGIN
+  4     LASTK C@ ?DUP IF
+  5       MAP-KEYB  DUP UART-TX  0 LASTK C!
+  6     \ 0D = IF CR 0 2 BLOCK B/BUF UART-RX-BURST THEN
+  7     THEN
+  8     ?UART-BYTE-READY IF UART-RX
+  9       DUP 80 < 0= IF INVV THEN 7F AND  \ force ascii 7-bits
+ 10       DUP 20 < IF INVV DUP . THEN      \ non-printable
+ 11       DUP 0D - IF EMIT THEN TRUV       \ ignore CR
+ 12     THEN
+ 13   ?TERMINAL UNTIL TERM0-DONE
+ 14 ;
+ 15 DECIMAL -->
 
 Scr# 1998 
   0 ( SHADOW SCREEN )
@@ -16443,6 +17163,24 @@ Scr# 4405
 
 Scr# 4646 
   0 ( reply )
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+Scr# 6000 
+  0 .( OK )
   1 
   2 
   3 
@@ -20491,6 +21229,26 @@ Scr# 10604
  14     11 c, 200 ,  \ ld   de,   #512
  15     01 c, 143b , \ ld   bc,   uart-rx-port  nn,
 
+Scr# 15000 
+  0 
+ ! , MºööX ∏"	                      
+  1   ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+  2 @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _
+  3 ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~ 
+  4 Ä Å Ç É Ñ Ö Ü á à â ä ã å ç é è ê ë í ì î ï ñ ó ò ô ö õ ú ù û ü
+  5 † ° ¢ £ § • ¶ ß ® © ™ ´ ¨ ≠ Æ Ø ∞ ± ≤ ≥ ¥ µ ∂ ∑ ∏ π ∫ ª º Ω æ ø
+  6 ¿ ¡ ¬ √ ƒ ≈ ∆ « » …   À Ã Õ Œ œ – — “ ” ‘ ’ ÷ ◊ ÿ Ÿ ⁄ € ‹ › ﬁ ﬂ
+  7 ‡ · ‚ „ ‰ Â Ê Á Ë È Í Î Ï Ì Ó Ô  Ò Ú Û Ù ı ˆ ˜ ¯ ˘ ˙ ˚ ¸ ˝ ˛ ˇ
+  8  	
+
+  9  !"#$%&'()*+,-./0123456789:;<=>?
+ 10 @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_
+ 11 `abcdefghijklmnopqrstuvwxyz{|}~
+ 12 ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü
+ 13 †°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø
+ 14 ¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ
+ 15 ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛ
+
 Scr# 15360 
   0 
   1 
@@ -21707,25 +22465,30 @@ Restarting Supervisor
   879 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   880 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
   881 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
-  887 ( UART Raspberry PI Zero - protocol )
-  888 ( UART Raspberry PI Zero - protocol )
-  889 ( UART Raspberry PI Zero - protocol )
-  890 ( UART Raspberry PI Zero - protocol )
-  891 ( UART Raspberry PI Zero - protocol )
-  892 ( trim routine )
-  893 ( trim routine )
-  895 ( RPI0 wrapper )
-  896 ( RPI0 wrapper )
-  897 ( RPI0 wrapper )
-  898 ( RPI0 wrapper )
-  899 ( Example for THIS definition )
-  900 ( UART Raspberry PI Zero )
-  901 ( UART Raspberry PI Zero - setup )
-  902 ( UART Raspberry PI Zero - setup )
-  903 ( UART Raspberry PI Zero - setup )
-  904 ( UART Raspberry PI Zero - setup )
-  905 ( UART Raspberry PI Zero - transmit )
-  906 ( UART Raspberry PI Zero - transmit )
+  882 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  883 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  884 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  885 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  886 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  887 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  888 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  889 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  890 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  891 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  892 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  893 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  894 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  895 \ Brodie - Starting FORTH - Ch. 10 - I/O and You
+  896 \ Brodie - Starting FORTH - Ch.11 - Extending the Compiler
+  897 \ Brodie - Starting FORTH - Ch.11 - Extending the Compiler
+  898 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  899 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  900 \ Brodie - Starting FORTH - Ch.11 - Compiling Words
+  901 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  902 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  903 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  904 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
+  905 \ Brodie - Starting FORTH - Ch. 11 - Extending the Compiler
   907 ( UART Raspberry PI Zero - receive )
   908 ( UART Raspberry PI Zero - receive )
   909 ( UART Raspberry PI Zero - receive )
@@ -21817,6 +22580,41 @@ Restarting Supervisor
  1619 ( heap dictionary )
  1620 ( heap dictionary )
  1621 ( heap dictionary )
+ 1887 ( UART Raspberry PI Zero - protocol )
+ 1888 ( UART Raspberry PI Zero - protocol )
+ 1889 ( UART Raspberry PI Zero - protocol )
+ 1890 ( UART Raspberry PI Zero - protocol )
+ 1891 ( UART Raspberry PI Zero - protocol )
+ 1892 ( trim routine )
+ 1893 ( trim routine )
+ 1895 ( RPI0 wrapper )
+ 1896 ( RPI0 wrapper )
+ 1897 ( RPI0 wrapper )
+ 1898 ( RPI0 wrapper )
+ 1899 ( Example for THIS definition )
+ 1900 ( UART Raspberry PI Zero )
+ 1901 ( UART Raspberry PI Zero - setup )
+ 1902 ( UART Raspberry PI Zero - setup )
+ 1903 ( UART Raspberry PI Zero - setup )
+ 1904 ( UART Raspberry PI Zero - setup )
+ 1905 ( UART Raspberry PI Zero - transmit )
+ 1906 ( UART Raspberry PI Zero - transmit )
+ 1907 ( UART Raspberry PI Zero - receive )
+ 1908 ( UART Raspberry PI Zero - receive )
+ 1909 ( UART Raspberry PI Zero - receive )
+ 1910 ( UART Raspberry PI Zero - receive a block )
+ 1911 ( UART Raspberry PI Zero - receive a block )
+ 1912 ( UART Raspberry PI Zero - receive a block )
+ 1913 ( UART Raspberry PI Zero - receive a block )
+ 1914 ( UART Raspberry PI Zero - receive a block )
+ 1915 ( UART Raspberry PI Zero - block receive )
+ 1916 ( UART Raspberry PI Zero - send a command )
+ 1917 ( UART Raspberry PI Zero )
+ 1918 ( UART Raspberry PI Zero )
+ 1919 ( UART Raspberry PI Zero )
+ 1920 ( UART Raspberry PI Zero - simple terminal )
+ 1921 ( UART Raspberry PI Zero - simple terminal )
+ 1922 ( UART Raspberry PI Zero - simple terminal )
  1998 ( SHADOW SCREEN )
  1999 ( touch.f )
  2022 ( Christmas Star )
@@ -22030,6 +22828,7 @@ Restarting Supervisor
  4404 ( UART Raspberry PI Zero - protocol )
  4405 ( UART Raspberry PI Zero - protocol )
  4646 ( reply )
+ 6000 .( OK )
  6475 ( solid circle )
  6476 : solid-circle ( x y r -- )
  6989 ( new SPLASH with string on Heap )
@@ -22254,6 +23053,8 @@ Restarting Supervisor
 10310 ( MMU7 banking study )
 10311 ( MMU7 banking study )
 10604 
+15000 
+!,MºööX∏"	 
 15360 
 15361 x     x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 15362 x             x          x          x          x          x

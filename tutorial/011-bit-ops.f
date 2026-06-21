@@ -16,6 +16,7 @@
 \ single-position shift, prefer the core primitives 2* (left) and
 \ 2/ (arithmetic right).
 \
+\ Starting FORTH (Brodie): no Brodie counterpart (vForth / Z80N extension)
 \ Reference: sec.2.12.3
 \
 \ Load from a clean session:

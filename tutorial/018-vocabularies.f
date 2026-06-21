@@ -22,6 +22,7 @@
 \ CONTEXT holds exactly one vocabulary at a time.
 \
 \
+\ Starting FORTH (Brodie): Ch.9 (brief)  |  vForth screen 872
 \ Reference: sec.2.12.13
 \
 \ Load from a clean session:

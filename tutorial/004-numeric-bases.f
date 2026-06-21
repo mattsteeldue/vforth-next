@@ -12,6 +12,7 @@
 \ temporarily override BASE without modifying it (see sec.2.9).  These
 \ prefixes are the safest way to mix bases in source code.
 \
+\ Starting FORTH (Brodie): Ch.7  |  vForth screens 838-849
 \ Reference: sec.2.9, 2.12.5, 2.12.11
 \
 \ Load from a clean session:

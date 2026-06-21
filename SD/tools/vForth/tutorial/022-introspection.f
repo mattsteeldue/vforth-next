@@ -20,6 +20,7 @@
 \   SEE     ( -- cccc )  disassemble a word
 \   WHERE   ( n n -- )   show the source line after a LOAD error
 \
+\ Starting FORTH (Brodie): Ch.9  |  vForth screens 868-877 (incl. SEE)
 \ Reference: sec.2.12.4, 3.6.1, 4.6
 \
 \ Load from a clean session:

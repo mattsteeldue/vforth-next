@@ -24,6 +24,7 @@
 \ POSTPONE requires NEEDS (in inc/postpone.f).
 \ ['] requires NEEDS (in inc/['].f).
 \
+\ Starting FORTH (Brodie): Ch.11  |  vForth screens 898-905
 \ Reference: sec.2.12.4
 \
 \ Load from a clean session (to see both approaches):

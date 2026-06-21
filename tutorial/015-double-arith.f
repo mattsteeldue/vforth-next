@@ -22,6 +22,7 @@
 \ The core word for converting signed single to double is S>D (the S->D
 \ is obsolete).
 \
+\ Starting FORTH (Brodie): Ch.5, Ch.8(dbl)  |  vForth screens 821-825, 854-864
 \ Reference: sec.2.12.11, sec.4.3
 \
 \ Load from a clean session:

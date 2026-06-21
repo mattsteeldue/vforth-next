@@ -20,6 +20,7 @@
 \   n DUP ABS  0  <# #S  ROT SIGN  #>  TYPE
 \     (dup for sign, absolute value, zero-extend, convert, add sign)
 \
+\ Starting FORTH (Brodie): Ch.7  |  vForth screens 838-849
 \ Reference: sec.2.12.5
 \
 \ Load from a clean session:

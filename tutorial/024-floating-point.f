@@ -32,6 +32,7 @@
 \
 \ NO-FLOATING removes the library and restores integer mode.
 \
+\ Starting FORTH (Brodie): no Brodie counterpart (vForth extension)
 \ Reference: 3.7 - lib/floating.f
 \
 \ Load from a clean session:

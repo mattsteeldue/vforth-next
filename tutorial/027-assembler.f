@@ -24,6 +24,7 @@
 \       jpf pe| AA, and illustrates how CODE words preserve the vForth
 \       register map via exx.
 \
+\ Starting FORTH (Brodie): no Brodie counterpart (vForth extension)
 \ Reference: sec.3.9
 \
 \ Load from a clean session:

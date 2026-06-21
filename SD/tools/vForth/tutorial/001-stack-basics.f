@@ -7,6 +7,7 @@
 \ produces values on it.  The stack notation ( before -- after ) used
 \ throughout this tutorial matches the convention in the reference manual.
 \
+\ Starting FORTH (Brodie): Ch.2  |  vForth screens 805-814
 \ Reference: sec.2.2, 2.9, 2.12.2, 2.12.4, 2.12.5
 \
 \ Load from a clean session:

@@ -18,6 +18,7 @@
 \ vForth note: DOES> follows the latest Forth standard (v1.8+).
 \ <BUILDS is kept for compatibility only -- prefer CREATE.
 \
+\ Starting FORTH (Brodie): Ch.8, Ch.11  |  vForth screens 850-867, 896-898
 \ Reference: sec.2.12.9, 6.1
 \
 \ Load from a clean session:
