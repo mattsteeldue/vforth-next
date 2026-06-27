@@ -40,6 +40,8 @@ CR
 ." --- Tutorial 019: compilation (vForth minimalist). " CR
 .(     Type NEWTASK to unload.   ) CR
 
+NEEDS .S
+
 
 \ ===========================================================================
 \ 1. STATE -- what mode are we in?

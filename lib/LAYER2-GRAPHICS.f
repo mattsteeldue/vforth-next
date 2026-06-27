@@ -17,20 +17,27 @@ MARKER NO-LAYER2-GRAPHICS       \ unload only this mode (keeps GRAPHICS-COMMON)
     NOOP
 ;
 
+\ shared words extracted to inc/ (deduplicated via NEEDS)
+NEEDS L1-POINT
+NEEDS L1-EDGE
+NEEDS L2-RAM-PAGE
+NEEDS .BORDER
+
 BASE @
 
 \ ____________________________________________________________________
 \
-\ Layer 2 Active RAM Page
-\ this operation is done only once at compile time, just to save time
-\ and setup MMU7! accordingly
-HEX 12 REG@ 2*
-CONSTANT  L2-RAM-PAGE           \ keeps Layer 2 Active RAM Page
+\ Layer 2 INITIALIZE
+: L2-INITIALIZE
+    RGB-COLORS
+    ATTRIB .INK
+    BACKGROUND .PAPER
+    BACKGROUND .BORDER
+;
 
 \ ____________________________________________________________________
 \
 \ Layer 2 PIXELADD
-HEX
 CODE L2-PIXELADD ( x y -- a )
     HEX
     D9 C,             \ exx
@@ -50,20 +57,6 @@ CODE L2-PIXELADD ( x y -- a )
     D9 C,             \ exx
     DD C, E9 C,       \ next
     SMUDGE            \ c;
-
-\ ____________________________________________________________________
-\
-\ Layer 2 POINT (per-pixel attribute)
-: L1-POINT  ( x y -- c )
-    PIXELADD C@
-;
-
-\ ____________________________________________________________________
-\
-\ Layer 2 EDGE rule
-: L1-EDGE  ( b -- f )
-    ATTRIB =
-;
 
 \ ____________________________________________________________________
 \
@@ -153,6 +146,8 @@ HEX
     ' L2-PLOT       \ PIXELATT  (has no meaning for Layer 2)
     ' NOOP          \ XY-RATIO
     ' L1-EDGE       \ EDGE
+    ' L2-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     0D8             \ ATTRIB (L20-ATTRIB)
 
 LAYER: LAYER2

@@ -30,6 +30,7 @@ CR
 .(     Type NEWTASK to unload.   ) CR
 
 NEEDS EVALUATE
+NEEDS .S
 
 
 \ ===========================================================================

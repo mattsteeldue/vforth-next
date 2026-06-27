@@ -42,13 +42,17 @@
 \   NEWTASK 024 TUTORIAL
 \
 
-: NEWTASK  NO-FLOATING ;
+MARKER NO-THIS
+
+: NEWTASK  NOOP  NO-THIS;
 
 CR
 .( --- Tutorial 024: floating point loaded. ) CR
 .(     Type NEWTASK to restore integer mode. ) CR
 
 NEEDS FLOATING
+
+' NO-FLOATING  ' NEWTASK >BODY !
 
 
 \ ===========================================================================

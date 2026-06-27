@@ -19,7 +19,19 @@ MARKER NO-LAYER12-GRAPHICS      \ unload only this mode (keeps GRAPHICS-COMMON)
     NOOP
 ;
 
+\ shared words extracted to inc/ (deduplicated via NEEDS)
+NEEDS L0-POINT
+NEEDS L0-PLOT
+NEEDS L0-XPLOT
+
 BASE @
+
+\ ____________________________________________________________________
+
+: L12-INITIALIZE
+    ATTR-COLORS
+    BACKGROUND .PAPER
+;
 
 \ ____________________________________________________________________
 \
@@ -51,89 +63,6 @@ CODE L12-PIXELADD   ( x y -- a )
 
 \ ____________________________________________________________________
 \
-\ pixel operator OR or XOR
-DEFER PLOTOP
-DEFER XPLOTOP
-
-CODE L0-SET   ( b1 b2 -- b3 )
-    HEX
-    E1 C,               \ pop   hl    ; b2 byte
-    7D C,               \ ld   a'| l|
-    E1 C,               \ pop   hl    ; b1 pattern
-    B5 C,               \ ora  l'|
-    6F C,               \ ld   l'| a|
-    E5 C,               \ push  hl
-    DD C, E9 C,         \ jp   (ix)
-    SMUDGE
-
-CODE L0-XOR   ( b1 b2 -- b3 )
-    HEX
-    E1 C,               \ pop   hl    ; byte
-    7D C,               \ ld   a'| l|
-    E1 C,               \ pop   hl    ; pattern
-    AD C,               \ xora l'|
-    6F C,               \ ld   l'| a|
-    E5 C,               \ push  hl
-    DD C, E9 C,         \ jp   (ix)
-    SMUDGE
-
-' L0-SET IS PLOTOP       \ usually OR to "set" the pixel
-' L0-XOR IS XPLOTOP      \ usually XOR to "xor" the pixel
-
-\ ____________________________________________________________________
-\
-\ POINT - fetch color/status of pixel x,y
-HEX
-: L0-POINT  ( x y -- c )
-    TUCK                        \ y x y
-    PIXELADD C@                 \ y b
-    SWAP 7 AND                  \ b y mod 7
-    LSHIFT 80 AND               \ f
-;
-
-\ ____________________________________________________________________
-\
-\ PLOT - set pixel x,y to color/status kept by ATTRIB
-\ COORD-CHECK, PIXELADD and PIXELATT are vectorized via DEFER..IS
-HEX
-: L0-PLOT       ( x y -- )
-    COORD-CHECK                 \ x y f
-    IF                          \ x y
-        TUCK                    \ y x y
-        PIXELADD >R             \ y         R: a
-        7 AND                   \ n
-        80 SWAP RSHIFT          \ 80>>n
-        R@ C@                   \ b  80>>n
-        PLOTOP
-        R@ C!                   \
-        ATTRIB R>               \ b a       R:
-        PIXELATT                \
-    ELSE
-        2DROP
-    THEN
-;
-
-\ ____________________________________________________________________
-\
-\ XPLOT - unset/invert pixel x,y
-HEX
-: L0-XPLOT       ( x y -- )
-    COORD-CHECK                 \ x y f
-    IF
-        TUCK                    \ y x y
-        PIXELADD >R             \ y
-        7 AND                   \ n
-        80 SWAP RSHIFT
-        R@ C@
-        XPLOTOP
-        R> C!
-    ELSE
-        2DROP
-    THEN
-;
-
-\ ____________________________________________________________________
-\
 \ Build LAYER12 and activate it
 \ PIXELATT has no meaning for Layer 1,2 -> 2DROP
 \ XY-RATIO halves the horizontal coordinate -> 2/
@@ -148,6 +77,8 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning on Layer 1,2)
     ' 2/            \ XY-RATIO
     ' NOOP          \ EDGE
+    ' L12-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     00              \ ATTRIB (L12-ATTRIB)
 
 LAYER: LAYER12

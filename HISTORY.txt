@@ -624,3 +624,13 @@ as announced on Facebook and Discord.
 \ build 20260614
 refinement of previous build.
 tested a few more tutorial.
+
+\ build 20260628
+New release to renew libraries; the core binary is unchanged apart from the
+build stamp.
+Reworked the whole LAYERxx-GRAPHICS family: shared words were extracted into
+inc/ and the per-layer modules made uniform. Available modules are now LAYER0,
+LAYER2, LAYER10, LAYER11, LAYER12, LAYER13 and the new LAYER22.
+LAYER22 drives the Layer 2 320x256 mode (vertical-band framebuffer, 80K across
+ten 8K MMU7 pages).
+Uniform layer colours throughout and Layer 0 attributes made permanent.

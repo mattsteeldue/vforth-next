@@ -1,0 +1,8 @@
+    LAYER22  --
+
+Activates Layer 2 high-res: 320x256 pixels, 256
+colours, 1 colour per pixel (80K RAM, vertical
+bands).  Re-vectors PLOT/POINT/DRAW-LINE/CIRCLE.
+x = vertical 0..255, y = horizontal 0..319.
+
+Available after NEEDS LAYER22-GRAPHICS

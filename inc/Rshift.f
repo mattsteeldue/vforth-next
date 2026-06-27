@@ -4,8 +4,6 @@
 
 .( RSHIFT )
 
-NEEDS CODE      \ just to be sure we are fine
-
 BASE @ \ save base status
 
 \ bit left shift of u bits

@@ -25,6 +25,7 @@ NEEDS +TO
 
 NEEDS 2OVER
 NEEDS FLIP
+NEEDS INVERT
 
 NEEDS IDE_MODE!
 NEEDS IDE_MODE@
@@ -142,6 +143,11 @@ DECIMAL
 00 VALUE ATTRIB
 00 VALUE P-ATTRIB \ address of ATTRIB field inside LAYERs definition
 
+\ current "background color" when applicable
+00 VALUE BACKGROUND 
+
+DEFER INITIALIZE    ( -- ) 
+
 \ depenging on current Graphic-Mode, determine address of a pixel
 \ and fit MMU7 if needed
 DEFER PIXELADD      ( x y -- a )
@@ -177,6 +183,8 @@ HEX
 : LAYER:
     <BUILDS
         ,           \    ATTRIB
+        ,           \    BACKGROUND
+        ,           \ is INITIALIZE
         ,           \ is EDGE
         ,           \ is XY-RATIO
         ,           \ is PIXELATT
@@ -194,6 +202,8 @@ HEX
         ATTRIB      P-ATTRIB !  \ save current attrib to previous mode default
         DUP     TO  P-ATTRIB    \ set pointer
         DUP  @  TO  ATTRIB      CELL+
+        DUP  @  TO  BACKGROUND  CELL+
+        DUP  @  IS  INITIALIZE  CELL+
         DUP  @  IS  EDGE        CELL+
         DUP  @  IS  XY-RATIO    CELL+
         DUP  @  IS  PIXELATT    CELL+
@@ -207,6 +217,7 @@ HEX
         DUP C@  TO  FLAG-MASK   1+
         DUP C@  LAYER!          1+
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
+        INITIALIZE
         CR
 ;
 
@@ -350,7 +361,7 @@ HEX
 HEX
 : FGRAPHICS-COMMON ( f -- )
     NOT IF
-        0 LAYER!                 \ restore Layer 0 hardware mode
+        12 LAYER!                \ restore Layer 1,2 (vForth default boot mode)
         1E EMITC 8 EMITC         \ restore normal 8x8 char size
         NO-GRAPHICS-COMMON       \ forget the whole package
     THEN
@@ -369,16 +380,12 @@ HEX
 \  s :  number of bit to be shifted
 : (COLOR)       ( b c m s -- )
   >R                \ b c m             R: s
-  DUP R@            \ b c m m  s
-  LSHIFT NEGATE     \ b c m m1          \ m1 has 0 only on bits to work on
-  ATTRIB AND        \ b c m m1          \ zeroes working ATTRIB bits
-  3 PICK            \ b c m m1 b
-  R>                \ b c m m1 b s
-  LSHIFT            \ b c m m1 b1       \ shift attribute value bits
-  OR                \ b c m n           \ put them in place
-  TO ATTRIB         \ b c m
-  ROT AND           \ c b&m             \ at end, change current attribs
-  SWAP EMITC EMITC  \
+  ROT OVER AND      \ c m (b&m)         \ masked value, keep mask
+  SWAP R@ LSHIFT    \ c (b&m) (m<<s)    \ field position
+  INVERT ATTRIB AND \ c (b&m) cleared   \ zero ONLY the field bits in ATTRIB
+  OVER R> LSHIFT OR \ c (b&m) ATTRIB'   \ drop (b&m)<<s into the cleared field
+  TO ATTRIB         \ c (b&m)
+  SWAP EMITC EMITC  \                   \ emit ctrl then masked value
 ;
 
 DECIMAL
@@ -386,11 +393,37 @@ DECIMAL
 \         ctrl  mask       shift
 \ _______________________________________
 \
-: .INK      16  COLOR-MASK   0   (COLOR) ;
-: .PAPER    17  COLOR-MASK   3   (COLOR) ;
-: .FLASH    18  FLAG-MASK    6   (COLOR) ;
-: .BRIGHT   19  FLAG-MASK    7   (COLOR) ;
-: .INVERSE  20  FLAG-MASK    8   (COLOR) ;
-: .OVER     21  FLAG-MASK    8   (COLOR) ;
+\ Attribute-mode implementations (3-bit ink/paper fields in one byte).
+\ These are the historical .INK/.PAPER/... bodies, used by Layer 0/1,1/1,3/1,2.
+: (ATTR.INK)      16  COLOR-MASK   0   (COLOR) ;
+: (ATTR.PAPER)    17  COLOR-MASK   3   (COLOR) ;
+: (ATTR.FLASH)    18  FLAG-MASK    6   (COLOR) ;
+: (ATTR.BRIGHT)   19  FLAG-MASK    7   (COLOR) ;
+: (ATTR.INVERSE)  20  FLAG-MASK    8   (COLOR) ;
+: (ATTR.OVER)     21  FLAG-MASK    8   (COLOR) ;
+
+\ Full-byte (one-colour-per-pixel) implementations, used by Layer 2 and 1,0.
+\ Here ATTRIB is a whole 8-bit colour: INK sets it directly, PAPER sets the
+\ BACKGROUND colour, and FLASH/BRIGHT/INVERSE/OVER have no meaning.
+: (RGB.INK)    ( b -- )  DUP TO ATTRIB      16 EMITC EMITC ;
+: (RGB.PAPER)  ( b -- )  DUP TO BACKGROUND  17 EMITC EMITC ;
+: (RGB.NULL)   ( b -- )  DROP ;
+
+\ The colour words are vectored: each LAYERxx INITIALIZE installs the proper
+\ profile so that interactive use (e.g.  216 .INK ) matches the active layer.
+DEFER .INK   DEFER .PAPER   DEFER .FLASH
+DEFER .BRIGHT   DEFER .INVERSE   DEFER .OVER
+
+: ATTR-COLORS   ( -- )
+    ['] (ATTR.INK)     IS .INK     ['] (ATTR.PAPER)   IS .PAPER
+    ['] (ATTR.FLASH)   IS .FLASH   ['] (ATTR.BRIGHT)  IS .BRIGHT
+    ['] (ATTR.INVERSE) IS .INVERSE ['] (ATTR.OVER)    IS .OVER ;
+
+: RGB-COLORS    ( -- )
+    ['] (RGB.INK)   IS .INK     ['] (RGB.PAPER) IS .PAPER
+    ['] (RGB.NULL)  IS .FLASH   ['] (RGB.NULL)  IS .BRIGHT
+    ['] (RGB.NULL)  IS .INVERSE ['] (RGB.NULL)  IS .OVER ;
+
+ATTR-COLORS                     \ sensible default before any layer activates
 
 BASE !

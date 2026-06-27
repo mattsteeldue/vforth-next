@@ -14,16 +14,20 @@ NEEDS VALUE
 NEEDS TO  
 NEEDS +TO 
 
-NEEDS 2OVER 
-NEEDS FLIP 
+NEEDS 2OVER
+NEEDS FLIP
+NEEDS INVERT
 
 NEEDS IDE_MODE!
 NEEDS IDE_MODE@
 
-NEEDS DEFER 
+NEEDS DEFER
 NEEDS IS
 
-: GRAPHICS 
+NEEDS .BORDER
+NEEDS .PERM
+
+: GRAPHICS
     NOOP
 ;
 
@@ -89,12 +93,12 @@ BASE @
 \
 \ Default attrib values
 
-    _BLUE   3 LSHIFT  _WHITE  +  VALUE  L0-ATTRIB 
-    _WHITE  3 LSHIFT  _BLACK  +  VALUE  L10-ATTRIB 
-    _BLUE   3 LSHIFT  _WHITE  +  VALUE  L11-ATTRIB 
-    00                           VALUE  L12-ATTRIB 
-    _WHITE  3 LSHIFT  _BLACK  +  VALUE  L13-ATTRIB 
-    HEX 0D8                      VALUE  L20-ATTRIB 
+    _BLUE   3 LSHIFT  _YELLOW  +  VALUE  L0-ATTRIB 
+    _YELLOW                       VALUE  L10-ATTRIB 
+    _BLUE   3 LSHIFT  _YELLOW  +  VALUE  L11-ATTRIB 
+    00                            VALUE  L12-ATTRIB 
+    _BLUE   3 LSHIFT  _YELLOW  +  VALUE  L13-ATTRIB 
+    HEX 0D8                       VALUE  L20-ATTRIB 
 \ ____________________________________________________________________
 \
 \ map-table to be able to change graphics-mode ignoring what base currently is
@@ -140,6 +144,11 @@ DECIMAL
 \ current "color" used in subsequent operations
 00 VALUE ATTRIB
 00 VALUE P-ATTRIB \ address of ATTRIB field inside LAYERs definition
+
+\ current "background color" when applicable
+00 VALUE BACKGROUND
+
+DEFER INITIALIZE    ( -- )
 
 \ depenging on current Graphic-Mode, determine address of a pixel
 \ and fit MMU7 if needed
@@ -326,7 +335,7 @@ HEX
     COORD-CHECK IF
         PIXELADD C@
     ELSE
-        2DROP -1    \ becasuse 0 is a valid color (black) 
+        2DROP -1    \ because 0 is a valid color (black)
     THEN
 ;
 
@@ -547,6 +556,74 @@ CODE L2-XPLOT  ( x y -- )
 
 \ ____________________________________________________________________
 
+\ ____________________________________________________________________
+\
+\ Colour-control helper and the .INK / .PAPER / ... words.
+\ Defined ahead of LAYER: so each LAYERxx INITIALIZE word can use them.
+\  b : attribute value       c : ctrl char 16..21
+\  m : bitmask applied to b   s : number of bits to shift
+DECIMAL
+: (COLOR)       ( b c m s -- )
+  >R                \ b c m             R: s
+  ROT OVER AND      \ c m (b&m)         \ masked value, keep mask
+  SWAP R@ LSHIFT    \ c (b&m) (m<<s)    \ field position
+  INVERT ATTRIB AND \ c (b&m) cleared   \ zero ONLY the field bits in ATTRIB
+  OVER R> LSHIFT OR \ c (b&m) ATTRIB'   \ drop (b&m)<<s into the cleared field
+  TO ATTRIB         \ c (b&m)
+  SWAP EMITC EMITC  \                   \ emit ctrl then masked value
+;
+
+\         ctrl  mask       shift
+\ _______________________________________
+\
+\ Attribute-mode implementations (3-bit ink/paper fields in one byte),
+\ used by Layer 0/1,1/1,3/1,2.
+: (ATTR.INK)      16  COLOR-MASK   0   (COLOR) ;
+: (ATTR.PAPER)    17  COLOR-MASK   3   (COLOR) ;
+: (ATTR.FLASH)    18  FLAG-MASK    6   (COLOR) ;
+: (ATTR.BRIGHT)   19  FLAG-MASK    7   (COLOR) ;
+: (ATTR.INVERSE)  20  FLAG-MASK    8   (COLOR) ;
+: (ATTR.OVER)     21  FLAG-MASK    8   (COLOR) ;
+
+\ Full-byte (one-colour-per-pixel) implementations, used by Layer 2 and 1,0.
+\ ATTRIB is a whole 8-bit colour: INK sets it directly, PAPER sets BACKGROUND,
+\ and FLASH/BRIGHT/INVERSE/OVER have no meaning.
+: (RGB.INK)    ( b -- )  DUP TO ATTRIB      16 EMITC EMITC ;
+: (RGB.PAPER)  ( b -- )  DUP TO BACKGROUND  17 EMITC EMITC ;
+: (RGB.NULL)   ( b -- )  DROP ;
+
+\ The colour words are vectored: each LAYERxx INITIALIZE installs the proper
+\ profile so that interactive use (e.g.  216 .INK ) matches the active layer.
+DEFER .INK      DEFER .PAPER     DEFER .FLASH
+DEFER .BRIGHT   DEFER .INVERSE   DEFER .OVER
+
+: ATTR-COLORS   ( -- )
+    ['] (ATTR.INK)     IS .INK     ['] (ATTR.PAPER)   IS .PAPER
+    ['] (ATTR.FLASH)   IS .FLASH   ['] (ATTR.BRIGHT)  IS .BRIGHT
+    ['] (ATTR.INVERSE) IS .INVERSE ['] (ATTR.OVER)    IS .OVER ;
+
+: RGB-COLORS    ( -- )
+    ['] (RGB.INK)   IS .INK     ['] (RGB.PAPER) IS .PAPER
+    ['] (RGB.NULL)  IS .FLASH   ['] (RGB.NULL)  IS .BRIGHT
+    ['] (RGB.NULL)  IS .INVERSE ['] (RGB.NULL)  IS .OVER ;
+
+ATTR-COLORS                     \ sensible default before any layer activates
+
+\ ____________________________________________________________________
+\
+\ Per-mode INITIALIZE: on activation set foreground from ATTRIB and
+\ paper/border from BACKGROUND (vectored by LAYER: -> INITIALIZE).
+\ Layer 1,2 is special: setting PAPER alone yields BORDER = PAPER and
+\ INK = 8's-complement of PAPER in hardware.
+: L0-INITIALIZE   ATTR-COLORS  ATTRIB .INK  BACKGROUND .PAPER  BACKGROUND .BORDER .PERM ;
+: L11-INITIALIZE  ATTR-COLORS  ATTRIB .INK  BACKGROUND .PAPER  BACKGROUND .BORDER ;
+: L13-INITIALIZE  ATTR-COLORS  ATTRIB .INK  BACKGROUND .PAPER  BACKGROUND .BORDER ;
+: L10-INITIALIZE  RGB-COLORS   ATTRIB .INK  BACKGROUND .PAPER  BACKGROUND .BORDER ;
+: L2-INITIALIZE   RGB-COLORS   ATTRIB .INK  BACKGROUND .PAPER  BACKGROUND .BORDER ;
+: L12-INITIALIZE  ATTR-COLORS  BACKGROUND .PAPER ;
+
+\ ____________________________________________________________________
+
 .( LAYER: )
 
 \ LAYER: is a defining word that allows you creating 6 new definitions
@@ -557,6 +634,8 @@ HEX
 : LAYER:
     <BUILDS
         ,           \    ATTRIB
+        ,           \    BACKGROUND
+        ,           \ is INITIALIZE
         ,           \ is EDGE
         ,           \ is XY-RATIO
         ,           \ is PIXELATT  
@@ -574,6 +653,8 @@ HEX
         ATTRIB      P-ATTRIB !  \ save current attrib to previous mode default
         DUP     TO  P-ATTRIB    \ set pointer
         DUP  @  TO  ATTRIB      CELL+
+        DUP  @  TO  BACKGROUND  CELL+
+        DUP  @  IS  INITIALIZE  CELL+
         DUP  @  IS  EDGE        CELL+
         DUP  @  IS  XY-RATIO    CELL+
         DUP  @  IS  PIXELATT    CELL+
@@ -587,8 +668,9 @@ HEX
         DUP C@  TO  FLAG-MASK   1+
         DUP C@  LAYER!          1+
             C@  ?DUP IF 1E EMITC EMITC THEN  \ char-size
-        CR    
-;        
+        INITIALIZE
+        CR
+;
 
 \ ____________________________________________________________________
 
@@ -604,6 +686,8 @@ HEX
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L0-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L0-ATTRIB       \ ATTRIB
 
 LAYER: LAYER0  
@@ -622,6 +706,8 @@ HEX
     ' L0-PIXELATT   \ PIXELATT      
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L11-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L11-ATTRIB      \ ATTRIB
 
 LAYER: LAYER11 
@@ -640,6 +726,8 @@ HEX
     ' L13-PIXELATT  \ PIXELATT  
     ' NOOP          \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L13-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L13-ATTRIB      \ ATTRIB
 
 LAYER: LAYER13 
@@ -658,6 +746,8 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning for Layer 1,0)
     ' NOOP          \ XY-RATIO  
     ' L1-EDGE       \ EDGE 
+    ' L10-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L10-ATTRIB      \ ATTRIB
 
 LAYER: LAYER10 
@@ -676,6 +766,8 @@ HEX
     ' L2-PLOT       \ PIXELATT  (has no meaning for Layer 2)
     ' NOOP          \ XY-RATIO  
     ' L1-EDGE       \ EDGE 
+    ' L2-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L20-ATTRIB      \ ATTRIB
 
 LAYER: LAYER2  
@@ -694,6 +786,8 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning on Layer 1,2)
     ' 2/            \ XY-RATIO  
     ' NOOP          \ EDGE 
+    ' L12-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
     L12-ATTRIB      \ ATTRIB
 
 LAYER: LAYER12 
@@ -847,37 +941,8 @@ HEX
 
 
 
-\ (COLOR)
-\ this definition needs 4 params
-\  b :  attribute value (in range 0-7)
-\  c :  ctrl character between 16 and 21
-\  m :  bitmask applied to b to avoid Basic's errors.
-\  s :  number of bit to be shifted
-: (COLOR)       ( b c m s -- )
-  >R                \ b c m             R: s
-  DUP R@            \ b c m m  s
-  LSHIFT NEGATE     \ b c m m1          \ m1 has 0 only on bits to work on
-  ATTRIB AND        \ b c m m1          \ zeroes working ATTRIB bits 
-  3 PICK            \ b c m m1 b 
-  R>                \ b c m m1 b s
-  LSHIFT            \ b c m m1 b1       \ shift attribute value bits
-  OR                \ b c m n           \ put them in place
-  TO ATTRIB         \ b c m 
-  ROT AND           \ c b&m             \ at end, change current attribs
-  SWAP EMITC EMITC  \ 
-;
-
-DECIMAL
-
-\         ctrl  mask       shift     
-\ _______________________________________
-\
-: .INK      16  COLOR-MASK   0   (COLOR) ;
-: .PAPER    17  COLOR-MASK   3   (COLOR) ;
-: .FLASH    18  FLAG-MASK    6   (COLOR) ;
-: .BRIGHT   19  FLAG-MASK    7   (COLOR) ;
-: .INVERSE  20  FLAG-MASK    8   (COLOR) ;
-: .OVER     21  FLAG-MASK    8   (COLOR) ;
+\ (COLOR) and the .INK / .PAPER / ... words are now defined ahead of
+\ LAYER: (moved up so each LAYERxx INITIALIZE word can reference them).
 
 \ ____________________________________________________________________
 \

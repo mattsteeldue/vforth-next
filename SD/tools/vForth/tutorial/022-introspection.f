@@ -137,7 +137,7 @@ CR
 \   WHERE
 
 .( The following definition has an error. ) CR
-.( Type:  WHERE  when you receive "Syntax error" ) CR
+.( Type:  WHERE  when you receive "Syntax error" on next row.) CR
 
 : WRONG  BEGIN WHILE LOOP  ;
 

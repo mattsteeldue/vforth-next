@@ -1,0 +1,9 @@
+    LAYER22-GRAPHICS  --
+
+NEEDS LAYER22-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 2 high-res: 320x256 pixels, 256
+colours, 1 colour per pixel.  Uses 80K of RAM (ten
+8K MMU7 pages) laid out in vertical bands.
+Same PLOT/DRAW-LINE/CIRCLE as the other modes;
+x = vertical 0..255, y = horizontal 0..319.
+

@@ -18,7 +18,24 @@ MARKER NO-LAYER10-GRAPHICS      \ unload only this mode (keeps GRAPHICS-COMMON)
     NOOP
 ;
 
+\ shared words extracted to inc/ (deduplicated via NEEDS)
+NEEDS L1-POINT
+NEEDS L1-PLOT
+NEEDS L1-XPLOT
+NEEDS L1-EDGE
+NEEDS .BORDER
+
 BASE @
+
+\ ____________________________________________________________________
+\
+\ Layer 1,0 INITIALIZE
+: L10-INITIALIZE
+    RGB-COLORS
+    ATTRIB     .INK
+    BACKGROUND .PAPER
+    BACKGROUND .BORDER
+;
 
 \ ____________________________________________________________________
 \
@@ -49,47 +66,8 @@ CODE L10-PIXELADD ( x y -- a )
 
 \ ____________________________________________________________________
 \
-\ Layer 1,0 POINT (per-pixel attribute)
-: L1-POINT  ( x y -- c )
-    PIXELADD C@
-;
-
-\ ____________________________________________________________________
+\ L1-PLOT and L1-XPLOT now come from inc/ (see NEEDS above).
 \
-\ Layer 1,0 EDGE rule
-: L1-EDGE  ( b -- f )
-    ATTRIB =
-;
-
-\ ____________________________________________________________________
-\
-\ Layer 1,0 PLOT
-\ COORD-CHECK and PIXELADD are vectorized via DEFER..IS
-: L1-PLOT  ( x y -- )
-    COORD-CHECK
-    IF
-        PIXELADD
-        ATTRIB SWAP C!
-    ELSE
-        2DROP
-    THEN
-;
-
-\ ____________________________________________________________________
-\
-\ Layer 1,0 XPLOT
-\ COORD-CHECK and PIXELADD are vectorized via DEFER..IS
-DECIMAL
-: L1-XPLOT  ( x y -- )
-    COORD-CHECK
-    IF
-        PIXELADD
-        DUP C@ 255 XOR SWAP C!
-    ELSE
-        2DROP
-    THEN
-;
-
 \ ____________________________________________________________________
 \
 \ Build LAYER10 and activate it
@@ -105,7 +83,9 @@ HEX
     ' 2DROP         \ PIXELATT  (has no meaning for Layer 1,0)
     ' NOOP          \ XY-RATIO
     ' L1-EDGE       \ EDGE
-    _WHITE 3 LSHIFT _BLACK +    \ ATTRIB (L10-ATTRIB)
+    ' L10-INITIALIZE \ INITIALIZE
+    _BLUE           \ BACKGROUND
+    _YELLOW                     \ ATTRIB (L10-ATTRIB)
 
 LAYER: LAYER10
 

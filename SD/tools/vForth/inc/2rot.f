@@ -4,8 +4,6 @@
 
 .( 2ROT )
 
-NEEDS CODE      \ just to be sure we are fine
-
 BASE @ \ save base status
 
 HEX 

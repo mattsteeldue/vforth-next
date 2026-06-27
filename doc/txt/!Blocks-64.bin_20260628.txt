@@ -1,9 +1,9 @@
-File: ..\!Blocks-64.bin
-Created: Sun Jun 21 22:15:22 2026
+File: C:\zx\forth\F18\tools\vForth\!Blocks-64.bin
+Created: Sun Jun 28 00:38:41 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-06-14
+\ v-Forth 1.8 - NextZXOS versione - build 2026-06-28
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
