@@ -1,0 +1,6 @@
+    LAYER0-GRAPHICS  --
+
+NEEDS LAYER0-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 0 (ULA): 256x192 pixels, 8
+colours, 32x24 cells, 2 colours per cell.
+

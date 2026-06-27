@@ -1,0 +1,6 @@
+    LAYER11-GRAPHICS  --
+
+NEEDS LAYER11-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 1,1 (Std Res): 256x192 pixels,
+256 colours, 32x24 cells, 2 colours per cell.
+

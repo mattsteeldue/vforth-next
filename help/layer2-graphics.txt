@@ -1,0 +1,6 @@
+    LAYER2-GRAPHICS  --
+
+NEEDS LAYER2-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 2: 256x192 pixels, 256 colours,
+1 colour per pixel.
+

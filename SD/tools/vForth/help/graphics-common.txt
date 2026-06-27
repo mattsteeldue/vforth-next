@@ -1,0 +1,12 @@
+    GRAPHICS-COMMON  --
+
+Shared core for the LAYERxx-GRAPHICS modules:
+colour constants, LAYER!, COORD-CHECK, the
+vectored primitives (PLOT XPLOT POINT PIXELADD
+PIXELATT XY-RATIO EDGE), the LAYER: defining
+word, and the layer-independent DRAW-LINE
+CIRCLE PAINT .INK .PAPER ...
+
+Loaded automatically by NEEDS LAYERxx-GRAPHICS;
+rarely needs NEEDS GRAPHICS-COMMON on its own.
+

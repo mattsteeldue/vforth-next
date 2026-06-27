@@ -1,0 +1,7 @@
+    LAYER13-GRAPHICS  --
+
+NEEDS LAYER13-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 1,3 (Timex HiColour): 256x192
+pixels, 256 colours, 32x192 cells, 2 colours
+per cell.
+

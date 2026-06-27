@@ -1,0 +1,6 @@
+    LAYER10-GRAPHICS  --
+
+NEEDS LAYER10-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 1,0 (LoRes): 128x96 pixels, 256
+colours, 1 colour per pixel.
+

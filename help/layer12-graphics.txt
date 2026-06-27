@@ -1,0 +1,6 @@
+    LAYER12-GRAPHICS  --
+
+NEEDS LAYER12-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 1,2 (Timex HiRes): 512x192
+pixels, only 2 colours on the whole screen.
+
