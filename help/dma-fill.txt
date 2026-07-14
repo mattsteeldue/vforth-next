@@ -1,0 +1,8 @@
+    DMA-FILL  byte dest len --
+
+    Fills len bytes starting at memory address dest with a constant
+    byte value using the DMA controller in continuous mode. The
+    source address remains fixed, while the destination address
+    increments after each byte. This operation blocks the CPU until
+    completion.
+

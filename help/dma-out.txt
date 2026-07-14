@@ -1,0 +1,7 @@
+    DMA-OUT  src ioport len --
+
+    Transfers len bytes from memory address src to an I/O port using
+    the DMA controller in continuous mode. The source memory address
+    increments after each byte, while the I/O port address remains
+    fixed. This operation blocks the CPU until completion.
+

@@ -35,7 +35,6 @@ NEEDS L1-PLOT
 NEEDS L1-XPLOT
 NEEDS L1-EDGE
 NEEDS L2-RAM-PAGE
-NEEDS MMU7@
 NEEDS .BORDER
 
 BASE @
@@ -57,8 +56,8 @@ CODE L22-PIXELADD  ( x y -- a )
     06 C, 05 C,       \ ld   b, 5
     ED C, 2A C,       \ bsrl de, b  \ e = y >> 5 = which 8K page
     7B C,             \ ld   a, e
-    27 C,             \ daa
-    E6 C, 0F C,       \ and  0F
+    27 C,             \ daa         \ DAA trick for fast modulo 10
+    E6 C, 0F C,       \ and  0F     \ extract low nibble = page number modulo 10
     C6 C, L2-RAM-PAGE C, \ add  L2-RAM-PAGE
     ED C, 92 C, 57 C, \ nextreg 57, a   \ map the page onto MMU7
     3E C, E0 C,       \ ld   a, E0

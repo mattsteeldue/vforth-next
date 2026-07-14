@@ -193,7 +193,9 @@ NEEDS ms
 
 : DEMO
     DEMO-AY-TONE
+    CR ." Play chord"
     AY-CHORD
+    CR ." Play noise"
     AY-NOISE
     AY-SILENCE
 ;

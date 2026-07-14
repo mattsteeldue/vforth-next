@@ -9,6 +9,10 @@
 \ border color per scanline, split-screen palette changes, and
 \ hardware-timed scrolling effects.
 \
+\ This tutorial's demo is a three-band split-scroll effect over a
+\ loaded Layer 2 picture, ported from a working forum contribution
+\ (forum/copper-bmp2.f) and adapted to current vForth conventions.
+\
 \ Reference: sec.7.6
 \
 \ Load from a clean session:
@@ -25,8 +29,14 @@ CR
 .(     Type NEWTASK to unload.         ) CR
 
 NEEDS COPPER
-NEEDS ms
-
+NEEDS LAYER2
+NEEDS LAYER12
+NEEDS BMP-LOAD
+NEEDS VALUE
+NEEDS TO
+NEEDS CASE
+NEEDS INTERRUPTS
+NEEDS .PAPER
 
 \ ===========================================================================
 \ 1. Copper hardware overview
@@ -84,92 +94,163 @@ NEEDS ms
 \ calling COP-STOP again and starting fresh.
 
 \ ===========================================================================
-\ 3. Next register for border color
+\ 3. Demo overview: a three-band split-scroll effect
 \ ===========================================================================
 \
-\ Writing to Next register $62 changes the border color.
-\ Actually the ULA border color is at I/O port $FE, but a common
-\ copper effect is to change the border via the ULA register.
+\ Next register $17 (Layer 2 Y Offset) sets a pixel offset applied
+\ to the whole Layer 2 framebuffer when it is drawn to the screen.
+\ Writing to it once per frame produces an ordinary vertical scroll;
+\ writing to it several times per frame, at different scanlines via
+\ COP-WAIT, produces a "torn" effect: the picture is cut into
+\ independent horizontal bands, each one showing the source bitmap
+\ at its own vertical offset.
 \
-\ In practice, COP-MOVE can write any Next register.
-\ To change border per scanline, write to reg $62 which on the Next
-\ can control the border indirectly, or use reg $40-$4F for palette.
-\
-\ A common trick is to write to Next register $43 (palette data) at
-\ specific scanlines to create a per-scanline color effect.
+\ This demo splits the 192-line display into three bands (lines
+\ 0-63, 64-127, 128-191) and scrolls each one by a different amount
+\ every frame, giving the classic split/shear "melting picture"
+\ copper effect.
 
 \ ===========================================================================
-\ 4. Demo: rainbow border using copper
+\ 4. Loading the picture
 \ ===========================================================================
 \
-\ This example changes the border ULA color by writing to port $FE
-\ via copper at intervals of 24 scanlines.
-\ We use COP-MOVE to write to Next register $62 (copper control hi)
-\ is not the border -- instead we demonstrate the pattern with
-\ Next register $40 (palette index) to show the technique.
-\
-\ For a real border effect on the Next, you write to the ULA ink/
-\ paper registers, or set palette entries.  Here we change the
-\ background palette entry (index 0) for visual effect.
+\ BMP-LOAD" (from lib/bmp-load.f, see tutorial 046) reads a 256x192
+\ 256-color BMP straight into the Layer 2 frame buffer, handling
+\ MMU7 page mapping and BMP header orientation internally.  It
+\ replaces the hand-rolled, order-reversed loader from the original
+\ forum source, which read pages back to front and hard-coded the
+\ file's payload offset instead of parsing it from the header.
 
-: COPPER-RAINBOW  ( -- )
+\ ===========================================================================
+\ 5. Building the copper program for one frame
+\ ===========================================================================
+\
+\ Each band keeps a running Y-offset (SCROLLn) and a per-frame step
+\ (STEPn, signed).  BUILD-COPPER-LIST advances each offset and
+\ re-emits the whole three-band list; it must be called again every
+\ time the offsets change, since the copper list is not re-read
+\ from the VALUEs -- it is a fixed sequence of numbers uploaded once.
+
+0 VALUE SCROLL0   \ current Y-offset, band 0 (lines 0-63)
+0 VALUE SCROLL1   \ current Y-offset, band 1 (lines 64-127)
+0 VALUE SCROLL2   \ current Y-offset, band 2 (lines 128-191)
+
+0 VALUE STEP0     \ per-frame increment (signed), band 0
+0 VALUE STEP1     \ per-frame increment (signed), band 1
+0 VALUE STEP2     \ per-frame increment (signed), band 2
+
+: BUILD-COPPER-LIST  ( -- )
     COP-STOP
-    \ Build copper list: change palette entry 0 per 24-line band
-    8 0 DO
-        I 24 *  0 COP-WAIT       \ wait for scanline I*24
-        I 32 *  $40 COP-MOVE     \ write palette index
-        I 32 * 7 AND  $41 COP-MOVE \ write palette color
-    LOOP
+    $00 $00 COP-WAIT
+        SCROLL0 STEP0 + TO SCROLL0  SCROLL0  $17 COP-MOVE
+    $40 $0F COP-WAIT
+        SCROLL1 STEP1 + TO SCROLL1  SCROLL1  $17 COP-MOVE
+    $80 $1E COP-WAIT
+        SCROLL2 STEP2 + TO SCROLL2  SCROLL2  $17 COP-MOVE
     COP-HALT
-    COP-START
-    ." Rainbow effect running. Press BREAK to stop." CR
-    BEGIN  ?TERMINAL  UNTIL
-    COP-STOP
 ;
 
 \ ===========================================================================
-\ 5. Demo: split screen border effect
+\ 6. Driving the effect from the 50Hz interrupt
 \ ===========================================================================
 \
-\ Change border register at two scanlines to create a split-color
-\ effect at row 96 (halfway down the display area).
-\
-\ Border changes by writing to I/O port $FE are not available via
-\ copper MOVE (which only writes Next registers).  However, you can
-\ use copper to write to Next register $62 palette-related registers
-\ or to the ULA scroll register to achieve split-screen effects.
-\
-\ The following example uses copper to write palette value at line 96.
+\ ISR-TEST rebuilds and restarts the copper list every 4th frame
+\ (roughly 12.5 times a second -- fast enough to look smooth, slow
+\ enough to leave CPU time for the key-polling loop below).  It is
+\ installed with ISR-XT, the current INTERRUPTS.f API; the original
+\ forum source stored it into a nonexistent "ISR-W" instead, which
+\ left the handler never actually hooked up.
 
-: COPPER-SPLIT  ( -- )
-    COP-STOP
-    \ Above scanline 96: palette 0 = dark blue ($09)
-    0   0 COP-WAIT
-    $09 $41 COP-MOVE     \ set color of palette index 0
-    \ At scanline 96: palette 0 = dark green ($12)
-    96  0 COP-WAIT
-    $12 $41 COP-MOVE
-    COP-HALT
-    COP-START
-    ." Split screen effect. BREAK to stop." CR
-    Begin  ?TERMINAL  UNTIL
-    COP-STOP
+23672 CONSTANT FRAMES-ADDR   \ ZX Next 50Hz frame counter (system var)
+
+: ISR-TEST  ( -- )
+    FRAMES-ADDR @ 3 AND 0= IF
+        BUILD-COPPER-LIST COP-START
+    THEN
+;
+
+ISR-OFF
+' ISR-TEST ISR-XT !
+
+\ ===========================================================================
+\ 7. Interactive control
+\ ===========================================================================
+\
+\ KEYPRESS blocks until a key is pressed and returns its code, using
+\ LAST-K ($5C08), the ZX ROM system variable holding the last key
+\ decoded by the keyboard interrupt routine.  HANDLE-KEY dispatches
+\ on it:
+\
+\   a   ISR-ON   start (or resume) the animation
+\   d   ISR-OFF  pause it -- the copper keeps displaying its last
+\                uploaded list, but the offsets stop advancing
+\   e   reverse all three bands to one direction
+\   q   reverse all three bands to the other direction
+\
+\ [BREAK] ends KEY-LOOP via ?TERMINAL.
+
+$5C08 CONSTANT LAST-K
+
+: KEYPRESS  ( -- c )
+    0 LAST-K C!
+    BEGIN  LAST-K C@  UNTIL
+    LAST-K C@
+;
+
+: HANDLE-KEY  ( c -- )
+    CASE
+        [CHAR] a OF  ISR-ON                                      ENDOF
+        [CHAR] d OF  ISR-OFF                                     ENDOF
+        [CHAR] e OF  -1 TO STEP0  -2 TO STEP1  -3 TO STEP2       ENDOF
+        [CHAR] q OF   1 TO STEP0   2 TO STEP1   3 TO STEP2       ENDOF
+    ENDCASE
+;
+
+: KEY-LOOP  ( -- )
+    BEGIN
+        KEYPRESS HANDLE-KEY
+    ?TERMINAL UNTIL
 ;
 
 \ ===========================================================================
-\ 6. Demo: disable copper
+\ 8. The demo word
 \ ===========================================================================
 \
-\ COP-STOP disables the copper and resets its internal pointer.
-\ After COP-STOP, the copper does nothing until COP-START is called.
+\ SPLIT-SCROLL-DEMO ties the pieces together: switch to Layer 2,
+\ load the picture, reset the scroll state, and hand control to
+\ KEY-LOOP.  On exit (BREAK) it stops the copper, disables the
+\ interrupt, and restores the normal LAYER12 text mode -- the same
+\ switch-in/restore-out pattern used by every graphic demo in this
+\ tutorial series (see tutorial/CLAUDE.md sec.13).
+\
+\ COP-STOP only halts the copper's own instruction pointer -- it
+\ does not touch whatever value the copper last wrote to Next
+\ register $17.  Without an explicit restore, BUILD-COPPER-LIST's
+\ last COP-MOVE would leave Layer 2's Y-offset shifted even after
+\ this demo exits, silently displacing any later, unrelated use of
+\ Layer 2.  SAVED-Y-OFFSET captures the register's value on entry
+\ and puts it back on exit, so the demo leaves hardware state ($17)
+\ exactly as it found it -- the same in-out discipline as LAYER12.
 
-: COPPER-OFF  ( -- )
+VARIABLE SAVED-Y-OFFSET
+
+: SPLIT-SCROLL-DEMO  ( -- )
+    $17 REG@ SAVED-Y-OFFSET !
+    LAYER2 CLS
+    ." Loading image..." CR
+    BMP-LOAD" tutorial/bmp/critters.bmp"
+    0 TO SCROLL0  0 TO SCROLL1  0 TO SCROLL2
+    -1 TO STEP0  -2 TO STEP1  -3 TO STEP2
+    ." a=start  d=pause  e/q=reverse direction  BREAK=quit" CR
+    KEY-LOOP
+    ISR-OFF
     COP-STOP
-    ." Copper stopped." CR
+    SAVED-Y-OFFSET @ $17 REG!
+    LAYER12 1 .PAPER CLS
 ;
 
 \ ===========================================================================
-\ 7. Notes on copper timing
+\ 9. Notes on copper timing
 \ ===========================================================================
 \
 \ Vertical line numbers for PAL (312 total lines):
@@ -184,10 +265,11 @@ NEEDS ms
 \ The list halts at COP-HALT ($FFFF) or wraps around.
 
 \ ===========================================================================
-\ 8. Simple tests (requires NEEDS TESTING)
+\ 10. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ Copper effects are purely visual.  Register constants can be tested.
+\ The animation is purely visual and needs SPLIT-SCROLL-DEMO run
+\ interactively; only the register constants can be tested here.
 \
 \ NEEDS TESTING
 \ T{  COP-CTRL-LO  ->  97   }T    \ $61

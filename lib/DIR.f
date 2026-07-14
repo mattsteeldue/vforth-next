@@ -135,9 +135,12 @@ VARIABLE DIR-GAP
         HERE DIR-GAP @ -
         DIR-SAVE-DP @ 
         ?DO                     \ for i between 1 to n-1 inclusive
-            I DIR-GAP @ + @ FAR \ element i+gap
-            I             @ FAR \ element i
-            32 (COMPARE)        \ -1 when a[i+gap] < a[i] 
+            I DIR-GAP @ + @ FAR PAD 32 CMOVE \ element i+gap, copied to PAD:
+                                              \ the FAR below may remap MMU7
+                                              \ to a different page and
+                                              \ invalidate this address
+            I             @ FAR              \ element i
+            PAD SWAP 32 (COMPARE) \ -1 when a[i+gap] < a[i]
             0< IF               \ exchange pointers, NOT strings!
                 I 2+ @  I  @ 
                 I 2+ !  I  ! 

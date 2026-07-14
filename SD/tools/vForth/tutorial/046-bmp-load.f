@@ -23,7 +23,12 @@ CR
 .( --- Tutorial 046: BMP image loading loaded. ) CR
 .(     Type NEWTASK to unload.             ) CR
 
-NEEDS GRAPHICS
+NEEDS BMP-LOAD
+NEEDS LAYER2
+NEEDS LAYER12
+NEEDS .PAPER
+NEEDS TO
+NEEDS WAIT-KEY
 
 \ ===========================================================================
 \ 1. BMP file requirements
@@ -48,6 +53,13 @@ NEEDS GRAPHICS
 \   45 ($2D) : file seek error
 \   46 ($2E) : file read error
 \   42 ($2A) : file close error
+\
+\ PATH GOTCHA: every file name is RELATIVE to vForth's current
+\ directory, i.e. the directory vForth was started from (tools/vForth
+\ on the SD card).  "tutorial/bmp/jaws.bmp" therefore names
+\ /tools/vForth/tutorial/bmp/jaws.bmp on the card.  A wrong path shows
+\ up as error 41 (file open error) and is easily mistaken for a broken
+\ loader -- check the path relative to tools/vForth first.
 
 \ ===========================================================================
 \ 2. BMP-LOAD -- load BMP into Layer 2
@@ -78,10 +90,10 @@ NEEDS GRAPHICS
 \   BMP-LOAD" filename"    (immediate word, works at interpret time)
 \
 \ At interpret time:
-\   BMP-LOAD" C:/pics/scene.bmp"
+\   BMP-LOAD" tutorial/testbild.bmp"
 \
 \ At compile time (inside a : definition):
-\   : SHOW-SCENE  BMP-LOAD" C:/pics/scene.bmp" ;
+\   : SHOW-SCENE  BMP-LOAD" tutorial/testbild.bmp" ;
 \
 \ BMP-LOAD" handles the string setup internally.
 
@@ -91,21 +103,20 @@ NEEDS GRAPHICS
 \
 \ To run this demo, place a suitable BMP on the SD card:
 \   - Width 256, height 192, 8bpp (256-color)
-\   - Saved as C:/demos/test256.bmp
+\   - Saved as tutorial/testbild.bmp
 \
 \ Then execute:
 \   SHOW-BMP
-
-NEEDS WAIT-KEY
 
 : SHOW-BMP  ( -- )
     LAYER2
     CLS
     ." Loading image..." CR
-    BMP-LOAD" C:/demos/test256.bmp"
+    BMP-LOAD" tutorial/testbild.bmp"
     ." Done. Press any key." CR
-    WAIT-KEY DROP
-    LAYER0
+    WAIT-KEY
+    LAYER12
+    1 .PAPER
     CLS
 ;
 
@@ -115,7 +126,7 @@ NEEDS WAIT-KEY
 \
 \ A counted-z string variable is created with ," inside CREATE:
 \
-\   CREATE MY-BMP  ," C:/pics/sky.bmp"
+\   CREATE MY-BMP  ," tutorial/bmp/jaws.bmp"
 \
 \ The layout in memory:
 \   byte 0    : string length (not including NUL)
@@ -127,29 +138,78 @@ NEEDS WAIT-KEY
 \
 \ This is useful when the filename is stored in a variable.
 
-CREATE DEMO-FILE  ," C:/demos/demo.bmp"
+CREATE DEMO-FILE  ," tutorial/bmp/jaws.bmp"
 
 : LOAD-DEMO  ( -- )
     LAYER2
     DEMO-FILE BMP-LOAD
-    WAIT-KEY DROP
-    LAYER0  CLS
+    WAIT-KEY
+    LAYER12 1 .PAPER CLS
 ;
 
 \ ===========================================================================
-\ 6. Demo: BMP slide show
+\ 6. Demo: double-buffered BMP slide show
 \ ===========================================================================
+\
+\ tutorial/bmp/ holds fourteen 256x192 BMPs, one movie still each.  The
+\ slide show below alternates between two Layer 2 RAM pages (L2-RAM-PAGE
+\ 9 and #12, i.e. NextReg $12 = 9 or 12): while one page is on screen
+\ (SHOW-TO-x), the next image loads into the other, hidden page
+\ (LOAD-TO-x) -- so loading never flashes or tears the visible frame.
+\ lib/bmp-load.f itself defines L2-RAM-PAGE (a CONSTANT initialised
+\ from NextReg $12 at load time) -- the page BMP-LOAD writes into.
+\ TO can retarget it before each load because TO stores through the
+\ word's PFA, which works the same for CONSTANT and VALUE.
+\
+\ FRAMES-ADDR is the ZX Spectrum Next's 50Hz frame counter at $5C78;
+\ SLIDE-DELAY busy-waits on it for two seconds (100 frames), or until
+\ [BREAK].
 
-CREATE SLIDE-A  ," C:/slides/slide1.bmp"
-CREATE SLIDE-B  ," C:/slides/slide2.bmp"
-CREATE SLIDE-C  ," C:/slides/slide3.bmp"
+23672 CONSTANT FRAMES-ADDR
+
+\ Set L2-RAM-PAGE to Layer 2 RAM default page (NextReg $12 = 9)
+: LOAD-TO-9   9  TO L2-RAM-PAGE ;
+
+\ Set L2-RAM-PAGE to Layer 2 RAM shadow page (NextReg $12 = 12)
+: LOAD-TO-C   #12 TO L2-RAM-PAGE ;
+
+\ Point the display at Layer 2 RAM page 9
+: SHOW-TO-9    9  $12 REG! ;
+
+\ Point the display at Layer 2 RAM page 12
+: SHOW-TO-C   #12 $12 REG! ;
+
+\ Wait two seconds (100 frames), or until [BREAK] is pressed
+: SLIDE-DELAY ( -- )
+    0 FRAMES-ADDR !
+    FRAMES-ADDR @ 100 +
+    BEGIN
+        DUP FRAMES-ADDR @ U<
+        ?TERMINAL OR
+    UNTIL
+    DROP
+;
 
 : SLIDE-SHOW  ( -- )
-    LAYER2
-    SLIDE-A BMP-LOAD  WAIT-KEY DROP
-    SLIDE-B BMP-LOAD  WAIT-KEY DROP
-    SLIDE-C BMP-LOAD  WAIT-KEY DROP
-    LAYER0  CLS
+    LAYER12 0 #17 EMITC EMITC   \ set black-on-white
+    SHOW-TO-9 \ ensure no flicker during first image loading.
+    LAYER2 CLS
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/critters.bmp"  SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/diehard.bmp"   SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/et.bmp"        SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/et2.bmp"       SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/freddy.bmp"    SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/friday.bmp"    SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/future.bmp"    SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/indian.bmp"    SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/jaws.bmp"      SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/krull.bmp"     SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/rocky.bmp"     SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/teenwolf.bmp"  SHOW-TO-9  SLIDE-DELAY
+    LOAD-TO-C  BMP-LOAD" tutorial/bmp/term.bmp"      SHOW-TO-C  SLIDE-DELAY
+    LOAD-TO-9  BMP-LOAD" tutorial/bmp/trouble.bmp"   SHOW-TO-9  SLIDE-DELAY
+    CLS LAYER12
+    LAYER12 1 #17 EMITC EMITC   \ set blue background
 ;
 
 \ ===========================================================================
@@ -176,4 +236,4 @@ CREATE SLIDE-C  ," C:/slides/slide3.bmp"
 \ Only structural tests are possible here.
 \
 \ NEEDS TESTING
-\ T{  DEMO-FILE C@  ->  20  }T    \ "C:/demos/demo.bmp" length
+\ T{  DEMO-FILE C@  ->  21  }T    \ "tutorial/bmp/jaws.bmp" length

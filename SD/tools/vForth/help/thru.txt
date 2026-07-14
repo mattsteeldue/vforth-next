@@ -1,0 +1,7 @@
+    THRU  scr1 scr2 --
+
+Load (interpret) Screens scr1 through scr2 inclusive.
+Do not mix with --> chaining: screens already chained-in
+would be loaded twice.
+
+Available after NEEDS THRU

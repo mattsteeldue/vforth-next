@@ -1,0 +1,5 @@
+    DMA-RESET-STATUS  --
+
+    Sends the WR6 reset-status command to the DMA controller, clearing
+    the transfer status flags without affecting other configuration.
+

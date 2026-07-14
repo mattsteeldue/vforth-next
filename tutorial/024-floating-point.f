@@ -44,7 +44,7 @@
 
 MARKER NO-THIS
 
-: NEWTASK  NOOP  NO-THIS;
+: NEWTASK  NOOP  NO-THIS ;
 
 CR
 .( --- Tutorial 024: floating point loaded. ) CR
@@ -124,7 +124,7 @@ CR
 \ F>D   ( fp -- d )   convert fp to double (truncates)
 \
 \   42  FLOAT  F.    => 4.2000e1
-\s   3.7  F>D   D.    => 3  (truncated)
+\   3.7  F>D   D.    => 3  (truncated)
 
 .( Try: 42  FLOAT F. ) CR      \ => 42.
 .( Try: 3.7 F>D   D. ) CR      \ => 3

@@ -1,0 +1,14 @@
+    DIR  -- cccc
+
+List a directory's content: name, size, date and time,
+sorted alphabetically. The directory path follows DIR
+on the same input line.
+
+For long list, [EDIT] key suspends output.
+
+Sort order depends on CASEON/CASEOFF: the comparison
+uppercases both characters before comparing (the same
+routine patched by CASEON/CASEOFF for word lookup), so
+under CASEOFF (the default) the listing sorts case-
+insensitively; under CASEON, all uppercase letters sort
+before any lowercase one.

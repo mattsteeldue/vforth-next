@@ -1,0 +1,7 @@
+    DMA-ENABLE  --
+
+    Sends the WR6 enable command to the DMA controller to start an
+    in-progress transfer operation. This command is normally sent
+    internally by high-level words like DMA-COPY, DMA-FILL, DMA-OUT,
+    and DMA-IN.
+

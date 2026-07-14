@@ -1,0 +1,6 @@
+    DMA-RESET  --
+
+    Sends the WR6 reset command to the DMA controller, clearing all
+    configuration and internal state. Useful for recovering from error
+    conditions or cleaning up before a new sequence of transfers.
+

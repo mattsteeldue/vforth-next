@@ -11,8 +11,11 @@
 \ .spr file with OPEN< / F_READ, and animates one sprite by writing
 \ its attributes every few frames.  The X coordinate spans 0..319, so
 \ it needs nine bits: the low eight live in attribute 0 and bit 8 is
-\ packed into attribute 2 together with the rotate/mirror and pattern
-\ fields -- the handling of that bit 8 is the subtle part below.
+\ packed into attribute 2 together with the rotate/mirror flags and
+\ the palette offset.  The subtle parts below: that bit 8, and the
+\ difference between a sprite SLOT (which hardware sprite you program)
+\ and a PATTERN (what it shows) -- animation alternates patterns on
+\ one slot, it does not touch a second sprite.
 \
 \ vForth notes: PAUSE uses the core word 1FRAME (EI HALT NEXT), which
 \ blocks one 50Hz frame, so no NEEDS is required for timing.  Numeric
@@ -84,18 +87,32 @@ CREATE SPRITE-BUFFER SPRITE-BUFLEN ALLOT
 \ SPRITE-OB.  At run time "addr _field" adds the field offset to addr.
 \
 \ Field -> hardware attribute mapping:
-\   _spriteid  -> attribute 3, bits 5:0 (slot number; $C0 = visible)
+\   _spriteid  -> attribute 3, bits 5:0 (PATTERN shown; $C0 = visible)
 \   _xcoord    -> attribute 0 (low 8 bits) + attribute 2 bit 0 (bit 8)
 \   _ycoord    -> attribute 1
 \   _rotmir    -> attribute 2, bits 3:1 (rotate / mirror flags)
-\   _pattern   -> attribute 2, bits 7:4 (pattern slot, here unused = 0)
+\   _pattern   -> attribute 2, bits 7:4 (palette offset, here 0)
 \   _anchor    -> attribute 4 area (anchor/relative; not used below)
+\
+\ Note the struct holds NO hardware slot number: the slot is chosen at
+\ update time (SPRITE-UPDATE's n argument).  Attribute 3 bits 5:0 name
+\ the PATTERN the sprite displays; confusing pattern with slot makes
+\ two sprites appear instead of one animated sprite.
 
 0  2 +FIELD _spriteid   2 +FIELD _xcoord   2 +FIELD _ycoord
    1 +FIELD _rotmir     1 +FIELD _pattern  1 +FIELD _anchor
 CONSTANT SPRITE-OB
 
+\ The ERASE is essential: DISPLAY and TEST only ever store the pattern
+\ id and the coordinates, so _rotmir, _pattern and _anchor keep their
+\ creation-time content forever.  Without ERASE that content is heap
+\ garbage; in particular a non-zero _pattern becomes a PALETTE OFFSET
+\ (attribute 2 bits 7:4) that the hardware adds to every pixel's
+\ colour index -- the pink skin ($F7) silently shifts to another hue
+\ (e.g. offset 4 gives $37, a pale blue).
+
 CREATE SPRITE  SPRITE-OB ALLOT
+       SPRITE  SPRITE-OB ERASE
 
 \ ===========================================================================
 \ 5. Uploading a pattern
@@ -135,19 +152,25 @@ CODE SPRITE-DATA>  ( a -- )
 \ 6. Updating a sprite's attributes
 \ ===========================================================================
 \
-\ Given the address of a SPRITE struct, select its slot and write the
-\ four attribute bytes.  Attribute 2 is assembled from three pieces:
-\ X bit 8, the rotate/mirror flags, and the pattern nibble.  The whole
-\ word keeps the struct address on the stack and DROPs it at the end.
+\ Given the address of a SPRITE struct and a hardware slot number n,
+\ select slot n and write the four attribute bytes.  Keep slot and
+\ pattern apart: n picks WHICH of the 64 hardware sprites is being
+\ programmed (port $303B), while _spriteid lands in attribute 3 bits
+\ 5:0 and picks WHAT that sprite shows -- the pattern.  Animation
+\ rewrites the same slot with a different pattern; using the pattern
+\ number as the slot would light up a second sprite instead.
+\ Attribute 2 is assembled from three pieces: X bit 8, the
+\ rotate/mirror flags, and the palette-offset nibble.  The word keeps
+\ the struct address on the stack and DROPs it at the end.
 
-: SPRITE-UPDATE ( a -- )
-    DUP  _spriteid C@ SPRITE-SLOT-SELECT-PORT P!   ( a )   \ select slot
+: SPRITE-UPDATE ( a n -- )
+    SPRITE-SLOT-SELECT-PORT P!                     ( a )   \ select slot n
     DUP  _xcoord     C@               SPRITE-ATTR  ( a )   \ attr 0: X low
     DUP  _ycoord     C@               SPRITE-ATTR  ( a )   \ attr 1: Y
     DUP  _xcoord 1+  C@  $01 AND                    ( a x8 )
     OVER _rotmir     C@  $0E AND  OR                ( a v2 )
     OVER _pattern    C@  $F0 AND  OR  SPRITE-ATTR   ( a )   \ attr 2
-    DUP  _spriteid   C@  $C0      OR  SPRITE-ATTR   ( a )   \ attr 3: vis
+    DUP  _spriteid   C@  $C0      OR  SPRITE-ATTR   ( a )   \ attr 3: pat+vis
     DROP ;
 
 \ ===========================================================================
@@ -198,11 +221,30 @@ CODE SPRITE-DATA>  ( a -- )
 \
 \ $14 = global transparency colour ($E3 is the default magenta key);
 \ $15 = sprite control: %00000011 enables sprites and draws them over
-\ the border.  Palette, clock speed ($07), contention ($08) and the
-\ sprite palette registers ($40/$41) are left at their defaults, so
-\ the sprites use the default sprite palette.
+\ the border.  Clock speed ($07) and contention ($08) are left alone.
+\
+\ The palette, however, is NOT left to chance.  DKSprite.spr is drawn
+\ for the DEFAULT sprite palette -- the identity mapping colour i = i
+\ in RRRGGGBB (the skin pixels are indexes $F7/$FB = pink).  But the
+\ palette registers $40/$41/$43 are shared state: a graphics library
+\ or an earlier demo may have reprogrammed the sprite palette, or
+\ pointed the sprites at the second palette, and then the colours come
+\ out wrong (blue skin).  SPRITE-PALETTE-INIT makes the demo
+\ self-sufficient: it selects the first sprite palette for both
+\ writing and display ($43), then rewrites the identity mapping
+\ through $40/$41 (the index auto-increments after each $41 write).
+\ CAUTION: $43 bits 3:1 also pick the palette each layer displays and
+\ bit 0 enables ULANext; %00100000 sets all of those to their power-on
+\ defaults (first palettes, ULANext off), which is what the LAYER12
+\ text mode expects.
+
+: SPRITE-PALETTE-INIT  ( -- )
+    %00100000 $43 REG!               \ r/w + show sprite 1st palette
+    0 $40 REG!                       \ palette index 0
+    #256 0 DO  I $41 REG!  LOOP ;    \ identity: colour i = i
 
 : SPRITES-ON   ( -- )
+    SPRITE-PALETTE-INIT
     $E3 $14 REG!                     \ transparency colour
     #3  $15 REG! ;                   \ enable + over border
 
@@ -225,24 +267,27 @@ CODE SPRITE-DATA>  ( a -- )
 \ These words assume SPRITE-LOAD< has already filled the pattern
 \ slots (do that interactively first -- see section 12).
 \
-\ DISPLAY stores x, y and the slot id into the shared SPRITE struct and
-\ pushes the attributes out.  With the stack ( x y id ), id is on top,
-\ so it is stored first, then y, then x.
+\ DISPLAY stores x, y and the pattern id into the shared SPRITE
+\ struct and pushes the attributes out through hardware slot 0.  With
+\ the stack ( x y id ), id is on top, so it is stored first, then y,
+\ then x.
 
 : DISPLAY  ( x y id -- )
-    SPRITE _spriteid !               ( x y )   \ store id
+    SPRITE _spriteid !               ( x y )   \ store pattern id
     SPRITE _ycoord   !               ( x )     \ store y
     SPRITE _xcoord   !               ( )       \ store x
-    SPRITE SPRITE-UPDATE ;
+    SPRITE 0 SPRITE-UPDATE ;
 
-\ TEST sweeps one sprite across the screen, alternating between
-\ pattern slots 0 and 1 (I 1 AND), four frames per step.
+\ TEST walks hardware sprite 0 across the screen: every step rewrites
+\ THE SAME slot 0, alternating its pattern between 0 and 1 (I 1 AND),
+\ four frames per step -- one sprite that appears to walk.  Only slot
+\ 0 is ever shown, so hiding slot 0 at the end cleans up completely.
 
 : TEST  ( -- )
     #60 0 DO
-        I 1 AND  SPRITE _spriteid !  ( )   \ alternate slot 0/1
+        I 1 AND  SPRITE _spriteid !  ( )   \ alternate pattern 0/1
         I 4 *    SPRITE _xcoord !    ( )   \ march X right
-        SPRITE SPRITE-UPDATE
+        SPRITE 0 SPRITE-UPDATE
         #4 PAUSE
     LOOP
     0 SPRITE-HIDE ;

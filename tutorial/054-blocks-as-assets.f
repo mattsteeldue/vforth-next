@@ -45,7 +45,7 @@ NEEDS DUMP
 \ binary blob that fits.  The trick that makes a binary block USABLE is to
 \ keep it self-describing: reserve line 0 (the first 64 bytes) for a human
 \ label -- the original filename -- and store the payload after it.  Then a
-\ plain  n LIST  still shows you what each block holds.
+\ plain  n LIST  or  n m INDEX  still show you what each block holds.
 
 \ ===========================================================================
 \ 2. LOAD2BLOCK -- file in, block out

@@ -24,7 +24,7 @@ CR
 .( --- Tutorial 047: UART communication loaded. ) CR
 .(     Type NEWTASK to unload.                  ) CR
 
-NEEDS UART-SYS
+NEEDS RPI0
 
 \ ===========================================================================
 \ 1. UART hardware ports

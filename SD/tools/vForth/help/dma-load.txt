@@ -1,0 +1,7 @@
+    DMA-LOAD  --
+
+    Sends the WR6 load command to the DMA controller. This loads
+    internal pointers from the Port A and Port B address parameters
+    before a transfer begins. This command is normally sent internally
+    by high-level transfer words.
+

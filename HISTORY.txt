@@ -603,8 +603,10 @@ Possible future step is to leave old fashion 64x23 and go to 80x32 text mode.
 A few demo show the capabilities of LAYER3.
 Core-Binary hasn't changed: this is just a release for renew libraries.
 
+
 \ build 20260525
 there was a bug in (COMPARE) primitive that prevented DIR to sort correctly. This seems the only affected definition.
+
 
 \ build 20260531
 improvement in (COMPARE), now it can handle arbitrarily-long strings (i.e. >256)
@@ -621,9 +623,11 @@ New KEYBOARD matrix facility (NEEDS KEYBOARD) complete with its help files.
 A full set of guided TUTORIALs is now available in the tutorial/ directory,
 as announced on Facebook and Discord.
 
+
 \ build 20260614
 refinement of previous build.
 tested a few more tutorial.
+
 
 \ build 20260628
 New release to renew libraries; the core binary is unchanged apart from the
@@ -634,3 +638,20 @@ LAYER2, LAYER10, LAYER11, LAYER12, LAYER13 and the new LAYER22.
 LAYER22 drives the Layer 2 320x256 mode (vertical-band framebuffer, 80K across
 ten 8K MMU7 pages).
 Uniform layer colours throughout and Layer 0 attributes made permanent.
+
+
+\ build 20260714
+Core binary unchanged apart from the build stamp.
+Fixed a DIR sort bug: two back-to-back FAR remaps could invalidate the first
+element pointer before (COMPARE) ran, corrupting sort order; DIR-SHELL-SORT
+now copies the first element to PAD before the second FAR.
+Rewrote PAINT using a proper Scanline Span Fill algorithm (Smith 1979); the
+previous flood-fill implementation is replaced.
+Reworked the LAYERxx-GRAPHICS family further (GRAPHICS.f/GRAPHICS-COMMON.f
+trimmed, LAYER22 refined).
+Fixed and verified several tutorials on CSpect: 045-copper, 046-bmp-load,
+053-more-sprites, plus smaller fixes across 024, 028, 029, 034, 047, 050,
+052, 054.
+New TUTORIAL listing helper in lib/TUTORIAL.f.
+DMA and IM2-HW (Hardware Interrupt Mode 2) libraries remain under active
+development in dev/ and are not part of this release yet.

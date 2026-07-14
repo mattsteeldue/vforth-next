@@ -1,0 +1,5 @@
+    DMA-CONTINUE  --
+
+    Sends the WR6 continue command to the DMA controller to resume a
+    transfer after it has been paused.
+

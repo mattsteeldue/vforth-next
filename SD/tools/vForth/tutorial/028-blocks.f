@@ -64,6 +64,8 @@ CR
 
 : SCR>BLK  ( screen# -- block# )  B/SCR * ;   \ first block of a screen
 
+.( Try: 1 LIST  to see a brief introduction of BLOCK system.) CR
+
 \ ===========================================================================
 \ 3. BLOCK and BUFFER -- getting a buffer address
 \ ===========================================================================
@@ -73,7 +75,7 @@ CR
 \
 \ Use BLOCK when you want the existing contents; use BUFFER when you are
 \ about to overwrite the whole block (it skips the read).  Both return the
-\ address of a B/BUF-byte (512) RAM buffer.
+\ address of a 512-byte RAM buffer.
 \
 \ Example -- show the raw bytes of block 1 (system metadata):
 \   1 BLOCK 64 -TRAILING TYPE
@@ -149,18 +151,25 @@ CR
 \ program can span many screens.  This is how vForth loads the libraries
 \ that NEEDS does not cover, and how the boot AUTOEXEC runs `11 LOAD`.
 \
-\ Note: classic Forth THRU (load a range) is NOT a vForth word.  To load a
-\ range, chain screens with --> or loop:  D2 D1 DO I LOAD LOOP .
+\ --> is immediate, it works even in the middle of a definition.
 \
-\ (No live demo here: LOADing a screen executes whatever it contains.)
+\ Note: classic Forth THRU ( scr1 scr2 -- ) is not in the core: load it
+\ with NEEDS THRU, then  800 803 THRU  interprets Screens 800..803.
+\ Do not mix THRU with --> chaining: screens already chained-in by -->
+\ would be loaded twice.
+\
+
+.( Try: 9 LOAD  to print all standard error messages. ) CR
 
 \ ===========================================================================
 \ 8. Reserved blocks and switching the block file
 \ ===========================================================================
 \
-\   BLOCK 1        : system metadata + copyright.  Never edited by EDIT; the
+\   1 BLOCK        : system metadata + copyright.  Never edited by EDIT; the
 \                    core reuses it as the temporary line buffer for
 \                    F_INCLUDE, so INCLUDE/NEEDS depend on it.
+\                    Try: EMPTY-BUFFERS 1 BLOCK 512 TYPE
+\
 \   Screens 4-7    : standard error message text (blocks 8-15), read by
 \                    ?ERROR -> ERROR -> MESSAGE.
 \   Screen 10      : free for end-user scratch (blocks 20-21).
@@ -170,6 +179,8 @@ CR
 \     USE /tools/vforth/myblocks.bin
 \
 \ USE lets you keep separate block files for separate projects.
+
+
 
 \ ===========================================================================
 \ 9. Demo: a non-destructive read, and a guarded write
@@ -210,6 +221,8 @@ CREATE NOTE$  ," ( tutorial 028 wrote here )"
 \
 \ * NUL byte (0x00) in a screen: LOAD stops interpreting at the NUL with no
 \   error message.  If a screen "loads halfway", hunt for a 0x00 with EDIT.
+\   There is an old definition named CHECKNULL available in Screen 179
+\   that can search for 0x00 in blocks as an example.
 \
 \ * Block vs screen numbers: LIST 440 reads screen 440 = blocks 880-881.
 \   BLOCK 440 reads the 512-byte block 440 = the first half of screen 220.

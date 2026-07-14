@@ -65,7 +65,7 @@ NEEDS EDIT
 \    ...
 \   <line 15>
 \   +----.----+----.----+...                                          <- ruler
-\    row:  RR   col:  CC   hex:  XX   dec:  DDD   chr:  c              <- status
+\    row:  RR   col:  CC   hex:  XX   dec:  DDD   chr:  c             <- status
 \    pad:  <current PAD contents>
 \    cmd:
 \   U-ndo    B-ack    D-el     I-nsert   H-old
@@ -74,6 +74,8 @@ NEEDS EDIT
 \ The status line tracks the cursor: its row/col, and the byte under it in
 \ hex, decimal, and as a character.  The "pad:" line mirrors PAD -- the
 \ scratch buffer the line commands cut and paste through.
+\ If PAD contains garbage the screen can be mangled, just give [EDIT]+H to 
+\ copy to pad the current line.
 
 \ ===========================================================================
 \ 3. Moving the cursor and typing

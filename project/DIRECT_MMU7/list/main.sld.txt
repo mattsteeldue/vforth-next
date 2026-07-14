@@ -1,9 +1,9 @@
 |SLD.data.version|1
-source/main.asm|120||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
+source/main.asm|123||0|-1|-1|Z|pages.size:8192,pages.count:224,slots.count:8,slots.adr:0,8192,16384,24576,32768,40960,49152,57344
 source/main.asm|81||0|-1|0|D|DEBUGGING
 source/main.asm|81||0|-1|0|L|,DEBUGGING,,+equ,+used
-source/main.asm|104||0|-1|25446|D|ORIGIN
-source/main.asm|104||0|-1|25446|L|,ORIGIN,,+equ,+used
+source/main.asm|107||0|-1|25446|D|ORIGIN
+source/main.asm|107||0|-1|25446|L|,ORIGIN,,+equ,+used
 source/system.asm|17||0|-1|23692|D|SCR_CT
 source/system.asm|17||0|-1|23692|L|,SCR_CT,,+equ,+used
 source/system.asm|18||0|-1|23560|D|LASTK

@@ -87,6 +87,14 @@ LAYER12              \ back to the normal text prompt after load
 \   NEEDS LAYER12-GRAPHICS   Layer 1,2 Timex HiRes  512x192  2 colours
 \   NEEDS LAYER10-GRAPHICS   Layer 1,0 LoRes        128x96   1 col/pixel
 \   NEEDS LAYER2-GRAPHICS    Layer 2                256x192  1 col/pixel
+\   NEEDS LAYER22-GRAPHICS   Layer 2   Wide         320x256  1 col/pixel
+\
+\ LAYER22 is the wide Layer 2: the ( x y ) convention is preserved, with
+\ x = vertical 0..255 and y = horizontal 0..319.  Its framebuffer takes
+\ 80K -- five 16K banks = ten 8K MMU7 pages -- laid out in vertical
+\ bands of 32 columns; the two banks beyond the three that NextZXOS
+\ reserves for the standard Layer 2 must be free (see the warning in
+\ lib/LAYER22-GRAPHICS.f).  Unload it with  NO-LAYER22-GRAPHICS .
 \
 \ To try a different mode, change the single NEEDS line at the top of
 \ this file and reload with  NEWTASK 052 TUTORIAL .

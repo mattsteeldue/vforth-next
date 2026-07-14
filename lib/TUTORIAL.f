@@ -15,8 +15,7 @@
 \
 \ TUT-TABLE holds one heap-pointer per tutorial (1-based, entry 0 = 0).
 \ The input number maps directly to the file prefix nnn: 30 TUTORIAL
-\ loads tutorial/030-ula-display.f.  Slots 26-29 are reserved (files
-\ do not exist; TUTORIAL reports "cannot open file" for those numbers).
+\ loads tutorial/030-ula-display.f.
 \ TUTORIAL fetches ha, calls FAR to resolve it, then skips the count
 \ byte to obtain a z-string, and passes it to F_OPEN / F_INCLUDE.
 \
@@ -30,12 +29,15 @@
 .( TUTORIAL )
 
 NEEDS VIEW-FILE-PAD
+NEEDS ?ESCAPE
 
 CR
 CR .( Use:  n TUTORIAL ) 
 CR .(   Import tutorial 'n'.)
 CR .(  or:  n VIEW )
 CR .(   List source, [EDIT] pause listing.)
+CR .(  or:  TUTORIALS )
+CR .(   List all tutorial file names, [EDIT] pause, [BREAK] stop.)
 CR
 
 \ ---------------------------------------------------------------------------
@@ -79,8 +81,8 @@ CREATE TUT-TABLE
     H" tutorial/025-memory-advanced.f" ,
     H" tutorial/026-catch-throw.f"     ,
     H" tutorial/027-assembler.f"       ,
-    H" tutorial/028-reserved.f"        ,
-    H" tutorial/029-reserved.f"        ,
+    H" tutorial/028-blocks.f"          ,
+    H" tutorial/029-edit.f"            ,
     H" tutorial/030-ula-display.f"     ,
     H" tutorial/031-screen-control.f"  ,
     H" tutorial/032-timing.f"          ,
@@ -105,8 +107,12 @@ CREATE TUT-TABLE
     H" tutorial/051-keyboard-matrix.f" ,
     H" tutorial/052-modular-graphics.f" ,
     H" tutorial/053-more-sprites.f"    ,
+    H" tutorial/054-blocks-as-assets.f" ,
+    H" tutorial/055-afx-sound-board.f" ,
+    H" tutorial/056-layer2-palette.f"  ,
+\   H" tutorial/057-dma.f"             ,
 
-53 CONSTANT TUT-MAX
+56 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------
@@ -147,6 +153,24 @@ CREATE TUT-TABLE
         ." TUTORIAL: cannot open file" CR  EXIT
     THEN
     F_INCLUDE ;
+
+\ ---------------------------------------------------------------------------
+\ TUTORIALS  ( -- )
+\ list every tutorial file name straight from TUT-TABLE: each cell holds a
+\ heap-pointer (ha) to a counted-string, so FAR COUNT TYPE is all it takes.
+\ [EDIT] pauses the listing, [BREAK] stops it -- same technique as DIR-LIST
+\ in lib/DIR.f
+\ ---------------------------------------------------------------------------
+
+: TUTORIALS ( -- )
+    TUT-TABLE  TUT-MAX 1+ CELLS +   \ limit  = TUT-TABLE + (TUT-MAX+1) cells
+    TUT-TABLE  2+                   \ index  = TUT-TABLE + 1 cell (skip entry 0)
+    DO
+        BEGIN ?ESCAPE NOT UNTIL
+        ?TERMINAL IF LEAVE THEN
+        I @  FAR  COUNT  TYPE  CR
+    2 +LOOP
+;
 
 ' LOAD-TUTORIAL 
 ' TUTORIAL >BODY !

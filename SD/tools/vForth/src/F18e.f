@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-06-28
+\ v-Forth 1.8 - NextZXOS version - build 2026-07-14
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -217,7 +217,7 @@ DECIMAL
 \
   HERE HEX U. 
   HP@      U.
-\ KEY  DROP
+  KEY  DROP
 
 \ force origin to an even address?
 \ HERE 1 AND ALLOT
@@ -226,7 +226,7 @@ SET-DP-TO-ORG
 
   HERE HEX U. 
   HP@      U.
-\ KEY  DROP
+  KEY  DROP
 \ ______________________________________________________________________
 \
 
@@ -1049,7 +1049,7 @@ CODE (map) ( a2 a1 n c1 -- c2 )
 
 CODE (compare) ( a1 a2 n -- b )
         POP     HL| 
-        LD      A'|    L|
+        LD      A'|    H|
         ORA      L|
         EXX
         POP     HL|         \ string a2
@@ -1079,7 +1079,7 @@ CODE (compare) ( a1 a2 n -- b )
     
                 EXX
                 DECX    HL|
-                LD      A'|    L|
+                LD      A'|    H|
                 ORA      L|
                 EXX
             JRF NZ'|   BACK,    \ until,
@@ -4283,7 +4283,7 @@ CODE fill ( a n c -- )
 \ Instead, in 2VARIABLE a double number is stored as EDLH.
 : (number)  ( d a -- d1 a1 )
     Begin
-\       1+          ( d a ) 
+        1+          ( d a ) 
         dup >r      ( d a )   
         c@          ( d c )
         base @      ( d c b )
@@ -4301,7 +4301,7 @@ CODE fill ( a n c -- )
             1 dpl +!
         Then
         r>          ( d a )
-        1+          ( d a ) 
+\       1+          ( d a )     \ moved after begin.
     Repeat
     r>              ( d a )
     ;
@@ -4464,7 +4464,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
 
 \ 721Dh
 .( CODE )
-: mcod  ( -- cccc )
+: code  ( -- cccc )
     -find       \ cfa b tf | ff
     If          \ cfa b 
         drop    \ cfa
@@ -4688,7 +4688,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
             Then
         Else
             here 
-            1+ 
+\           1+                  \ removed apr 2026
             number 
             dpl @ 1+ 
             If 
@@ -6555,7 +6555,7 @@ RENAME   dliteral       DLITERAL
 RENAME   literal        LITERAL
 RENAME   [compile]      [COMPILE]
 RENAME   create         CREATE
-RENAME   mcod           CODE        \ be careful on this
+RENAME   code           CODE        \ be careful on this
 RENAME   id.            ID.
 RENAME   error          ERROR
 RENAME   (abort)        (ABORT)
