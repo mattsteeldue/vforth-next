@@ -128,4 +128,4 @@ CR
 \ stack, so it has no automated {..}T tests.  Verify it by hand:
 \
 \   HELP DUP           \ see the DUP help file printed
-\   HELP NOSUCHWORD     \ see the "NextZXOS Open error." message instead 
+\   HELP NOSUCHWORD     \ see the "NextZXOS Open error." message instead

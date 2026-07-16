@@ -13,9 +13,9 @@
 \ lower bits encode the offset from $E000.  FAR decodes ha into a real
 \ address and maps the correct page onto MMU7 ($E000-$FFFF).
 \
-\ TUT-TABLE holds one heap-pointer per tutorial (1-based, entry 0 = 0).
-\ The input number maps directly to the file prefix nnn: 30 TUTORIAL
-\ loads tutorial/030-ula-display.f.
+\ TUT-TABLE holds one heap-pointer per tutorial, entry 0 = tutorial 000
+\ (000-HELP.f).  The input number maps directly to the file prefix nnn:
+\ 30 TUTORIAL loads tutorial/030-ula-display.f.
 \ TUTORIAL fetches ha, calls FAR to resolve it, then skips the count
 \ byte to obtain a z-string, and passes it to F_OPEN / F_INCLUDE.
 \
@@ -30,6 +30,7 @@
 
 NEEDS VIEW-FILE-PAD
 NEEDS ?ESCAPE
+NEEDS HELP
 
 CR
 CR .( Use:  n TUTORIAL ) 
@@ -53,7 +54,7 @@ CR
 \ ---------------------------------------------------------------------------
 
 CREATE TUT-TABLE
-    0 ,
+    H" tutorial/000-HELP.f"            ,
     H" tutorial/001-stack-basics.f"    ,
     H" tutorial/002-stack-ops.f"       ,
     H" tutorial/003-output.f"          ,
@@ -140,9 +141,9 @@ CREATE TUT-TABLE
 \ ---------------------------------------------------------------------------
 
 : LOAD-TUTORIAL  ( n -- )
-    DUP  1  <  OVER  TUT-MAX  >  OR  IF
-        DROP  ." TUTORIAL: number out of range [1-"
-        TUT-MAX  .  ." ]" CR  
+    DUP  0  <  OVER  TUT-MAX  >  OR  IF
+        DROP  ." TUTORIAL: number out of range [0-"
+        TUT-MAX  .  ." ]" CR
         EXIT
     THEN
 \
@@ -164,7 +165,7 @@ CREATE TUT-TABLE
 
 : TUTORIALS ( -- )
     TUT-TABLE  TUT-MAX 1+ CELLS +   \ limit  = TUT-TABLE + (TUT-MAX+1) cells
-    TUT-TABLE  2+                   \ index  = TUT-TABLE + 1 cell (skip entry 0)
+    TUT-TABLE                       \ index  = TUT-TABLE (entry 0 = tut. 000)
     DO
         BEGIN ?ESCAPE NOT UNTIL
         ?TERMINAL IF LEAVE THEN

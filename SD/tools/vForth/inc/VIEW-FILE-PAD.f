@@ -9,7 +9,7 @@
 \
 \ Given PAD holds a z-string
 \ open it and send to screen
-\ If file not exists, report error 41 "NextZXOS Open error."
+\ If file not exists, report message 43 "File not found."
 \
 BASE @
 DECIMAL
@@ -21,28 +21,31 @@ NEEDS ?ESCAPE
 : VIEW-FILE-PAD ( -- )
     PAD DUP 10 - 01 F_OPEN 
     IF
-        .PAD SPACE
+        DROP .PAD SPACE
         43 MESSAGE
     ELSE
         >R 
         \ prepare char size (85 per line)
         30 EMITC 6 EMITC
         \ use BLOCK number 1 to keep one line of text read from file
+        \ buffer address is stable: nothing in the loop calls BLOCK
+        1 BLOCK
         BEGIN
-            ?escape if
+            ?ESCAPE IF
                 1
-            else
-                1 BLOCK B/BUF R@ F_GETLINE
-                \ send to ouput
-                DUP IF 
-                    1 BLOCK B/BUF 1- -TRAILING TYPE CR 
+            ELSE
+                DUP B/BUF R@ F_GETLINE
+                \ send to output
+                DUP IF
+                    OVER B/BUF 1- -TRAILING TYPE CR
                 THEN
-            then
+            THEN
         \ zero byte read means end-of-file
-        0= 
-        \ or [break] 
+        0=
+        \ or [break]
         ?TERMINAL OR
         UNTIL
+        DROP
         \ restore screenchar size
         30 EMITC 8 EMITC
         \ closedown

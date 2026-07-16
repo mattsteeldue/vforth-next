@@ -655,3 +655,9 @@ Fixed and verified several tutorials on CSpect: 045-copper, 046-bmp-load,
 New TUTORIAL listing helper in lib/TUTORIAL.f.
 DMA and IM2-HW (Hardware Interrupt Mode 2) libraries remain under active
 development in dev/ and are not part of this release yet.
+Post-release fix (same build stamp, core binary unchanged): F_CHMOD's
+"dot-command compatibility" block corrupted IX (the a1 filespec pointer)
+with garbage right before the RST 08,$AF call; F_STAT's DE (Return Stack
+Pointer) restore used a mislabeled pop hl (E1) instead of pop de (D1),
+leaving RSP corrupted after the call. Both fixed in inc/F_CHMOD.f and
+inc/F_STAT.f, verified on CSpect.
