@@ -13,6 +13,12 @@ NEEDS .PAD
 NEEDS HEAP
 NEEDS ?ESCAPE
 NEEDS SHOW-PROGRESS
+NEEDS WILDCARD
+\ shadow the core F_OPENDIR with the wildcard-enabled version --
+\ NEEDS would skip it (name already in dictionary), so force with INCLUDE.
+\ F_READDIR needs no shadow: the core word already threads a2 (the same
+\ wildcard z-string) into DE correctly, see inc/f_opendir.f header.
+INCLUDE inc/f_opendir.f
 
 \
 \ emit a date given a MSDOS format date-number: 16 bits are used this way
@@ -68,6 +74,9 @@ VARIABLE DIR-SAVE-HP \ HP value before DIR
 VARIABLE DIR-SAVE-DP \ DP value berore DIR
 VARIABLE DIR-BYTES 0 ,  
 VARIABLE DIR-GAP
+VARIABLE DIR-DRIVE  CHAR C DIR-DRIVE C!    \ drive letter used by DIR
+\ ' F_OPENDIR 9 + C@ CHAR C -  #14 ?ERROR   
+\ ' F_OPENDIR 9 + CONSTANT DIR-DRIVE
 
 .( .)
 
@@ -146,8 +155,10 @@ VARIABLE DIR-GAP
                 I 2+ !  I  ! 
                 DROP 0   \ flag sorted false
             THEN
+            ?TERMINAL IF LEAVE THEN
         2 +LOOP
         IF LEAVE THEN   \ leave outer loop if flag is true
+        ?TERMINAL IF LEAVE THEN
         I show-progress \ 8 AND IF [CHAR] . EMIT 8 EMITC THEN \ flashing dot
     LOOP                       \ uses flag-sorted
 ;
@@ -160,7 +171,7 @@ VARIABLE DIR-GAP
     PAD C/L BLANK
     67 ALLOT                        \               
     0 C, HERE                       \ a1            -- now HERE is PAD
-    [ CHAR C ] LITERAL C,           \ a1            -- start with C:
+    DIR-DRIVE C@ C,                 \ a1            -- start with <drive>:
     BL WORD DUP C@ 1+ ALLOT         \ a1 a3         -- append cccc
     >R                              \ a1     R: a3  
     0 C,                            \ a1            -- append 0x00
@@ -171,27 +182,29 @@ VARIABLE DIR-GAP
 ;
 
 \ This operation requires at least 8K available in HEAP.
-\ given a path-name in PAD, open such directory and put in HEAP
-\ each entry, Pointers are put at HERE and DP is advanced.
+\ given a path-name in PAD, open such directory and put in HEAP each entry
+\ matching WILDCARD-SPEC (filtered by NextZXOS itself, see f_opendir.f).
+\ Pointers are put at HERE and DP is advanced.
 \ This will form a dynamic array starting from DIR-SAVE-DP to HERE -2
 : DIR-TO-HEAP ( -- )
     HP@  DIR-SAVE-HP !              \ save HP for future forget/restore
     HERE DIR-SAVE-DP !              \ save DP for future forget/restore
     PAGE-WATERMARK SKIP-HP-PAGE     \ ensure to be at a new 8k page...
-    PAD F_OPENDIR 43 ?ERROR >R      \ keep filehandle in R@
+    PAD WILDCARD-SPEC F_OPENDIR 43 ?ERROR >R  \ keep filehandle in R@
     BEGIN
         HERE                        \ use dictionary as temp area
-        PAD                         \ wildcard ignored
+        WILDCARD-SPEC                \ same pattern given at F_OPENDIR time
         R@ F_READDIR 46 ?ERROR
-    WHILE
+        ?TERMINAL NOT AND
+    WHILE                            \ NextZXOS already filtered by pattern
         HERE DUP                    \ a a
         1+ SKIP-NAME                \ a a+n
         HERE - 10 +                 \ a m
         DUP HEAP                    \ a m hp
-        DUP >R                      \ a m hp  
+        DUP >R                      \ a m hp
         FAR SWAP                    \ a a2 m
         CMOVE
-        R> ,                        \ append to array 
+        R> ,                        \ append to array
     REPEAT
     R>  F_CLOSE DROP
 ;
