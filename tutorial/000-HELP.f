@@ -19,7 +19,7 @@
 \   NEWTASK 000 TUTORIAL
 \
 
-MARKER NEWTASK
+\ MARKER NEWTASK \ this is the only case where we really don't need this.
 
 CR
 .( --- Tutorial 000: HELP loaded. ) CR
