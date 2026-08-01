@@ -1,0 +1,8 @@
+    SAVE-BYTES    a n --
+
+Save n bytes at address a to a new file named in PAD
+(a z-string, set beforehand with PAD"). Fails with an
+error if the file already exists; see SAVE-BYTES-FORCE
+to overwrite instead.
+
+example  PAD" test.bin"  $4000 $1000 SAVE-BYTES

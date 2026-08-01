@@ -1,4 +1,5 @@
     F_OPENDIR  a -- fh f
 
-Open directory at path a.
-Returns directory handle and error flag.
+Open directory at path a, requesting NextZXOS-side wildcard
+filtering mode. Returns directory handle and error flag.
+The actual pattern is supplied later via F_READDIR's a2.

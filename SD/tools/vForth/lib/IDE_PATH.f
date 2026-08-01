@@ -3,75 +3,28 @@
 \
 .( IDE_PATH )
 \
-\ Manage path
+\ Path/directory management via the NextZXOS M_P3DOS service $01B1.
 \
-\ a : address of pathspec (terminated with $ff)
-\ b : 0 change path
-\     1 get path
-\     2 make path
-\     3 delete path
+\ IDE_PATH ( a b -- f )
+\   a : address of pathspec, terminated with $FF
+\   b : 0 change path   1 get path   2 make path   3 delete path
+\
+\ (PARSE-PATH) ( -- a )
+\   parse the next word from the input stream, in place, and append
+\   a $FF terminator; returns its address, ready for   b IDE_PATH
+\
+\ Consumers: inc/CD.f inc/PWD.f inc/MAKEDIR.f inc/REMOVEDIR.f
 
-BASE @
+MARKER NO-IDE_PATH
 
-: IDE_PATH ( a b -- f )      
-    >R 0 0 R> 
-    [ HEX ] 01B1 M_P3DOS [ DECIMAL ]
-    >R 2DROP 2DROP R> 
+: IDE_PATH ( a b -- f )
+    >R 0 0 R>
+    $01B1 M_P3DOS
+    >R 2DROP 2DROP R>
 ;
 
 
-\ accept text from current input and set a suitable string for IDE_PATH
-: PATH>PAD ( -- )
-    BL WORD COUNT >R PAD R@ 
-    CMOVE 
-    $FF PAD R> + C!
+: (PARSE-PATH) ( -- a )
+    BL WORD COUNT           \  a  n
+    OVER + 1+  $FF SWAP C!  \  a          -- append $FF terminator
 ;
-
-
-\ wrapper around IDE_PATH having b as operation selection
-: PATH_OP ( b -- )
-    PATH>PAD
-    PAD SWAP IDE_PATH  
-    [ DECIMAL ] 44 ?ERROR
-;
-
-
-\ set current path, used in the form
-\
-\     SETCD cccc
-\
-: SETCD ( -- ) 
-    0 PATH_OP
-;
-
-
-\ get current path, uses PAD as result buffer
-\ used in the form
-\
-\     GETCD .
-\
-\ Must give at least a single dot to mean the current directory
-: GETCD ( -- ) 
-    1 PATH_OP
-;
-
-
-\ create path, used in the form
-\
-\     MAKEDIR cccc
-\
-: MAKEDIR ( -- ) 
-    2 PATH_OP
-;
-
-
-\ remove path, used in the form
-\
-\     REMOVEDIR cccc
-\
-: REMOVEDIR ( -- ) 
-    3 PATH_OP
-;
-
-
-BASE !

@@ -1,0 +1,9 @@
+    CD  -- cccc
+
+Change current directory. The path follows CD on the
+same input line.
+
+example  CD C:/tools/vForth
+
+Warning: changing directory impedes any subsequent use
+of NEEDS until the current directory is restored.

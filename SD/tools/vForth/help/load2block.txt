@@ -1,0 +1,8 @@
+    LOAD2BLOCK    n --
+
+Load up to 448 bytes from the file named in PAD (a
+z-string, set beforehand with PAD") into BLOCK n,
+starting at line 1; the filename itself is copied to
+line 0. Marks the block for UPDATE.
+
+example  PAD" tutorial/afx/test/test1.afx"  20 LOAD2BLOCK

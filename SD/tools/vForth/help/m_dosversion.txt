@@ -1,0 +1,5 @@
+    M_DOSVERSION  -- ver lang
+
+Get NextZXOS API version and language code. ver is the version
+in BCD (eg $0208 = v2.08); lang is a packed char pair (eg "en").
+Decode both with SPLIT.

@@ -1,0 +1,4 @@
+    M_SETCAPS  a -- prev f
+
+Set NextZXOS capability flags (bit 7 = skip zero-fill on
+truncate calls). Returns previous capabilities and error flag.

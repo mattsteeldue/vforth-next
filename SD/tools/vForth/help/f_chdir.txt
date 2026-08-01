@@ -1,0 +1,4 @@
+    F_CHDIR  a -- f
+
+Change the working directory of the default drive to the
+null-terminated path a. Returns error flag.

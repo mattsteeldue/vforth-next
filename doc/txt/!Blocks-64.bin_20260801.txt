@@ -1,9 +1,9 @@
-File: !Blocks-64.bin
-Created: Tue Jul 14 21:08:41 2026
+File: C:\zx\forth\F18\tools\vForth\!Blocks-64.bin
+Created: Sat Aug  1 18:13:24 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-07-14
+\ v-Forth 1.8 - NextZXOS versione - build 2026-08-01
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
@@ -211,24 +211,6 @@ Scr# 11
  13 \   CURS KEY DROP NEEDS PERSISTENCE RESTORE-SYSTEM
  14 
  15   INCLUDE  LIB/AUTOEXEC.F
-
-Scr# 20 
-  0 ( testing )
-  1 layer24 hex
-  2 0   0 plot  0  40 plot
-  3 0  80 plot  0  C0 plot
-  4 0 100 plot  0 140 plot
-  5 key drop
-  6 0 180 plot  0 1c0 plot
-  7 
-  8 layer12   1 .paper
-  9 decimal
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
 
 Scr# 35 
   0 
@@ -21375,546 +21357,6 @@ Scr# 15999
  14 
  15 
 
-Scr# 16000 
-  0 M    øÒ˜ÓøÒ  œÙ¨ˆèÓ àW
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 7ÍÔ}„u‚u‚u GÍj }YÍj‚ujÍj˜Ó}Íãi8j­¹yPiHyzhŽÍãi­£c
-  9 ° ^h­,d2d¹yijÇpHyçcôÿh¥Íãi¹yÕhijVgh·Íãi¹yijVgHyzhËÍãiãhó
- 10 c ‚ïc öhàÍãiÜh¯jFiœk£c	 ¼i­wh^h‚hõÍãiÜh£c	 ¼i­£c0 ^h^
- 11 hÕh­lÕh‚h
-Íãi­¹y»ãhÜhhóc Õh´Fi»Pi£c Vg&hóc
- Hyzïc
- »
- 12 Fi´PihÍãiÜhi‚Ül8j,dÜh2dH‚ij±cöÿ]k¯jFi,dÜh2d+‚ij±cöÿi‚h.Íãi
- 13 ­¹yFióc Jq
-Restoring 8j¦‚Jqok¦uïc žh>Íãi?j¦‚hFÍãi­¹yFi
- 14 óc ƒ€hRÍãiMxFi¾fÁh8j8j8j8j£cÒxhii&h:lóc] Jq,Can't unmo
- 15 unt, there's something still open.:lJq!Use F_CLOSE manually, the
-
-Scr# 16001 
-  0 n retry.:lïcF JqRemove/insert SD and press Y @o=fd£cY ¨kócòÿ8j
-  1 8j8j?j£cÒxÁhiiÊxhZÍãi6ˆhbÍãiO}_thlÍãi,d2d[i‘k.~a~a~;~­
-  2 o/lçcìÿhuÍãi	kFihon¸h^hÕh,d:l2d‘k.~a~a~a~a~;~­oFj~2d£c ^h2d
-  3 „/l2d£c ^h2d£c ^h„/l2d£c ^h2d,d2d[i£c ÑgÜh[jÁkóc
- /lÁhïc
-  4 lçcàÿpfóc üc
- £c ±cˆÿ&h	kPih~Íãi£c l?jlh‡Íãi£c l8jl
-  5 hÍãi¼m9kFiøg9kPi£c h™Íãi¸h¨kÜhóc ÕhÁhh Íãi£c àmn÷„nó
-  6 c]k8jsk£c hªÍãi£c àmnïc]k8jskÕhFjK€£c h¶Íãi£c àmnÁhøg9
-  7 kFiœkóc
- FjK€ïcîÿ9kPihÀÍãi&m[mshÇÍãiøg‘jFiÁkóc& :løg‘jFi™h,
-  8 d2dFi pfóc üc
- 8j™h±cêÿhÐÍãi1hFi&hhh­lìnhÜÍãiJqNfa: [mÜ
-  9 h [iê~:lhèÍãiJqLfa: fmÜh FiÜh s:lhôÍãiJqCfa: PmÜh FjP
- 10 mžh^hFi h ÍãiPm£c
- '„h
-ÍãiÜhFiu…hÍãiÜhFiê~hÍãi8†hE†
- 11 h(Íãi8†h¾„E†h2ÍãiìnÜhh¾„­oÏ„/l&hh<Íãi8†hÜhn†^h~hhFÍãi8
- 12 †hÜhFi­ln†ÁhhOÍãiÜhÜhFi³kóc ¾„h]Íãi£cÿÿóc Üh£cÂn¨kóc
- ÕhM
- 13 j^hÕhhjÍãiÜhFi£cd÷„óc _†ïc  £c±c÷„óc _†ïc £cçc÷„óc _†ïc€
- 14 £cüc÷„óc _†ïcp £cóc÷„óc _†ïc` £cïc÷„óc _†ïcP £c£c÷„óc R†ïc@
- 15 £cJq÷„óc …†ïc0 £c¹…÷„óc ˜†ïc  £cn÷„óc 8†h¾„8†ïc
- Ühu…Â†Áhh
-
-Scr# 16002 
-  0 uÍãi:lå†hÏ„pf¸hFi£câu¨kàg¸hFi£c¦u¨kàg¸hFi£ch¨kàg¸hFi£cv¨kàg¸
-  1 hFi£cn¨kàgócºÿå†hÍãi	kFiÕhon&mÜhÎ…Ühé…Üh†ÜhPmFi£cÌiFi¨kóc
-  2 Õh	kPiž‡Áhïc
- on)†	kPihŒÍãiAs6h8j§mê~:lñ‡h•Íãi.hžÍãiÜh8jÁ
-  3 kMj§mÜhwjÁk6hMj§mëjFi¦wÁhh§Íãi]kbjwhÒpÿpðpbjwhVgh±ÍãiTˆbjVgH
-  4 yh¼Ípu 6„uÂÍãiTˆðpwhbjVgbjðpdihÈÍãiTˆbjÒpHyhÎÍãiÜh?jìkw
-  5 j~h,d2d~hTˆ2d’ˆTj±còÿÃˆhÕÍãiðpwhÕh’ˆhÝÍãiÜhÒˆ÷ˆhãÍãiÜh¬ˆwj
-  6 ~hÜhãhd 2dwhTˆ2d’ˆçcôÿÃˆhéÍãi£c~ yˆ÷ˆhïÍãiëjFi^hõÍãi?jë
-  7 j.iI‰hûÍãiTjëj.iI‰hÍãiëjFi£c ëj.iëjFi¡h	ÍãiëjFi£c( œkÜh
-  8 ?jÁkóc Áh?jëjPit‰hÍãi@o=fhÍãi²‰Ühlh-Íãi½‰£c EdÁhh6Í
-  9 j  ?Íj  IÍãi8jÛ‰Pi8jâ‰PihSÍãiÛ‰FiTˆâ‰Fi^hh^Íãi8j^hÕhFj^h
- 10 hhÍãi£c lllhqÍãi8j8j ŠhzÍãi£c lh„Íãiü‰diHyhŽÍãiü
- 11 ‰[ih˜Íãi£c 8j,dJq
-+----.----çcñÿJq+--h ÍãiÛ‰Fi8jÎkóc TjÛ‰
- 12 .iïc >ŠhªÍãiÛ‰Fi£c Ákóc ?jÛ‰.iïc >Šh´Íãiâ‰Fi8jÎkóc Tjïc
- 13  ‰Š£c? â‰.ih¿Íãiâ‰Fi£c? Ákóc ?jïc ¨Š£cÁÿâ‰.ihËÍãiJq	Scree
- 14 n # ëjFiê~:lcŠ:lwj8j,d2dëjFi¦w­o:lçcòÿcŠh×ÍãiÛ‰FiëjFi¸h8jŠ Š¦
- 15 w­ohæÍãi8j£c  Š¾„Jq row:Ï„£c ~¾„Jq col:Ï„£c ~¾„Jq hex:
-
-Scr# 16003 
-  0 Ï„£c ~¾„Jq dec:Ï„£c ~¾„Jq chr:Ï„:l¾„Jq pad:Ï„ðpìn£c; Ùk­o
-  1 8j£c  Š¾„Jq cmd:Ï„:lJq*U-ndo    B-ack    D-el     I-nsert   H-
-  2 old:lJq2Q-uit    N-ext    S-hift   R-eplace  P-ut hex byte£c8 8j
-  3  Š¾„Jq  edit  Ï„hôÍãiXŠ£c £c  ŠonÜhMjÎ~£c$ £c  Š~nÜhMjÎ~£c
-  4 / £c  Š£c  ìkl£c £c  Šâ‰FiMjÎ~£c £c  ŠÛ‰FiMjÎ~hýÍãiÊ‰£c
-  5  °iÊ‰^hhÍãipj8j,dëjFipj\w2d^h¹y‘h8jÕhPiçcèÿhÍãi£c £c( ~jd
-  6 i£c_ £c* ~jdihÍãiXŠ[jìk£c( ~jdi£c £c* ~jdih"Íãi£c £c  Š
-  7 ½‰d[jìk£cP ÷„óc
- ÔŒKŠïcÎ £cH ÷„óc Û‰Fi¬ˆïcº £cS ÷„óc Û‰FiÒˆï
-  8 c¦ £cR ÷„óc Û‰Fi÷ˆïc’ £cI ÷„óc Û‰Fi‰ïc~ £cD ÷„óc Û‰Fi‰ïcj £
-  9 cN ÷„óc ?jëj.ié‰ïcT £cB ÷„óc Tjëj.ié‰ïc> £cU ÷„óc
- çŒ>Šïc, £cQ
- 10  ÷„óc  Jq ok:lbjFj\w~8j£c  Š¦uïc Áh1Š‹c‹h+Íãiâ‰Fi8jÎkóc
- 11 Tjâ‰.iü‰ÜhwhÕhbjâ‰Fiœk~hVgHy[jÛ‰FiTˆbj^h~hdih4Íãiü‰Ühwhbjâ‰Fiœ
- 12 k~heg[jü‰diHyh>Íãi£c ÷„óc ÉŠïcl £c	 ÷„óc ìŠïc\ £c
- ÷„óc ¨Š
- 13 ïcL £c ÷„óc ‰Šïc< £c ÷„óc
- MŽH‹ïc* £c ÷„óc ¨Š8jâ‰Piïc £c
- 14 ÷„óc Nïc ÁhhKÍãiÎé‰‹c‹qŒ-XŠÛ‰Fiâ‰FiŠ$i Š²‰pfóc
- Áh8jŒŽH
- 15 ‹Üh[jÁkóc h Šl&h­Žïc KŠ ŠÁhXŠlìŠïc¶ÿhUÍãiÜhpjgwÜhëjPiJqS
-
-Scr# 16004 
-  0 creen# ~nê~:lij\wãh^hbjgwÜhMjÎ~/lãhpjvw¦wÄo­o:l…h~£c^ l/lhsa
-  1 ve-system                       n£c,n,nïc Õh®chxÍãi£cPiíh€
-  2 Íãi£c.iíhŠÍãiÌi£cÿiskîih•Íãi&mPihœÍãiO}kFióc n£cskn;
-  3 ïc ;hªÍãih8j8j&h?j£cÕx£c, §miiêh¸Íãi8j8j8j8j£cÕx£
-  4 c, §mhÈÍÔ}…‚u‚uº¬ÞÍHtÿÿ        îÍãiŠhiÁh&h´^h[iÑg
-  5 h÷Íãi£c lÇlhÍãi£c lÇlhÍãi£c l?jÑglhÍãi£c
-  6 l?jÑglh#Íãi£c l?jÑglh+Íãi£c lÕhllh8Íãi£c l?jÑg
-  7 lhDá&}¤Óþ­¬2H\ÝéQÍãiÿih\Íj  fÍj oÍj |Íj ‡Íj
-  8  ‘Íj Íj ¨Íj ·Íj ÅÍj ÓÍj âÍj ñÍj  Íj
-  9  Íj Íjþ (ÍHt 2ÍHt
-=Íãihí‘÷‘£c &hNe£c gwÛ^h
- 10 ghIÍj UÍjÀ eÍãi$i"’³kÕh)’³kÑghpÍj }Íj­—ŠÍãiÉ’h—
- 11 Íãiih ÍãiÁ“hªÍãi.”h´ÍãiP“hÁÍãi¦ihÊÍãiÿihÙÍãiÚ”héÙ
- 12 ÑáUí”åÙÝéúÙáÑ{Ö00Æ0_>Þ í’WË%Ë;Ë>à³gåÙÝéÙÑáË:Ë{>
-Î í’WU
- 13 í”>à´gåÙÝéÍj +Íj ;ÙáÑ{æÆí’W>à³gåÙÝéLÙÑáKí*{'æÆ
- 14 í’W>à±gåÙÝé\Ùá|æöXgÑsÙÝémÍãi£c ql£c ààgdihzÍãiÌhS’[iÕh£
- 15 c Ñg°i£c€ Ñgh‡ÍãiS’[ih“Íãi6hChhŸÍãiE’¨khªÍãi “h¶Íãiª“
-
-Scr# 16005 
-  0 hÁá}áµoåÝéÌá}á­oåÝé×ÙÑá}/£oåÙÝéãÍãi0’óc* ÌhS’h£c Ñg£c€ Õh
-  1 ¼i1h[iŽ“1hdiE’&h\’ïc ihïÍãi0’óc S’E’Õhdiïc ihûÙáÑ{æ
-  2 Æí’W>à³g:H’wÙÝéÍãi0’óc$ ÌhS’h£c Ñg£c€ Õh¼i1h[i—“&hdiïc i
-  3 hÍãi0’óc S’Üh[i£cÿ ìgÕhdiïc ih"ÙáÑ{æÆí’W>à³g:H’/wÙÝé
-  4 4ÍãiE’µ‘Ñg£c ll£c¥e£cÎ;h?Íãi¥e£c l8jl8j£c llhQÍã
-  5 iE’µ‘Ñg£c ll£c½”£cÎ;hcÍãi8j£cp x8j£c x8j£c x£cÿ £c
-  6 x8j£c x£c¿ £c xE’à£cÿ E’œkñ£c½”£cÎ;è’£c ^h£cò’PihoÍã
-  7 iè’£c
- ^hè’,d2dql£c à£c  £cÿ E’œkµpçcèÿh‚Íãi£c £cp x8j£c x
-  8 8j£c x£cŸ £c x8j£c x£cÿ £c xE’à£cÿ E’œkñ£cZ•£cÎ;è’£c
-  9 	 ^h£cò’Pih‰Íjb ÍjZÿ—ÍjÿÿžÍj §Íj¼ÿ¯Íjxÿ¶Íj ½Í
- 10 j÷ ÄÍj ËÍj÷ ÒÍj  ÙÍj  äÍãi3tsksksksksksksksksksksk‚k‚
- 11 k‚k‚kÂnÍãiE’L’PiÜh£cO’PiÜhFi£cH’PihÜhFi£c’’;hÜhFi£c‰’;hÜhFi
- 12 £c€’;hÜhFi£c\’;hÜhFi£cn’;hÜhFi£ce’;hÜhFi£cw’;hÜhFi£cS’
- 13 ;hÜhFi£c%’PihÜhFi£c,’PihÜh[i£c¸‘PiwhÜh[i£c¿‘PiwhÜh[i’wh[iÿk
- 14 óc
- £c ll’’hïÍc– ž”ÿiÿi)“.”Á“P“›’ À   ûÍc– Ú”ÿiÿi)“.”
- 15 Á“P“›’ À Íc– Ú”ÿiÿi;“.”Á“P“›’ À Íc– Ú”ƒ“ÿii_”ø“
-
-Scr# 16006 
-  0 m“§’€ ` ÿÍc– Ú”ÿi¦ii.”Á“P“É’ À *Íc–þ ù”ƒ“ÿi”‚””m“
-  1 ö’ À ÿ 6Íc–þ ‡•ƒ“ÿiø“_”ø“m““@ ÿ DÍãi£c–Pi£c–Pi£c,–Pi
-  2 £c%–Pi?j"––œkÜh½v£cí•PiŸv£cû•Pi?j)––œkÜh½vžh£cô•PiŸv£c–Piê•ñ•
-  3 ^h£c	–Pipfóc h––e’–Ÿi£c–Pi–ñ•ÁkChóc –"–¨kóc hñ•£c	–.i
-  4 ø•£c–.i–ê•ÎkChóc –)–¨kóc hê•£c	–.iÿ•£c–.iïc–ÿhUÍãiê•ø•€
-  5 ’^hñ•ÿ•^he’ê•ø•€’œkñ•ÿ•^he’ê•ø•€’^hñ•ÿ•œke’ê•ø•€’œkñ•ÿ•œke’ê•ÿ•€
-  6 ’^hñ•ø•^he’ê•ÿ•€’œkñ•ø•^he’ê•ÿ•€’^hñ•ø•œke’ê•ÿ•€’œkñ•ø•œke’heÍ
-  7 ãi8j£cû•Pi£c–Pi£cô•Pi£cí•Piÿ•ócf Mjÿ•Ÿiœk£c	–PiÔ˜?j£cû•.i–Ghóc
-  8  ø•ŸiŸi£c ^h£c	–.iïc  ø•ÿ•œkŸiŸi£c ^h£c	–.iTj£c–.iÔ˜ÿ•ø•Ákóc
-  9 ²ÿïc ê•ñ•e’hpÍãi£cv\ÜhFi£c½zygÁh£c^hÌhÕhPih|ÍÔ}…‚u‚urg
- 10 …Íjv\’Íãi8j8j;‘ì™£cÿ Ñgì™£cÿÑgì™£cÿ Ñgì™£cÿÑgì™£cÿ Ñg£cH’Pi
- 11 ˜h›Íãiè—Î£cd £cH’Pi8j8j£cÿ 8j˜£cÿ £c?8j£c?˜£cÿ £c?£cÿ 8
- 12 j˜8j8j8j£c?˜£cÿ £c?8j8j˜8j£c?£cÿ 8j˜=fÁhª—?jñh¤ÍãiÉ—Î
- 13 è—ÎJqDRAW 100 COLORED SEGMENTS £cd 8j,d%šçcüÿ=fÁh£cþ £cH’Piª—?
- 14 jñhBYE                              ™£cÿ Ñgì™£cÿÑgì™£cÿ Ñgì™
- 15 £cÿÑ3015cÿ Ñg£cH’Pi˜hÏÍãiè—Î£cd £cH’Pi8j8j£cÿ 8j˜£cÿ £c?8
-
-Scr# 16024 
-  0   o v-Forth 1.8 - NextZXOS version  Heap Vocabulary - build 202
-  1 5-08-15  MIT License  1990-2025 Matteo Vitturi ƒLIÔ  £c‡EXECU
-  2 TÅr ®c‡(+LOOP©z ±c†(LOOP©† çc†BRANCÈ’ ïc‡0BRANCÈ óc‡(LEAVE©¨ üc
-  3 …(?DO©´ d„(DO©À ,dÉÊ 2d‚I§Ó =d…DIGIÔÙ Ed†CASEOÎà {d‡CASEOFÆê „
-  4 d…UPPEÒõ d†(FIND©²d‡ENCLOSÅ e…(MAP©Ne‰(COMPARE©"he‡(EMIT
-  5 C©,‘e…(CLS©:¥e‡(?EMIT©FÕe†1FRAMÅP7fƒKEÙ\=f‰?TERMINAÌgpf†SE
-  6 LECÔo„f†F_SEEË} f‡F_CLOSÅˆ¾f†F_SYNÃ“Ëf‰F_FGETPOÓŸØf†F_REAÄª
-  7 òf‡F_WRITÅ¸g†F_OPEÎÃ g‰F_OPENDIÒÏ6g‰F_READDIÒÚEg…CMOVÅèVg
-  8 †CMOVE¾öegƒUMª yg†UM/MOÄ¡gƒANÄÑg‚OÒàgƒXOÒ&ìgƒSPÀ-øgƒSP
-  9 ¡5hƒRPÀ=hƒRP¡Eh„EXIÔMh‚>ÒUh‚R¾^&h‚RÀe1h‚0½l6hƒNOÔs
- 10 Ch‚0¼zGh‚0¾‚Ph«‰^h‚D«hh‚1«–wh‚1­~h‚2«¤…h…CELL««h…CEL
- 11 L­²‘h‚2­¼™h†NEGATÅÆžh‡DNEGATÅÍ«h„OVEÒØ¸h„DROÐäÁhƒNIÐíÆh„T
- 12 UCËöÌh„SWAÐþÕhƒDUÐÜhƒROÔãh„-ROÔìh„PICË õh…2OVEÒ)i…2DR
- 13 OÐ2i…2SWAÐ<i„2DUÐF$i‚+¡P.i†TOGGLÅY=iÀ`Fi¡kPi‚CÀq[i‚C
- 14 ¡wdi‚2À~mi‚2¡…}i‚PÀŒ‰i‚P¡“•i‚2ªšŸi‚2¯¡¦i†LSHIFÔ¨°i†RSHIF
- 15 Ô¯¼i…CELLÓºÈiºÅÌiÁ»Ïîi„NOOÐÕÿiˆCONSTANÔÛjˆVARIABLÅäj„U
-
-Scr# 16025 
-  0 SEÒñ#j°þ8j±?j²Fj³Mj‚-±Tj‚BÌ[jƒC/Ì&bj…B/BUÆ-ij…
-  1 B/SCÒ5pj…L/SCÒ?wj‡+ORIGIÎI~j†(NEXT©SŠj‚S°_‘j‚R°j—jƒTIÂqj
-  2 …WIDTÈx£j‡WARNINÇ€©j…FENCÅŠ¯j‚DÐ–µjˆVOC-LINË »j…FIRSÔ§Áj…L
-  3 IMIÔ´Çj‚HÐ¾Íj…NMODÅÈÓjƒBLËÏÙjƒ>IÎÙßjƒOUÔáåjƒSCÒéëj†OFFSEÔ
-  4 ññj‡CONTEXÔù÷j‡CURRENÔýj…STATÅk„BASÅ	kƒDPÌ&kƒFLÄ/kƒ
-  5 CSÐ7k‚R£?!kƒHLÄG'k„USEÄN-k„PREÖV3k‚LÐ_9k…PLACÅh?k‰SOURCE
-  6 -IÄoEk„SPAÎyKk‡HANDLEÒ‡QkƒEXÐWk„HERÅœ]k…ALLOÔ¤hk¬­sk‚C¬
-  7 ·‚kƒS>Ä½‘k­Äœk½Ì¨k‚U¼Ò³k¼ØÁk¾ßÎkƒMIÎåÙkƒMAØëìk„?DUÐ
-  8 óÿk„-DUÐû
-l…EMITÃl„EMIÔl…SPACÅ/l‚CÒ :lˆTRAVERSÅ*Gl…M
-  9 MU7À1dl…MMU7¡>ql„>FAÒHzl„<FAÒR‡lˆ?IN_MMU·[œlƒFAÒd­l‰?HEAP_
- 10 PTÒq¸l†?>HEAÐyËlƒHPÀ‡ÜlŽPAGE-WATERMARË’çlŒSKIP-HP-PAGÅšîl†L
- 11 ATESÔ­m…>BODÙ¾&m…<NAMÅÉ1mƒCFÁÓPmƒNFÁÝ[mƒLFÁåfmƒPFÁíum„!C
- 12 SÐõšm†?ERROÒý§m…?COMÐ¼m…?EXEÃÏm†?PAIRÓàm„?CSÐ%ïmˆ?LOADI
- 13 NÇ0n‡COMPILÅ9nˆCOMPILE¬F,nÁÛR5nÝ_Bn†SMUDGÅeQn‰IMMEDIATÅ
- 14 k`nƒHEØvon‡DECIMAÌ„~n‡(;CODE©ŒnÅ;CODÅ˜¨n‡<BUILDÓ¤¹n‡_DOES
- 15 >ß®ÂnÅDOES¾ºÕn…COUNÔÆìn†BOUNDÓÐùnÅLEAVÅÚo„CURÓå@o„TYPÅï­
-
-Scr# 16026 
-  0 o‰-TRAILINÇøÄo†ACCEPÔño…QUERÙœp„FILÌµp…ERASÅ$Çp…BLANË-Ò
-  1 p„HOLÄ7ÝpƒPAÄAðp„WORÄJÿp„(."©RJq„CHAÒ[aq‚,¢dpqÂ.Ãm‡qÂ.¢t
-  2 ¬qÂ.¨{¹q…(SGN©‚Æqˆ(NUMBER©‰rˆ(PREFIX©“Hr†NUMBEÒ “r…2FINÄ­
-  3 s…-FINÄ¸As‡(ABORT©ÂNs…ERROÒÌWsƒID®Øs„CODÅâºs†CREATÅê3tÉ[
-  4 COMPILEÝóLtÇLITERAÌþ_tÈDLITERAÌ	ttÆ[CHARÝ	‰tÁ€%	”t†?STACË0	Ñ
-  5 t‰INTERPREÔ6	uŠVOCABULARÙA	OuÅFORTÈO	}u‹DEFINITIONÓ^	ˆuÁ¨h	—u„Q
-  6 UIÔx	¦u…ABORÔ~	âu„WARÍ‡	v„COLÄ‘	v…BASIÃš	v‚+­£	ŸvƒD+­­	®vƒABÓ
-  7 ´	½v„DABÓ¼	Èv‚MªÄ	Óv†SM/REÍÍ	ìv†FM/MOÄÔ	w…M/MOÄß	Hw‚M¯ê	Qwªô	\
-  8 w„/MOÄû	gw¯
-vwƒMOÄ
-
-w…*/MOÄ
-Œw‚*¯
-›w†(LINE©"
-¦w….LINÅ)
-Ãw‡M
-  9 ESSAGÅ4
-Ðw†DEVICÅ>
-øw„REGÀJ
-ÿw„REG¡U
-x‡M_P3DOÓ^
-x†BLK-FÈg
-Mx‰B
- 10 LK-FNAMÅs
-TxˆBLK-SEEË~
-xˆBLK-REAÄŒ
-˜x‰BLK-WRITÅ™
-±xˆBLK-INIÔ¦
-Ê
- 11 x„#SEÃ´
-íxƒR/×Á
-ôx„+BUÆÊ
-!y†UPDATÅÒ
-HyEMPTY-BUFFERÓÛ
-ay†BUFFEÒæ
- 12 
-vy…BLOCËø
-¹y…#BUFÆz…FLUSÈz‰F_GETLINÅ4z‰F_INCLUDÅ!Íz…OP
- 13 EN¼/‚{‡INCLUDÅ=¥{‡NEEDS-×G°{ˆNEEDS-FÎSØ{‰NEEDS-INÃ_|‰NEEDS
- 14 -LIÂl|†NEEDS¯z|†MAP-FÎˆd|‡NEEDS-Æ“‹|…NEEDÓžÊ|„LOAÄª}Ã--
- 15 ¾´0}§½O}†FORGEÔÅ`}ÆMARKEÒË©}†SPACEÓÖ~‚<£á.~‚#¾ì;~„SIGÎó
-
-Scr# 16027 
-  0 N~£úa~‚#Óš~ƒD.Ò	­~‚.ÒÎ~‚D®Ý~®ê~¿&õ~‚U®, …WORDÓ2
-  1 „LISÔ9^…INDEØC¡ƒCLÓLÎ†SPLASÈV×…VIDEÏ^êˆAUTOEXEÃiû
-  2 ƒBYÅs€„BACË€+€ÂIÆˆ8€ÄTHEÎ‘K€ÅENDIÆ˜b€ÄELSÅ¡k€ÅBEGIÎ«Š€ÅA
-  3 GAIÎ´—€ÅUNTIÌ¾ª€ÃENÄÈ½€ÅWHILÅÒÆ€ÆREPEAÔÚÑ€„?DO­äÜ€ÂDÏïÿ€Ä
-  4 LOOÐøÅ+LOOÐÿ%Ã?DÏ6ÁÜS”PERSISTENCE-CLEAN-UÐž‹PERSIS
-  5 TENCÅ ­FORTH-POINTEÒ9´ŒUSER-POINTEÒI»ŽNO-PERSISTENCÅ[ÂŒ
-  6 CLEAR-BLOCKÓlÕ’RESTORE-FROM-BLOCËöSAVE-TO-BLOCË‚MANAGE
-  7 -RW-BLOCË§‚MANAGE-CORE-PAGÅ¹+‚MANAGE-HEAP-PAGÅÍH‚MANAGE-U
-  8 SER-DATÁâi‚ŒMANAGE-PAGEÓ÷¦‚ŽRESTORE-SYSTEÍÙ‚‹SAVE-SYSTEÍƒ
-  9 ƒBYÅ0ƒ‡REMOUNÔ@(ƒƒSEÅHôƒÃ['ÝTýƒ…(DMP©\„„DUMÐd'„„INVÖn¾„
- 10 „TRUÖwÏ„ÄCASÅ€à„„(OF©‰÷„ÂOÆ’…ÅENDOÆ›+…ÇENDCASÅ¢L…….WORÄ¬
- 11 u…‚.Ó¸‚…„(H"©Â¹…‡DEB-NFÁÉÎ…‡DEB-LFÁÒé…‡DEB-CFÁÞ†‡DEB-PFÁê
- 12 )†…DEB-×ö8†…DEB-ÎE†…DEB-ÌR†…DEB-Â_†…DEB-¢ n†…DEB.¢*…†…D
- 13 EB.Ó4˜†„?FWÄ>­†‰DEB-DELTÁHÂ†ˆ(DELOAD©Qå††DELOAÄ_ž‡…(SEE©lñ
- 14 ‡ˆSEE-CCCÃw6ˆ„EDIÔKˆ„LINÅŽTˆ„TEXÔ—yˆ…-MOVÅ ’ˆÆEDITOÒ©¡ˆÈ
- 15 ³¬ˆÅ¾ÃˆÓÄÒˆ‚RÅÊ÷ˆƒINÓÐ‰Ä×‰Ðß:‰Ì³I‰ÎëV‰Âñe‰‚NÎ
-
-Scr# 16028 
-  0 ÷t‰‚BÂý‰„KEYÂå²‰ˆKEYBEMIÔ½‰‰KEYBEMITÄÊ‰„NRO×!Û‰„NCOÌ/â
-  1 ‰…HOMEÃ8é‰…ADDRÃAü‰†TO-SCÒKŠ…AT-XÙU Š„HOMÅ`1Š„BUZÚj>Š…CUR
-  2 C¡sKŠ…CURCÀ|XŠ…RULEÒ†cŠƒUPÃ‰Š…DOWNÃš¨Š…LEFTÃ¢ÉŠ†RIGHTÃ¬ì
-  3 Š‡PUTPAGÅ¶‹‡REFRESÈÁH‹ŠEDIT-FRAMÅÍc‹‰EDIT-STAÔÙqŒ„BYTÅèÔŒ„
-  4 UNDÏöçŒ…DONEÃÿ…INITÃ-ƒCMÄN„DELÃMŽ„INSÃ$ŒŽ…CTRLÃ-­Ž
-  5 ˆEDIT-DEÆ.…WHERÅ@‰‹DRAW-CIRCLÅFÌˆŠSETUP-DONÅW]‰ÄCASÅgl‰„
-  6 (OF©vƒ‰ÂOÆ˜‰ÅENDOÆˆ·‰ÇENDCASÅØ‰¥SETUÐ™ŠE_MODEÀžŠ‹NO-GR
-  7 APHICÓ¬¥‘ATTRIB-MASK-TABLÅº´‹ATTRIB-MASËÊÇ„.INËàà†.PAPEÒ
-  8 ðñ….OVEÒù‘‡.BRIGHÔ‘†.FLASÈ(‘ƒ.AÔ;‘ˆ.INVERSÅ%N‘‡.BORD
-  9 EÒ-a‘ˆGRAPHICÓ:t‘†_BLACËF}‘…_BLUÅS„‘„_REÄ^‹‘ˆ_MAGENTÁh’‘†_
- 10 GREEÎq™‘…_CYAÎ~ ‘‡_YELLO×‰§‘†_WHITÅ“®‘ŠCOLOR-MASËŸµ‘‰FLAG-M
- 11 ASËª¼‘‰L0-ATTRIÂ¹Ã‘ŠL10-ATTRIÂÇÊ‘ŠL11-ATTRIÂÕÑ‘ŠL12-ATTRIÂä
- 12 Ø‘ŠL13-ATTRIÂóß‘ŠL20-ATTRIÂæ‘…L-HEØí‘…L-DEÃ ÷‘†LAYER¡*’‡
- 13 H-RANGÅ4"’‡V-RANGÅ?)’‹COORD-CHECËK0’†ATTRIÂWE’ˆP-ATTRIÂgL’ˆ
- 14 PIXELADÄrS’ˆPIXELATÔ\’„PLOÔŒe’…XPLOÔ™n’…POINÔ¢w’ˆXY-RATIÏ¬
- 15 €’„EDGÅ¶‰’ŠINITIALIZÅÃ’’‹L0-PIXELADÄÌ›’ŒL10-PIXELADÄÛ§’ŒL12
-
-Scr# 16029 
-  0 -PIXELADÄëÉ’‹L2-RAM-PAGÅüè’‹L2-MAX-PAGÅï’‹L2-PIXELADÄö’ŒL2
-  1 2-PIXELADÄ-“‹L0-PIXELATÔ=)“ŒL13-PIXELATÔN;“ˆL0-POINÔ^P“ˆL1-
-  2 POINÔom“‡L0-EDGÅ|x“‡L1-EDGÅ‰ƒ“†PLOTOÐ•Ž“‡XPLOTOÐ¡—“†L0-SEÔ¬
-  3  “†L0-XOÒ¸ª“†L0-REÓÃ´“‡L0-PLOÔÎÁ“‡L1-PLOÔÙø“‡L2-PLOÔå”ˆL0
-  4 -XPLOÔñ.”ˆL1-XPLOÔý_”ˆL2-XPLOÔ
-‚”L0-INITIALIZÅž”†L1-CLÓ$½
-  5 ”L1-INITIALIZÅ6Ú”L2-INITIALIZÅAù”‡L22-CLÓSZ•ŽL22-INITIALIZÅ
-  6 e‡•‚DØqê•‚DÙ„ñ•‚SØ‹ø•‚SÙ’ÿ•„DIFÆ™–ƒERÒ –‚X°©–‚Y°±–‚
-  7 X±¸"–‚Y±¿)–‚PØÆ0–‚MØÍ7–†LAYERºÔ>–†LAYER°Û.—‡LAYER1±æM—‡LA
-  8 YER1³ñl—‡LAYER1°ý‹—‡LAYER1²	ª—†LAYER²É—‡LAYER2«!è—‰DRAW-LI
-  9 NÅ,˜ŒCIRCLE-EIGHÔ8Ô˜‹DRAW-CIRCLÅF[™†RANDOÍWì™‡NEWTASËgš„S
- 10 EEÄršˆOne-Linå~%š„Griä‡bš„TESÔ”Õš‡NEWTASË#›„SEEÄ¦2›ˆOne-
- 11 Linå²9›„Griä»v›„TESÔÈé›
- 12 
- 13 
- 14 
- 15 
-
-Scr# 16100 
-  0 •˜7øÒ˜ÓøÒ   €Ö ‚èÓ à!
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 3Í;02.2.2CÍ¸&È}UÍ¸&.2fÍ¸&˜ÓyÍ&ä&€u7ü%7Ï7½$ŠÍ&€=
-  9 ° 
-%€Æ Ì u7's-7 ôÿ½$¡Í&u7%'$½$³Í&u7'$7Ï7½$ÇÍ&%
- 10   i€‰  Z€½$ÜÍ&ˆ%['ò%H(= 	 h&€#%
-%z€½$ñÍ&ˆ%= 	 h&€= 0 
-%
- 11 %%Y)%z€½$Í&€u7€%ˆ%Ç$  %€ò%€ü%=  $Ò$ 
- 7Ï7‰ 
- €
- 12 ò%€ü%½$Í&ˆ%Í€ˆ)ä&Æ ˆ%Ì ¬€'K öÿ	(['ò%Æ ˆ%Ì €'K öÿÍ€½$*Í&
- 13 €u7ò%  ö-
-Restoring ä&
-ö-okR2‰  €½$:Í&ë&
-½$BÍ&€u7ò%
- 14   lÖ=½$KÍ&&‰½$TÍ&=  »(ë&»(½$]Í&=  »(ä&»(½$fÍ&ˆ%ä&m(
- 15 ù&S*ˆ%#'m(â$ù&S*—'ò%Œ5m%½$oÍ&h*å'ò%¤$å'ü%=  ½$xÍ&d%T(ˆ% 
-
-Scr# 16101 
-  0 %m%½$Í&=  Œ*Ã*óÃ* 	(ä&(=  ½$‰Í&=  Œ*Ã*‰ 	(ä&(%ò&>
-  1 =  ½$•Í&=  Œ*Ã*m%¤$å'ò%H( 
- ò&>‰ îÿå'ü%½$žÍ&	('#%~-«-œ-
-  2 '#%$½$¨Í&·'$7½$³Í2 -02¹Í&·œ-#%'$'œ-&½$¿Í&·
-  3 '~-7½$ÅÍ&ˆ%ë&˜(#'*%Æ Ì *%·Ì Š‚ 'K òÿ»‚½$ÌÍ&œ-#%%Š‚½$ÔÍ
-  4 &ˆ%Ê‚ï‚½$ÚÍ&ˆ%¤‚#'*%ˆ%%   Ì #%·Ì Š‚ ôÿ»‚½$àÍ&= ~ q‚ï‚½$æ
-  5 Í&—'ò%=½$ìÍ&ë&—'Ú%Aƒ½$òÍ& '—'Ú%Aƒ½$ùÍ&—'ò%=  —'Ú%—'ò%]
-  6 =½$ Í&—'ò%= ( H(ˆ%ë&m(  m%ë&—'ü%lƒ½$	Í&ì+Û"½$Í&ªƒˆ%Ä(½$
-  7 $Í&µƒ=  ß m%½$-ÍË&  6ÍË&  @Í&ä&Óƒü%ä&Úƒü%½$JÍ&Óƒò%·Úƒò
-  8 %
-%½$UÍ&ä&
-%%ò&
-%½$_Í&=  »(»(»(½$hÍ&ä&ä&„½$qÍ&=  Ä(½
-  9 ${Í&ôƒ&7½$…Í&ôƒ&½$Í&=  ä&Æ ö-
-+----.---- ñÿö-+--½$—
- 10 Í&Óƒò%ä&z(   'ÓƒÚ%‰  6„½$¡Í&Óƒò%=  m(  ë&ÓƒÚ%‰  6„½$«
- 11 Í&Úƒò%ä&z(   '‰  „= ? ÚƒÚ%½$¶Í&Úƒò%= ? m(  ë&‰   „= Á
- 12 ÿÚƒÚ%½$ÂÍ&ö-	Screen # —'ò%¦<æ([„æ(#'ä&Æ Ì —'ò%Œ5Y,æ( òÿ[„½$Î
- 13 Í&Óƒò%—'ò%d%ä&„„Œ5Y,½$ÝÍ&ä&=  „•ö- row:¦=  Ó;•ö- co
- 14 l:¦=  Ó;•ö- hex:¦=  Ó;•ö- dec:¦=  Ó;•ö- chr:¦æ(•ö-
- 15  pad:¦œ-˜+= ; …(Y,ä&=  „•ö- cmd:¦æ(ö-*U-ndo    B-ack    D
-
-Scr# 16102 
-  0 -el     I-nsert   H-oldæ(ö-2Q-uit    N-ext    S-hift   R-eplace
-  1  P-ut hex byte= 8 ä&„•ö-  edit  ¦½$ëÍ&P„=  =  „+ˆ%ù&Š<
-  2 = $ =  „*+ˆ%ù&Š<= / =  „=   ˜(Ä(=  =  „Úƒò%ù&Š<=  =  „
-  3 Óƒò%ù&Š<½$ôÍ&Âƒ=  \&Âƒ
-%½$ýÍ&'ä&Æ —'ò%'B5Ì 
-%u7=%ä&%ü%
-  4 èÿ½$Í&=  = ( *'&= _ = * *'&½$Í&P„'˜(= ( *'&=  = * *'
-  5 &½$Í&=  =  „‡µƒ'!'˜(= P ó 
- Ì†C„‰ Î = H ó  Óƒò%¤‚‰
-  6  º = S ó  Óƒò%Ê‚‰ ¦ = R ó  Óƒò%ï‚‰ ’ = I ó  Óƒò%þ‚‰ ~ =
-  7  D ó  Óƒò%ƒ‰ j = N ó  ë&—'Ú%áƒ‰ T = B ó   '—'Ú%áƒ‰ > =
-  8  U ó 
- ß†6„‰ , = Q ó   ö- okæ('ò&B5Ó;ä&=  „R2‰  m%)„	…[
-  9 …½$"Í&Úƒò%ä&z(   'ÚƒÚ%ôƒˆ%#%%'Úƒò%H(*%$7'Óƒò%·'
-%*%&
- 10 ½$+Í&ôƒˆ%#%'Úƒò%H(*%$'ôƒ&7½$5Í&=  ó  Á„‰ l = 	 ó
- 11  ä„‰ \ = 
- ó   „‰ L =  ó  „‰ < =  ó 
- Eˆ@…‰ * =  ó
- 12    „ä&Úƒü%‰  =  ó  F‡‰  m%½$BÍ&Š=áƒ	…[…i†%‡P„Óƒò%Úƒò%
- 13 „Ð%„ªƒ# 
- m%ä&„ˆ@…ˆ%'m(  Ç$„Ä(Ò$¥ˆ‰  C„„m%P„Ä(ä„‰ ¶ÿ½$N
- 14 >þÛþ/o>÷Ûþ/¥æ& oåÝéWÍ&>9Ç$=  »(=  »(‰  ë&‰   ë&u7'Ý$ð7
- 15 ˆ%  ë&u7'*%p,Y,æ(â$#Œ$ Îÿ=  »(=  »(Ò$]#= * S*½$^Í&¤$='ò
-
-Scr# 16103 
-  0 %m( & æ(¤$='ò%E%Æ Ì ò%¼<#  – 
- ä&E%K êÿ½$kÍô0zÍ¸&\ŠÍ¸&x\
-  1 šÍ¸&j\«Í¸&;¼Í¸&;ÍÍ¸&;âÍË&PÃ÷ÍË&ˆ
-ÍË&  Í¸& à/ÍË&  D
-  2 ÍË&ŒZÍË&  lóÙÑbkÙáÝåÕÅí[aŠz³('þíxAíH±0;íx0æíxw#·(Ù
-  3 z³ÙíµhŠ ÓÙíRÁÑÝáåûÝésÙá}´(;$>íyíxæ()=ú Ì ý+}´ õÙÝé|Í
-  4 ; ‚.2.2un…Í&=  Ä(=  Ä(=  Ä(=  Ä(=  Ä(=  Ä(½$“Íô0âÃÍÌ
-  5 ËÆÅ¬ÇÉÈ¡Íô0~|\{}[]®Í&Ç$J‹9‹=  Ò$è!½$ÁÍô0 ÀE \ ó~
-  6  à“ ðº  â 	 °×Í&=  å5=  }$K&K&p‹
-%&½$ïÍ&= d 75•‹%7
-  7 5½$Í&ˆ%=  }$IŠA&=  h&= € Œ$IŠA&½$Í&²‹Å‹½$,Í&WŠ5&= € }$
-  8 =  S*ù&=  õ5= @ WŠA&è‹= 0 =   õ5½$>Í&PŠ5&=  }$½$OÍ&&Œï$#
-  9 Œ$ öÿPŠA&½$aÍ&=  7Œ½$sÍ&=  7Œ½$„Í&=  7Œ½$•Í&= 
- 7Œ½$
- 10 ¨Í&¥+   Ì &7Œ øÿ½$½Í&PŠ5&=  }$½$ÎÍ&IŠ5&½$ÞÍ&ªŒd%T(#
- 11 Œ$ ôÿm%½$òÍ&=  µŒ= 
- µŒ½$Í&¥+   Ì &µŒ øÿ½$Íô0SUP> &
- 12 Í&öŒ˜+ßŒ½$:Í&ä&%#%ä&Æ ™Œ  ªŒ%m%– 
- ë&×Š êÿ½$OÍ&BŠ&=
- 13  }$  = _Šü%‰ 
- = ŒŠü%Š;Š&=  }$  #%&»(=  »(½$aÍ&4
- 14 Š&ˆ%  ä&4Š&½$lÍ&zŠò% ( ˆ%= m T(  ä&zŠü%= K T(  ä&zŠü%
- 15 ‰ ` ˆ%= 
- H( R ˆ%=  T(  Û(æ(ˆ%=  T(  Û(=  »(=  »(ˆ%= 
-
-Scr# 16104 
-  0 T(  ë&zŠü%‰  ˆ%'m(ï$  ˆ%Ä(m%½${Í&¥+   Ì &“ øÿ½$ŽÍË&
-  1 ò×¡ÍË&ö×´ÍË& ÇÍË&  ÕÍË& ãÍ&ë&u7=Žü%ë&u7DŽü%ä&KŽü%ä&RŽü%ä
-  2 &4Š&ä&BŠ&=  7Œë&=  »(»(½$ñÍ&=  =  »(»(½$ÿÍ&RŽò% r ˆ%=
-  3   T(  m%ä&RŽü%ä&‹'ü%ë&…'ü%°1‰ H ˆ%=  T(  =Žm(DŽ   'DŽÚ%
-  4 'KŽÚ%m%‰   DŽò%&DŽò%'m(  ë&DŽÚ%ë&KŽÚ%‰ , = # T(YŽò%}$  ë&R
-  5 Žü%ä&KŽü%ë&u7ˆ%'~-DŽü%½$Í&`Žä&zŠü%7|[‹«( * ˆ%²Žˆ%=  T(
-  6  7Œë&)sŠlŠŠsŠ%&Ž‰  7Œ™Œ  ªŒ	(&	(ë&&Ž# ¶ÿŸŽ½$Í&=  Â=
-  7   ó‹½$Í&¸[ŒNŒ[½$bye                              …#©{½Ò
-X
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
-Scr# 16124 
-  0   k v-Forth 1.8 - NextZXOS version  Dot-command - build 2026-01
-  1 -01  MIT License  1990-2026 Matteo Vitturi ƒLIÔ  = ‡EXECUTÅn
-  2 H ‡(+LOOP©v K †(LOOP©‚  †BRANCÈŽ ‰ ‡0BRANCÈ™  ‡(LEAVE©¤ – …(?D
-  3 O©°   „(DO©¼ Æ ÉÆ Ì ‚I§Ï × …DIGIÔÕ ß †CASEOÎÜ !‡CASEOFÆæ !…UP
-  4 PEÒñ '!†(FIND©ý L!‡ENCLOSÅº!…(MAP©è!‰(COMPARE©"‡(EMITC©(
-  5 +"…(CLS©6A"‡(?EMIT©Bq"†1FRAMÅLÕ"ƒKEÙXÛ"‰?TERMINAÌc#†SELECÔ
-  6 k"#†F_SEEËy@#‡F_CLOSÅ„]#†F_SYNÃj#‰F_FGETPOÓ›w#†F_REAÄ¦‘#‡
-  7 F_WRITÅ´±#†F_OPEÎ¿Å#‰F_OPENDIÒËÞ#‰F_READDIÒÖï#…CMOVÅä$†CMO
-  8 VE¾ò$ƒUMªü%$†UM/MOÄM$ƒANÄ}$‚OÒŒ$ƒXOÒ"˜$ƒSPÀ)¤$ƒSP¡1­
-  9 $ƒRPÀ9³$ƒRP¡A¸$„EXIÔI½$‚>ÒQÇ$‚R¾ZÒ$‚RÀaÝ$‚0½hâ$ƒNOÔoï$‚0
- 10 ¼vó$‚0¾~ü$«…
-%‚D«Œ%‚1«’#%‚1­™*%‚2« 1%…CELL«§9%…CELL­®
- 11 =%‚2­¸E%†NEGATÅÂJ%‡DNEGATÅÉW%„OVEÒÔd%„DROÐàm%ƒNIÐér%„TUCËò
- 12 x%„SWAÐú%ƒDUÐˆ%ƒROÔ%„-ROÔ˜%„PICË¡%…2OVEÒ%­%…2DROÐ.
- 13 ½%…2SWAÐ8Ã%„2DUÐBÐ%‚+¡LÚ%†TOGGLÅUé%À\ò%¡gü%‚CÀm&‚C¡s
- 14 &‚2Àz&‚2¡)&‚PÀˆ5&‚P¡A&‚2ª–K&‚2¯R&†LSHIFÔ¤\&†RSHIFÔ«h
- 15 &…CELLÓ¶t&ºÁx&Á»Ëš&„NOOÐÑ«&ˆCONSTANÔ×¯&ˆVARIABLÅàÂ&„USEÒí
-
-Scr# 16125 
-  0 Ï&°úä&±ë&²	ò&³ù&‚-± '‚BÌ'ƒC/Ì"'…B/BUÆ)'…B/SC
-  1 Ò1'…L/SCÒ;#'‡+ORIGIÎE*'†(NEXT©O6'‚S°[='‚R°fC'ƒTIÂmI'…WID
-  2 TÈtO'‡WARNINÇ|U'…FENCÅ†['‚DÐ’a'ˆVOC-LINËœg'…FIRSÔ£m'…LIMIÔ
-  3 °s'‚HÐºy'…NMODÅÄ'ƒBLËË…'ƒ>IÎÕ‹'ƒOUÔÝ‘'ƒSCÒå—'†OFFSEÔí'
-  4 ‡CONTEXÔõ£'‡CURRENÔ ©'…STATÅ¯'„BASÅµ'ƒDPÌ"»'ƒFLÄ+Á'ƒCSÐ3
-  5 Ç'‚R£;Í'ƒHLÄCÓ'„USEÄJÙ'„PREÖRß'‚LÐ[å'…PLACÅdë'‰SOURCE-IÄk
-  6 ñ'„SPAÎu÷'‡HANDLEÒƒý'ƒEXÐŒ(„HERÅ˜	(…ALLOÔ (¬©(‚C¬³.(
-  7 ƒS>Ä¹=(­ÀH(½ÈT(‚U¼Î_(¼Ôm(¾Ûz(ƒMIÎá…(ƒMAØç˜(„?DUÐï«(
-  8 „-DUÐ÷¶(…EMITÃ »(„EMIÔ	Ä(…SPACÅÛ(‚CÒæ(ˆTRAVERSÅ&ó(…MMU7À
-  9 -)…MMU7¡:)„>FAÒD&)„<FAÒN3)ˆ?IN_MMU·WH)ƒFAÒ`Y)‰?HEAP_PTÒm
- 10 d)†?>HEAÐuw)ƒHPÀƒˆ)ŽPAGE-WATERMARËŽ“)ŒSKIP-HP-PAGÅ–š)†LATES
- 11 Ô©Ã)…>BODÙºÒ)…<NAMÅÅÝ)ƒCFÁÏü)ƒNFÁÙ*ƒLFÁá*ƒPFÁé!*„!CSÐñ
- 12 F*†?ERROÒùS*…?COMÐh*…?EXEÃ{*†?PAIRÓŒ*„?CSÐ!›*ˆ?LOADINÇ,
- 13 °*‡COMPILÅ5Ã*ˆCOMPILE¬BØ*ÁÛNá*Ý[î*†SMUDGÅaý*‰IMMEDIATÅg+
- 14 ƒHEØr+‡DECIMAÌ€*+‡(;CODE©ˆ9+Å;CODÅ”T+‡<BUILDÓ e+‡_DOES>ßª
- 15 n+ÅDOES¾¶+…COUNÔÂ˜+†BOUNDÓÌ¥+ÅLEAVÅÖ­+„CURÓáì+„TYPÅëY,‰-T
-
-Scr# 16126 
-  0 RAILINÇôp,†ACCEPÔý,…QUERÙH-„FILÌa-…ERASÅ s-…BLANË)~-„HO
-  1 LÄ3‰-ƒPAÄ=œ-„WORÄF«-„(."©Nö-„CHAÒW.‚,¢`.Â.Ãi3.Â.¢pX.Â.
-  2 ¨we.…(SGN©~r.ˆ(NUMBER©…¯.ˆ(PREFIX©ô.†NUMBEÒœ?/…2FINÄ©®/…-
-  3 FINÄ´í/‡(ABORT©¾ú/…ERROÒÈ0ƒID®Ô;0„CODÅÞf0†CREATÅæß0É[COMP
-  4 ILEÝïø0ÇLITERAÌú1ÈDLITERAÌ	 1Æ[CHARÝ	51Á€!	@1†?STACË,	}1‰IN
-  5 TERPREÔ2	°1ŠVOCABULARÙ=	û1ÅFORTÈK	)2‹DEFINITIONÓZ	42Á¨d	C2„QUIÔt
-  6 	R2…ABORÔz	Ž2„WARÍƒ	±2„COLÄ	º2…BASIÃ–	>4‚+­Ÿ	…4ƒD+­©	”4ƒABÓ°	£4
-  7 „DABÓ¸	®4‚MªÀ	¹4†SM/REÍÉ	Ò4†FM/MOÄÐ	÷4…M/MOÄÛ	.5‚M¯æ	75ªð	B5„/M
-  8 OÄ÷	M5¯ý	\5ƒMOÄ
-g5…*/MOÄ
-r5‚*¯
-5†(LINE©
-Œ5….LINÅ%
-©5‡MESSA
-  9 GÅ0
-¶5†DEVICÅ:
-Þ5„REGÀF
-å5„REG¡Q
-õ5‡M_P3DOÓZ
-6ˆBLK-SEEËc
-36ˆBLK
- 10 -REAÄo
-J6‰BLK-WRITÅ|
-c6ˆBLK-INIÔ‰
-|6„#SEÃ—
-©6ƒR/×¤
-°6„+BUÆ­
-Ý6†U
- 11 PDATÅµ
-7EMPTY-BUFFERÓ¾
-7†BUFFEÒÉ
-27…BLOCËÛ
-u7…#BUFÆæ
-È7…FLUSÈ
- 12 ð
-Ï7‰F_GETLINÅú
-ð7‰F_INCLUDÅ‰8…OPEN¼>9‡INCLUDÅ a9‡NEEDS-×*
- 13 l9ˆNEEDS-FÎ6”9‰NEEDS-INÃBÁ9‰NEEDS-LIÂOÌ9†NEEDS¯]×9†MAP-FÎk
- 14 :‡NEEDS-ÆvG:…NEEDÓ†:„LOAÄ½:Ã--¾—ì:§ ;†FORGEÔ¨;ÆMARKEÒ
- 15 ®e;†SPACEÓ¹Ó;‚<£Äê;‚#¾Ï÷;„SIGÎÖ
-<£Ý<‚#ÓæV<ƒD.Òìi<‚.Òó
-
-Scr# 16127 
-  0 Š<‚D®û™<®¦<¿	±<‚U®¼<…WORDÓÇ<„LISÔ=…INDEØ&]=ƒCLÓ/Š
-  1 =†SPLASÈ9“=…VIDEÏA¦=ˆAUTOEXEÃL·=ƒBYÅVÖ=„BACËcí=ÂIÆkú=ÄTHEÎ
-  2 t>ÅENDIÆ{$>ÄELSÅ„->ÅBEGIÎŽL>ÅAGAIÎ—Y>ÅUNTIÌ¡l>ÃENÄ«>ÅWH
-  3 ILÅµˆ>ÆREPEAÔ½“>„?DO­Çž>ÂDÏÒÁ>ÄLOOÐÛÖ>Å+LOOÐâç>Ã?DÏëø>ÁÜõ
-  4 ?†BLK-FÈý`?‰BLK-FNAMÅg?”PERSISTENCE-CLEAN-UÐ€‹PERSISTENC
-  5 Å€FORTH-POINTEÒ5€ŒUSER-POINTEÒE€ŽNO-PERSISTENCÅW&€ŒCLEA
-  6 R-BLOCKÓh9€’RESTORE-FROM-BLOCË{Z€SAVE-TO-BLOCËŒi€MANAGE-RW-
-  7 BLOCË£z€MANAGE-CORE-PAGÅµ€MANAGE-HEAP-PAGÅÉ¬€MANAGE-USER-
-  8 DATÁÞÍ€ŒMANAGE-PAGEÓó
-ŽRESTORE-SYSTEÍ=‹SAVE-SYSTEÍlƒBYÅ
-  9 ,w„EDIÔ<Œ„INVÖD•„TRUÖM¦„LINÅV·ÄCASÅ_Ü„(OF©hóÂOÆq
- 10 ‚ÅENDOÆz'‚ÇENDCASÅH‚„TEXÔ‹q‚…-MOVÅ—Š‚ÆEDITOÒ ™‚Èª¤‚Åµ»
- 11 ‚Ó»Ê‚‚RÅÁï‚ƒINÓÇþ‚ÄÎƒÐÖ2ƒÌªAƒÎâNƒÂè]ƒ‚NÎîlƒ‚BÂô
- 12 …ƒ„KEYÂÜªƒˆKEYBEMIÔµƒ‰KEYBEMITÄÂƒ„NRO×Óƒ„NCOÌ&Úƒ…HOMEÃ/
- 13 áƒ…ADDRÃ8ôƒ†TO-SCÒB„…AT-XÙL„„HOMÅW)„„BUZÚa6„…CURC¡jC„…CU
- 14 RCÀsP„…RULEÒ}[„ƒUPÃ‡„…DOWNÃ‘ „…LEFTÃ™Á„†RIGHTÃ£ä„‡PUTPAGÅ
- 15 ­	…‡REFRESÈ¸@…ŠEDIT-FRAMÅÄ[…‰EDIT-STAÔÐi†„BYTÅßÌ†„UNDÏíß†…
-
-Scr# 16128 
-  0 DONEÃö‡…INITÃÿ%‡ƒCMÄ	F‡„DELÃEˆ„INSÃ„ˆ…CTRLÃ$¥ˆˆEDIT-DEÆ
-  1 û&‰‡?ESCAPÅ7‰„VIE×D—‰‚.ÓPø‰ˆUART-SYÓY/ŠŠUART-LASTË`4Š‹UAR
-  2 T-FRAMEÓm;Š‹UART-FLAGS²|BŠŒUART-RX-PORÔŒIŠŒUART-TX-PORÔœPŠŒU
-  3 ART-CT-PORÔ­WŠUART-1ST-TIMEOUÔ¾^ŠUART-2ND-TIMEOUÔÏeŠŽUART-C
-  4 HUNK-LEÎälŠ‰UART-BUFÆùsŠ’UART-ESCAPE-STATUÓzŠUART-CURSOR-FA
-  5 CÅŠ‘UART-CURSOR-PHASÅ1ˆŠUART-RX-BURSÔFŠ‚mó\×Š„REDÏnÿŠ„B
-  6 ELÌu‹‰RPI0-TKB±~9‹‰RPI0-TKB²‡J‹ˆMAP-KEYÂ•[‹ŽUART-SYS-CLOCË£
-  7 p‹‘UART-VIDEO-TIMINÇ°•‹“UART-BAUD-PRESCALAÒÃ²‹’UART-SET-PRESC
-  8 ALAÒÙÅ‹‘UART-SET-BAUDRATÅñè‹‹RPI0-SELECÔó‹?UART-BUSY-TØ&Œ
-  9 ŒUART-TX-BYTÅ.7ŒUART-SEND-EOÔ@NŒUART-SEND-ETØQ[ŒŒUART-SEND-
- 10 CÒchŒŒUART-SEND-LÆuuŒŽUART-SEND-TEXÔ†‚Œ?UART-BYTE-READÙ—™ŒŒ
- 11 UART-RX-BYTÅªªŒ‹UART-WAIT-Â¿µŒUART-WAIT-CR-LÆÐÌŒUART-WAIT-F
- 12 OÒàßŒˆSUP>-STÒôöŒUART-WAIT-PROMPÔUART-RX-TIMEOUÔUAR
- 13 T-SHOW-CURSOÒ(7UART-GET-KEYÂ<|†C-EMIÔQ“ŠCHUNK-EMIÔc&ŽŽUA
- 14 RT-FORTH-BUÆn=ŽŽUART-FORTH-PTÒ}DŽŽUART-FORTH-CNÔKŽŽUART-FORT
- 15 H-FLÇ£RŽ‰UART-METÁ¶YŽ‰TERM-INIÔÉ`Ž‰TERM-DONÅ×ŸŽ‰FORTH-CMÄå²
-
-Scr# 16129 
-  0 Ž„TERÍó[‰RPI0-INIÔ¸„RPI°
-É
-  1 
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 
-
 
 Index:
 
@@ -21929,7 +21371,6 @@ Index:
     9 ( Print a complete error list )
    10 ( Recompilation )
    11 .( Autoexec )
-   20 ( testing )
    35 
    99 .( Assembler )
   100 .( Assembler. Use NEEDS ASSEMBLER instead )
@@ -23098,29 +22539,3 @@ Restarting Supervisor
 15362 x             x          x          x          x          x
 15616 NextZXOS Out of memory.
 15999 ( clear blocks 16000 - 16208 )
-16000 MøÒ˜ÓøÒœÙ¨ˆèÓàW
-16001 n retry.:lïcFJqRemove/insert SD and press Y @o=fd£cY¨kócòÿ8j
-16002 uÍãi:lå†hÏ„pf¸hFi£câu¨kàg¸hFi£c¦u¨kàg¸hFi£ch¨kàg¸hFi£cv¨kàg¸
-16003 Ï„£c~¾„Jq dec:Ï„£c~¾„Jq chr:Ï„:l¾„Jq pad:Ï„ðpìn£c;Ùk­o
-16004 creen# ~nê~:lij\wãh^hbjgwÜhMjÎ~/lãhpjvw¦wÄo­o:l…h~£c^l/lhsa
-16005 hÁá}áµoåÝéÌá}á­oåÝé×ÙÑá}/£oåÙÝéãÍãi0’óc*ÌhS’h£cÑg£c€Õh
-16006 m“§’€`ÿÍc–Ú”ÿi¦ii.”Á“P“É’À*Íc–þù”ƒ“ÿi”‚””m“
-16024 o v-Forth 1.8 - NextZXOS version  Heap Vocabulary - build 202
-16025 SEÒñ#j°þ8j±?j²Fj³Mj‚-±Tj‚BÌ[jƒC/Ì&bj…B/BUÆ-ij…
-16026 o‰-TRAILINÇøÄo†ACCEPÔño…QUERÙœp„FILÌµp…ERASÅ$Çp…BLANË-Ò
-16027 N~£úa~‚#Óš~ƒD.Ò	­~‚.ÒÎ~‚D®Ý~®ê~¿&õ~‚U®,…WORDÓ2
-16028 ÷t‰‚BÂý‰„KEYÂå²‰ˆKEYBEMIÔ½‰‰KEYBEMITÄÊ‰„NRO×!Û‰„NCOÌ/â
-16029 -PIXELADÄëÉ’‹L2-RAM-PAGÅüè’‹L2-MAX-PAGÅï’‹L2-PIXELADÄö’ŒL2
-16100 •˜7øÒ˜ÓøÒ€Ö ‚èÓà!
-16101 %m%½$Í&= Œ*Ã*óÃ* 	(ä&(= ½$‰Í&= Œ*Ã*‰ 	(ä&(%ò&>
-16102 -el     I-nsert   H-oldæ(ö-2Q-uit    N-ext    S-hift   R-eplace
-16103 %m( &æ(¤$='ò%E%Æ Ì ò%¼<# – 
-ä&E%K êÿ½$kÍô0zÍ¸&\ŠÍ¸&x\
-16104 T( ë&zŠü%‰ ˆ%'m(ï$ ˆ%Ä(m%½${Í&¥+  Ì &“ øÿ½$ŽÍË&
-16124 k v-Forth 1.8 - NextZXOS version  Dot-command - build 2026-01
-16125 Ï&°úä&±ë&²	ò&³ù&‚-±'‚BÌ'ƒC/Ì"'…B/BUÆ)'…B/SC
-16126 RAILINÇôp,†ACCEPÔý,…QUERÙH-„FILÌa-…ERASÅ s-…BLANË)~-„HO
-16127 Š<‚D®û™<®¦<¿	±<‚U®¼<…WORDÓÇ<„LISÔ=…INDEØ&]=ƒCLÓ/Š
-16128 DONEÃö‡…INITÃÿ%‡ƒCMÄ	F‡„DELÃEˆ„INSÃ„ˆ…CTRLÃ$¥ˆˆEDIT-DEÆ
-16129 Ž„TERÍó[‰RPI0-INIÔ¸„RPI°
-É

@@ -1,6 +1,7 @@
 \
 \ .fat-time.f
 \
+.( .FAT-TIME )
 \
 \ emit a time given a MSDOS format time-number
 \ seconds : bits 0-4, values between 0 and 58, even values only

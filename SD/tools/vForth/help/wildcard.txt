@@ -1,0 +1,7 @@
+    WILDCARD    --
+
+Parses the next word as a DOS-style wildcard pattern (* and
+?) used by DIR to filter directory entries. Sticky by design:
+once set, the pattern stays active for every later DIR call,
+on any line, until WILDCARD is called again. A bare WILDCARD
+(nothing following) resets the pattern to * (match all).

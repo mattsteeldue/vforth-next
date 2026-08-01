@@ -1,0 +1,5 @@
+    F_RMDIR  a -- f
+
+Remove the directory at null-terminated path a. Drive defaults to
+'*' (current drive) unless a includes a drive letter. Returns
+error flag.

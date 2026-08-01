@@ -222,16 +222,18 @@ F_Open_Exit:
 //  ______________________________________________________________________ 
 //
 // f_opendir    a1 -- u f
-// open a file 
+// open a directory, request NextZXOS-side wildcard filtering (mode $30);
+// the pattern itself is supplied later via F_READDIR's a2 parameter
                 New_Def F_OPENDIR, "F_OPENDIR", is_code, is_normal
                 ex      (sp), ix            // filespec nul-terminated
                 push    ix
                 pop     hl
                 push    de                  // Save Return Stack pointer
                 push    bc                  // Save Instruction pointer
-                ld      b, $10              // file-mode
-                ld      a, "C"
-                rst     $08     
+                ld      b, $30              // lfn_only | use_wildcards
+                ld      a, "*"
+                di
+                rst     $08
                 db      $A3
                 jr      F_Open_Exit
 
@@ -252,7 +254,8 @@ F_Open_Exit:
                 push    de                  // Save Return Stack pointer
                 push    bc                  // Save Instruction pointer
                  exx
-                 rst     $08     
+                 di
+                 rst     $08
                  db      $A4
                  jr      F_Open_Exit
 

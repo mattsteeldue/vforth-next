@@ -1,0 +1,4 @@
+    M_GETSETDRV  a -- a2 f
+
+Get (a=0) or set (a<>0, drive letter in bits 7..3) the default
+drive. Returns the resulting default drive and error flag.

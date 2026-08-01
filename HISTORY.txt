@@ -661,3 +661,22 @@ with garbage right before the RST 08,$AF call; F_STAT's DE (Return Stack
 Pointer) restore used a mislabeled pop hl (E1) instead of pop de (D1),
 leaving RSP corrupted after the call. Both fixed in inc/F_CHMOD.f and
 inc/F_STAT.f, verified on CSpect.
+
+
+\ build 20260801
+F_OPENDIR received minor adjustments for the DIR rewrite below; nothing else
+in the binary layout shifted.
+Filesystem utilities reorganized. DIR was rewritten around NextZXOS's own
+wildcard-filtered F_OPENDIR/F_READDIR, with a companion WILDCARD word to set
+the pattern (fixed an end-of-line ghost-word bug and a DIR-SHELL-SORT hang on
+an empty result set). Separately, the older IDE_PATH library (the M_P3DOS-
+based path service) was tidied up: a shared (PARSE-PATH) helper now backs CD
+and PWD, the orphaned SETCD/GETCD/PATH_OP wrapper words were retired, and two
+NextZXOS operations that never had a wrapper -- MAKEDIR and REMOVEDIR -- got
+proper inc/ words built on the same primitive. The reference manual was
+reorganized to match, growing in the process.
+New tutorials: 000-HELP, 057-dot-commands, 058-layer3-tilemap,
+059-standalone-executables, 060-idiomatic-traps. HELP/VIEW themselves were
+improved, and help/ pages were added for the whole filesystem toolkit (CD,
+PWD, MAKEDIR, REMOVEDIR, LOAD-BYTES, SAVE-BYTES, SAVE-BYTES-FORCE,
+LOAD2BLOCK).

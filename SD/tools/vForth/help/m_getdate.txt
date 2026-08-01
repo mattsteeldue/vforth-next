@@ -1,0 +1,5 @@
+    M_GETDATE  -- date time hs f
+
+Get current date/time from the Real Time Clock. date and time
+are in MS-DOS format; hs packs seconds/100ths (decode with
+SPLIT). Returns error flag if no RTC is present.

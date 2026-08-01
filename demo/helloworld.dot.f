@@ -11,7 +11,9 @@ needs pad"
 
 marker redo
 
-variable org 
+variable release        \ 0 = test in place (debug), 1 = final $2000 build
+
+variable org
 variable msg
 
 : dot-relative ( a1 -- a2 ) release @ if org @ -  $2000 + then ; 

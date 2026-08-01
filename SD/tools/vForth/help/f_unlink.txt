@@ -1,0 +1,4 @@
+    F_UNLINK  a -- f
+
+Delete the file at null-terminated filespec a. Returns error flag.
+Only the base file is deleted, not any +3DOS metadata file.

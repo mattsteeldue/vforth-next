@@ -25,9 +25,9 @@ forth
 \
 \ entry-point at $2000
 \
-code entry-point 
+code entry-point
     Here  org !
-        jp  0 AA,
+        jp  0 AA,   \ placeholder, patched below (direct post-hoc patch)
     c;
        
 \ print routine
@@ -79,6 +79,7 @@ code parse
 
         ld      a'|  (hl)|
         cpn         char  "  N,
+        \ relocation: rel-AA, shorthand (DOT-RELATIVE + AA, in one step)
         callf    z|    ' parse-string  rel-AA,
 
         jr    Back,  \ to the closest Here
@@ -90,9 +91,12 @@ create help-message
 
   
 code help
+        \ relocation: rel-NN, shorthand for the embedded message address
         ldx     hl|   help-message rel-NN,
-        call    ' print AA,
-        
+        \ relocation: rel-AA, shorthand -- was plain AA, (bug: called the
+        \ live-dictionary address of print, wrong once relocated to $2000)
+        call    ' print rel-AA,
+
         ret
     c;
 
@@ -100,12 +104,18 @@ code help
 code main
         ld      a'|     h|
         ora      l|
+        \ relocation: manual dot-relative + AA, (same result as rel-AA,,
+        \ spelled out in two steps -- see tutorial 057 section 3)
         jpf      z|    ' help dot-relative AA,
-        call    ' parse AA,
-        ret        
-    c;   
+        \ relocation: rel-AA, shorthand -- was plain AA, (bug: called the
+        \ live-dictionary address of parse, wrong once relocated to $2000)
+        call    ' parse rel-AA,
+        ret
+    c;
 
 \ patch the origin jump to main
+\ relocation: direct post-hoc patch -- translate with dot-relative and
+\ poke the operand straight into dictionary memory, bypassing AA, entirely
 ' main dot-relative  org @ 1+ !
 
 
@@ -113,6 +123,9 @@ code tester
         push   bc|
         push   de|
         push   ix|
+        \ plain AA, is correct here: tester calls main IN PLACE, before
+        \ relocation (tutorial 057 section 6, TESTER pattern) -- do not
+        \ "fix" this one to rel-AA,
         call ' main AA,
         pop    ix|
         pop    de|

@@ -1,0 +1,6 @@
+    REMOVEDIR  -- cccc
+
+Remove a directory. The path follows REMOVEDIR on the
+same input line.
+
+example  REMOVEDIR C:/tools/vForth/olddir

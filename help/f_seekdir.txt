@@ -1,0 +1,4 @@
+    F_SEEKDIR  h d -- f
+
+Set the position in the open directory h to the double-cell
+offset d, as previously returned by F_TELLDIR. Returns error flag.

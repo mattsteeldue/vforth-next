@@ -1,0 +1,5 @@
+    WILDCARD?    pat-a pat-n str-a str-n -- flag
+
+Case-insensitive DOS-style glob match: * matches zero or
+more characters, ? matches exactly one character. Returns
+true if str matches pat.

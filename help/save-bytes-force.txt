@@ -1,0 +1,7 @@
+    SAVE-BYTES-FORCE    a n --
+
+Save n bytes at address a to a file named in PAD (a
+z-string, set beforehand with PAD"), creating it if
+needed and overwriting it if it already exists.
+
+example  PAD" test.bin"  $4000 $1000 SAVE-BYTES-FORCE

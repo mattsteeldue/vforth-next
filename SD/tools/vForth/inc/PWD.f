@@ -8,16 +8,14 @@
 
 NEEDS IDE_PATH
 
-BASE @
-
 : PWD ( -- )
     \ put to PAD just a dot "." followed by an $FF.
-    [ CHAR . $FF00 + ] LITERAL PAD !    
+    [ CHAR . $FF00 + ] LITERAL PAD !
     PAD 1 IDE_PATH
-    [ DECIMAL ] 44 ?ERROR
+    #44 ?ERROR              \ NextZXOS DOS call error
     PAD
     BEGIN
-        DUP C@ 
+        DUP C@
         DUP $FF -
     WHILE
         EMIT
@@ -25,5 +23,3 @@ BASE @
     REPEAT
     DROP
 ;
-
-BASE !

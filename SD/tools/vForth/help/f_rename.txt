@@ -1,0 +1,5 @@
+    F_RENAME  src dest -- f
+
+Rename/move the file at null-terminated filespec src to dest.
+Only the base file is renamed, not any +3DOS metadata file.
+Returns error flag.

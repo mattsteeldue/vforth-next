@@ -23,15 +23,18 @@ variable org
 \
 \ entry-point $2000
 \
-code entry-point 
+code entry-point
     Here  org !
-        jp  0 AA,
+        jp  0 AA,   \ placeholder, patched below (direct post-hoc patch)
     c;
 
 
 ," Matteo Vitturi (c) 2024"
 
 
+\ These variables are CREATEd here, inside the [org, Here) span that gets
+\ saved and relocated, so every reference to their address below (lda()/
+\ ld()a/ld()x/ldx()) must go through rel-AA, like any other embedded address.
 variable v-mmu7
 variable v-sp
 variable v-fh
@@ -50,8 +53,10 @@ code bailout
 \ __________________________________________________________
 
 code close-bailout
+        \ relocation: rel-AA, shorthand (v-fh lives in the relocated block)
         lda()   v-fh  rel-AA,
         rst     08|     $9B  C,          \ f_close
+        \ relocation: rel-AA, shorthand
         jp    ' bailout rel-AA,
     c;
 
@@ -91,7 +96,9 @@ code display
 z" Save to SD banks from n to m."  -1 allot here
 ," Usage: .savebank n,m,filespec"  -1 allot $000D ,  $0D swap c!
 code help
+        \ relocation: rel-NN, shorthand for the embedded message address
         ldx     hl|     rel-NN,
+        \ relocation: rel-AA, shorthand
         jp      ' display rel-AA,
     c;
 
@@ -102,7 +109,9 @@ code help
 \ output:   none
 z" Wrong interval"  -1 allot $000D , \ add a return-carriage
 code wronginterval
+        \ relocation: rel-NN, shorthand for the embedded message address
         ldx     hl|     rel-NN,
+        \ relocation: rel-AA, shorthand
         jp      ' display rel-AA,
     c;
 
@@ -135,10 +144,11 @@ code parseint
 \            a: char to be compared with
 \ output:   none
 \ modified:  a
-code parsechar \ 
+code parsechar \
         cpa   (hl)|
         incx    hl|
         retf     z|
+        \ relocation: rel-AA, shorthand
         jp      ' help rel-AA,
     c;
 
@@ -180,6 +190,9 @@ code get-mmu7
 
 \ __________________________________________________________
 
+\ relocation: every CALL/JP/LD()/etc. below targeting another word or one of
+\ the v-* variables uses rel-AA,/rel-NN, (mechanism 1, shorthand) -- this
+\ whole word lives inside the relocated [org, Here) block.
 code main
         \ if hl is zero display help
         ld      a'|     h|
@@ -288,6 +301,8 @@ code main
 
 \ __________________________________________________________
 
+\ relocation: direct post-hoc patch -- translate with dot-relative and
+\ poke the operand straight into dictionary memory, bypassing AA, entirely
 ' main dot-relative org @ 1+ !  \ patch JP instruction
 
 \ __________________________________________________________
@@ -297,6 +312,9 @@ code tester ( hl -- carry )
         push   bc|
         push   de|
         push   ix|
+        \ plain AA, is correct here: tester calls main IN PLACE, before
+        \ relocation (tutorial 057 section 6, TESTER pattern) -- do not
+        \ "fix" this one to rel-AA,
         call ' main AA,
         pop    ix|
         pop    de|

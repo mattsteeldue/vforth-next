@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-07-14
+\ v-Forth 1.8 - NextZXOS version - build 2026-08-01
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -1769,14 +1769,20 @@ HERE TO f_open_exit^
 
 
 .( F_OPENDIR )
-\ given a z-string address, open a file-handle to the directory
+\ given a z-string address, open a file-handle to the directory,
+\ requesting NextZXOS-side wildcard filtering (mode $30); the pattern
+\ itself is supplied later via F_READDIR's a2 parameter
 \ Return 0 on success, True flag on error
+\ A='*' ($2A) use the default drive 
+\ A='$' ($24) use the system drive (C:, where the NEXTZXOS and BIN dirs are)
+\ bits 7..3=drive letter (0=A...15=P)
+\ bits 2..0=ignored (use 1 to ensure A<>0)
 CODE f_opendir ( a -- fh f )
         EX(SP)IX            \ filespec nul-terminated
         PUSH    DE|
         PUSH    BC|
-        LDN     B'|   HEX 10   N,
-        LDN     A'|   CHAR C   N,
+        LDN     B'|   HEX 30   N,
+        LDN     A'|   CHAR *   N,
         DI
         RST     08|   HEX  A3  C,
         JR      f_open_exit^ BACK,
