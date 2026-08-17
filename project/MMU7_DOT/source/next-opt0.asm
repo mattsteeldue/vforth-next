@@ -240,14 +240,14 @@ F_Open_Exit:
 
 //  ______________________________________________________________________ 
 //
-// f_readdir    a1 a2 b -- u f
-// open a file 
+// f_readdir    a1 a2 fh -- n f
+// read the next dir entry into a1; a2 = wildcard pattern NextZXOS filters on
                 New_Def F_READDIR, "F_READDIR", is_code, is_normal
                  exx
                  pop     hl
                  ld      a, l
                  pop     de
-                 ex      (sp), ix            // filespec nul-terminated
+                 ex      (sp), ix            // wildcard spec nul-terminated
                  push    ix
                  pop     hl
                 exx

@@ -6,7 +6,7 @@
    5  0000              //
    6  0000              //  v-Forth 1.8 NextZXOS version
    7  0000              //  Basic Loader version
-   8  0000              //  build 20260801
+   8  0000              //  build 20260817
    9  0000              //
   10  0000              //  Direct-Threaded version.
   11  0000              //
@@ -475,7 +475,7 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2026-08-01 ", $0D  // 37
+  67+ E024 20 48 65 61                  db      " Heap Vocabulary - build 2026-08-17 ", $0D  // 37
   67+ E028 70 20 56 6F
   67+ E02C 63 61 62 75
   67+ E030 6C 61 72 79
@@ -483,7 +483,7 @@
   67+ E038 75 69 6C 64
   67+ E03C 20 32 30 32
   67+ E040 36 2D 30 38
-  67+ E044 2D 30 31 20
+  67+ E044 2D 31 37 20
   67+ E048 0D
   68+ E049 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E04D 20 4C 69 63
@@ -3528,8 +3528,8 @@
  232++6757
  233++6757              //  ______________________________________________________________________
  234++6757              //
- 235++6757              // f_readdir    a1 a2 b -- u f
- 236++6757              // open a file
+ 235++6757              // f_readdir    a1 a2 fh -- n f
+ 236++6757              // read the next dir entry into a1; a2 = wildcard pattern NextZXOS filters on
  237++6757                              New_Def F_READDIR, "F_READDIR", is_code, is_normal
  237++6757             >
  237++6757             >Dict_Ptr        defl    $
@@ -3586,7 +3586,7 @@
  239++675A E1                            pop     hl
  240++675B 7D                            ld      a, l
  241++675C D1                            pop     de
- 242++675D DD E3                         ex      (sp), ix            // filespec nul-terminated
+ 242++675D DD E3                         ex      (sp), ix            // wildcard spec nul-terminated
  243++675F D9                           exx
  244++6760 D5                           push    de                  // Save Return Stack pointer
  245++6761 C5                           push    bc                  // Save Instruction pointer

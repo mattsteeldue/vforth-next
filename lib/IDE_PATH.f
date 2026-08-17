@@ -26,5 +26,5 @@ MARKER NO-IDE_PATH
 
 : (PARSE-PATH) ( -- a )
     BL WORD COUNT           \  a  n
-    OVER + 1+  $FF SWAP C!  \  a          -- append $FF terminator
+    OVER +     $FF SWAP C!  \  a          -- append $FF terminator
 ;

@@ -4,10 +4,10 @@
 .( WILDCARD )
 \
 \ Parses the next word in the input stream as a DOS-style wildcard pattern
-\ (* / ?) and keeps it ready, null-terminated, as the "wc" argument for
-\ F_OPENDIR / F_READDIR (inc/f_opendir.f, inc/f_readdir.f): NextZXOS itself
-\ filters entries when the directory is opened with esx_mode_use_wildcards,
-\ so no Forth-side WILDCARD? matching is needed on that path anymore.
+\ (* / ?) and keeps it ready, null-terminated, as the "a2" argument of the
+\ core word F_READDIR: NextZXOS itself filters entries, because F_OPENDIR
+\ opens the directory with esx_mode_use_wildcards, so no Forth-side
+\ WILDCARD? matching is needed on that path anymore.
 \
 \ Independent of DIR (lib/dir.f): DIR keeps parsing only the path that
 \ follows it in the input stream, exactly as today. WILDCARD-SPEC defaults

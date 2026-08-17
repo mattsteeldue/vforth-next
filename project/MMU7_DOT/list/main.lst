@@ -6,7 +6,7 @@
    5  0000              //
    6  0000              //  v-Forth 1.8 NextZXOS version
    7  0000              //  DOT-command version
-   8  0000              //  build 20260801
+   8  0000              //  build 20260817
    9  0000              //
   10  0000              //  Direct-Threaded version.
   11  0000              //
@@ -451,14 +451,14 @@
   66+ E01B 76 65 72 73
   66+ E01F 69 6F 6E 20
   66+ E023 0D
-  67+ E024 20 44 6F 74                  db      " Dot-command - build 2026-08-01 ", $0D  // 33
+  67+ E024 20 44 6F 74                  db      " Dot-command - build 2026-08-17 ", $0D  // 33
   67+ E028 2D 63 6F 6D
   67+ E02C 6D 61 6E 64
   67+ E030 20 2D 20 62
   67+ E034 75 69 6C 64
   67+ E038 20 32 30 32
   67+ E03C 36 2D 30 38
-  67+ E040 2D 30 31 20
+  67+ E040 2D 31 37 20
   67+ E044 0D
   68+ E045 20 4D 49 54                  db      " MIT License ", 127                         // 14
   68+ E049 20 4C 69 63
@@ -3511,8 +3511,8 @@
  240++2402
  241++2402              //  ______________________________________________________________________
  242++2402              //
- 243++2402              // f_readdir    a1 a2 b -- u f
- 244++2402              // open a file
+ 243++2402              // f_readdir    a1 a2 fh -- n f
+ 244++2402              // read the next dir entry into a1; a2 = wildcard pattern NextZXOS filters on
  245++2402                              New_Def F_READDIR, "F_READDIR", is_code, is_normal
  245++2402             >
  245++2402             >Dict_Ptr        defl    $
@@ -3569,7 +3569,7 @@
  247++2405 E1                            pop     hl
  248++2406 7D                            ld      a, l
  249++2407 D1                            pop     de
- 250++2408 DD E3                         ex      (sp), ix            // filespec nul-terminated
+ 250++2408 DD E3                         ex      (sp), ix            // wildcard spec nul-terminated
  251++240A DD E5                         push    ix
  252++240C E1                            pop     hl
  253++240D D9                           exx

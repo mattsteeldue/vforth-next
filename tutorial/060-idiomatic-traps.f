@@ -131,6 +131,10 @@ INSTALL-DOUBLE TRIPLE
 \   VARIABLE DIR-DRIVE   [CHAR] C DIR-DRIVE C!   \ wrong: [CHAR] belongs
 \                                                 \ only inside : ... ;
 \
+\ (Historical: DIR-DRIVE has since been removed from lib/DIR.f -- DIR now
+\ leaves the drive to the NextZXOS default '*'. The trap it illustrates is
+\ unchanged, and applies to any VARIABLE initialised at top level.)
+\
 \ Just like '  vs [']: the rule is not "which one runs" (both may well
 \ produce *something*) but "which state you are in" -- interpreting a
 \ top-level line, or compiling a colon-definition's body.

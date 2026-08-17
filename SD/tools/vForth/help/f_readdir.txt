@@ -1,4 +1,7 @@
     F_READDIR  a1 a2 fh -- n f
 
-Read directory entry. Returns entry info
-and error flag. NextZXOS file operations.
+Read the next entry of directory handle fh into buffer a1.
+a2 is a null-terminated wildcard pattern: NextZXOS applies
+the filter here, because F_OPENDIR opened fh in wildcard
+mode. n is 1 for an entry read, 0 at end of directory.
+Returns also the error flag f.

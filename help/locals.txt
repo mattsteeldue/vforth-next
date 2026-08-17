@@ -1,0 +1,14 @@
+    LOCALS   --
+
+Compile-only. Makes the local names declared by the preceding
+LOCALS-FOR visible inside the definition being compiled, and
+compiles the code that binds the caller arguments to them.
+Use it as the first word of the definition.
+
+Binding is by save-and-restore: each cell's previous content
+goes on the return stack and is put back on every exit path,
+so the word is re-entrant and may RECURSE. Each activation
+costs 4+4n bytes of a 160-byte return stack: keep recursion
+shallow.
+
+Available after NEEDS LOCALS

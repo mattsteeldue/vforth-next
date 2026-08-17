@@ -680,3 +680,23 @@ New tutorials: 000-HELP, 057-dot-commands, 058-layer3-tilemap,
 improved, and help/ pages were added for the whole filesystem toolkit (CD,
 PWD, MAKEDIR, REMOVEDIR, LOAD-BYTES, SAVE-BYTES, SAVE-BYTES-FORCE,
 LOAD2BLOCK).
+
+
+\ build 20260817
+New LOCALS library (lib/LOCALS.f): VALUE-like named local variables, declared
+before the colon definition -- "3 LOCALS-FOR MULADD  A B C" -- and bound by the
+LOCALS word at the start of the body. It patches nothing and redefines no core
+word, so MARKER NO-LOCALS unloads it cleanly. Locals are permanent cells rather
+than frame slots, yet definitions stay re-entrant: LOCALS saves each previous
+value on the return stack and diverts EXIT through a restore chain, so RECURSE
+and an early EXIT both unwind correctly. Maximum 8 locals per scope, 4+4n bytes
+per activation on the 160-byte return stack. A static, dependency-free rendering
+is in lib/doc/, tests in test/LOCALS-TESTS.f, and tutorial 061-locals walks
+through it.
+Fixed a trailing space in the pathspec built by (PARSE-PATH) (lib/IDE_PATH.f):
+MAKEDIR and REMOVEDIR created directories whose name ended in a blank, because
+the $FF terminator was written one byte past the text, leaving in between the
+blank that WORD appends to its packet. CD and PWD share the same helper but were
+unaffected in practice, FAT lookup tolerating a trailing space on a name that
+already exists.
+The core binary is unchanged in this build apart from the build stamp itself.

@@ -1,0 +1,12 @@
+    LOCALS-FOR   n --
+
+Declares n VALUE-like locals for the colon definition that
+follows, in the form  n LOCALS-FOR name loc1 ... locn  typed in
+interpretation state, all on one line. Read a local by name,
+write it with TO. Maximum 8.
+
+A local is one permanent cell, saved on entry and restored on
+exit, so the definition is re-entrant and may RECURSE within
+the limits of the 160-byte return stack.
+
+Available after NEEDS LOCALS
