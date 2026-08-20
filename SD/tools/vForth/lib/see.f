@@ -105,23 +105,30 @@ NEEDS (H")
     
 ;
 
+\ BRANCH as a definition's first cell only ever means a { / LOCALS splice
+\ CPU follows at runtime, read cold, and jump the splice in one step.
+: LOC-SKIP  ( pfa -- target )
+    CELL+  DUP @ +
+;
+
 \ display header and deload
 : (SEE)  ( xt -- )
     BASE @                  \ xt b
     SWAP HEX                \ b  xt
     >BODY                   \ b  a
-    DUP DEB-NFA             \ b  a    
+    DUP DEB-NFA             \ b  a
     DUP DEB-LFA             \ b  a
     DUP DEB-CFA             \ b  a
     DUP CFA @ ['] : @ =     \ b  a  f
     IF                      \ b  a
         SWAP BASE !         \ a
+        DUP @ ['] BRANCH =  IF  LOC-SKIP  THEN   \ skip { / LOCALS splice
         DELOAD              \ a
-        DROP         
+        DROP
     ELSE                    \ b  a
         HEX DEB-PFA           \ b
-        BASE ! 
-    THEN 
+        BASE !
+    THEN
 ;
 
 \

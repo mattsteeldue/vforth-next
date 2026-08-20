@@ -719,3 +719,12 @@ teaches { ... } first, demoting LOCALS-FOR/LOCALS to a "See also"; help/
 pages were completed for every inc/ word whose name needs FAT filename
 mapping (EXEC:, (H"), **, *_, -?EXECUTE, :NONAME, ?DO-, ?ESCAPE,
 UART-send-text>, OPEN">, OPEN>), plus ASK-Y/N and BMP-LOAD".
+Post-release fix (same build stamp, core binary unchanged): the in-place
+declaration mechanism described above shipped initially as a trampoline
+(a second, nameless colon body spliced in behind a patched CALL). It has
+since been replaced by a leaner design: { now compiles an unconditional
+BRANCH over the spliced-in local headers and lands on the binding code
+within the SAME word, so RECURSE re-enters through one thread instead of
+two and pays no extra per-recursion-level cost. As a side effect, SEE --
+which used to hang on a word declared with { -- now decodes it cleanly.
+lib/LOCALS.f, lib/see.f and tutorial 061-locals were all updated to match.

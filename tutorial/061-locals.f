@@ -147,33 +147,38 @@ NEEDS RECURSE
 \   47 SPLIT-DIGIT .S       => 7 4    \ LO=7 deepest, HI=4 (declared 2nd) on top
 
 \ =========================================================================
-\ 5. How in-place declaration works: the trampoline
+\ 5. How in-place declaration works: jumping over the splice
 \ =========================================================================
 \
 \ A local is a real dictionary word, and CREATE writes at HERE -- but
 \ while a colon definition is being compiled, HERE IS the thread being
 \ generated, so a word created mid-definition would drop bytes into the
-\ middle of it. { works around this rather than around it:
+\ middle of it. { does not dodge this by closing the definition early --
+\ it jumps over the problem instead, and never lets go of FOO's own : :
 \
-\   1. { ends the OUTER definition early, after just a slot and an EXIT.
-\      It stays smudged, exactly as plain : would leave it -- not yet
-\      visible in the dictionary.
-\   2. HERE is now OUTSIDE any pending definition, so CREATE works again:
-\      each local name declared between { and } is created right there.
-\   3. { then builds, by hand, a second nameless colon-header -- just the
-\      call-prologue that : itself would write -- and patches its
-\      address into the slot left in step 1. This nameless body is where
-\      A B C ... end up compiled: the code you wrote between { and the
-\      final ; .
-\   4. Your own closing ; still belongs to the OUTER word: it closes the
-\      body's thread with EXIT, then SMUDGEs the outer word, revealing
-\      it in the dictionary at last.
+\   1. { compiles an unconditional BRANCH with its offset left blank, to
+\      be patched later -- the same forward-reference trick IF uses.
+\      FOO's own : stays open throughout.
+\   2. Right after that BRANCH, each local name declared between { and }
+\      gets CREATEd -- splicing real dictionary headers into the middle
+\      of FOO's own thread, on purpose.
+\   3. { then lays down this scope's own restore chain, and patches the
+\      BRANCH's offset to land exactly here: past the local headers and
+\      past the chain, on the code that binds them to the caller's
+\      arguments.
+\   4. Your own closing ; still belongs to FOO, completely unchanged: it
+\      compiles the final EXIT and reveals FOO in the dictionary.
 \
-\ So  : FOO { X } ... ;  compiles two threads sharing one dictionary
-\ entry: FOO's own (just a call into the body, then EXIT), and the
-\ nameless body doing the real work. This is also why RECURSE inside the
-\ body compiles a call back to FOO, not directly into the body -- FOO is
-\ still LATEST throughout, since the body itself has no name.
+\ So  : FOO { X } ... ;  compiles ONE dictionary entry, ONE thread: a
+\ BRANCH, X's own header, the restore chain, the code that binds X, your
+\ code, EXIT. At run time the BRANCH simply jumps over the header and the
+\ chain -- inert data no instruction ever falls into -- landing on the
+\ binding code. Since there is only ever one word, RECURSE compiles a
+\ call straight back into FOO: no second, nameless body to re-enter
+\ through.
+\
+\ One practical side effect: SEE understands this splice and decodes a
+\ word with locals cleanly -- try SEE FACT once section 7 has defined it.
 
 \ =========================================================================
 \ 6. Scoping: the names do not leak
@@ -236,9 +241,9 @@ NEEDS RECURSE
 
 \ The restoring is done WITHOUT redefining EXIT, ; or : . { pushes, on
 \ the return stack above the caller's address, the address of a short
-\ chain of restore steps built for this scope. The EXIT that ends the
-\ body finds that address instead of the caller's, lands in the chain,
-\ and the chain's own EXIT is what finally returns.
+\ chain of restore steps built for this scope. The EXIT that ends FOO
+\ finds that address instead of the caller's, lands in the chain, and
+\ the chain's own EXIT is what finally returns.
 
 \ =========================================================================
 \ 8. An early EXIT unwinds too
@@ -261,17 +266,19 @@ NEEDS RECURSE
 \ =========================================================================
 \
 \ Every activation spends one return-stack cell for the restore chain's
-\ address, plus two per local (its old value and its cell address), plus
-\ one more cell for the trampoline's own return address -- paid again on
-\ EVERY recursion level, because RECURSE re-enters through the outer
-\ word (section 5). The return stack is only 160 bytes, shared with the
-\ input line buffer: measured on the emulator, a word with one local
-\ survives 15 recursion levels and dies at 20; with eight locals, about
-\ 3. Overflowing it overwrites the input buffer and corrupts the system
-\ with no error message, so keep recursion visibly bounded -- and
-\ remember that ABORT (and THROW) jump straight out without running the
-\ restore chain, which is harmless only because every entry re-binds all
-\ the locals before the body starts.
+\ address, plus two per local (its old value and its cell address) --
+\ 4+4n bytes, the SAME at every recursion level. That flat cost is a
+\ direct result of section 5: RECURSE re-enters through FOO itself, not
+\ through a second nameless body, so there is no extra per-level entry
+\ charge to pay. The return stack is only 160 bytes, shared with the
+\ input line buffer, so recursion still has to stay bounded -- overflow
+\ overwrites the input buffer and corrupts the system with no error
+\ message. If the exact depth matters to you, measure it: a RECURSE-
+\ until-it-breaks word on the emulator is a cheap way to find your own
+\ limit for a given local count. And remember that ABORT (and THROW)
+\ jump straight out without running the restore chain, which is harmless
+\ only because every entry re-binds all the locals before the body
+\ starts.
 
 \ =========================================================================
 \ 10. The guards
@@ -335,9 +342,10 @@ NEEDS RECURSE
 \     argument is needed more than twice. Below that, plain stack code
 \     is shorter and faster.
 \   - Keep { ... } as the first thing in the definition.
-\   - Remember the cost: every scope permanently spends one cell per
-\     local plus a name in the heap, and none of it is reclaimed. They
-\     are meant for a handful of definitions, not for every word.
+\   - Remember the cost: every local permanently spends dictionary space
+\     for TWO headers (its own reader, plus a second one SEE uses to
+\     print its name), none of it reclaimed. They are meant for a
+\     handful of definitions, not for every word.
 \   - Recursion is allowed, but count the levels: the return-stack
 \     budget in section 9 is tight.
 \   - Reach for -- output locals when a word has more than one thing to
