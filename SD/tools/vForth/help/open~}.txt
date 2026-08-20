@@ -1,0 +1,12 @@
+    OPEN">   -- fh
+
+Interpreter-only. Opens a file for write, creating it or
+overwriting it if it already exists. Used in the form
+
+    OPEN"> filename.ext"
+
+(no leading BL: the name runs up to the next " ). Returns the
+NextZXOS file handle fh, or aborts via message 43 if the open
+fails. See HELP OPEN> for the plain-word-parsed variant.
+
+Available after NEEDS OPEN">

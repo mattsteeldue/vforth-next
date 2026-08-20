@@ -1,7 +1,8 @@
 \
 \ 061-locals.f
-\ Named local variables: how to stop juggling the stack in words that
-\ take three or four arguments, and what you give up in exchange.
+\ Named local variables: the { ... } bracket form for naming a word's
+\ arguments in place, what it costs, and the older two-part form it
+\ replaces.
 \
 \ A word that takes one or two arguments reads well in plain stack style.
 \ At three or four, the ROT / OVER / -ROT / 2SWAP traffic starts to hide
@@ -10,14 +11,18 @@
 \ once and then refer to them by name.
 \
 \ vForth-specific notes:
-\   - This is NOT the Forth-2012 locals wordset, and does not try to be.
-\     The standard {: a b :} form declares locals INSIDE the definition;
-\     here the declaration goes on the line BEFORE it. The reason is in
-\     section 4: creating a word while another one is being compiled
-\     would splice bytes into the middle of the code being generated.
+\   - This is NOT the Forth-2012 locals wordset, and does not try to be:
+\     a local here is a permanent cell, not a frame slot, and re-entrancy
+\     is obtained by saving/restoring that cell (section 7), not by a
+\     stack frame. { ... } now LOOKS similar to the standard's { : a b :}
+\     shape -- declared inside the definition -- but section 5 explains
+\     why that took a second design: creating a word while another one
+\     is being compiled would normally splice bytes into the middle of
+\     the code being generated, which is why an older two-part form
+\     (section 11) had to declare locals BEFORE the definition opened.
 \   - A local is one permanent cell, not a stack frame. Re-entrancy is
 \     obtained by saving the cell on entry and restoring it on exit, so
-\     recursion works but stays shallow; see section 6.
+\     recursion works but stays shallow; see section 7.
 \   - Nothing in the core is modified or redefined by this library, so
 \     loading it cannot disturb code that was already compiled.
 \
@@ -62,33 +67,25 @@ NEEDS RECURSE
 \ stack version becomes a puzzle. With names it stays literal.
 
 \ =========================================================================
-\ 2. Declaring a scope
+\ 2. Declaring locals in place: { ... }
 \ =========================================================================
 \
-\ The declaration goes on the line BEFORE the colon definition, in
-\ interpretation state, and has this shape:
-\
-\       n LOCALS-FOR <definition-name>  <local1> <local2> ... <localn>
-\
-\ n is the number of locals. The name that follows is the name of the
-\ definition that comes next -- LOCALS-FOR is a decorator for it.
-\ Everything must fit on ONE source line.
-\
-\ Inside the definition, LOCALS (no arguments) makes the names visible
-\ and compiles the code that pops the arguments into them. In practice
-\ it is the first word of the definition, because it consumes the
-\ caller's arguments.
+\ { is IMMEDIATE and must be the very first word of the definition. It
+\ parses names up to a closing } -- all on the SAME source line -- and
+\ compiles the code that pops the caller's arguments into them, in the
+\ order they were pushed:
 
-3 LOCALS-FOR MULADD  A B C
 : MULADD  ( a b c -- n )
-    LOCALS
+    { A B C }
     A B *  B C *  +  C A *  +
 ;
 
 \   2 3 4 MULADD .          => 26      \ 6 + 12 + 8
 
 \ Note what did NOT have to be written: no >R, no ROT, no 2DUP. Each
-\ argument is simply named where it is used, as many times as needed.
+\ argument is simply named where it is used, as many times as needed --
+\ and the declaration sits right where the reader needs it, at the top
+\ of the definition, instead of on a separate line above it.
 
 \ =========================================================================
 \ 3. Reading and writing a local
@@ -98,9 +95,8 @@ NEEDS RECURSE
 \ stores into it. This works because a local IS a CONSTANT underneath,
 \ so the core TO needs no modification at all.
 
-2 LOCALS-FOR CLAMP-ADD  LO HI
 : CLAMP-ADD  ( lo hi -- n )
-    LOCALS
+    { LO HI }
     LO HI +              ( sum )
     DUP 100 > IF         \ cap the running total at 100
         DROP 100
@@ -112,9 +108,8 @@ NEEDS RECURSE
 
 \ TO in action: the local is updated in place during the computation.
 
-3 LOCALS-FOR ACCUM  V1 V2 V3
 : ACCUM  ( v1 v2 v3 -- n )
-    LOCALS
+    { V1 V2 V3 }
     V1 V2 + TO V1        \ V1 := V1 + V2
     V1 V3 + TO V1        \ V1 := V1 + V3
     V1
@@ -123,34 +118,70 @@ NEEDS RECURSE
 \   1 2 3 ACCUM .           => 6
 
 \ =========================================================================
-\ 4. Why it takes TWO words instead of one
+\ 4. Output locals: an optional -- for return values
 \ =========================================================================
 \
-\ The split is not a matter of taste, it is forced by the core.
-\
-\ (a) A local is a real dictionary word, and creating a word writes into
-\     the dictionary at HERE. While a colon definition is being
-\     compiled, HERE IS the code being generated -- so a local created
-\     mid-definition would drop bytes into the middle of the thread, and
-\     the interpreter would later run straight into them. Hence the
-\     locals are created BEFORE the definition opens.
-\
-\ (b) But  :  begins with  CURRENT @ CONTEXT !  -- it resets the search
-\     vocabulary. So whatever LOCALS-FOR does to make the names findable
-\     is undone the instant  :  runs. Something has to put it back from
-\     INSIDE the definition, and that something is LOCALS.
-\
-\ A useful consequence: if you forget LOCALS, the local names simply do
-\ not resolve and compilation stops with an error. The mistake is loud,
-\ not silent.
+\ A -- inside the braces marks off a second group: OUTPUT locals. They
+\ are not bound from the stack -- each starts at 0 on every entry -- and
+\ the body never pushes them either: every exit path (the closing ; and
+\ any early EXIT) pushes their current value automatically, in the order
+\ declared, before restoring the caller's own locals underneath them.
+
+: SUM-TO  ( n -- sum )
+    { N -- ACC }
+    N 0> IF  N 0 DO  ACC I 1+ + TO ACC  LOOP  THEN
+;
+
+\   5 SUM-TO .              => 15     \ 1+2+3+4+5
+\   0 SUM-TO .              => 0      \ ACC never touched: stays at 0
+
+\ With more than one output, declaration order still matters: the FIRST
+\ name declared after -- ends up deepest on the stack, the last one on
+\ top -- same rule as any other multi-value return.
+
+: SPLIT-DIGIT  ( n -- lo hi )
+    { N -- LO HI }
+    N 10 MOD TO LO   N 10 / TO HI
+;
+
+\   47 SPLIT-DIGIT .S       => 7 4    \ LO=7 deepest, HI=4 (declared 2nd) on top
 
 \ =========================================================================
-\ 5. Scoping: the names do not leak
+\ 5. How in-place declaration works: the trampoline
 \ =========================================================================
 \
-\ The locals live in their own vocabulary, which is emptied by every
-\ LOCALS-FOR. Once another scope is declared, the previous names are
-\ gone from the search order:
+\ A local is a real dictionary word, and CREATE writes at HERE -- but
+\ while a colon definition is being compiled, HERE IS the thread being
+\ generated, so a word created mid-definition would drop bytes into the
+\ middle of it. { works around this rather than around it:
+\
+\   1. { ends the OUTER definition early, after just a slot and an EXIT.
+\      It stays smudged, exactly as plain : would leave it -- not yet
+\      visible in the dictionary.
+\   2. HERE is now OUTSIDE any pending definition, so CREATE works again:
+\      each local name declared between { and } is created right there.
+\   3. { then builds, by hand, a second nameless colon-header -- just the
+\      call-prologue that : itself would write -- and patches its
+\      address into the slot left in step 1. This nameless body is where
+\      A B C ... end up compiled: the code you wrote between { and the
+\      final ; .
+\   4. Your own closing ; still belongs to the OUTER word: it closes the
+\      body's thread with EXIT, then SMUDGEs the outer word, revealing
+\      it in the dictionary at last.
+\
+\ So  : FOO { X } ... ;  compiles two threads sharing one dictionary
+\ entry: FOO's own (just a call into the body, then EXIT), and the
+\ nameless body doing the real work. This is also why RECURSE inside the
+\ body compiles a call back to FOO, not directly into the body -- FOO is
+\ still LATEST throughout, since the body itself has no name.
+
+\ =========================================================================
+\ 6. Scoping: the names do not leak
+\ =========================================================================
+\
+\ The locals live in their own vocabulary, emptied by every { (or
+\ LOCALS-FOR, section 11). Once another scope is declared, the previous
+\ names are gone from the search order:
 \
 \   FORTH  A .              => A? is undefined.
 \
@@ -163,13 +194,13 @@ NEEDS RECURSE
 \ and CURRENT agree and otherwise reports error 23.)
 
 \ =========================================================================
-\ 6. Re-entrancy: how one cell serves several activations
+\ 7. Re-entrancy: how one cell serves several activations
 \ =========================================================================
 \
-\ Each local is ONE permanent cell, allocated when the scope is
-\ declared -- there is no stack frame. Two live activations of the same
-\ word would therefore trample on each other, were it not for what
-\ LOCALS compiles around the body:
+\ Each local is ONE permanent cell, allocated when it is declared --
+\ there is no stack frame. Two live activations of the same word would
+\ therefore trample on each other, were it not for what { compiles
+\ around the body:
 \
 \   on entry   the previous contents of each cell go on the return
 \              stack, then the arguments are stored into the cells;
@@ -181,9 +212,8 @@ NEEDS RECURSE
 \ outer activation finds its own values exactly where it left them. So a
 \ word with locals may call itself.
 
-1 LOCALS-FOR FACT  N
 : FACT  ( n -- n! )
-    LOCALS
+    { N }
     N 1 > IF  N 1- RECURSE  N *  ELSE  1  THEN
 ;
 
@@ -195,27 +225,30 @@ NEEDS RECURSE
 \
 \ Ordinary nesting works for the same reason, and needs nothing special.
 
-1 LOCALS-FOR SQUARE-IT  S
-: SQUARE-IT  ( n -- n2 )   LOCALS  S S * ;
+: SQUARE-IT  ( n -- n2 )   { S }   S S * ;
 
-2 LOCALS-FOR HYPOT2  H1 H2
 : HYPOT2  ( a b -- a2+b2 )
-    LOCALS
+    { H1 H2 }
     H1 SQUARE-IT  H2 SQUARE-IT  +
 ;
 
 \   3 4 HYPOT2 .            => 25
 
-\ The restoring is done WITHOUT redefining EXIT, ; or : . LOCALS pushes
-\ on the return stack, on top of the caller's address, the address of a
-\ short chain of restore steps. The EXIT that ends the definition finds
-\ that address instead of the caller's, lands in the chain, and the
-\ chain's own EXIT is what finally returns. Any EXIT works this way,
-\ including an early one in the middle of the body:
+\ The restoring is done WITHOUT redefining EXIT, ; or : . { pushes, on
+\ the return stack above the caller's address, the address of a short
+\ chain of restore steps built for this scope. The EXIT that ends the
+\ body finds that address instead of the caller's, lands in the chain,
+\ and the chain's own EXIT is what finally returns.
 
-1 LOCALS-FOR SAFE-DIV  D
+\ =========================================================================
+\ 8. An early EXIT unwinds too
+\ =========================================================================
+\
+\ Any EXIT works this way, including an early one in the middle of the
+\ body:
+
 : SAFE-DIV  ( n d -- q )
-    LOCALS
+    { D }
     D 0= IF  DROP 0 EXIT  THEN      \ this EXIT unwinds too
     D /
 ;
@@ -223,45 +256,93 @@ NEEDS RECURSE
 \   100 4 SAFE-DIV .        => 25
 \   100 0 SAFE-DIV .        => 0
 
-\ THE PRICE: the return stack. Every activation spends 4 bytes, plus 4
-\ for each local, on a return stack that is only 160 bytes and shares
-\ them with the input line buffer. A word with 1 local recurses about 15
-\ levels deep; with 4 locals, about 6. Going past that overwrites the
-\ input buffer and corrupts the system with no error message, so keep
-\ recursion visibly bounded -- and remember that ABORT (and THROW) jump
-\ straight out without running the restore chain, which is harmless only
-\ because every entry re-binds all the locals before the body starts.
+\ =========================================================================
+\ 9. The cost: return-stack budget
+\ =========================================================================
+\
+\ Every activation spends one return-stack cell for the restore chain's
+\ address, plus two per local (its old value and its cell address), plus
+\ one more cell for the trampoline's own return address -- paid again on
+\ EVERY recursion level, because RECURSE re-enters through the outer
+\ word (section 5). The return stack is only 160 bytes, shared with the
+\ input line buffer: measured on the emulator, a word with one local
+\ survives 15 recursion levels and dies at 20; with eight locals, about
+\ 3. Overflowing it overwrites the input buffer and corrupts the system
+\ with no error message, so keep recursion visibly bounded -- and
+\ remember that ABORT (and THROW) jump straight out without running the
+\ restore chain, which is harmless only because every entry re-binds all
+\ the locals before the body starts.
 
 \ =========================================================================
-\ 7. The guards
+\ 10. The guards
 \ =========================================================================
 \
-\ Three mistakes are caught and reported rather than silently miscompiled:
+\ Four mistakes are caught and reported rather than silently miscompiled:
 \
-\   LOCALS: bad count           n is 0, or larger than 8 (the maximum).
+\   LOCALS: bad count           the count is 0, or more than 8 (input and
+\                               output combined -- the maximum).
 \
-\   LOCALS: no scope declared   LOCALS used without a LOCALS-FOR, or a
-\                               second time on the same declaration.
-\                               Without this, two definitions would
-\                               quietly share the same cells.
+\   LOCALS: no scope declared   LOCALS (older form) used without a
+\                               LOCALS-FOR, or a second time on the same
+\                               declaration.
 \
 \   LOCALS: scope not adjacent  something else was defined between the
-\                               LOCALS-FOR and its definition, so the
-\                               pairing is no longer certain.
+\                               older form's LOCALS-FOR and its
+\                               definition, so the pairing is no longer
+\                               certain.
+\
+\   LOCALS: misplaced { or }    } with no matching {, a { never closed
+\                               on its own line, or a second -- in the
+\                               same { ... } group.
 
 \ =========================================================================
-\ 8. Rules of thumb
+\ 11. See also: the older two-part form, LOCALS-FOR + LOCALS
+\ =========================================================================
+\
+\ { ... } is built on top of an older mechanism that is still supported.
+\ The declaration goes on the line BEFORE the colon definition, in
+\ interpretation state:
+\
+\       n LOCALS-FOR <definition-name>  <local1> <local2> ... <localn>
+\
+\ n is the count; the name that follows is the name of the definition
+\ that comes right after -- everything on ONE source line. Inside that
+\ definition, LOCALS (no arguments, first word of the body) makes the
+\ names visible and compiles the binding code. There is no -- in this
+\ form: every declared local comes off the stack.
+
+3 LOCALS-FOR MULADD2  X Y Z
+: MULADD2  ( a b c -- n )
+    LOCALS
+    X Y *  Y Z *  +  Z X *  +
+;
+
+\   2 3 4 MULADD2 .         => 26
+
+\ { exists precisely to remove this form's two sharp edges: the count
+\ must match exactly (LOCALS-FOR N ... vs the definition's own argument
+\ count), and nothing else may be defined between LOCALS-FOR and the
+\ definition it names, or the adjacency guard rejects it. Prefer { ... }
+\ for new code; LOCALS-FOR/LOCALS remains here for old sources and for
+\ the rare case where the declaration genuinely needs to sit apart from
+\ the definition.
+
+\ =========================================================================
+\ 12. Rules of thumb
 \ =========================================================================
 \
 \   - Use locals when a word takes three or more arguments, or when an
 \     argument is needed more than twice. Below that, plain stack code
 \     is shorter and faster.
-\   - Keep LOCALS as the first word of the definition.
+\   - Keep { ... } as the first thing in the definition.
 \   - Remember the cost: every scope permanently spends one cell per
 \     local plus a name in the heap, and none of it is reclaimed. They
 \     are meant for a handful of definitions, not for every word.
-\   - Recursion is allowed, but count the levels: 4+4n bytes each on a
-\     160-byte return stack (section 6).
+\   - Recursion is allowed, but count the levels: the return-stack
+\     budget in section 9 is tight.
+\   - Reach for -- output locals when a word has more than one thing to
+\     hand back and TO-driven bookkeeping reads clearer than juggling
+\     the return stack by hand.
 
 \ NEEDS TESTING
 \ T{  2 3 4 MULADD-STACK   ->  10   }T
@@ -269,7 +350,11 @@ NEEDS RECURSE
 \ T{  30 40 CLAMP-ADD      ->  70   }T
 \ T{  80 90 CLAMP-ADD      ->  100  }T
 \ T{  1 2 3 ACCUM          ->  6    }T
+\ T{  5 SUM-TO             ->  15   }T
+\ T{  0 SUM-TO             ->  0    }T
+\ T{  47 SPLIT-DIGIT       ->  7 4  }T
 \ T{  3 4 HYPOT2           ->  25   }T
 \ T{  5 FACT               ->  120  }T
 \ T{  100 4 SAFE-DIV       ->  25   }T
 \ T{  100 0 SAFE-DIV       ->  0    }T
+\ T{  2 3 4 MULADD2        ->  26   }T

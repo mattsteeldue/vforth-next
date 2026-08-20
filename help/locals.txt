@@ -1,14 +1,21 @@
     LOCALS   --
 
-Compile-only. Makes the local names declared by the preceding
-LOCALS-FOR visible inside the definition being compiled, and
-compiles the code that binds the caller arguments to them.
-Use it as the first word of the definition.
+Compile-only. { ... } declares named locals in place, first
+in the definition:  : SUM3 { X Y Z } X Y + Z + ; . Read a
+local by name, write it with TO. Maximum 8, input and
+output combined.
+
+An optional -- inside { } marks output locals: not read from
+the stack, created at 0 on every entry, and pushed
+automatically (in declaration order) by every exit path,
+e.g.  : SUM-TO { N -- ACC } ... ; . See HELP { and HELP --.
 
 Binding is by save-and-restore: each cell's previous content
-goes on the return stack and is put back on every exit path,
+goes on the return stack and is restored on every exit path,
 so the word is re-entrant and may RECURSE. Each activation
-costs 4+4n bytes of a 160-byte return stack: keep recursion
-shallow.
+costs 4+4n bytes of the 160-byte return stack: keep
+recursion shallow.
+
+See also: the older two-part form, LOCALS-FOR + LOCALS.
 
 Available after NEEDS LOCALS

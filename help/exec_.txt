@@ -1,0 +1,19 @@
+    EXEC:   n --
+
+Compile-only. Vectorized fast case: with no comparisons,
+jumps straight to the n-th word in the XT table that
+follows, e.g.
+    : DISP ( n -- )  EXEC:  w0 w1 w2 w3 ;
+
+EXEC: pre-loads EXIT as the return address, so the jumped-
+to word returns straight from the enclosing definition
+(tail call). It must therefore be the LAST action in any
+definition that uses it.
+
+No bounds check at runtime: an out-of-range n fetches a
+spurious address and jumps to it, crashing the system.
+Caller must guarantee 0 <= n < number-of-entries.
+
+See HELP CASE for arbitrary/non-contiguous values.
+
+Available after NEEDS EXEC:

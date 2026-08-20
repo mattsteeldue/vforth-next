@@ -1,0 +1,13 @@
+    (H")   -- a n
+
+Runtime companion of S" . Fetches the heap-pointer literal
+compiled right after this call, maps it into the current 8K
+page via FAR, and returns the string's address and length.
+
+Not meant to be typed directly: S" compiles a call to (H")
+followed by that ha literal automatically, once, at compile
+time. Every run of the defined word decodes it afresh.
+
+See HELP S" and HELP H".
+
+Available after NEEDS (H")

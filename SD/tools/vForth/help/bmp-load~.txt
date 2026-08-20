@@ -1,0 +1,15 @@
+    BMP-LOAD"   --
+
+IMMEDIATE. Loads a 256-color .bmp file straight into Layer 2
+video RAM (six 8K pages via MMU7), checking the "BM"
+signature and size bounds first. Filename is quote-delimited:
+
+    BMP-LOAD" C:/demos/bmp256converts/bitmaps/future.bmp"
+
+Works both interpreted and inside a colon-definition: at
+compile time it compiles S" plus a call to (BMP-LOAD); at
+the interpreter it opens and loads the file right away.
+Switch to LAYER2 before loading and back to LAYER12 after,
+e.g.  LAYER2  BMP-LOAD" ..."  WAIT-KEY  LAYER12 .
+
+Available after NEEDS BMP-LOAD"

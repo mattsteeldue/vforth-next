@@ -1,7 +1,7 @@
 \
-\ &.4.f
+\ &_.f
 \
-.( *.4 )
+.( *_ )
 \
 
 \ Geometrical approach.

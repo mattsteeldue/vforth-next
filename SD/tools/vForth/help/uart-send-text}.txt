@@ -1,0 +1,11 @@
+    UART-send-text>   a n --
+
+Sends n bytes starting at a to the RPi0 over UART, one byte
+at a time via UART-TX-BYTE, escaping any > (GT) byte in the
+text by prefixing it with a backslash. Used by SEND-BLOCK to
+transmit a BLOCK's content plus its trailing redirection
+target without a stray > breaking the shell command.
+
+See HELP SEND-BLOCK.
+
+Available after NEEDS SEND-BLOCK

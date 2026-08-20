@@ -700,3 +700,22 @@ blank that WORD appends to its packet. CD and PWD share the same helper but were
 unaffected in practice, FAT lookup tolerating a trailing space on a name that
 already exists.
 The core binary is unchanged in this build apart from the build stamp itself.
+
+
+\ build 20260820
+Core binary unchanged apart from the build stamp.
+LOCALS gained an inline declaration form: { name1 ... namen } declares and
+binds locals as the first word of the definition itself, replacing the
+older two-part "n LOCALS-FOR word  names..." / "LOCALS" pair as the
+preferred syntax (still supported, and what { is built on). An optional
+-- inside the braces marks a second group of OUTPUT locals: not bound
+from the stack, created at 0 on every entry, and pushed automatically (in
+declaration order) by every exit path instead. In-place declaration is
+made possible by a trampoline: { closes the outer definition early on a
+slot plus EXIT, so HERE is free again for CREATE to place the locals,
+then splices in a nameless body for the rest of the definition.
+Documentation caught up with the new syntax: tutorial 061-locals now
+teaches { ... } first, demoting LOCALS-FOR/LOCALS to a "See also"; help/
+pages were completed for every inc/ word whose name needs FAT filename
+mapping (EXEC:, (H"), **, *_, -?EXECUTE, :NONAME, ?DO-, ?ESCAPE,
+UART-send-text>, OPEN">, OPEN>), plus ASK-Y/N and BMP-LOAD".

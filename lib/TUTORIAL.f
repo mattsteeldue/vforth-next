@@ -108,7 +108,7 @@ CREATE TUT-TABLE
     H" tutorial/051-keyboard-matrix.f" ,
     H" tutorial/052-modular-graphics.f" ,
     H" tutorial/053-more-sprites.f"    ,
-    H" tutorial/054-blocks-as-assets.f" ,
+    H" tutorial/054-dma.f"             ,
     H" tutorial/055-afx-sound-board.f" ,
     H" tutorial/056-layer2-palette.f"  ,
     H" tutorial/057-dot-commands.f"    ,
@@ -116,9 +116,10 @@ CREATE TUT-TABLE
     H" tutorial/059-standalone-executables.f" ,
     H" tutorial/060-idiomatic-traps.f" ,
     H" tutorial/061-locals.f"          ,
-\   H" tutorial/062-dma.f"             ,
+    H" tutorial/062-error-messages.f"  ,
+    H" tutorial/063-blocks-as-assets.f" ,
 
-61 CONSTANT TUT-MAX
+63 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------

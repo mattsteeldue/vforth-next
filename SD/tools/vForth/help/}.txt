@@ -1,3 +1,7 @@
     >  n1 n2 -- f
 
 Signed greater-than comparison.
+
+Looking for local variables instead?  { ... }  (same character
+as the closing brace) declares named locals in place at the
+start of a definition. See HELP LOCALS.

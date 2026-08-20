@@ -1,0 +1,12 @@
+    *_   n1 n2 -- n3
+
+Multiply two 12:4 fixed-point numbers (12 bits integer part,
+4 bits fractional part, one 16-bit cell each). n3 is the
+product, rescaled back to 12:4.
+
+Geometrical/unsigned-multiply trick: both factors are offset
+by $8000 before an unsigned 16x16 multiply, and the offset is
+subtracted back out afterward, so no signed-multiply routine
+is needed.
+
+Available after NEEDS *_

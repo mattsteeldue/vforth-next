@@ -1,0 +1,15 @@
+    ASK-Y/N   --
+
+Interactive boot-time prompt: "Do you wish to load
+utilities ? (Y/n)". Any key other than N/n continues,
+falling through to the NEEDS lines that load REMOUNT,
+WHERE, .S, EDIT, DUMP, HEAP, S", SEE, etc. N/n prints "ok"
+and QUITs straight to the prompt, skipping them.
+
+Part of Screen 11 / lib/autoexec.f, run once by AUTOEXEC
+during COLD boot. Not a reusable NEEDS module: it is
+defined, called, and FORGET-ten again by its own MARKER in
+the same script -- look here to understand the boot
+sequence, not to call it from your own code.
+
+See root CLAUDE.md, "Boot Sequence".

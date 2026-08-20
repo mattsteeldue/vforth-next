@@ -9,4 +9,9 @@ A local is one permanent cell, saved on entry and restored on
 exit, so the definition is re-entrant and may RECURSE within
 the limits of the 160-byte return stack.
 
+This form has no -- : every declared local comes off the
+stack. For output locals (not read from the stack, pushed
+automatically on exit) use the inline  { ... -- ... }  form
+instead. See HELP LOCALS.
+
 Available after NEEDS LOCALS

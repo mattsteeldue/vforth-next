@@ -18,6 +18,9 @@
 \  -14  interpreting a compile-only word
 \  ...  (see Forth standard appendix)
 \ User-defined codes: positive integers are conventionally free.
+\ These are the codes the STANDARD reserves.  vForth's own ABORT and
+\ ABORT" do not raise them: they abort directly, without going through
+\ THROW -- see section 5.
 \
 \ ABORT (core) is an unconditional abort that always returns to the
 \ interactive prompt.  It clears both stacks regardless of CATCH.
@@ -145,14 +148,29 @@ CR
 \ 5. ABORT" revisited in context
 \ ===========================================================================
 \
-\ ABORT" ( f -- ) is built on THROW -2.  It is the right tool for
-\ fatal pre-condition checks inside a definition where there is no
-\ recovery needed:
+\ ABORT" ( f -- ) is the right tool for fatal pre-condition checks
+\ inside a definition where no recovery is needed:
 \
 \   : POSITIVE-ONLY  ( n -- n )
 \       DUP 0<= ABORT" requires a positive number" ;
 \
-\ If ABORT" is called inside a CATCH, the catch sees throw code -2.
+\ IMPORTANT, and vForth-specific: ABORT" is NOT built on THROW here.
+\ inc/abort".f compiles  S" TYPE ABORT , and ABORT resets both stacks
+\ and jumps to QUIT -- straight through any pending CATCH frame, which
+\ therefore never returns.  A CATCH does NOT see throw code -2 (or any
+\ other code) from an ABORT" : control goes back to the prompt.
+\
+\ So the choice is not a matter of taste:
+\
+\   - the caller may want to recover      -> THROW a code, and CATCH it;
+\   - the condition is unrecoverable      -> ABORT" or a numbered
+\                                            message with ?ERROR.
+\
+\ One consequence to keep in mind: HANDLER, the variable CATCH uses to
+\ remember the current handler, is not cleared by ABORT or QUIT.  After
+\ an ABORT" raised inside a CATCH it still points at a return-stack
+\ frame that no longer exists.  Numbered messages (tutorial 062) and
+\ THROW do not have this problem.
 
 : POSITIVE-ONLY  ( n -- n )
     DUP 0> NOT ABORT" requires a positive number" ;
@@ -169,4 +187,5 @@ CR
 \ T{  0 THROW          ->      }T    \ 0 THROW is a no-op
 \ T{  10 2 PROTECTED-DIV -> 5  }T
 \ T{  10 0 PROTECTED-DIV -> 0  }T   \ error caught, returns 0
-\ T{  ['] POSITIVE-ONLY CATCH -> -2 }T   \ ABORT" throws -2 (no arg)
+\ ABORT" cannot be tested through CATCH: it does not throw, it aborts.
+\   0 POSITIVE-ONLY          -> requires a positive number, back at Ok

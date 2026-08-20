@@ -1,3 +1,19 @@
-    -->  --
+    --    --
 
-Continue to next block (in block mode).
+Compile-only, valid only inside a  { ... }  locals group (see
+HELP { and HELP LOCALS). Marks off a second list of names:
+OUTPUT locals. Names before -- are bound from the stack on
+entry, as usual; names after -- start each entry at 0 and are
+not read from the stack. Every exit path -- the closing ; and
+any early EXIT -- pushes their current value automatically, in
+declaration order, before restoring the caller's own locals
+underneath them.
+
+Example:
+    : SUM-TO  { N -- ACC }
+        N 0 ?DO  ACC I 1+ + TO ACC  LOOP ;
+
+At most one -- per { ... } group; a second one raises error
+#60 (LOCALS: misplaced { or }; also raised for a duplicate --).
+
+Available after NEEDS LOCALS

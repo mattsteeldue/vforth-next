@@ -1,0 +1,14 @@
+    :NONAME   -- xt
+
+Compiles an anonymous (headerless) colon definition and
+leaves its execution token on the stack, e.g.
+
+    DEFER PRINT
+    :NONAME  . ;   IS PRINT
+
+Compile the body as usual, close it with the ordinary ; .
+Typical use: build a word to install with IS/DEFER!, or an
+xt to store in a table, without cluttering the dictionary
+with a throwaway name.
+
+Available after NEEDS :NONAME

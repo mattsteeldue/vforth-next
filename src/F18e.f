@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-08-17
+\ v-Forth 1.8 - NextZXOS version - build 2026-08-20
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 

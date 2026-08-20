@@ -1,0 +1,7 @@
+    -?EXECUTE   --
+
+Used in the form  -?EXECUTE cccc . Parses the next word,
+searches the dictionary for it, and EXECUTEs it if found.
+Does nothing (no error) if not found.
+
+Available after NEEDS -?EXECUTE

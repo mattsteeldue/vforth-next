@@ -1,0 +1,6 @@
+    **   n u -- n1
+
+Raise n to the power u (u a non-negative integer exponent).
+n1 = n^u. 0 ** 0 gives 1.
+
+Available after NEEDS **

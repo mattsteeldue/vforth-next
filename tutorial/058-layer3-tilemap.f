@@ -296,7 +296,7 @@ CR .( Try:  TILE3-40-DEMO ) CR
 \ Regenerating the charset from ROM every time (section 6) is cheap
 \ but unnecessary once the result is known-good: SAVE-BYTES it to a
 \ file (tutorial 042; the same LOAD2BLOCK-adjacent idea as tutorial
-\ 054's BLOCK-as-asset technique) and just LOAD-BYTES it back from
+\ 063's BLOCK-as-asset technique) and just LOAD-BYTES it back from
 \ then on.  demo/Layer3-demo2-setup.f does exactly this once (it must
 \ run under the non-dot vForth variant) and writes five .bin files
 \ into demo/; demo/Layer3-demo2.f (and demo3.f, section 4) just

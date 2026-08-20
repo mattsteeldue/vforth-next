@@ -174,7 +174,7 @@ CR
 \ f n ?ERROR
 \
 \ If f is true, displays standard error message n and aborts to the prompt.
-\ Error messages are stored in Screen# 4-7 (BLOCK 8-15): they are part of
+\ Error messages are stored in Screen# 4-8 (BLOCK 8-17): they are part of
 \ the block file and shared by all library code.  No string is compiled into
 \ the definition -- just a one-cell error number.  This saves dictionary space
 \ compared to ABORT" .

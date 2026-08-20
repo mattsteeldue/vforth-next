@@ -1,0 +1,12 @@
+    ?ESCAPE   -- f
+
+True if the [EDIT] key is currently pressed.
+
+Used to let a scrolling/streaming display (e.g. VIEW-FILE-PAD,
+the file viewer behind HELP) be interrupted mid-stream without
+waiting for a full BREAK. Distinct from ?TERMINAL, which
+detects a true BREAK (CAPS SHIFT + SPACE) at the core level.
+
+See HELP ?TERMINAL.
+
+Available after NEEDS ?ESCAPE

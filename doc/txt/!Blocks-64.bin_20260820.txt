@@ -1,9 +1,9 @@
-File: C:\zx\forth\F18\tools\vForth\!Blocks-64.bin
-Created: Mon Aug 17 12:40:25 2026
+File: C:\Zx\Forth\F18\tools\vForth\!Blocks-64.bin
+Created: Thu Aug 20 13:33:07 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-08-17
+\ v-Forth 1.8 - NextZXOS versione - build 2026-08-20
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
@@ -34,39 +34,39 @@ Scr# 1
 
 Scr# 2 
   0 ( Error messages    from -31 to -17 )
-  1 msg# -31
-  2 
-  3 
-  4 
-  5 
-  6 
-  7 
-  8 
-  9 
- 10 
- 11 
- 12 
- 13 
- 14 
- 15 msg# -17
+  1 was not defined by CREATE.
+  2 Obsolescent feature.
+  3 Compiler nesting.
+  4 User interrupt.
+  5 Invalid recursion.
+  6 Loop parameters unavailable.
+  7 Return stack imbalance.
+  8 Invalid numeric argument.
+  9 Address alignment exception.
+ 10 Control structure mismatch.
+ 11 Unsupported operation.
+ 12 Write to a read-only location.
+ 13 Definition name too long.
+ 14 Parsed string overflow.
+ 15 Pictured numeric output string overflow.
 
 Scr# 3 
   0 ( Error messages    from -15 to -1  )
-  1 msg# -15
-  2 msg# -14
-  3 msg# -13
-  4 msg# -12
-  5 msg# -11
-  6 msg# -10
-  7 msg# -9
-  8 msg# -8
-  9 msg# -7
- 10 msg# -6
- 11 msg# -5
- 12 msg# -4
- 13 msg# -3
- 14 msg# -2
- 15 msg# -1
+  1 Invalid FORGET.
+  2 is a compile-only word.
+  3 is undefined.
+  4 Argument type mismatch.
+  5 Result out of range.
+  6 Division by zero.
+  7 Invalid memory address.
+  8 Dictionary full.
+  9 DO loops nested too deeply.
+ 10 Return stack is empty.
+ 11 Return stack full.
+ 12 Stack is empty.
+ 13 Stack full.
+ 14 Aborted with message.
+ 15 Aborted.
 
 Scr# 4 
   0 is undefined.
@@ -132,10 +132,10 @@ Scr# 7
   6 Cell number after '->' below ...}T does not match.
   7 
   8 Real-Time-Clock module not present.
-  9 
- 10 
- 11 
- 12 
+  9 LOCALS: bad count.
+ 10 LOCALS: no scope declared.
+ 11 LOCALS: scope not adjacent.
+ 12 LOCALS: misplaced { or }.
  13 
  14 
  15 Abort.

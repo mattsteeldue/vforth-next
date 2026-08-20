@@ -1,0 +1,10 @@
+    ?DO-   --
+
+Compile-only. Low-level structural word: a variant of BACK
+fitted for control structures built on ?DO/LOOP, patching a
+forward THEN branch for every ?DO/LOOP pair still open on the
+control-flow stack since the matching mark. Used to implement
+higher-level looping words, not written directly in ordinary
+code.
+
+Available after NEEDS ?DO-

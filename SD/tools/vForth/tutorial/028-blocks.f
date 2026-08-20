@@ -170,7 +170,7 @@ CR
 \                    F_INCLUDE, so INCLUDE/NEEDS depend on it.
 \                    Try: EMPTY-BUFFERS 1 BLOCK 512 TYPE
 \
-\   Screens 4-7    : standard error message text (blocks 8-15), read by
+\   Screens 4-8    : standard error message text (blocks 8-17), read by
 \                    ?ERROR -> ERROR -> MESSAGE.
 \   Screen 10      : free for end-user scratch (blocks 20-21).
 \   Screen 11      : AUTOEXEC -- runs INCLUDE lib/autoexec.f at boot.

@@ -3,7 +3,7 @@
 \ Background AFX sound: fire-and-forget effects while the keyboard stays live.
 \
 \ Tutorial 050 introduced the .afx format and the AFXFRAME machine-code
-\ player; tutorial 054 showed how LOAD2BLOCK packs one .afx file per block.
+\ player; tutorial 063 showed how LOAD2BLOCK packs one .afx file per block.
 \ This tutorial puts the two together with a small sample of the effects
 \ shipped in tutorial/afx/ and demonstrates the whole point of
 \ interrupt-driven sound: once an effect is started it plays entirely in
@@ -11,7 +11,7 @@
 \ keeps running, and the keyboard stays fully interactive while up to six
 \ voices decay on the AY chips.
 \
-\ Reference: sec.7.4; see also tutorials 034, 049, 050, 054
+\ Reference: sec.7.4; see also tutorials 034, 049, 050, 063
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -58,7 +58,7 @@ NEEDS [']
 \ tutorial/afx/zxgames/ ships 94 classic ZX game effects (see also the
 \ test/, zxmsxdemo/ and streetsofrage_2/ folders).  We pick six of the
 \ longer ones -- different games, different characters -- and pack them
-\ one per block, exactly as tutorial 054 taught.  Blocks 4402-4407 are
+\ one per block, exactly as tutorial 063 taught.  Blocks 4402-4407 are
 \ the conventional AFX sample area (tutorial/afx/zxgames.f uses
 \ 4402-4495), so they are safe to overwrite.
 \
@@ -192,7 +192,7 @@ PAD" tutorial/afx/zxgames/exolon_5.afx"        4407 LOAD2BLOCK  .PAD CR
 \   INCLUDE tutorial/afx/aydemo.f    \ the author's six-voice jukebox
 \
 \ Tutorial 050 documents the .afx frame encoding and the AFXFRAME code;
-\ tutorial 054 documents LOAD2BLOCK and blocks-as-assets.
+\ tutorial 063 documents LOAD2BLOCK and blocks-as-assets.
 
 \ ===========================================================================
 \ 9. Tests (geometry only -- the sound itself needs ears)
