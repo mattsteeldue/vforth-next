@@ -43,6 +43,7 @@ The extension works on a vForth source tree (the one holding `src/F18e.f`,
 |---|---|
 | *vForth: Send file to SD image* | Writes the active file into the SD image. |
 | *vForth: Pick file from SD image* | Overwrites the active file with its copy from the SD image. |
+| *vForth: Run file in CSpect* | Sends the active file, starts CSpect and runs it there. |
 | *vForth: Open Screen #* | Edits a Screen (16 x 64) of `!Blocks-64.bin` as text. |
 | *vForth: Open Block # (hex)* | Edits a Block (512 bytes) of `!Blocks-64.bin` in a hex editor. |
 | *vForth: Next Screen/Block* (`Ctrl+Shift+F8`) | Opens the next Screen or Block. |
@@ -77,6 +78,8 @@ image tools, not for language support:
 | `vforth.sdImage` | `""` | `C:\Zx\CSpect\cspect-next-2gb.img` | The CSpect SD card image (`.img`). Required by the SD image tools. |
 | `vforth.hdfmonkeyPath` | `"hdfmonkey"` | `C:\Zx\CSpect\hdfmonkey.exe` | Path to the `hdfmonkey` executable. |
 | `vforth.sdDestPrefix` | `""` | `/tools/vforth` | Where the vForth root is mirrored inside the image; prepended to a file's path relative to `vforth.root`. |
+| `vforth.cspectPath` | `""` | `C:\Zx\CSpect\CSpect.exe` | The `CSpect.exe` itself (not a shortcut or `.bat`). Required by *Run file in CSpect*. |
+| `vforth.cspectArgs` | `"-esc -w4 -zxnext -nextrom"` | (default) | CSpect command-line switches; `-mmc=<vforth.sdImage>` is added if missing. |
 | `vforth.sdExcludeTopDirs` | `["dev","doc","dot","emu","forum","project","prompts","tools","version"]` | (default) | Top-level directories not normally deployed to the SD card; pushing from one asks for confirmation. |
 
 The author's setup, as it appears in `settings.json`:
@@ -85,7 +88,9 @@ The author's setup, as it appears in `settings.json`:
 "vforth.root": "C:\\Zx\\Forth\\F18\\tools\\vForth\\",
 "vforth.sdImage": "C:\\Zx\\CSpect\\cspect-next-2gb.img",
 "vforth.hdfmonkeyPath": "C:\\Zx\\CSpect\\hdfmonkey.exe",
-"vforth.sdDestPrefix": "/tools/vforth"
+"vforth.sdDestPrefix": "/tools/vforth",
+"vforth.cspectPath": "C:\\Zx\\CSpect\\CSpect.exe",
+"vforth.cspectArgs": "-esc -w4 -zxnext -nextrom"
 ```
 
 Notes:
@@ -145,6 +150,31 @@ active file (same relative path, same `vforth.sdDestPrefix`) with
 first, warning that unsaved changes are lost, and does nothing if the two
 copies are identical. Useful to bring back a file edited inside vForth on the
 Spectrum side.
+
+## Run file in CSpect
+
+Sends the active file (like *Send file to SD image*), starts CSpect and makes
+it run that file. A typical use is launching a single tutorial or demo, e.g.
+`tutorial/054-dma.f`, straight from the editor.
+
+How it works: your `/nextzxos/autoexec.bas` is copied, inside the image, to
+`/nextzxos/autoexec-vforth.bas`, and `autoexec.bas` is replaced by a short
+program: it sets the colours (`LAYER 1,2 : PAPER 0`), **puts your original
+back first** (`.cp --force`), then runs `.cd <vforth.sdDestPrefix>` and
+`.vforth <path>.f` (vForth opens `!Blocks-64.bin`, `inc/` and `lib/` relative
+to the current directory). CSpect is started and VS Code does not wait for
+it: the swap lasts only the few seconds of boot, whatever way vForth is left
+and whenever CSpect is closed, so several instances on different files are
+possible. Caution: they would all share the same SD image file, and a second
+launch within the boot time of the first replaces the program it has yet to
+read. If a run fails half way, a leftover `autoexec-vforth.bas` is kept as
+the original by the next run, and *vForth: Restore autoexec.bas in SD image*
+puts it back by hand.
+
+Set `vforth.cspectPath` (the `CSpect.exe` itself, not a shortcut) and, if
+needed, `vforth.cspectArgs` (default `-esc -w4 -zxnext -nextrom`;
+`-mmc=<vforth.sdImage>` is added if missing). Needs `vforth.sdImage` and
+`hdfmonkey` like the other SD tools.
 
 ## Open Screen #
 
