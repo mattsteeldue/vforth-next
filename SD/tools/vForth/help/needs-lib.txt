@@ -1,0 +1,6 @@
+    NEEDS-LIB    -- a
+
+Counted-string constant "lib/", the second path
+NEEDS tries (after inc/) when looking for a missing
+word's source file. See also NEEDS-INC, NEEDS-FN,
+NEEDS-W.

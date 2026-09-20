@@ -1,0 +1,5 @@
+    R0    -- a
+
+User variable. Holds the starting (bottom) address
+of the return stack, used by RP! to reset it. See
+also S0, RP!, SP!.

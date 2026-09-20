@@ -1,3 +1,6 @@
     ENDCASE  --
 
 Closes a CASE...OF...ENDOF structure.
+
+Part of the CASE library.
+Available after NEEDS CASE

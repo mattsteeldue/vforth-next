@@ -10,6 +10,7 @@
 \
 
 NEEDS DEFER@
+NEEDS [']
 
 
 : ACTION-OF ( -- xt )

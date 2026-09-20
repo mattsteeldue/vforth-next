@@ -16,4 +16,5 @@ Example:
 At most one -- per { ... } group; a second one raises error
 #60 (LOCALS: misplaced { or }; also raised for a duplicate --).
 
+Part of the LOCALS library.
 Available after NEEDS LOCALS

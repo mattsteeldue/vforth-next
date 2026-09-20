@@ -1,0 +1,6 @@
+    STATE    -- a
+
+User variable. Non-zero while compiling a colon-
+definition, zero while interpreting. Read by
+immediate words (e.g. .C, LITERAL) to decide whether
+to compile or execute. See also [, ], :, ;.

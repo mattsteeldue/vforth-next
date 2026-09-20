@@ -14,4 +14,5 @@ stack. For output locals (not read from the stack, pushed
 automatically on exit) use the inline  { ... -- ... }  form
 instead. See HELP LOCALS.
 
+Part of the LOCALS library.
 Available after NEEDS LOCALS

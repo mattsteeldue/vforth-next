@@ -1,0 +1,10 @@
+    CURS    a -- a 0
+
+Blinks the cursor character at address a (and its
+inverse/bright variants driven by the ROM FLAGS/
+FLAGS2 bytes) once per video frame, via 1FRAME,
+until a key is available; then restores the screen
+position. Used inside ACCEPT's input loop; leaves a
+0 on the stack that the caller DROPs before calling
+KEY. See root CLAUDE.md "Boot Sequence" for the
+1FRAME/HALT keyboard-timing background.

@@ -3,4 +3,5 @@
 Block until any key is pressed, then return its index.
 Blocking counterpart of KEY-SCAN.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

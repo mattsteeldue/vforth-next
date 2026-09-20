@@ -118,8 +118,11 @@ CREATE TUT-TABLE
     H" tutorial/061-locals.f"          ,
     H" tutorial/062-error-messages.f"  ,
     H" tutorial/063-blocks-as-assets.f" ,
+    H" tutorial/064-scaled-integer-math.f" ,
+    H" tutorial/065-fedora-silhouette.f" ,
+    H" tutorial/066-kempston-joystick.f" ,
 
-63 CONSTANT TUT-MAX
+66 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------

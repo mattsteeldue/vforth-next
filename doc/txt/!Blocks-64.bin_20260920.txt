@@ -1,9 +1,9 @@
-File: C:\Zx\Forth\F18\tools\vForth\!Blocks-64.bin
-Created: Thu Aug 20 13:33:07 2026
+File: C:\zx\forth\F18\tools\vForth\!Blocks-64.bin
+Created: Sun Sep 20 19:51:02 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-08-20
+\ v-Forth 1.8 - NextZXOS versione - build 2026-09-20
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
@@ -178,14 +178,14 @@ Scr# 9
 
 Scr# 10 
   0 ( Recompilation )
-  1   ." press a key or BREAK"
-  2   2 f_close drop
-  3   curs key drop
+  1 \ ." press a key or BREAK"
+  2 \ 2 f_close drop
+  3 \ curs key drop
   4 
-  5   include src/f18e.f
+  5 \ include demo/chomp-chomp-next/chomp-chomp.f
   6 
-  7   2 f_close drop
-  8   3 f_close drop
+  7 \ 2 f_close drop
+  8 \ 3 f_close drop
   9 
  10 
  11 
@@ -8789,6 +8789,114 @@ Scr# 723
  13   fh-BMP @ f_close 42 ?error
  14 ;
  15 
+
+Scr# 740 
+  0 ( chomp-chomp maze 1 )
+  1 EAAAAAAAAANAAAAAAAAAD
+  2 M.........N.........J
+  3 M.EAD.EAD.N.EAD.EAD.J
+  4 MOM J.M J.N.M J.M JOJ
+  5 M.IBH.IBH.L.IBH.IBH.J
+  6 M...................J
+  7 M.FCG.K.FCACG.K.FCG.J
+  8 M.....N...N...N.....J
+  9 IBBBB.MCG.L.FCJ.BBBBH
+ 10     J.N.......N.M
+ 11 BBBBH.L.E---D.L.IBBBB
+ 12 /.......M   J.......\
+ 13 AAAAD.K.I---H.K.EAAAA
+ 14     J.N.... ..N.M
+ 15 BBBBH.L.FCACG.L.IBBBB
+
+Scr# 741 
+  0 ( chomp-chomp maze 1 (cont'd)
+  1 M.........N.........J
+  2 MOFCD.FCG.L.FCG.ECGOJ
+  3 M...N...........N...J
+  4 AAD.L.FCCCCCCCG.L.EAA
+  5   J...............M
+  6    AAAAAAAAAAAAAAA
+  7 (reserved for level metadata)
+  8 (reserved for level metadata)
+  9 (reserved for level metadata)
+ 10 (reserved for level metadata)
+ 11 (reserved for level metadata)
+ 12 (reserved for level metadata)
+ 13 (reserved for level metadata)
+ 14 (reserved for level metadata)
+ 15 (reserved for level metadata)
+
+Scr# 742 
+  0 ( chomp-chomp maze 2 )
+  1 EAAAAAAAAAAAAAAAAAAAD
+  2 M...................J
+  3 MOED.EAAD.K.EAAD.EDOJ
+  4 M.IH.IBBH.L.IBBH.IH.J
+  5 M...................J
+  6 M.EAD.EAD.K.EAD.EAD.J
+  7 M.IBH.IBH.L.IBH.IBH.J
+  8 M...................J
+  9 IBBBB.ED.FCG.ED.BBBBH
+ 10     J.IH.....IH.M
+ 11 BBBBH...E---D...IBBBB
+ 12 /.....K.M   J.K.....\
+ 13 AAAAD.L.I---H.L.EAAAA
+ 14     J...... ....M
+ 15 BBBBH.FG.FCG.FG.IBBBB
+
+Scr# 743 
+  0 ( chomp-chomp maze 2 (cont'd)
+  1 M...................J
+  2 M.FCG.EAAD.EAAD.FCG.J
+  3 M.....M  J.M  J.....J
+  4 AAD.W.IBBH.IBBH.W.EAA
+  5   JO.............OM
+  6    AAAAAAAAAAAAAAA
+  7 (reserved for level metadata)
+  8 (reserved for level metadata)
+  9 (reserved for level metadata)
+ 10 (reserved for level metadata)
+ 11 (reserved for level metadata)
+ 12 (reserved for level metadata)
+ 13 (reserved for level metadata)
+ 14 (reserved for level metadata)
+ 15 (reserved for level metadata)
+
+Scr# 744 
+  0 ( chomp-chomp maze 3 )
+  1 EAAAAAAAAAAAAAAAAAAAD
+  2 MO.................OJ
+  3 M.K.K.K.K.K.K.K.K.K.J
+  4 M.N.N.N.N.N.N.N.N.N.J
+  5 M.L.L.L.L.L.L.L.L.L.J
+  6 M...................J
+  7 M.FCG.FCCG.FCCG.FCG.J
+  8 M...................J
+  9 IBBBB.FCG.W.FCG.BBBBH
+ 10     J...........M
+ 11 BBBBH.W.E---D.W.IBBBB
+ 12 /.......M   J.......\
+ 13 AAAAD.K.I---H.K.EAAAA
+ 14     J.N.... ..N.M
+ 15 BBBBH.L.FCCCG.L.IBBBB
+
+Scr# 745 
+  0 chomp-chomp maze 3 (cont'd)
+  1 M...................J
+  2 M.FG.K.K.K.K.K.K.FG.J
+  3 MO...N.N.N.N.N.N...OJ
+  4 AAAD.L.L.L.L.L.L.EAAA
+  5    J.............M
+  6     AAAAAAAAAAAAA
+  7 (reserved for level metadata)
+  8 (reserved for level metadata)
+  9 (reserved for level metadata)
+ 10 (reserved for level metadata)
+ 11 (reserved for level metadata)
+ 12 (reserved for level metadata)
+ 13 (reserved for level metadata)
+ 14 (reserved for level metadata)
+ 15 (reserved for level metadata)
 
 Scr# 777 
   0 ( 0< modified )
@@ -21776,6 +21884,12 @@ Restarting Supervisor
   721 ( 256 bitmap )
   722 ( 256 bitmap )
   723 ( 256 bitmap )
+  740 ( chomp-chomp maze 1 )
+  741 ( chomp-chomp maze 1 (cont'd)
+  742 ( chomp-chomp maze 2 )
+  743 ( chomp-chomp maze 2 (cont'd)
+  744 ( chomp-chomp maze 3 )
+  745 chomp-chomp maze 3 (cont'd)
   777 ( 0< modified )
   778 ( Bernstein - Vazirani )
   779 ( Bernstein - Vazirani )

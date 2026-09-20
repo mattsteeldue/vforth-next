@@ -3,4 +3,5 @@
 True if key index n is held now. Non-blocking; test
 several indices to detect simultaneous keys.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

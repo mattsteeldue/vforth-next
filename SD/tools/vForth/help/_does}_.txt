@@ -1,0 +1,9 @@
+    _DOES>_    --
+
+Runtime action compiled by DOES>: patches the CFA
+of the most recently defined word (see LATEST) so
+it CALLs the code that follows DOES> in the
+defining word, instead of the plain CREATE runtime.
+Internal to the CREATE...DOES> mechanism -- never
+used directly in source. See also DOES>, CREATE,
+<BUILDS.

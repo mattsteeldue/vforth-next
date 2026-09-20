@@ -10,4 +10,5 @@ Returns the NextZXOS file handle fh, or aborts via message 43
 if the open fails. See HELP OPEN"> for the quote-delimited
 variant.
 
-Available after NEEDS OPEN>
+Part of the ZAP library.
+Available after NEEDS ZAP

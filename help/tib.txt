@@ -1,0 +1,6 @@
+    TIB    -- a
+
+User variable. Holds the address of the terminal
+input buffer that QUERY/ACCEPT fill from the
+keyboard, and that the interpreter parses with
+>IN/WORD when BLK is 0. See also BLK, >IN, SPAN.

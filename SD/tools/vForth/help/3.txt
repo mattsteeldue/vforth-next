@@ -1,0 +1,3 @@
+    3    -- n
+
+Constant. Leaves 3 on the stack.

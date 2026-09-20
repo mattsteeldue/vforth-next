@@ -1,0 +1,6 @@
+    NMODE    -- a
+
+User variable selecting how NUMBER parses a literal:
+0 for integer (the default, set at COLD), 1 for
+floating point. Toggled by the words INTEGER and
+FLOATING in lib/floating.f.

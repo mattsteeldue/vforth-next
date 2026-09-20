@@ -6,7 +6,8 @@
 .( ?LAYER2 )
 \
 \
-NEEDS LAYERS
+NEEDS LAYERS    \ loads all the layer words, including LAYER2 and LAYER12
+NEEDS WAIT-KEY
 
 : ?LAYER2
     LAYER2

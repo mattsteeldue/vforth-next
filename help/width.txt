@@ -1,0 +1,5 @@
+    WIDTH    -- a
+
+User variable. Holds the maximum number of
+significant characters kept from a word's name when
+it is compiled into the dictionary (31 by default).

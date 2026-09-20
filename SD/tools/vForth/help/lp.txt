@@ -1,0 +1,5 @@
+    LP    -- a
+
+User variable inherited from the fig-Forth line-
+printer slot. Not used by this core or by any
+shipped library module. See also FLD.

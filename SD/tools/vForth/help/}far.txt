@@ -2,5 +2,3 @@
 
 Convert heap pointer to far address.
 Returns address and page number.
-
-Available after NEEDS >FAR

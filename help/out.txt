@@ -1,0 +1,5 @@
+    OUT    -- a
+
+User variable. Tracks the current output column,
+incremented as characters are sent to the terminal;
+used for tab/column bookkeeping. See also TIB, SPAN.

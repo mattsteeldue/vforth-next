@@ -1,0 +1,8 @@
+    BLK    -- a
+
+User variable. Holds the number of the Screen
+currently being interpreted by LOAD, or 0 when
+input is coming from the terminal (TIB) instead.
+Set to 1 during F_INCLUDE, which reuses BLOCK 1 as
+a line buffer (see root CLAUDE.md "Note on BLOCK 1
+and F_INCLUDE"). See also >IN, SOURCE-ID.

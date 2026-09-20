@@ -1,0 +1,7 @@
+    HP    -- a
+
+User variable. Holds the current heap-space pointer:
+the next free address for names and code inside the
+MMU7 heap page (see root CLAUDE.md "Heap
+Dictionary"). See also HP@, PAGE-WATERMARK,
+SKIP-HP-PAGE.

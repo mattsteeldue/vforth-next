@@ -1,0 +1,9 @@
+    MAP-FN    a --
+
+Rewrites, in place, every character of the counted
+string at address a that is illegal in a FAT
+filename (: ? / * | \ < > ") into its filesystem-
+safe substitute (see the FAT Filename Character
+Mapping table in the root CLAUDE.md). Used
+internally by NEEDS before opening inc/cccc.f or
+lib/cccc.f.

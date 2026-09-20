@@ -3,4 +3,5 @@
 Constant 255: the value KEY-SCAN returns when no key
 is being pressed.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

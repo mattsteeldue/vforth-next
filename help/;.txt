@@ -1,0 +1,12 @@
+    ;    --     ( compile time )
+
+Ends a colon-definition. Checks the data stack is
+back at the depth it had when : started (see CSP),
+compiles EXIT, unsmudges the new name so it can be
+found, and returns to interpret state. Compile-only
+immediate word -- an unmatched ; outside a
+definition is an error.
+
+FAT filename note: ; is a legal FAT character, so
+this word has its own file here (unlike : and \,
+which both map to _ -- see CLAUDE.md).

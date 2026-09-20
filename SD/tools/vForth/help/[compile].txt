@@ -1,0 +1,7 @@
+    [COMPILE]    --     ( compile time )
+
+Forces the following word, even if it is IMMEDIATE,
+to be compiled into the current definition rather
+than executed now. Looks the word up, checks it was
+found, and appends its execution token with COMMA.
+Compile-only immediate word.

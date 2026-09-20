@@ -3,4 +3,5 @@
 Block until the whole keyboard is released. Debounce
 step; does not touch the stack.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

@@ -1,0 +1,7 @@
+    BLK-FNAME    -- a
+
+CREATEd buffer holding the block file's name as a
+counted string, "!Blocks-64.bin", used by BLK-INIT
+to F_OPEN the persistent block store. The buffer
+has spare room after the string for building a full
+path. See also BLK-FH.

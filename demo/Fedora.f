@@ -1,6 +1,21 @@
 \
-\ Patrick Kaell's Fedora
+\ Fedora.f
 \
+\ Patrick Kaell's Fedora: a 3D-looking hat, silhouette-plotted slice by
+\ slice with a one-cell-per-column z-buffer (RR).  The arithmetic is
+\ explained step by step in tutorial 065.
+\
+\ Run it with:  DEMO   ( any key returns to the text screen )
+\
+\ REQUIRES LAYER12.  The widest column reached by FEDORA is X1=317 (see
+\ tutorial 065 sec.6), which only fits inside LAYER12's H-RANGE=512 --
+\ every other mode (LAYER0/2/10/11/13) caps H-RANGE at 256 or less and
+\ would silently clip about one seventh of the columns.  DEMO therefore
+\ selects LAYER12 explicitly instead of trusting whatever mode happens
+\ to be active, and restores it afterwards (tutorial/CLAUDE.md sec.13
+\ "switch in, restore out").
+\
+
 needs J
 needs GRAPHICS
 needs SQRT
@@ -88,4 +103,9 @@ CREATE RR 642 ALLOT
     -2 +LOOP
 ;
 
-CLS FEDORA
+: DEMO ( -- )
+    LAYER12 CLS
+    FEDORA
+    KEY DROP
+    LAYER12 1 .PAPER CLS
+;

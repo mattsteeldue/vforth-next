@@ -1,0 +1,7 @@
+    CONTEXT    -- a
+
+User variable. Points to the vocabulary where the
+next dictionary search begins (see FIND). Set by
+naming a vocabulary at the interpreter (e.g. FORTH).
+Contrast with CURRENT, which controls where new
+definitions are added.

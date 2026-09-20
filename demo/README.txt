@@ -22,9 +22,32 @@ things as they were before import-ing this source file.
 
 Chomp-chomp.f
 -------------
-Simple pac-man like game. Your character can be controlled using keyboard 
-via arrows keys or using Kempston joystick. Ghosts movement are completely
-random. Once loaded, you have to give GAME to start it.
+Simple pac-man like game. Your character can be controlled using keyboard
+via arrows keys or using Kempston joystick. Each of the four ghosts follows
+its own arcade targeting rule: Blinky (red) heads straight for you, Pinky
+(magenta) aims four cells ahead to cut you off, Inky (cyan) doubles the
+vector running from Blinky to the cell ahead of you, and Ted (yellow)
+charges until he is within eight cells and then backs off to his corner.
+They alternate between chasing and scattering to their own corners, all
+turn round together whenever that mode changes, and they travel at 75% of
+your speed - 50% while frightened. Once loaded, you have to give GAME to
+start it.
+Game speed is a parameter rather than an accident of how many sprites get
+drawn: TICK-FRAMES holds how many 50Hz video frames one game tick lasts
+(5 by default), so  3 TICK-FRAMES !  makes the whole game quicker.
+Clearing a maze moves you on to the next one. The first is compiled into
+the game, so a standalone executable never depends on the block file; the
+other three live on Screen 740 and up, two Screens each, and can be
+redrawn with EDIT without recompiling anything -  n MAZE-CHECK  then
+reports whether maze n still holds together (borders sealed, tunnel
+mouths paired, nothing walled off, the sprite start cells intact). Line 0
+of each of the two Screens is a title comment rather than maze data, so
+INDEX shows a readable label instead of a wall of glyphs.
+util/chomp-maze.py does the same checks from the host, and draws the maze
+as pixels so a layout can be seen before it is played.
+ n TEST-LEVEL  starts the game straight at maze n (0 is the compiled
+one), which is handy for trying out a layout you just edited without
+first clearing every level before it.
 To forget this demo you have to give COLD.
 This demo also come with a subdirectory named chomp-chomp that contains
 the result of execution of ZAP definition that is the simplest way to 
@@ -85,7 +108,23 @@ Dot-version shows a jammed character-set, see next demo instead.
 
 Layer3-Demo2.f
 --------------
-This #2 demo is almost identical to #1, but all data are loaded from SD where 
+This #2 demo is almost identical to #1, but all data are loaded from SD where
 we previously saved running Layer3-Demo2-setup.f auxiliary source file.
 For this reason, dot-version works as fine as non-dot version.
+
+
+
+Brot.f
+------
+Mandelbrot set on Layer 2, computed entirely in 16-bit scaled (fixed point)
+integers: the value n stands for n/256. The arithmetic is explained step
+by step in tutorial 064. Entry point is DEMO, which draws the default
+view and waits for any key before switching back to the text screen.
+Zoom by setting a new view before calling DEMO again:
+  cx cy span WINDOW  ( hundredths, e.g. -50 60 120 WINDOW )
+  DEMO
+Mind the iteration count: the loop gives up after 15 rounds and calls the
+point "inside", so a view aimed close to the boundary - the seahorse
+valley, e.g. -75 10 60 WINDOW - comes out almost entirely black. Deeper
+views need more iterations, and more shades in COLOR-TAB.
 

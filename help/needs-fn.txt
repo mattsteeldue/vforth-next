@@ -1,0 +1,6 @@
+    NEEDS-FN    -- a
+
+CREATEd 40-byte scratch buffer holding the full
+path+filename ("inc/cccc.f" or "lib/cccc.f")
+assembled by NEEDS/ before F_OPEN. Internal to the
+NEEDS mechanism -- see NEEDS-W, NEEDS-INC, NEEDS-LIB.

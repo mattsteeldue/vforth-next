@@ -2,5 +2,3 @@
 
 Backward compatibility alias for
 CREATE. Creates a new word.
-
-Available after NEEDS <BUILDS

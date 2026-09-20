@@ -1,0 +1,8 @@
+    PLACE    -- a
+
+User variable. Holds the number of digits to show
+after the decimal point when a floating-point value
+is printed (default 4, set at COLD). Set with n
+PLACES (see lib/floating.f) -- not to be confused
+with the ANS Forth string word of the same name,
+which this core does not provide.

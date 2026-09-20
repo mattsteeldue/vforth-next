@@ -1,0 +1,5 @@
+    B/SCR    -- n
+
+Constant. Leaves 2, the number of BLOCKs that make
+up one Screen (see LOAD, LIST). See also B/BUF,
+C/L, L/SCR.

@@ -2,3 +2,6 @@
 
 Used in CASE...OF...ENDOF...ENDCASE.
 Marks the branch for a specific case.
+
+Part of the CASE library.
+Available after NEEDS CASE

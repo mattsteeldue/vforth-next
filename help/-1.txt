@@ -1,0 +1,4 @@
+    -1    -- n
+
+Constant. Leaves -1 on the stack, the canonical
+TRUE flag value.

@@ -1,0 +1,6 @@
+    NEEDS-W    -- a
+
+CREATEd 35-byte scratch buffer holding the target
+word's name turned into a zero-padded filename
+"cccc.f", before NEEDS-FN prefixes it with inc/ or
+lib/. Internal to the NEEDS mechanism.

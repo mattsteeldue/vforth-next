@@ -1,0 +1,6 @@
+    >IN    -- a
+
+User variable. Holds the current parse offset into
+the input buffer (TIB, or the block buffer when BLK
+is non-zero); WORD advances it past each token it
+consumes. See also BLK, TIB, WORD.

@@ -25,6 +25,7 @@ CR
 .(     Type NEWTASK to unload.                        ) CR
 
 NEEDS RPi0
+NEEDS S"
 
 \ ===========================================================================
 \ 1. Hardware setup

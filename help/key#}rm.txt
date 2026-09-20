@@ -3,4 +3,5 @@
 Split key index n into the (port mask) pair used for
 fast per-frame polling and for storing redefined keys.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

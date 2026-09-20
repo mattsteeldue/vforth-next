@@ -1,0 +1,7 @@
+    (NEXT)    -- a
+
+Constant. Leaves the address of the inner
+interpreter's NEXT routine (reached via jp (ix),
+see root CLAUDE.md "Compilation Model"). Used by
+low-level CODE words that must fall through to the
+next threaded instruction without a HLL wrapper.

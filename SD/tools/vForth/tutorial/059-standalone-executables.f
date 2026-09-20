@@ -83,7 +83,7 @@ CR
 \ NEEDS ZAP
 \
 \   INCLUDE demo/chomp-chomp.f     \ define your program first
-\   ZAP CHOMP-CHOMP                \ note: bare name, NOT ' CHOMP-CHOMP
+\   ZAP GAME                       \ note: bare name, NOT ' GAME
 \
 \ ZAP does not take its argument on the stack: like a plain word lookup, it
 \ PARSES the next token from the input line itself (it uses the run-time,

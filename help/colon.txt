@@ -1,0 +1,9 @@
+    :    --
+
+Begins a colon definition: parses a
+name and starts compiling a new word,
+closed by ; (semicolon).
+
+FAT filename note: : maps to _ (see
+CLAUDE.md), same as \ -- so HELP :
+loads help/_.txt, not this file.

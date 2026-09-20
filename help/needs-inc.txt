@@ -1,0 +1,5 @@
+    NEEDS-INC    -- a
+
+Counted-string constant "inc/", the first path NEEDS
+tries when looking for a missing word's source file.
+See also NEEDS-LIB, NEEDS-FN, NEEDS-W.

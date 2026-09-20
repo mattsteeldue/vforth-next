@@ -3,4 +3,5 @@
 Map key index n (0..39) to the 16-bit port that selects
 its keyboard half-row, e.g. 12 -> $FBFE.
 
+Part of the KEYBOARD library.
 Available after NEEDS KEYBOARD

@@ -1,0 +1,5 @@
+    BL    -- c
+
+Constant. Leaves 32, the ASCII code of the blank
+(space) character -- the standard word-delimiter
+for WORD, ENCLOSE and friends.

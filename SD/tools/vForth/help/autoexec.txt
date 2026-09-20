@@ -1,5 +1,3 @@
     AUTOEXEC  --
 
 Execute autostart program if defined.
-
-Available after NEEDS AUTOEXEC

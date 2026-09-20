@@ -1,0 +1,7 @@
+    USED    -- a
+
+User variable. Together with PREV, forms the
+round-robin chain used to pick which block buffer
+to reuse next (see BLOCK, BUFFER). Despite the
+name, it holds an address, not a count. See also
+FIRST, LIMIT.

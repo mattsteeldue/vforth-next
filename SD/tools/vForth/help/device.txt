@@ -1,0 +1,5 @@
+    DEVICE    -- a
+
+Variable, initialised to 2. Holds the current
+output device/channel number passed to SELECT (see
+VIDEO, which does "2 DUP DEVICE ! SELECT").

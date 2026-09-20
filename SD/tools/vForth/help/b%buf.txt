@@ -1,0 +1,6 @@
+    B/BUF    -- n
+
+Constant. Leaves 512, the number of bytes in one
+block buffer (and one BLOCK). See also B/SCR, C/L,
+L/SCR and the "Blocks, Screens" section of the root
+CLAUDE.md.

@@ -1,0 +1,6 @@
+    HLD    -- a
+
+User variable. Holds the address of the last
+character deposited by # or HOLD during pictured
+numeric output, working backwards from PAD. See
+also <#, #, #>, PAD.

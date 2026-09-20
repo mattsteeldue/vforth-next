@@ -1,0 +1,6 @@
+    WARNING    -- a
+
+User variable controlling how ?ERROR/ERROR report a
+failure: 0 prints only "msg#n", 1 (the default)
+prints the full message text from the error Screens,
+-1 aborts silently. See also ?ERROR, ERROR, MESSAGE.

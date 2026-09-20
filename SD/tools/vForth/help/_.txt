@@ -1,0 +1,17 @@
+    \    --
+
+Comment to end of line: ignores all
+text through the next newline.
+Full entry: help/bslash.txt
+
+    :    --
+
+Begins a colon definition: parses a
+name and starts compiling a new word,
+closed by ; (semicolon).
+Full entry: help/colon.txt
+
+NOTE: \ and : both map to FAT filename
+_ (NDOM/NCDM table, L3.asm), so HELP
+for either word loads this combined
+file. See CLAUDE.md FAT mapping table.

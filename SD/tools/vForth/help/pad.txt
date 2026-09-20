@@ -1,0 +1,6 @@
+    PAD    -- a
+
+Leaves the address of a scratch buffer used for
+building character strings: HERE + 68. Contents are
+only valid until the next word that moves HERE (see
+also ALLOT, DP).

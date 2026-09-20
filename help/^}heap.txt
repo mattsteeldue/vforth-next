@@ -1,0 +1,8 @@
+    ?>HEAP    n1 -- n2
+
+Heap-pointer correction: if n1 looks like a heap
+pointer (see ?HEAP_PTR), converts it to a real MMU7
+address via FAR, paging in the correct 8K page as a
+side effect. Otherwise leaves n1 unchanged. Used
+wherever a stored link/name-field address might be
+a heap pointer instead of a direct address.

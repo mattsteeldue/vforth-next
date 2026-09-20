@@ -1,0 +1,7 @@
+    BASE    -- a
+
+User variable. Holds the current number-conversion
+radix (default 10), used by NUMBER when converting
+input text to a value and by . U. etc. when
+formatting output. See also DECIMAL, HEX, OCTAL,
+BINARY.

@@ -1,0 +1,4 @@
+    SCR    -- a
+
+User variable. Holds the number of the Screen most
+recently displayed by LIST.

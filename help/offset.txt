@@ -1,0 +1,8 @@
+    OFFSET    -- a
+
+User variable inherited from fig-Forth's multi-disk
+support: intended to be added to a block number
+before it reaches disk I/O. The addition is
+currently commented out in BLOCK's implementation,
+so OFFSET has no effect in this core -- vestigial,
+kept for compatibility.

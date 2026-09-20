@@ -1,0 +1,10 @@
+    ENCLOSE    a c -- a n1 n2 n3
+
+Scans the text at address a for the delimiter
+character c, without going past a NUL byte, and
+returns three offsets from a:
+  n1  the first non-delimiter character
+  n2  the first delimiter after the text
+  n3  the first character not enclosed
+Example: "c c x x x c x" with c the delimiter
+leaves n1 n2 n3 = 2 5 6. See also WORD.

@@ -2,4 +2,5 @@
 
 Inserts line n from PAD into block.
 
-Available after NEEDS INS
+Part of the LED library.
+Available after NEEDS LED

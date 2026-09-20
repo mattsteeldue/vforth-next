@@ -1,0 +1,7 @@
+    SKIP-HP-PAGE    ha -- a
+
+Given a heap address ha, checks whether it lies past
+PAGE-WATERMARK within its 8K page; if so, advances HP
+to the start of the next page instead. Keeps a single
+dictionary entry from straddling an MMU7 page
+boundary. See also HP, PAGE-WATERMARK.

@@ -1,0 +1,8 @@
+    FORTH    --
+
+The root vocabulary. Executing FORTH makes it the
+CONTEXT vocabulary, so word lookup searches it
+first. Defined directly with VOCABULARY's own
+runtime action rather than by running VOCABULARY
+FORTH. Immediate word. See also CONTEXT, CURRENT,
+DEFINITIONS, VOCABULARY, VOC-LINK.

@@ -1,0 +1,4 @@
+    R#    -- a
+
+User variable. Holds the position of the editing
+cursor used by the screen EDITOR. See EDIT.

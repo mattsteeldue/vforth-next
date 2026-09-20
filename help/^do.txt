@@ -3,5 +3,3 @@
 Like DO but skips loop body if
 limit = initial value.
 Used with LOOP or +LOOP.
-
-Available after NEEDS ?DO

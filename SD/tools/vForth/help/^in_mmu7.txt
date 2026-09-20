@@ -1,0 +1,6 @@
+    ?IN_MMU7    a -- f
+
+Leaves f true when address a lies at $E000 or
+above, i.e. inside the MMU7 window that hosts the
+heap dictionary (see root CLAUDE.md "Memory
+Layout"). See also ?HEAP_PTR, ?>HEAP, FAR.

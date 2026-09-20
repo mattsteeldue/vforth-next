@@ -1,0 +1,6 @@
+    BLK-FH    -- a
+
+Variable. Holds the NextZXOS file handle of the
+open block file (!Blocks-64.bin), used by BLK-SEEK,
+BLK-READ and BLK-WRITE. Opened by BLK-INIT during
+the boot sequence. See also BLK-FNAME.

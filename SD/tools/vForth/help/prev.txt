@@ -1,0 +1,6 @@
+    PREV    -- a
+
+User variable. Together with USED, forms the
+round-robin chain used to pick which block buffer
+to reuse next (see BLOCK, BUFFER). See also FIRST,
+LIMIT.

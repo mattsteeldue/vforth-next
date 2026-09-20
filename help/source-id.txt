@@ -1,0 +1,6 @@
+    SOURCE-ID    -- a
+
+User variable. Identifies the current input source:
+0 for the terminal, a file-handle-derived value while
+F_INCLUDEing a file. Set to 0 at COLD. See also BLK,
+>IN.

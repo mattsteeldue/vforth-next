@@ -1,0 +1,6 @@
+    FIRST    -- a
+
+User variable. Holds the address of the first
+(lowest) block buffer, the base of the buffer pool
+used by BLOCK/BUFFER round-robin allocation. See
+also LIMIT, PREV, USED.

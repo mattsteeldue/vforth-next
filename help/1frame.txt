@@ -1,0 +1,7 @@
+    1FRAME    --
+
+Waits for exactly one 50Hz interrupt: enables
+interrupts (EI) then HALTs until the next one
+occurs. Used by the key-wait loops (see CURS) to
+pace polling to the video frame rate instead of
+busy-waiting.

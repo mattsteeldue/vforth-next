@@ -1,0 +1,6 @@
+    LIMIT    -- a
+
+User variable. Holds the address just past the end
+of the block-buffer pool (see root CLAUDE.md, where
+LIMIT_system = $E000 marks the boundary below which
+S0/TIB/R0/USER live). See also FIRST.

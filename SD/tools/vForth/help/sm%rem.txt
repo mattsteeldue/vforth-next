@@ -2,5 +2,3 @@
 
 Symmetric division of double-cell d
 by n, returns remainder and quotient.
-
-Available after NEEDS SM/REM

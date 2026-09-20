@@ -1,0 +1,6 @@
+    DPL    -- a
+
+User variable. Set by NUMBER while converting input
+text: holds the count of digits to the right of a
+decimal point found in the text, or -1 if no point
+was present. See also BASE, EXP, PLACE.

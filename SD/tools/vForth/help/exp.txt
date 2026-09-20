@@ -1,0 +1,7 @@
+    EXP    -- a
+
+User variable. Holds the exponent digits collected
+while NUMBER (and the floating-point helper (EXP))
+convert a literal such as 1.5E3. Not the
+mathematical e^x function -- there is no such word
+in this core. See also DPL, PLACE, lib/floating.f.

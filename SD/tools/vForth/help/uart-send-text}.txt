@@ -8,4 +8,5 @@ target without a stray > breaking the shell command.
 
 See HELP SEND-BLOCK.
 
+Part of the SEND-BLOCK library.
 Available after NEEDS SEND-BLOCK

@@ -1,0 +1,7 @@
+    CSP    -- a
+
+User variable. Temporary storage for the data-stack
+pointer, saved by : (via !CSP) and checked by ; (via
+?CSP) to make sure a colon-definition leaves the
+stack as balanced as it found it. See also !CSP,
+?CSP.

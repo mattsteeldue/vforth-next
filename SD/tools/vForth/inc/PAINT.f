@@ -22,6 +22,7 @@
 \ define. Do not load it on a bare system.
 \
 .( PAINT )
+NEEDS GRAPHICS-COMMON
 \
 
 \ dedicated 8K page for the seed stack (pages 32-39 are HEAP; 40-47

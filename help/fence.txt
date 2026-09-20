@@ -1,0 +1,6 @@
+    FENCE    -- a
+
+User variable. Holds the lowest address that FORGET
+is allowed to remove. Attempting to FORGET a word
+below FENCE is rejected, protecting the resident
+core from accidental removal.

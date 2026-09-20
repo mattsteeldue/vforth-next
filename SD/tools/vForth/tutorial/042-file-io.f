@@ -26,6 +26,7 @@ CR
 
 NEEDS LOAD-BYTES
 NEEDS SAVE-BYTES
+NEEDS PAD"
 
 \ ===========================================================================
 \ 1. PAD" -- set PAD to a filename string

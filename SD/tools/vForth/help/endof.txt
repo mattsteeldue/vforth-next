@@ -2,3 +2,6 @@
 
 Closes an OF branch in a CASE
 structure. Skips to ENDCASE.
+
+Part of the CASE library.
+Available after NEEDS CASE

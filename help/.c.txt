@@ -1,0 +1,8 @@
+    .C    char --     ( compile time )
+
+Shared engine behind ." and .(: parses text up to
+the given delimiter character. While compiling, it
+compiles (.") followed by the text, so the text
+prints when the enclosing definition runs. While
+interpreting, it TYPEs the text immediately. Not
+normally called directly -- use ." or .( instead.

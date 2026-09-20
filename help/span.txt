@@ -1,0 +1,5 @@
+    SPAN    -- a
+
+User variable. Holds the number of characters
+actually received by the last EXPECT/ACCEPT. See
+also TIB, OUT.

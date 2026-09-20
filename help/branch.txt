@@ -1,0 +1,7 @@
+    BRANCH    --
+
+Primitive: unconditional branch, using the
+following cell as a signed offset from the current
+instruction pointer. Compiled by ELSE, AGAIN, and
+other control-flow words -- never used directly in
+ordinary source. See also 0BRANCH.

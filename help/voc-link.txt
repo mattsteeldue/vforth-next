@@ -1,0 +1,7 @@
+    VOC-LINK    -- a
+
+User variable. Head of the linked list of every
+vocabulary created with VOCABULARY, threaded through
+each vocabulary's PFA+6; walked by FORGET to unlink
+vocabularies defined above the forgotten point. See
+also FORTH, VOCABULARY, CONTEXT, CURRENT.

@@ -888,7 +888,7 @@ DECIMAL
 
 \ ____________________________________________________________________
 \
-NEEDS PAINT
+\ NEEDS PAINT
 
 \ if passed  f  is zero, then it forgets all this library
 \ Typical usage:  0 GRAPHICS 

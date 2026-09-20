@@ -1,0 +1,6 @@
+    DP    -- a
+
+User variable. Holds the Dictionary Pointer: the
+address of the next free byte of dictionary space,
+advanced by , C, and ALLOT. HERE fetches it. See
+also FENCE, HERE, ALLOT.

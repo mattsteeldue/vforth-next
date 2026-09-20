@@ -2,5 +2,3 @@
 
 Closes BEGIN...AGAIN infinite loop.
 Branches back to BEGIN.
-
-Available after NEEDS AGAIN

@@ -7,6 +7,7 @@ NEEDS BINARY            \ base 2
 NEEDS SPLIT             \ split an integer into two bytes, low, high.
 NEEDS AY
 NEEDS MS
+NEEDS .S
 
 
 BASE @

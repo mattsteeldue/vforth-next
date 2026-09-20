@@ -1,0 +1,6 @@
+    LIT    -- x
+
+Primitive compiled before every integer literal in
+a colon-definition: fetches the following cell and
+pushes it. Never used directly in ordinary source --
+plain numbers are compiled to LIT automatically.

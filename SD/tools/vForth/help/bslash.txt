@@ -1,0 +1,9 @@
+    \    --
+
+Comment to end of line: ignores all
+text through the next newline.
+
+FAT filename note: \ is illegal in
+FAT/Windows names and maps to _ (see
+CLAUDE.md), same as : -- so HELP \
+loads help/_.txt, not this file.

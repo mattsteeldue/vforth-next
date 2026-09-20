@@ -1,0 +1,8 @@
+    0BRANCH    f --
+
+Primitive: pops a flag and branches, using the
+following cell as a signed offset from the current
+instruction pointer, only if the flag is zero
+(false). Compiled by IF, UNTIL, WHILE and similar
+control-flow words -- never used directly in
+ordinary source. See also BRANCH.

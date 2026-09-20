@@ -12,4 +12,5 @@ the interpreter it opens and loads the file right away.
 Switch to LAYER2 before loading and back to LAYER12 after,
 e.g.  LAYER2  BMP-LOAD" ..."  WAIT-KEY  LAYER12 .
 
-Available after NEEDS BMP-LOAD"
+Part of the BMP-LOAD library.
+Available after NEEDS BMP-LOAD

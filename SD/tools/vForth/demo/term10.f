@@ -11,7 +11,8 @@ NEEDS INVV          \ Inverse-Video
 NEEDS FLIP          \ Swap hi and lo bytes of TOS
 \
 MARKER DONE  \ Useful to rollback dictionary memory to this point
-INCLUDE LIB/UART-CONST.F
+INCLUDE LIB/UART-SYS.F
+#23560  constant  LASTK 
 \
 
 \ Table of actual clock speeds depending on video mode

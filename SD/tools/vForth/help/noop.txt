@@ -1,0 +1,6 @@
+    NOOP    --
+
+Does nothing. Used as a placeholder execution token
+-- e.g. AUTOEXEC patches its own call site in ABORT
+to NOOP after its first run, so later WARMs skip it
+(see root CLAUDE.md "Boot Sequence").

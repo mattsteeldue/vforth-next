@@ -1,0 +1,5 @@
+    CURRENT    -- a
+
+User variable. Points to the vocabulary that new
+definitions are added to (see DEFINITIONS). Search
+order is controlled separately by CONTEXT.

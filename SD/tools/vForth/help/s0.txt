@@ -1,0 +1,5 @@
+    S0    -- a
+
+User variable. Holds the starting (bottom) address
+of the data stack, used by SP! to reset it. See
+also R0, SP!, RP!.

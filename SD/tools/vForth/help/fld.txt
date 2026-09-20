@@ -1,0 +1,6 @@
+    FLD    -- a
+
+User variable reserved for an output field width.
+Currently unused by the core or by any shipped
+library module -- reserved for future/application
+use, like LP.

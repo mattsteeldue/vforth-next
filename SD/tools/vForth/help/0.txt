@@ -1,0 +1,4 @@
+    0    -- n
+
+Constant. Leaves 0 on the stack, the canonical
+FALSE flag value.

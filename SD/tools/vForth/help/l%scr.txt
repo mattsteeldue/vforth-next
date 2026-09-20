@@ -1,0 +1,4 @@
+    L/SCR    -- n
+
+Constant. Leaves 16, the number of lines per Screen
+(see EDIT, LIST). See also B/BUF, B/SCR, C/L.

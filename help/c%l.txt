@@ -1,0 +1,5 @@
+    C/L    -- n
+
+Constant. Leaves 64, the number of characters per
+line within a Screen (see EDIT, LIST). See also
+B/BUF, B/SCR, L/SCR.

@@ -1,0 +1,8 @@
+    HANDLER    -- a
+
+User variable used by CATCH and THROW. CATCH saves
+the previous HANDLER, stores the current return-
+stack pointer in it, and restores the previous value
+on the way out; THROW uses it to unwind the return
+stack back to the matching CATCH. See also CATCH,
+THROW.

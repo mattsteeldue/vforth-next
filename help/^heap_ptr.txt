@@ -1,0 +1,7 @@
+    ?HEAP_PTR    n -- n f
+
+Tests whether n looks like an MMU7 heap-relative
+pointer rather than a real 16-bit address: f is
+true when n is non-zero and less than $6300 (below
+the core's own code). Used internally by ?>HEAP and
+FAR-aware words; see also ?IN_MMU7.

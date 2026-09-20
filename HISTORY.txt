@@ -728,3 +728,31 @@ within the SAME word, so RECURSE re-enters through one thread instead of
 two and pays no extra per-recursion-level cost. As a side effect, SEE --
 which used to hang on a word declared with { -- now decodes it cleanly.
 lib/LOCALS.f, lib/see.f and tutorial 061-locals were all updated to match.
+
+
+\ build 20260920
+Core binary unchanged apart from the build stamp.
+New: lib/SPRITE.f (hardware sprite helpers); tutorial 064 (scaled integer
+math, with demo/brot.f reworked as its example), 065 (Fedora silhouette) and
+066 (Kempston joystick); doc/ONBOARDING.md and doc/REVERSE.md, guides for
+developers approaching the sources. LOCALS went through versions 3 to 8, the
+last one (binder words, closure style) being the shipped lib/LOCALS.f; SEE
+was adapted to it. The historical LOCALS versions were moved to lib/doc/.
+Demos: chomp-chomp now has arcade ghost personalities, cyclic colours,
+extended UDGs instead of a RAM font, and mazes stored in blocks over multiple
+levels (util/chomp-maze.py, test/CHOMP-AI-TESTS.f, test/CHOMP-MAZE-TESTS.f);
+a new chomp-chomp-next is started on top of hardware sprites.
+Help: about seventy new pages for core definitions (BASE, BLK, CONTEXT,
+STATE, TIB, S0, R0, LIT, BRANCH, 0BRANCH, ENCLOSE, PAD, PLACE, WIDTH, ...)
+and for the words whose names collide under FAT mapping (: and \ now have
+colon.txt and bslash.txt, _.txt covers both).
+Housekeeping: 32 files defining core words (IF, ELSE, THEN, UNTIL, WHILE,
+REPEAT, AGAIN, CELLS, HEX, WORDS, CODE, MMU7!, MMU7@, {FAR, }FAR, ...) moved
+from inc/ to inc/doc/, so that NEEDS never loads them; inc/COLOR-DATA.f,
+inc/COLOR-MASK.f and the never-implemented PUSH stub were removed. Missing
+NEEDS lines added to PAINT, ACTION-OF, ^LAYER2, GRAPHICS, GRAPHICS-COMMON,
+AFXFRAME-forth and afxplay-ASM. src/F18e.f was reordered and linted (typos,
+obsolete notes, formatting) and is now verified against the assembled core
+by the new /check-f18e procedure (util/cmp-f18e.py): a single compilation
+compared through a relocation map, replacing the old double compilation.
+VS Code extension packages 0.1.0 to 0.1.2 are included under tools/.

@@ -1,0 +1,7 @@
+    PAGE-WATERMARK    -- n
+
+Constant. The offset within an 8K MMU7 page (0..
+$1FFF) beyond which SKIP-HP-PAGE forces HP on to the
+start of the next page, leaving a small unusable tail
+rather than splitting an entry across a page
+boundary. See also HP, SKIP-HP-PAGE, ?IN_MMU7.
