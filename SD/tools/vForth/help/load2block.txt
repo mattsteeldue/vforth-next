@@ -6,3 +6,5 @@ starting at line 1; the filename itself is copied to
 line 0. Marks the block for UPDATE.
 
 example  PAD" tutorial/afx/test/test1.afx"  20 LOAD2BLOCK
+
+Available after NEEDS LOAD2BLOCK

@@ -135,7 +135,8 @@ NEEDS LOAD-BYTES
 \ right after the code -- does NOT: it must be translated from
 \ "wherever it is now" to "where it will be at $2000".
 \
-\ ORG remembers the address HERE had when this CODE word started:
+\ ORG remembers the address HERE had when the FIRST CODE word of the dot
+\ command started -- every byte from ORG to HERE is what gets saved:
 
 VARIABLE ORG
 
@@ -279,6 +280,21 @@ VARIABLE ORG
 \ Note ANDA A ( AND A,A ) doubles as the NUL test AND, as a side effect,
 \ clears the carry flag -- exactly the "success" state the dot-command
 \ ABI (section 1) wants on the RET that ends the loop.
+\
+\ PRINT will be part of the saved file, so ORG must be set BEFORE it:
+\ the saved range is ORG..HERE (section 10), and a routine compiled
+\ before ORG would simply be missing at $2000 -- a CALL to it would land
+\ in whatever sits below $2000 (the ROM).  And since NextZXOS starts the
+\ dot command at its very first byte, those first bytes must jump to the
+\ real entry point, .HELLO (section 8), which does not exist yet: DOT-START
+\ holds a JP placeholder that section 8 patches once .HELLO is compiled
+\ (the "direct post-hoc patch" of demo/parser.dot.f's entry-point).
+\ DOT-START is never meant to be executed from the vForth prompt.
+
+CODE DOT-START  ( -- )  \ first bytes of the dot command: do NOT execute
+HERE  ORG !
+    jp    0 AA,          \ placeholder, patched in section 8
+C;
 
 CODE PRINT  ( -- )  \ hl = z-string address in/out; not a Forth-stack word
 HERE
@@ -322,13 +338,16 @@ CR .( Try:  GREETING 1+ TESTER  => Hello, World! ) CR
 \ word that will become the dot command itself.  It is entered with
 \ HL/BC per section 1's ABI (both ignored here -- this demo takes no
 \ arguments), prints the embedded greeting via PRINT, and returns with
-\ carry clear.  Compare with demo/helloworld.dot.f: same structure,
-\ VARIABLE ORG made explicit up front instead of assumed.
+\ carry clear.  Compare with demo/helloworld.dot.f: same structure, but
+\ there the print loop is inlined in the one and only CODE word, while
+\ here it is the separate PRINT routine -- which is why ORG was set back
+\ in DOT-START (section 7) and not here: the saved range ORG..HERE must
+\ include PRINT, or the CALL below would reach outside the dot command.
+\ Once .HELLO exists, its address is patched into DOT-START's JP.
 
 VARIABLE MSG
 
 CODE .HELLO  ( -- )  \ NextZXOS ABI: hl = args, bc = cmdline; exit via carry
-HERE  ORG !
     jr    holdplace
 
     Z" Hello, World!"  MSG !
@@ -338,6 +357,8 @@ HERE  ORG !
     call  ' PRINT REL-AA,
     ret                        \ carry already clear from PRINT's ANDA A
 C;
+
+' .HELLO DOT-RELATIVE  ORG @ 1+ !   \ patch DOT-START's JP operand
 
 .( .HELLO defined. ) CR
 
@@ -382,7 +403,9 @@ C;
 \   <a> <n> SAVE-BYTES   write n bytes starting at a to that filename.
 \
 \ ORG @ HERE OVER -  computes exactly (start-address, length) from the
-\ ORG variable section 3 set at the top of .HELLO's CODE block:
+\ ORG variable (section 3) set at the top of DOT-START (section 7): it
+\ covers DOT-START, PRINT, GREETING, TESTER, MSG and .HELLO.  GREETING,
+\ TESTER and MSG ride along as a few harmless bytes never used at $2000:
 
 .( About to write C:/DOT/HELLO -- CR then run the two lines below. ) CR
 CR .(   UNLINK c:/dot/hello ) CR

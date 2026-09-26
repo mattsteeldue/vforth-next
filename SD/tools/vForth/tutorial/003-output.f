@@ -98,8 +98,9 @@ CR
 \   % binary:       %11111111 .  => 255
 \
 \ Output also follows BASE:
-\   HEX   255 .     => FF
-\   DECIMAL
+\   255 HEX .  DECIMAL   => FF
+\ (write the number BEFORE switching: HEX 255 . would read 255 itself
+\ in hex, i.e. $255, and print 255)
 \
 \ Best practice: restore DECIMAL explicitly after a HEX block, or use
 \ the prefix characters to avoid touching BASE at all.

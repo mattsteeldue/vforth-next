@@ -54,7 +54,7 @@ NEEDS M+
 \
 \ A number containing . , / - or : is read as a double -- two cells pushed:
 \
-\   120,000 .S       => 120000  0       (lo=120000 hi=0)
+\   120,000 .S       => 54464  1        (lo=54464 hi=1: 1*65536+54464)
 \   3.14    .S       => 314     0       (NOT float! just double)
 \
 \ S>D ( n -- d ) sign-extends a single to double:
@@ -76,8 +76,10 @@ NEEDS M+
 \ D+ ( d1 d2 -- d3 )   add two double-precision integers
 \ D- ( d1 d2 -- d3 )   subtract  (NEEDS D-)
 \
-\   50,000  S>D  50,000  S>D  D+  D.   => 100000
-\   100,000 S>D  30,000  S>D  D-  D.   => 70000
+\   50,000  50,000  D+  D.     => 100000
+\   100,000 30,000  D-  D.     => 70000
+\
+\ (no S>D here: 50,000 has a comma, so it is ALREADY a double)
 \
 \ D- is defined as DNEGATE D+.  DNEGATE (core) negates a double:
 \
@@ -143,7 +145,7 @@ CR
 RESET-TOTAL
 
 .( Try: 1000 ADD-TO-TOTAL  2000 ADD-TO-TOTAL  .TOTAL ) CR
-.( (should print 3000)                                ) CR
+." (should print 3000)                               " CR
 
 
 \ ===========================================================================

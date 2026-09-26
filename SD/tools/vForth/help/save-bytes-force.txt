@@ -5,3 +5,5 @@ z-string, set beforehand with PAD"), creating it if
 needed and overwriting it if it already exists.
 
 example  PAD" test.bin"  $4000 $1000 SAVE-BYTES-FORCE
+
+Available after NEEDS SAVE-BYTES-FORCE

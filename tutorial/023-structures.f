@@ -64,7 +64,7 @@ CREATE MY-POINT   POINT-SIZE ALLOT
 .( POINT-SIZE = ) POINT-SIZE . CR   \ => 4
 
 : INIT-POINT  ( x y addr -- )
-    DUP  pt.y  !
+    TUCK pt.y  !
          pt.x  ! ;
 
 : .POINT  ( addr -- )

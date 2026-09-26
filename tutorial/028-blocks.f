@@ -39,7 +39,9 @@ CR
 \ A BLOCK is a 512-byte record stored persistently in !Blocks-64.bin.
 \ When you ask for block n, vForth finds (or makes) a 512-byte RAM buffer,
 \ reads the record into it, and hands you the buffer address.  You read and
-\ write that RAM; nothing touches the SD card until you FLUSH.
+\ write that RAM; a changed buffer reaches the SD card only when it is
+\ written back: by FLUSH, or when BLOCK needs that buffer for another
+\ block and writes it out first (only if it was marked with UPDATE).
 \
 \ This decouples slow storage from fast RAM: many BLOCK calls, one FLUSH.
 \ It is the original Forth idea of virtual memory -- a uniform window onto
@@ -93,7 +95,9 @@ CR
 \
 \ The cycle is always: BLOCK (get buffer) -> change bytes -> UPDATE (mark)
 \ -> ... -> FLUSH (persist).  Forget UPDATE and your change is silently lost
-\ on the next buffer reuse.  Forget FLUSH and it never reaches the SD card.
+\ on the next buffer reuse.  Forget FLUSH and it reaches the SD card only
+\ whenever its buffer happens to be recycled -- or never, if vForth is
+\ switched off first.
 \
 \ NEEDS SAVE  gives the standard shorthand:  SAVE  =  UPDATE FLUSH
 \

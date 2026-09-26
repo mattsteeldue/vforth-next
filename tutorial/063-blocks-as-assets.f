@@ -110,8 +110,10 @@ NEEDS DUMP
 \ session with the SD/working tree mounted.  It loads the effect into the
 \ free scratch block 20 (first half of Screen 10) and inspects it.
 \
-\ Note: STORE-DEMO marks block 20 dirty but does NOT FLUSH, so nothing is
-\ written to the SD card unless you FLUSH yourself.  Run it from the prompt.
+\ Note: STORE-DEMO marks block 20 dirty but does NOT FLUSH.  It is not
+\ written at once, but it WILL reach the SD card as soon as its buffer is
+\ recycled for another block (or at the next FLUSH): use EMPTY-BUFFERS to
+\ abandon it.  Run it from the prompt.
 
 20 CONSTANT DEMO-BLK
 

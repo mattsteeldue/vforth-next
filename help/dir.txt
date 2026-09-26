@@ -12,3 +12,5 @@ routine patched by CASEON/CASEOFF for word lookup), so
 under CASEOFF (the default) the listing sorts case-
 insensitively; under CASEON, all uppercase letters sort
 before any lowercase one.
+
+Available after NEEDS DIR

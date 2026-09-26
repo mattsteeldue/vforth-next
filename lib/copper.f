@@ -38,7 +38,7 @@ $063 CONSTANT COP-WRITE      \ Copper data 16-bit write
  
 : COP-WAIT ( v h -- )    \ v-vertical (0-311) h-horizontal (0-55)
     $3F AND 2* FLIP SWAP \ compose horizontal part
-        $FF AND          \ compose vertical part
+        $1FF AND         \ compose vertical part (9 bits)
     OR                   \ merge
     $8000 OR             \ set bit-15.
     COP-UPLOAD 

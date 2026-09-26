@@ -1,3 +1,5 @@
     CELL  -- 2
 
 Returns the cell size in bytes (2).
+
+Available after NEEDS CELL

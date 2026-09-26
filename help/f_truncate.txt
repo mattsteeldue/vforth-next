@@ -2,3 +2,5 @@
 
 Truncate or extend the unopened file at filespec a to exactly d
 bytes. Extended parts are zero-filled. Returns error flag.
+
+Available after NEEDS F_TRUNCATE

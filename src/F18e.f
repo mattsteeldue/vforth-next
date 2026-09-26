@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-09-20
+\ v-Forth 1.8 - NextZXOS version - build 2026-09-25
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -5245,12 +5245,19 @@ decimal #SEC constant #sec
 \ any block previously inside the buffer, if modified, is rewritten to
 \ disk before reading the block n.
 : buffer  ( n -- a )
-    used @   
-    dup >r   
-    Begin 
-        +buf 
-    Until 
-    used !  
+    Begin
+        used @
+        dup >r
+        Begin
+            +buf
+        Until
+        used !
+        \ BLOCK 1 is the line buffer of INCLUDE/EVALUATE: its content
+        \ cannot be re-read from disk, so it is never recycled.
+        \ 2* drops the UPDATE bit: 2- gives zero only for block 1.
+        r@ @ 2* 2- dup
+        0= If  r> drop  Then
+    Until
     r@ @ 0< 
     If  
         r@ cell+  
@@ -6634,14 +6641,15 @@ CASEOFF
 \           ...     Free memory
 \           ...     Stack grows downward
 \ SP                SP@
-\ D0E8              S0 @
-\ D0E8              #TIB     TIB @
+\ D0F4              S0 @
+\ D0F4              #TIB     TIB @
 \                   #...     Return stack grows downward: it can hold 80 entries
 \                   #RP@
-\ D398              #R0 @
-\ D398-D3E0         #        User variables area (40 entries, 80 bytes)
-\ D3E8      FIRST   First buffer.
-\ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes)
+\ D194              #R0 @
+\ D194-D1E4         #        User variables area (40 entries, 80 bytes)
+\ D1E4      FIRST   First buffer.
+\ E000      LIMIT   There are 7 buffers (516 * 7 = 3612 bytes);
+\                   the one holding BLOCK 1 is never recycled
 \ FFFF      P_RAMT  Physical ram-top
 \ 
 

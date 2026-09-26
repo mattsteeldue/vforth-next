@@ -155,7 +155,7 @@ NEEDS WAIT-KEY
     192 0 DO              \ rows 0..191
         256 0 DO          \ cols 0..255
             I J AND       \ simple pattern condition
-            IF  I J PLOT     THEN
+            IF  J I PLOT     THEN
         2 +LOOP
     2 +LOOP
     WAIT-KEY

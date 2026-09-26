@@ -28,8 +28,6 @@ NEEDS MMU7!
 NEEDS MMU7@
 NEEDS MMU0!
 NEEDS MMU1!
-NEEDS REG!
-NEEDS REG@
 NEEDS ms
 
 
@@ -44,9 +42,12 @@ NEEDS ms
 \   ----  -------------   -------   ----------
 \   0     $0000-$1FFF     $50       ROM 0 (ZX ROM)
 \   1     $2000-$3FFF     $51       ROM 1
-\   2     $4000-$5FFF     $52       ULA screen and attributes
-\   3     $6000-$7FFF     $53       ULA screen continued
-\   4     $8000-$9FFF     $54       vForth low dictionary
+\   2     $4000-$5FFF     $52       ULA screen, attributes, BASIC
+\                                    system variables (from $5B00)
+\   3     $6000-$7FFF     $53       BASIC up to RAMTOP $61FF, IM2
+\                                    table at $6200, vForth code and
+\                                    dictionary from $6366
+\   4     $8000-$9FFF     $54       vForth dictionary continued
 \   5     $A000-$BFFF     $55       vForth continued
 \   6     $C000-$DFFF     $56       vForth continued
 \   7     $E000-$FFFF     $57       vForth heap (current page)
@@ -116,13 +117,11 @@ $12 REG@ 2 * CONSTANT L2-FIRST-PAGE
 \
 \ Template for temporarily mapping a different page into slot 7:
 \
-\   : WITH-PAGE  ( page quot -- )
-\       >R
+\   : WITH-PAGE  ( xt page -- )
 \       MMU7@ >R          \ save current dictionary page
 \       MMU7!             \ map requested page
-\       R@ EXECUTE        \ run the quotation
+\       EXECUTE           \ run the xt
 \       R> MMU7!          \ restore dictionary page
-\       RDROP
 \   ;
 \
 \ Since vForth does not have quotations (anonymous xt), the pattern

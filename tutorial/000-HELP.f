@@ -68,12 +68,13 @@ NEEDS HELP
 \ ===========================================================================
 \
 \ If no help/ file exists for the name you typed, VIEW-FILE-PAD (the word
-\ HELP hands the filename to) reports the standard NextZXOS open error
-\ (message 41).  This is normal for words you defined yourself, or for a
-\ typo in the name -- HELP does not search the dictionary, only the help/
-\ directory, so it cannot tell "unknown word" from "no help file yet".
+\ HELP hands the filename to) prints the file name followed by the
+\ standard "File not found." (message 43).  This is normal for words you
+\ defined yourself, or for a typo in the name -- HELP does not search the
+\ dictionary, only the help/ directory, so it cannot tell "unknown word"
+\ from "no help file yet".
 \
-\   HELP NOSUCHWORD    => (reports "NextZXOS Open error.")
+\   HELP NOSUCHWORD    => help/NOSUCHWORD.txt File not found.
 
 \ ===========================================================================
 \ 4. FAT-mapped names

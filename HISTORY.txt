@@ -756,3 +756,27 @@ obsolete notes, formatting) and is now verified against the assembled core
 by the new /check-f18e procedure (util/cmp-f18e.py): a single compilation
 compared through a relocation map, replacing the old double compilation.
 VS Code extension packages 0.1.0 to 0.1.2 are included under tools/.
+
+
+\ build 20260925
+Core binary CHANGED in this build (block buffers).
+Fixed the "block-buffer starvation" bug: INCLUDE keeps the source line being
+interpreted in the BLOCK 1 buffer, and a file that read more distinct blocks
+than the pool holds used to recycle that buffer, so WORD re-read the block
+file metadata and a random word came out "is undefined", a different one on
+each run. BUFFER now never evicts BLOCK 1, whose content cannot be re-read
+from disk, and the pool grows from 6 to 7 buffers, so user code still has
+six: an INCLUDEd file may read any number of blocks, and FLUSH inside an
+INCLUDE is safe. Cost: 516 bytes of dictionary (FIRST $D1E4, R0/USER $D194,
+S0/TIB $D0F4). Regression test: test/BLOCK1-PIN-TESTS.f. Side effect: FLUSH
+no longer writes BLOCK 1 back; to persist hand-edited metadata use
+1 BLOCK 1 0 R/W. src/F18e.f is aligned and verified by /check-f18e.
+Tutorials: an audit fixed runtime bugs (CASE double drop in 013/030, PRINT
+outside the saved dot-command range in 057, transposed PLOT in 036/038,
+MOUSE-DRAW, palette dimming, CMOVE arguments, ...), wrong expected outputs in
+about a dozen tutorials, and stale prose (NextReg map, sprite attributes,
+copper WAIT format, tilemap modes, error codes). lib/copper.f COP-WAIT now
+keeps all 9 bits of the line; lib/bmp-load.f fixed a wrong height.
+Help: "Available after NEEDS ..." added to the pages of inc/ words; DMA pages
+rewritten. Docs: doc/ONBOARDING-2026-09-24.md replaces REVERSE.md (earlier
+versions kept, dated). VS Code extension 0.1.3 is included under tools/.

@@ -2,3 +2,5 @@
 
 Compares two strings. Returns -1 if
 a1 < a2, 0 if equal, 1 if a1 > a2.
+
+Available after NEEDS COMPARE

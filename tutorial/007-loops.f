@@ -76,7 +76,7 @@ CR
 \ Counting down: set index above limit, step negatively with +LOOP (sec.3).
 \
 \   : .DOWN  ( n -- )
-\       0 SWAP DO  I .  -1 +LOOP  CR ;   \ see section 3
+\       1 SWAP DO  I .  -1 +LOOP  CR ;   \ see section 4
 \
 \   5 .DOWN             => 5 4 3 2 1
 
@@ -117,10 +117,13 @@ CR
 \   10 .STEP2           => 0 2 4 6 8
 \
 \ Descending loop: index starts above limit, step is negative.
-\ Set limit one below the last value you want to print.
+\ Going down, the boundary between limit-1 and limit is crossed only
+\ AFTER the pass with index = limit, so the limit itself IS included:
+\ set limit to the last value you want to print.
+\ (0 SWAP DO ... -1 +LOOP would print 5 4 3 2 1 0.)
 \
 \   : .DOWN  ( n -- )   \ print n down to 1
-\       0 SWAP 1+ DO  I .  -1 +LOOP  CR ;
+\       1 SWAP DO  I .  -1 +LOOP  CR ;
 \
 \   5 .DOWN             => 5 4 3 2 1
 
@@ -128,7 +131,7 @@ CR
     0 DO  I .  2 +LOOP  CR ;
 
 : .DOWN  ( n -- )
-    0 SWAP 1+ DO  I .  -1 +LOOP  CR ;
+    1 SWAP DO  I .  -1 +LOOP  CR ;
 
 .( Try: 10 .STEP2  ) CR
 .( Try: 5 .DOWN    ) CR

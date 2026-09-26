@@ -25,8 +25,6 @@ CR
 .( --- Tutorial 039: Hardware sprites loaded. ) CR
 .(     Type NEWTASK to unload.             ) CR
 
-NEEDS REG!
-NEEDS REG@
 NEEDS SPLIT
 
 
@@ -48,13 +46,17 @@ NEEDS SPLIT
 \ Sprite attribute bytes (4 bytes per sprite):
 \   byte 0 : X position bits 7-0
 \   byte 1 : Y position bits 7-0
-\   byte 2 : %ppppppHV  pattern number bits 7-2, H-mirror, V-mirror
-\             plus bit 0 = X bit 8 (for positions 256-319)
-\   byte 3 : %EVVVVVVV  E=enable/visible, palette-offset bits 6-0
-\             OR  $C0 for sprite to appear
+\   byte 2 : %PPPPXYRx  palette offset bits 7-4, X mirror (3),
+\             Y mirror (2), rotate (1), X bit 8 (0, for X 256-319)
+\   byte 3 : %VEnnnnnn  V=visible (7), E=enable attribute byte 4 (6),
+\             pattern number bits 5-0
+\
+\ The sprite SLOT is chosen only by the write to port $303B; byte 3
+\ selects the PATTERN the slot shows (see tutorial 053).
 \
 \ Pattern data: 16*16 = 256 bytes, one byte per pixel.
-\ The global transparency color byte is read from Next reg $14.
+\ The global transparency color byte is read from Next reg $14
+\ (default $E3): pixels of that color are not drawn.
 
 \ ===========================================================================
 \ 2. Port constants
@@ -139,13 +141,15 @@ _ _ _ _ _ v v | " " " _ _ _ _ _ \ F
 \   y    : vertical position
 \   slot : sprite number 0-127
 \
-\ The sprite appears at screen position (x, y).
-\ X=0 hides the sprite off the left edge; X=8 is the normal left edge.
-\ Y=0 is the top edge.
+\ Sprite coordinates include the border: their origin is 32 pixels up
+\ and 32 pixels left of the top-left corner of the 256x192 screen.
+\ X=32 is the left edge of the screen, Y=32 its top edge; smaller
+\ values place the sprite over the border (visible only with bit 1 of
+\ Next reg $15 set, as SPRITES-ON does).
 
 : SPRITE-SHOW  ( x y slot -- )
     SPRITE-SLOT-PORT P!         \ select slot
-    SWAP SPLIT SWAP             \ y_hi y_lo x
+    SWAP SPLIT SWAP             \ y x_hi x_lo
     SPRITE-ATTR-PORT P!         \ byte 0 : x low byte
     SWAP SPRITE-ATTR-PORT P!    \ byte 1 : y low byte
     01 AND SPRITE-ATTR-PORT P!  \ byte 2 : x hi bit + palette
@@ -167,18 +171,18 @@ _ _ _ _ _ v v | " " " _ _ _ _ _ \ F
 \
 \ This example uses sprite slot 0.  The pattern is a 16x16 mouse-arrow.
 \ Pixel color 255 = white in the default palette.
-\ Pixel color 0 = usually the global transparency color.
+\ Pixel color $E3 = the default global transparency color.
 
 \ directly change Sprite #0
 
 : SPRITE-DEMO  ( -- )
-    MOUSE-FACE  0  SPRITE-PAT-UPLOAD   \ upload pattern to slot 1
+    MOUSE-FACE  0  SPRITE-PAT-UPLOAD   \ upload pattern to slot 0
     SPRITES-ON
     5120 0 DO    
         I 20 / DUP 2/
         0 SPRITE-SHOW    
     LOOP
-    1 SPRITE-HIDE
+    0 SPRITE-HIDE
     SPRITES-OFF
 ;
 

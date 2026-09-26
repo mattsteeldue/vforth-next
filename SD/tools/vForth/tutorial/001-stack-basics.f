@@ -102,7 +102,7 @@ CR
 \   6 7 *  .      => 42
 \   22 7 / .      => 3       (integer quotient)
 \   22 7 MOD .    => 1       (remainder)
-\   22 7 /MOD . . => 1 3     (prints remainder then quotient)
+\   22 7 /MOD . . => 3 1     (quotient is on top: printed first)
 \
 \ 2* and 2/ are faster shift-based alternatives for 2 * and 2 /:
 \

@@ -1,3 +1,5 @@
     PWD    ( -- )
 
 Print the current directory path.
+
+Available after NEEDS PWD

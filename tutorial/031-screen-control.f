@@ -103,9 +103,7 @@ NEEDS WAIT-KEY
 \ Example: bright cyan paper (5), red ink (2), no flash:
 \   2  5 8 * +  64 +    ( = 2 + 40 + 64 = 106 = $6A )
 
-HEX
-: >ATTRIB   ( row col -- a )   SWAP 20 * + 5800 +  ;
-DECIMAL
+: >ATTRIB   ( row col -- a )   SWAP 32 * + $5800 +  ;
 
 : CELL-ATTR@  ( row col -- b )   >ATTRIB C@  ;
 : CELL-ATTR!  ( b row col -- )   >ATTRIB C!  ;
@@ -129,7 +127,7 @@ DECIMAL
     24 0 DO
         32 0 DO
             7                   \ ink
-            I 7 AND             \ paper: 0-7 cycling every 8 rows
+            I 7 AND             \ paper: 0-7 cycling every 8 columns
             0 0 ATTR-BYTE       \ bright=0 flash=0
             J I CELL-ATTR!      \ write directly to attribute memory
         LOOP

@@ -119,9 +119,10 @@ NEEDS ms
 \   COORD-CHECK ( x y -- x y f )
 \
 \ Returns true if (x, y) is within the current mode's pixel range.
-\ L0-PLOT calls COORD-CHECK automatically before writing.
-\ Layer2 PLOT does not (for speed); use COORD-CHECK manually if
-\ plotting from user input.
+\ L0-PLOT calls COORD-CHECK automatically before writing.  Layer2 PLOT
+\ does not call it, but performs the same check in machine code and
+\ skips out-of-range pixels.  COORD-CHECK is still handy to validate
+\ user input, or to skip work for a pixel that would not be drawn.
 
 \ ===========================================================================
 \ 6. PAINT -- flood fill
@@ -141,12 +142,15 @@ NEEDS ms
 \ Warning: PAINT can be slow on large areas and may overflow the
 \ return stack on complex shapes.  Use with care.
 \
+\ Since the boundary is "same colour as ATTRIB", in LAYER10/LAYER2 the
+\ fill colour MUST be the outline colour: fill with a different colour
+\ and PAINT never meets an edge -- it floods the whole screen.
+\
 \ Example: fill a circle with red (LAYER2)
 \   LAYER2
 \   224 TO ATTRIB   \ red
 \   96 128 40 CIRCLE
-\   7 TO ATTRIB     \ blue
-\   96 128 PAINT    \ fill interior
+\   96 128 PAINT    \ fill interior, same red as the outline
 
 : UNSETUP
     LAYER12
@@ -165,7 +169,7 @@ UNSETUP
     96 0 DO               \ rows 0..95
         128 0 DO          \ cols 0..127
             I J +  TO ATTRIB
-            I J PLOT
+            J I PLOT
         LOOP
     LOOP
 ;

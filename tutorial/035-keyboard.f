@@ -211,5 +211,5 @@ HELPER
 \ automatically.  ?ESCAPE can only be tested on real hardware.
 \
 \ NEEDS TESTING
-\ T{  [CHAR] Y  ->  89  }T   \ ASCII Y
-\ T{  [CHAR] Q  ->  81  }T   \ ASCII Q
+\ T{  CHAR Y  ->  89  }T     \ ASCII Y
+\ T{  CHAR Q  ->  81  }T     \ ASCII Q

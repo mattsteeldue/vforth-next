@@ -19,29 +19,26 @@
 \
 \ ---------------------------------------------------------------------
 \ WHY THE DISK MAZES ARE CHECKED FROM THE PROMPT AND NOT FROM HERE
+\ (history: the cause was fixed in core build 2026-09-25)
 \
 \ F_INCLUDE reads each source line into the BLOCK 1 buffer and sets BLK
-\ to 1, so the line being interpreted lives in the block buffer pool --
-\ and that pool is six buffers handed out round-robin (FIRST/PREV/USE).
-\ Reading a seventh distinct block therefore recycles the buffer holding
-\ the current source line: WORD re-reads BLOCK 1 from disk, gets the
-\ block file's metadata instead of the line, and the interpreter walks
-\ off into it.  What that looks like is a random word "is undefined" --
-\ a different word each run, since it depends on what the recycled
-\ buffer happens to hold.  Nothing announces the real cause.
+\ to 1, so the line being interpreted lives in the block buffer pool.
+\ Up to build 2026-09-24 that pool was six buffers handed out
+\ round-robin (FIRST/PREV/USE), and reading a seventh distinct block
+\ recycled the buffer holding the current source line: WORD re-read
+\ BLOCK 1 from disk, got the block file's metadata instead of the line,
+\ and a random word came out "is undefined" -- a different one each run.
 \
-\ MAZE-CHECK reads three blocks per disk maze, so a file that checks all
-\ three disk mazes touches nine distinct blocks and is guaranteed to
-\ lose its own source line partway.  Verified 2026-08-24 with a probe
-\ file containing nothing but four MAZE-CHECK calls: it died on the
-\ sixth block read, exactly when the round-robin came back round to
-\ BLOCK 1.
+\ MAZE-CHECK reads three blocks per disk maze, so checking all three
+\ disk mazes from here touched nine distinct blocks.  Verified
+\ 2026-08-24 with a probe file of four MAZE-CHECK calls: it died on the
+\ sixth block read, exactly when the round-robin came back to BLOCK 1.
+\ Hence this file spends its block budget on ONE disk maze (#1), and
+\ mazes #2 and #3 are covered by DISK-MAZE-TESTS, run from the ok prompt.
 \
-\ So this file spends its whole block budget on ONE disk maze (#1, three
-\ blocks, re-used by every test below that touches disk), and everything
-\ covering mazes #2 and #3 lives in DISK-MAZE-TESTS, a word compiled
-\ here and run from the ok prompt -- where the input comes from TIB, BLK
-\ is 0, and no source line is at risk.
+\ Since build 2026-09-25 the pool has seven buffers and BUFFER never
+\ evicts BLOCK 1 (regression test: test/BLOCK1-PIN-TESTS.f), so the
+\ split is no longer required; it is kept as it stands.
 \ ---------------------------------------------------------------------
 \
 

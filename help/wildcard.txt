@@ -5,3 +5,5 @@ Parses the next word as a DOS-style wildcard pattern (* and
 once set, the pattern stays active for every later DIR call,
 on any line, until WILDCARD is called again. A bare WILDCARD
 (nothing following) resets the pattern to * (match all).
+
+Available after NEEDS WILDCARD

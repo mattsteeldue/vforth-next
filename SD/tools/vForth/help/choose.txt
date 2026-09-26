@@ -1,3 +1,5 @@
     CHOOSE  u -- u2
 
 Returns random number between 0 and u-1.
+
+Available after NEEDS CHOOSE

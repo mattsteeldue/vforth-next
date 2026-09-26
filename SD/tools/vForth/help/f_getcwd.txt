@@ -2,3 +2,5 @@
 
 Get the current working directory of the default drive as a
 null-terminated path, stored at buf. Returns error flag.
+
+Available after NEEDS F_GETCWD

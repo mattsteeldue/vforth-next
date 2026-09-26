@@ -26,6 +26,11 @@ CR
 
 NEEDS RPI0
 
+\ Side effect: loading lib/RPi0.f runs RPI0-INIT at the end of the file,
+\ so NEEDS RPI0 alone already switches the CPU to 28 MHz and selects
+\ the Raspberry Pi Zero UART (NextReg $A0 enables the Pi peripherals)
+\ -- before any word of this tutorial is called.
+
 \ ===========================================================================
 \ 1. UART hardware ports
 \ ===========================================================================
@@ -60,7 +65,7 @@ NEEDS RPI0
 \ Example: set 115200 baud
 \   115.200 UART-SET-BAUDRATE
 \
-\ The system clock depends on the video timing mode (reg $17).
+\ The system clock depends on the video timing mode (reg $11).
 \ UART-VIDEO-TIMING reads this and returns the appropriate clock.
 
 \ ===========================================================================

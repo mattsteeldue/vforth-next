@@ -2,3 +2,5 @@
 
 Change the working directory of the default drive to the
 null-terminated path a. Returns error flag.
+
+Available after NEEDS F_CHDIR

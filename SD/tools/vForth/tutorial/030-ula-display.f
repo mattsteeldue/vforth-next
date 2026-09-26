@@ -178,7 +178,7 @@ NEEDS WAIT-KEY
         5 OF  ." cyan    " ENDOF
         6 OF  ." yellow  " ENDOF
         7 OF  ." white   " ENDOF
-        DROP ." ?       "
+        ." ?       "
     ENDCASE
 ;
 
@@ -221,15 +221,13 @@ CR
 \   b  $5800 R 32 * + C + C!
 \
 \ Example: make cell (2,4) have bright red ink on white paper:
-\   HEX  0 3 LSHIFT 7 OR 40 OR  5800 2 20 * + 4 + C!
+\   HEX  7 3 LSHIFT 2 OR 40 OR  5800 2 20 * + 4 + C!  DECIMAL
 \   ( ink=2 red, paper=7 white, bright=1, flash=0 )
 \   ( 0 flash, 1 bright=40, 7 paper=38, 2 ink => 40+38+2 = 7A )
 
-HEX
 : ATTRIB-ADDR  ( row col -- a )
-    SWAP 20 * + 5800 +
+    SWAP 32 * + $5800 +
 ;
-DECIMAL
 
 : ATTRIB@  ( row col -- b )  ATTRIB-ADDR C@  ;
 : ATTRIB!  ( b row col -- )  ATTRIB-ADDR C!  ;

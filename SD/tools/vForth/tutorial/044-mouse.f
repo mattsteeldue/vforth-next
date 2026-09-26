@@ -177,19 +177,34 @@ NEEDS GRAPHICS
     0 0 .AT  ." Hold left button to draw. BREAK to quit." CR
     -1 MOUSE!
     255 TO ATTRIB        \ white
+    0                    \ pen flag: true while the left button is held
     BEGIN
-        MOUSE-XY
-        MOUSE $0002 AND IF   \ left button held (any click-down)
-            OVER OVER PLOT
-        ELSE
-            2DROP
+        MOUSE ?DUP IF    \ new button events since the last read?
+            DUP $0002 AND IF  NIP -1 SWAP  THEN   \ left down: pen down
+            $0200 AND IF  DROP 0  THEN            \ left up:   pen up
+        THEN
+        DUP IF
+            MOUSE-XY  32 -  SWAP 32 -  SWAP       \ sprite -> screen coords
+            COORD-CHECK IF  PLOT  ELSE  2DROP  THEN
         THEN
         ?TERMINAL
     UNTIL
+    DROP
     0 MOUSE!
-    LAYER0
-    CLS
+    LAYER12  1 .PAPER    \ back to the default mode, blue paper
 ;
+
+\ Two details the loop above has to get right:
+\   - MOUSE returns click EVENTS, and reading them clears them: a click
+\     is reported once, as "down" ($0002) and later "up" ($0200), never
+\     as "held".  Testing MOUSE $0002 AND each pass would plot a single
+\     pixel per click, so the loop keeps its own pen flag, set by the
+\     down event and cleared by the up event.
+\   - MOUSE-XY returns SPRITE coordinates, whose origin is 32 pixels up
+\     and 32 pixels left of the top-left corner of the 256x192 screen
+\     (the sprite area includes the border).  Subtracting 32 from both
+\     puts the pixel right under the tip of the arrow; COORD-CHECK then
+\     discards the positions that fall on the border.
 
 \ ===========================================================================
 \ 9. Unloading: NEWTASK and NO-MOUSE

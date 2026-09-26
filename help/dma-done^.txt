@@ -1,6 +1,9 @@
     DMA-DONE?  -- flag
 
-    Returns true (non-zero) if the DMA transfer has completed, false
-    if the transfer is still in progress. Polls bit 5 of the DMA status
-    byte. Waits for completion with: BEGIN DMA-DONE? UNTIL
+Returns true (non-zero) if the DMA transfer has completed,
+false if the transfer is still in progress. Polls bit 5 of
+the DMA status byte. Waits for completion with: BEGIN DMA-
+DONE? UNTIL
 
+Under development: not yet loadable by NEEDS.
+Load it with  INCLUDE dev/DMA.f

@@ -7,3 +7,5 @@ example  CD C:/tools/vForth
 
 Warning: changing directory impedes any subsequent use
 of NEEDS until the current directory is restored.
+
+Available after NEEDS CD

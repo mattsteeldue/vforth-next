@@ -2,3 +2,5 @@
 
 Forces HERE to an even address by
 allocating one byte if needed.
+
+Available after NEEDS ALIGN

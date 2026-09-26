@@ -2,3 +2,5 @@
 
 Creates a structure field. Used
 for defining record structures.
+
+Available after NEEDS +FIELD

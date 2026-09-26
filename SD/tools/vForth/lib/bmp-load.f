@@ -1,7 +1,7 @@
 \
 \ bmp-load.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-04-19            
+\ v-Forth 1.8 - NextZXOS version - build 2026-09-24            
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \
 \ load a .bmp file in Layer 2 memory
@@ -58,7 +58,7 @@ CONSTANT L2-RAM-PAGE           \ keeps Layer 2 Active RAM Page
     \ check BMP signature
     PAD @ $4D42 -       #38 BMP-ERROR \ not a BMP file
     BMP-HS @ ABS $100 - #38 BMP-ERROR \ not a BMP file
-    BMP-VS @ ABS $0C0 - #39 BMP-ERROR \ not a BMP file
+    BMP-VS @ ABS $0C0 - #38 BMP-ERROR \ not a BMP file
     
     \ take offset to payload-data, skipping header
     PAD $0A + 2@ SWAP 

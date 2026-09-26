@@ -2,3 +2,5 @@
 
 Set NextZXOS capability flags (bit 7 = skip zero-fill on
 truncate calls). Returns previous capabilities and error flag.
+
+Available after NEEDS M_SETCAPS

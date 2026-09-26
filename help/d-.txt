@@ -2,3 +2,5 @@
 
 Subtracts double-cell number d2
 from d1.
+
+Available after NEEDS D-

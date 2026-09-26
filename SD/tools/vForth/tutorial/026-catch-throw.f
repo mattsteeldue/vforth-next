@@ -48,6 +48,7 @@ NEEDS CATCH
 NEEDS THROW
 NEEDS ABORT"
 NEEDS SQRT
+NEEDS DEPTH
 NEEDS [']
 
 CR
@@ -89,6 +90,8 @@ CR
     ['] SAFE-SQRT  CATCH
     DUP IF
         ." Error " . ." (sqrt of negative)" CR  DROP  0
+    ELSE
+        DROP                \ discard the 0 left by CATCH
     THEN ;
 
 
@@ -133,15 +136,18 @@ CR
 \
 \ For data-stack cleanup, use a saved stack depth:
 
-: WITH-CLEANUP  ( n -- n | 0 )
-    \ Square root, returning 0 on any error.  Demonstrates cleanup.
-    DUP  >R               \ save original for message
+: WITH-CLEANUP  ( n1 n2 -- n3 | 0 )
+    \ Division returning 0 on any error.  Demonstrates cleanup.
+    DEPTH 2 - >R          \ save the depth below the two arguments
     ['] SAFE-DIV  CATCH
-    DUP IF
-        R> DROP  DROP  0  \ discard saved, drop n1 n2, return 0
-    ELSE
-        R> DROP           \ discard saved, result already on stack
-    THEN ;
+    IF                    \ error: drop whatever is left above that depth
+        BEGIN  DEPTH R@ >  WHILE  DROP  REPEAT
+        0
+    THEN
+    R> DROP ;             \ discard saved depth, result on stack
+CR
+.( Try: 10 2 WITH-CLEANUP .  ) CR    \ => 5
+.( Try: 10 0 WITH-CLEANUP .  ) CR    \ => 0
 
 
 \ ===========================================================================

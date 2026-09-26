@@ -213,7 +213,7 @@ C;
 \ CODE word is finalised, convert each mnemonic to a raw hex literal
 \ with C,.  The result needs no ASSEMBLER at runtime.
 \
-\ VIDEO-SYNC in release form (inc/VIDEO-SYNC.f):
+\ VIDEO-SYNC in release form (as it would be written in an inc/ file):
 \
 \   CODE VIDEO-SYNC  ( -- )
 \       $76 C,             \ halt

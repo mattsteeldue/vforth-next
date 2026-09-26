@@ -47,8 +47,7 @@ NEEDS WAIT-KEY
 \ BMP-LOAD handles both orientations automatically.
 \
 \ Error codes thrown on failure:
-\   38 ($26) : not a valid BMP (bad signature or wrong size)
-\   39 ($27) : wrong image dimensions
+\   38 ($26) : not a valid BMP (bad signature, or not 256x192)
 \   41 ($29) : file open error
 \   45 ($2D) : file seek error
 \   46 ($2E) : file read error

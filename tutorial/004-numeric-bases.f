@@ -111,8 +111,8 @@ NEEDS BINARY                        \ for BINARY in demonstration words
 \ is interpreted as a double-precision (32-bit) integer, pushing two
 \ cells onto the stack (LSCell below, MSCell on top).
 \
-\   120,000 .S      => 120000  0     (d: low=120000 high=0, shown as two cells)
-\   3.14159 .S      => 314159  0     (decimal point is a separator, not float!)
+\   120,000 .S      => 54464  1      (d = 1*65536 + 54464: low cell, high cell)
+\   3.14159 .S      => 52015  4      (decimal point is a separator, not float!)
 \   1/23/45 .S      => 12345   0     (all punctuation acts the same way)
 \
 \ This is *not* floating point  --  the punctuation just signals "double".

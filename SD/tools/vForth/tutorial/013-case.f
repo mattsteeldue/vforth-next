@@ -47,7 +47,9 @@ NEEDS CASE
 \   ENDCASE                 ( n dropped by ENDCASE )
 \
 \ Inside each OF branch, n is gone (already matched and dropped).
-\ In the default section, n is still present -- DROP it if not needed.
+\ In the default section, n is still present -- and ENDCASE drops it.
+\ Never DROP n yourself: use it (DUP it first if a word consumes it) and
+\ leave it on the stack for ENDCASE.
 \
 \ The comparison is always equality.  For range tests, use IF instead.
 
@@ -99,13 +101,14 @@ CR
 \ ===========================================================================
 \
 \ If no OF matches, the default section runs with n on the stack.
-\ You can use n there (e.g., to print it) or simply DROP it.
+\ You can use n there (e.g., to print it), but ENDCASE will drop it, so
+\ it must still be there: DUP it before any word that consumes it.
 \
 \   : DESCRIBE  ( n -- )
 \       CASE
 \           0 OF  ." zero"    ENDOF
 \           1 OF  ." one"     ENDOF
-\                 ." number " .  \ consumes n, so no DROP needed
+\                 ." number " DUP .  \ ENDCASE drops the original n
 \       ENDCASE  CR ;
 \
 \   0 DESCRIBE      => zero
@@ -116,7 +119,7 @@ CR
     CASE
         0 OF  ." zero"    ENDOF
         1 OF  ." one"     ENDOF
-              ." number " .
+              ." number " DUP .
     ENDCASE  CR ;
 
 

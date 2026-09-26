@@ -20,7 +20,7 @@
 \ No section of the vForth manual documents palettes yet (there is no
 \ PALETTE entry under "Colors & Attributes").  Authoritative source is
 \ the ZX Spectrum Next Developer's Guide & Reference Manual rev.3
-\ (doc/zx-next-dev-guide-r3.txt in this repo): section 3.4 "Palette",
+\ (doc/zx-next-dev-guide-r3.md in this repo): section 3.4 "Palette",
 \ printed pages 60-66 (registers $40/$41/$43/$44 on pages 63-65), and
 \ section 3.6.4 "Effects" / double-buffering note, printed page 73-74.
 \
@@ -109,8 +109,10 @@ $44 CONSTANT PAL-EXT
 : PAL-SHOW-2ND  ( -- )  PAL-SHOW-L2-2ND  PAL-CONTROL REG! ;
 
 \ PAL-RESET-BYTE matches the reset value documented in tutorial 053
-\ (sprite palette init): edit target = Layer 2 first bank, every
-\ layer's on-screen bank = first, ULANext off, auto-increment on.
+\ (sprite palette init): edit target = SPRITES first palette (bits 6-4
+\ = %010, not Layer 2), every layer's on-screen bank = first, ULANext
+\ off, auto-increment on.  After PAL-RESET, select a Layer 2 edit
+\ target again (PAL-EDIT-1ST / PAL-EDIT-2ND) before writing colours.
 : PAL-RESET  ( -- )  PAL-RESET-BYTE  PAL-CONTROL REG! ;
 
 \ ===========================================================================
@@ -203,10 +205,14 @@ $44 CONSTANT PAL-EXT
 \ frame -- useful for day/night, flash, or fade-style effects.
 
 : DIM-2ND-PALETTE  ( -- )  \ color(i) := identity, halved brightness
+    \ RRRGGGBB shifted right once moves every field down one bit; the
+    \ mask %01101101 then clears the bit each field received from the
+    \ one above it (R's lsb into G's msb, G's lsb into B's msb), which
+    \ leaves R/2, G/2 and B/2 in their own fields.
     PAL-EDIT-2ND
     0 PAL-INDEX!               \ auto-increment starts from index 0
     256 0 DO
-        I  %10110110 AND  PAL-COLOR!   \ drop msb of each RGB field
+        I 2/  %01101101 AND  PAL-COLOR!  \ R/2 G/2 B/2, field by field
     LOOP
 ;
 

@@ -3,3 +3,5 @@
 Truncate or extend the open file handle h to exactly d bytes.
 Extended parts are zero-filled. File position is unaffected.
 Returns error flag.
+
+Available after NEEDS F_FTRUNCATE

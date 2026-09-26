@@ -1,7 +1,7 @@
     ,"    --
 
 Parses text up to the next " in the input and
-compiles it at HERE as a counted string: a length
+compiles it at HERE as a z-counted string: a length
 byte, the characters, then a trailing NUL. Building
 block for higher-level string words (see H", S").
 The text is left in dictionary space, not pushed on

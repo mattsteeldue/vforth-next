@@ -40,7 +40,8 @@
 \   NEWTASK 064 TUTORIAL
 \
 \ Run it with:  DEMO   (any key returns to the text screen)
-\ What it should look like:  tutorial/064-scaled-integer-math.png
+\ What it should look like:  tutorial/064-brot.png
+\ (and tutorial/064-brot-bulb.png for ZOOM-DEMO's north bulb)
 \
 
 MARKER NEWTASK

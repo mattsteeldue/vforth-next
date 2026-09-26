@@ -1,6 +1,9 @@
     DMA-DISABLE  --
 
-    Sends the WR6 disable command to the DMA controller. This must be
-    done before uploading a new DMA program to prevent the controller
-    from executing a partially configured transfer.
+Sends the WR6 disable command to the DMA controller. This
+must be done before uploading a new DMA program to prevent
+the controller from executing a partially configured
+transfer.
 
+Under development: not yet loadable by NEEDS.
+Load it with  INCLUDE dev/DMA.f

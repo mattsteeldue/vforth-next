@@ -176,8 +176,11 @@ UNSETUP
 \ 7. Unloading
 \ ===========================================================================
 \
-\ NEWTASK removes this tutorial only.  To drop the graphics modules
-\ themselves use their own markers (defined by the lib files):
+\ MARKER NEWTASK is defined BEFORE the NEEDS LAYER11-GRAPHICS line, so
+\ NEWTASK forgets the graphics modules too, whenever this tutorial was
+\ the one that loaded them (it keeps them only if they were already in
+\ the dictionary before 052 was loaded).  To drop the graphics modules
+\ alone, use their own markers (defined by the lib files):
 \
 \   NO-LAYER11-GRAPHICS   forget just the Layer 1,1 module
 \   NO-GRAPHICS-COMMON    forget the whole modular graphics package

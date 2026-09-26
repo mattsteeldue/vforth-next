@@ -1,7 +1,10 @@
     DMA-IN  ioport dest len --
 
-    Transfers len bytes from an I/O port to memory address dest using
-    the DMA controller in continuous mode. The destination memory
-    address increments after each byte, while the I/O port address
-    remains fixed. This operation blocks the CPU until completion.
+Transfers len bytes from an I/O port to memory address dest
+using the DMA controller in continuous mode. The destination
+memory address increments after each byte, while the I/O
+port address remains fixed. This operation blocks the CPU
+until completion.
 
+Under development: not yet loadable by NEEDS.
+Load it with  INCLUDE dev/DMA.f

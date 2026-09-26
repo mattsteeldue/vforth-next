@@ -64,9 +64,8 @@ NEEDS .PAPER
 \     bits  7-0 : value to write
 \
 \   bit 15 = 1 : WAIT  instruction
-\     bits 14-6 : vertical line number (9 bits, 0-311)
-\     bits  5-1 : horizontal position (5 bits, 0-55)
-\     bit     0 : unused
+\     bits 14-9 : horizontal position (6 bits, 0-55)
+\     bits  8-0 : vertical line number (9 bits, 0-311)
 
 \ ===========================================================================
 \ 2. Key words from lib/copper.f

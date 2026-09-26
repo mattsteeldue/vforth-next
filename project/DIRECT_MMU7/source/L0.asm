@@ -53,7 +53,7 @@ SP_Saved:       dw      $0000               // Saved SP during NextOS call
 USER_Pointer:   dw      USER_system
 
 // +030
-RP_Pointer:     dw      $d188 // R0_system
+RP_Pointer:     dw      $d188 // save slot of ldhlrp/ldrphl, written before read: $d188 is a stale R0 of an older layout
 
 // +32
 IX_Echo:        dw      $0000               // Echo IX after NextOS call
@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      111
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2026-09-20 ", $0D  // 37
+                db      " Heap Vocabulary - build 2026-09-25 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap

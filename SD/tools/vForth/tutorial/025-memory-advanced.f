@@ -148,7 +148,7 @@ ROOM
 \ Heap space is independent of dictionary space.  UNUSED measures only
 \ the dictionary side; HP@ shows how much heap is used.
 \
-\   HP@ @ U.    => (current top-of-heap address, near $E000)
+\   HP@ U.      => (current top-of-heap address, near $E000)
 
 .( HP = ) HP@ U. CR
 

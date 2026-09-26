@@ -155,7 +155,7 @@ IMMEDIATE
 \
 \ Helper: convert character to UDG code
 : UDG+ ( c -- c' )
-    UPPER 79 + ;    \ convert letter A-Z to UDG code 165-190
+    UPPER 79 + ;    \ convert letter A-Z to UDG code 144-169
 \
 \ Compile a UDG character: read char at compile-time,
 \ convert to UDG code, compile as literal.
@@ -166,8 +166,8 @@ IMMEDIATE
 \ Usage at compile-time:
 \   : SHOW-A  [UDG] A  EMITC ;
 \
-\ This reads 'A', converts it to UDG code (~165), and compiles 165 as
-\ a literal. When SHOW-A runs, it pushes 165 and emits it as a UDG char.
+\ This reads 'A', converts it to UDG code (144), and compiles 144 as
+\ a literal. When SHOW-A runs, it pushes 144 and emits it as a UDG char.
 \
 \ The key: [COMPILE] LITERAL forces LITERAL to compile (not execute),
 \ because LITERAL is itself immediate and would normally run.

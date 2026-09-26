@@ -3,3 +3,5 @@
 Get current date/time from the Real Time Clock. date and time
 are in MS-DOS format; hs packs seconds/100ths (decode with
 SPLIT). Returns error flag if no RTC is present.
+
+Available after NEEDS M_GETDATE

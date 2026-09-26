@@ -3,3 +3,5 @@
 Finds definition in counted string
 at a. Returns xt and 1 (immediate)
 or -1 (not immediate), or a and 0.
+
+Available after NEEDS FIND

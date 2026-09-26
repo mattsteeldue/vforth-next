@@ -29,7 +29,8 @@
 \ Starting FORTH (Brodie): no Brodie counterpart (locals postdate the
 \ book; this is a vForth extension built as a library).
 \ Reference: sec.2 (core words). LOCALS is a lib/ module and is not yet
-\ described in the manual; the design notes are in prompts/LOCALS-PLAN.md.
+\ described in the manual; the design notes are in
+\ planners/archive/LOCALS-PLAN.md.
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL

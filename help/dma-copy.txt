@@ -1,7 +1,10 @@
     DMA-COPY  src dest len --
 
-    Transfers len bytes from memory address src to memory address dest
-    using the DMA controller in continuous mode. Both source and
-    destination addresses increment after each byte is transferred.
-    The operation blocks the CPU until completion.
+Transfers len bytes from memory address src to memory
+address dest using the DMA controller in continuous mode.
+Both source and destination addresses increment after each
+byte is transferred. The operation blocks the CPU until
+completion.
 
+Under development: not yet loadable by NEEDS.
+Load it with  INCLUDE dev/DMA.f

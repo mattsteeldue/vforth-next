@@ -76,9 +76,9 @@ NEEDS LAYER12
 \ Two grid resolutions are available:
 \   40x32 tiles  -- lower-density, 2 bytes per cell (index + attribute:
 \                   per-tile palette offset, mirror, rotate, priority)
-\   80x32 tiles  -- higher-density; commonly used WITHOUT the attribute
-\                   byte (see section 3), trading per-tile attributes
-\                   for half the tilemap memory and finer detail.
+\   80x32 tiles  -- higher-density; with or without the attribute
+\                   byte (section 3): without it, per-tile attributes
+\                   are traded for half the tilemap memory.
 \
 \ Unlike Layer 2 (tutorial 037), Tilemap has no vectored PLOT/DRAW-LINE
 \ in this codebase: you write tile INDEX bytes directly into the grid.
@@ -130,10 +130,12 @@ NEEDS LAYER12
 \   TILE-OFF   ( -- )   disable tilemap, restore ULA
 \   TILE-40    ( -- )   enable 40x32, WITH per-tile attribute byte,
 \                       tile defs at $4A00, grid at $4000
-\   TILE-80    ( -- )   enable 80x32, no attribute byte, defs at $5400
-\   TILE-TXT   ( -- )   enable 80x32 "text mode" (1-bit tiles), defs
-\                       at $5400 too -- the mode section 8's console
-\                       runs in
+\   TILE-80    ( -- )   enable 80x32 "text mode" (1-bit tiles), WITH
+\                       per-tile attribute byte, defs at $5400
+\   TILE-TXT   ( -- )   enable 80x32 "text mode" (1-bit tiles), NO
+\                       attribute byte ($6C gives every tile the same
+\                       one), defs at $5400 too -- the mode section 8's
+\                       console runs in
 \
 \   SET-PAL  ( colour index -- )   write one palette entry
 \   GET-PAL  ( index -- colour )   read one palette entry

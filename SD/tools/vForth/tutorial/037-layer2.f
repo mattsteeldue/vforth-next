@@ -85,7 +85,7 @@ NEEDS FLIP
 \   LAYER2
 \     1 .PAPER
 \   218 .INK
-\   224 TO ATRIB
+\   224 TO ATTRIB
 \   96 128 40 CIRCLE
 
 \ ===========================================================================
@@ -98,8 +98,8 @@ NEEDS FLIP
 \ correct 8K RAM page into MMU slot 7 ($E000-$FFFF) for each write.
 \
 \ Coordinates: x=row 0..191, y=column 0..255.
-\ Coordinates outside range are silently ignored (ULA PLOT) or may
-\ wrap (Layer2 raw PLOT) -- keep values in range.
+\ Coordinates outside range are silently ignored, in ULA modes and in
+\ Layer 2 alike: L2-PLOT skips any x >= 192 or y >= 256.
 
 \ ===========================================================================
 \ 4. DRAW-LINE and CIRCLE in Layer 2
@@ -136,8 +136,8 @@ UNSETUP
     SETUP
     256 0 DO              \ horizontal
         192 0 DO          \ vertical
-            I 5 RSHIFT 7 AND 2 LSHIFT \ red
-            J 3 RSHIFT 7 AND 5 LSHIFT \ green
+            I 5 RSHIFT 7 AND 2 LSHIFT \ green, by row
+            J 3 RSHIFT 7 AND 5 LSHIFT \ red, by column
             J 6 RSHIFT 3 AND          \ blue
             + + TO ATTRIB
             I J PLOT

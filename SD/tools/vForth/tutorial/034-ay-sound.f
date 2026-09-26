@@ -109,9 +109,9 @@ NEEDS ms
 
 \ Tone period formula:
 \   period = 1750000 / ( freq_hz * 16 )
-\ In 16-bit arithmetic, use double-number division:
-\   freq_hz 16 * ( n1 -- d )
-\   1750000 OVER UM/MOD NIP
+\ 1750000 does not fit in 16 bits, so divide a double number by it
+\ (the trailing dot makes 1750000. a double literal):
+\   freq_hz 16 *  >R  1750000.  R>  UM/MOD NIP   ( -- period )
 \ Common values (pre-computed):
 \   262 Hz (C4) -> period 418
 \   440 Hz (A4) -> period 248
@@ -128,7 +128,9 @@ NEEDS ms
 \   ENABLE-MONO       ( -- )  set bits 7-5 of Next register 9
 \                             to route all channels to mono output
 \
-\ AYSETUP calls both automatically for all three chips.
+\ AYSETUP calls only ENABLE-MONO (and SHH) for each of the three chips:
+\ it does NOT call ENABLE-TURBOSOUND.  Call it yourself before using
+\ AY2 or AY3.
 
 \ ===========================================================================
 \ 6. Demo: play tone on channel A

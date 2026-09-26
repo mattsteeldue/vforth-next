@@ -2,3 +2,5 @@
 
 Moves n blocks from orig to dest.
 Block-level copy operation.
+
+Available after NEEDS BMOVE

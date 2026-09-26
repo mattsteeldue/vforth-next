@@ -1,6 +1,8 @@
     DMA-STATUS  -- b
 
-    Returns the current DMA status byte. Bit 5 indicates transfer
-    completion (0=done, 1=in progress). Bit 0 indicates that at least
-    one byte has been transferred.
+Returns the current DMA status byte. Bit 5 indicates
+transfer completion (0=done, 1=in progress). Bit 0 indicates
+that at least one byte has been transferred.
 
+Under development: not yet loadable by NEEDS.
+Load it with  INCLUDE dev/DMA.f

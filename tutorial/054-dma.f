@@ -15,7 +15,7 @@
 \ code" pattern shown in the hardware manual.
 \
 \ Authoritative source: ZX Spectrum Next Developer's Guide & Reference Manual
-\ rev.3 (doc/zx-next-dev-guide-r3.txt in this repo): section 3.3 "DMA",
+\ rev.3 (doc/zx-next-dev-guide-r3.md in this repo): section 3.3 "DMA",
 \ printed pages 43-60 (registers WR0-WR6 on pages 44-53, examples on pages
 \ 54-59). See also "DMA and Interrupts" (page 59) for timing implications
 \ when running DMA in continuous mode: the CPU is blocked until the transfer
@@ -118,7 +118,7 @@ $80   CONSTANT FILL-LEN
 : .DEMO-OUT
     CR
     .( Sending ) TEST-LEN . .( bytes from ) TEST-SRC HEX . DECIMAL
-    DECIMAL .( to port $FE (border) ) CR
+    DECIMAL .( to port $FE [border] ) CR
     TEST-SRC $FE TEST-LEN DMA-OUT
     .( Done. [Border color affected if on real hardware.] ) CR ;
 
@@ -137,7 +137,7 @@ $10   CONSTANT IN-LEN
 
 : .DEMO-IN
     CR
-    .( Reading ) IN-LEN . .( bytes from port $FE (keyboard)  ) CR
+    .( Reading ) IN-LEN . .( bytes from port $FE [keyboard]  ) CR
     .( into memory at ) IN-DEST HEX . DECIMAL CR
     $FE IN-DEST IN-LEN DMA-IN
     .( Done. ) CR ;

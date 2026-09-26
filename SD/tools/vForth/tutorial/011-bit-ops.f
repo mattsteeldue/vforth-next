@@ -160,11 +160,12 @@ CR
 \ Both live in inc/ and need NEEDS before use.
 \
 \   $1234 SPLIT . .    => 18 52    (hi=$12=18 is TOS; lo=$34=52 below)
-\   $1234 FLIP  .      => $3412
+\   $1234 FLIP  .      => 13330   ($3412)
 \
 \ When lo and hi come from SPLIT they are in 0-255 range, so FLIP
-\ reassembles the original cell in one step (no 8 LSHIFT OR needed):
-\   $1234 SPLIT FLIP .   => $1234
+\ moves hi back into the high byte and OR merges lo (FLIP OR does the
+\ job of 8 LSHIFT OR):
+\   $1234 SPLIT FLIP OR .   => 4660   ($1234)
 \
 \ Note: FLIP works as a reassembler only for byte values (0-255).
 \ For a general 8-bit field not obtained via SPLIT, use 8 LSHIFT OR.

@@ -38,7 +38,7 @@ NEEDS DIR
 \ The result is printed as a string to the current output device.
 \
 \ Example:
-\   PWD    \ might print   C:/NextZXOS/vForth
+\   PWD    \ might print   C:/tools/vForth
 
 \ ===========================================================================
 \ 2. CD -- change directory
@@ -56,7 +56,7 @@ NEEDS DIR
 \ CD back or use absolute paths.
 \
 \ Examples:
-\   CD C:/NextZXOS/vForth    \ absolute path
+\   CD C:/tools/vForth       \ absolute path
 \   CD tutorial              \ relative path
 \   CD ..                    \ parent directory
 \   CD /                     \ root directory
@@ -89,12 +89,16 @@ NEEDS DIR
 \   /nextzxos/           NextZXOS system files
 \     autoexec.bas       startup script
 \     spectrum.rom       ROM image
-\   /vForth/             vForth installation
-\     vForth.bas         launcher
-\     vForth             main binary
+\   /tools/vForth/       vForth installation (start vForth from here)
+\     Forth18_loader.bas launcher (loads forth18e.bin and ram8.bin)
+\     forth18e.bin       core binary
+\     ram8.bin           heap dictionary image
+\     !Blocks-64.bin     block file (Screens, error messages)
 \     inc/               include files for NEEDS
 \     lib/               library files for NEEDS
 \     tutorial/          tutorial source files
+\     demo/              vForth demo programs
+\   /dot/vforth          dot-command variant, run as  .vforth
 \   /demos/              demo programs
 \   /games/              games
 \
@@ -129,9 +133,9 @@ NEEDS DIR
 \ To temporarily navigate to a directory and return:
 \
 \   PWD      \ print and note current path
-\   CD demos
-\   \  ... do stuff in demos/ ...
-\   CD C:/NextZXOS/vForth     \ or wherever you started
+\   CD demo
+\   \  ... do stuff in demo/ ...
+\   CD C:/tools/vForth        \ or wherever you started
 
 \ ===========================================================================
 \ 8. File naming rules

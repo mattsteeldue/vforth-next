@@ -2,3 +2,5 @@
 
 Creates a double-cell variable
 initialized with value d.
+
+Available after NEEDS 2VARIABLE

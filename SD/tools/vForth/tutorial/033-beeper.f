@@ -51,10 +51,15 @@ NEEDS BLEEP
 \ The ROM routine at $03B5 is called directly.  Both parameters
 \ must be pre-computed.  The ROM requires the CPU to be at 3.5 MHz.
 \
-\ Example: middle A (440 Hz) for 1 second
-\   HEX 07A7 00DC BLEEP
-\   ( n1 = (3500000/440 - 241)/8 = 1959 = $07A7 )
-\   ( n2 = 1 * 440 = 440 = $01B8  ... typical value )
+\ Example: A3 (220 Hz) for 1 second
+\   $07A7 $00DC BLEEP
+\   ( n1 = (3500000/220 - 241)/8 = 1959 = $07A7 )
+\   ( n2 = 1 * 220 = 220 = $00DC )
+\
+\ The A above it (440 Hz) for 1 second:
+\   $03C4 $01B8 BLEEP
+\   ( n1 = (3500000/440 - 241)/8 = 964 = $03C4 )
+\   ( n2 = 1 * 440 = 440 = $01B8 )
 
 \ ===========================================================================
 \ 3. BLEEP-CALC -- compute BLEEP parameters from friendly values

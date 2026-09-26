@@ -1,3 +1,5 @@
     F_REWINDDIR  h -- f
 
 Rewind the open directory h back to its start. Returns error flag.
+
+Available after NEEDS F_REWINDDIR

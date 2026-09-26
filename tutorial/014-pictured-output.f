@@ -54,7 +54,7 @@ NEEDS S>D
 \ Consume it (e.g., with TYPE) before calling <# again.
 \
 \   255  0  <# #S #>  TYPE CR     => 255    (format unsigned double)
-\   $41  0  <# #S [CHAR] $ HOLD #>  TYPE CR => $41   (hex with $)
+\   HEX $41 0 <# #S CHAR $ HOLD #> TYPE CR DECIMAL => $41 (hex with $)
 
 
 \ ===========================================================================

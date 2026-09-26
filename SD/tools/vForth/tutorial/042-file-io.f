@@ -165,14 +165,17 @@ CREATE DATA-BUF  256 ALLOT
 \
 \ ?ERROR ( f n -- )  if f is non-zero, throw error n
 \
-\ NextZXOS error codes (decimal):
+\ NextZXOS error codes (decimal), as listed by  9 LOAD :
+\   39  opendir error
+\   40  out of memory
 \   41  open error     (file not found, permission denied)
 \   42  close error
-\   44  directory error
-\   45  seek error
+\   43  file not found
+\   44  DOS call error
+\   45  pos (seek) error
 \   46  read error
 \   47  write error
-\   48  rename error
+\ (48 is not a message: it is the header line of the next Screen.)
 \
 \ LOAD-BYTES and SAVE-BYTES call ?ERROR automatically.
 

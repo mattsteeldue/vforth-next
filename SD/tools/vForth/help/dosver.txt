@@ -1,3 +1,5 @@
     DOSVER  --
 
 Print the NextZXOS API version, eg "NextZXOS v. : 02.08"
+
+Available after NEEDS DOSVER

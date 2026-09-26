@@ -95,6 +95,10 @@ VARIABLE BUF
 \ CHAR+  ( a -- a+1 )   advance address by one byte
 \ 1+     ( a -- a+1 )   same as CHAR+ for byte arrays
 \
+\ CELLS, CELL+ and CELL- are core; CHARS and CHAR+ are not: they need
+\ NEEDS CHARS / NEEDS CHAR+ (or just use + and 1+ -- a char is
+\ one byte on this system).
+\
 \ These words make code portable to systems with different cell sizes:
 \   3 CELLS ALLOT   -- allot space for 3 cells (6 bytes here)
 \   addr CELL+      -- move to next cell (not next byte)
@@ -167,7 +171,7 @@ MYBUF 16 ERASE
 \   PRIMES 2 CELLS + @ .                   => 5   (third prime, index 2)
 \
 \   CREATE VOWELS  $41 C, $45 C, $49 C, $4F C, $55 C,  ( A E I O U )
-\   VOWELS 2 CHARS + C@ EMIT               => I
+\   VOWELS 2 + C@ EMIT                     => I   (a char is 1 byte)
 
 CREATE PRIMES  2 , 3 , 5 , 7 , 11 ,
 CREATE VOWELS  $41 C, $45 C, $49 C, $4F C, $55 C,

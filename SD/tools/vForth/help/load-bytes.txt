@@ -5,3 +5,5 @@ Load n bytes at address a from the file named in PAD
 normally be below $E000.
 
 example  PAD" test.bin"  $4000 $1000 LOAD-BYTES
+
+Available after NEEDS LOAD-BYTES

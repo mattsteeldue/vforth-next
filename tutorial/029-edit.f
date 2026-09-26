@@ -165,11 +165,13 @@ NEEDS EDIT
 
 : EDIT-SCRATCH  ( -- )   10 LIST EDIT ;
 
-\ A guarded launcher for an arbitrary screen, refusing the system range
-\ (screens 0..7 hold metadata and the error messages -- never edit them):
+\ A guarded launcher for an arbitrary screen, refusing the system range:
+\ screens 0..8 hold metadata and the error messages, screen 9 the
+\ message-list utility (9 LOAD) and screen 11 the AUTOEXEC script run
+\ at every boot -- never edit them by accident.  Screen 10 is free.
 
 : EDIT-SCREEN  ( screen# -- )
-    DUP 8 < IF
+    DUP 10 <  OVER 11 =  OR IF
         ." Refusing to edit system screen " . CR
     ELSE
         LIST EDIT

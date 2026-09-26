@@ -54,13 +54,14 @@ NEEDS AY                \ AYSETUP, AYSELECT, SHH (lib/AY.f)
 \ 2. AFX-CH-DESC -- channel descriptor table
 \ ===========================================================================
 \
-\ AFXFRAME uses a 48-byte table AFX-CH-DESC (6 channels: 3 chips x
-\ 2 words each):
+\ AFXFRAME uses the table AFX-CH-DESC: one 4-byte descriptor (2 words)
+\ per voice, 9 voices (3 AY chips x 3 channels) = 36 bytes, inside a
+\ 48-byte allocation (the last 12 bytes are spare):
 \
 \   +0 (2 bytes) : current address in effect data
 \                  high byte = $00 means channel is free/stopped
 \   +2 (2 bytes) : effect timer
-\   +4           : next channel descriptor (repeats for 6 channels)
+\   +4           : next channel descriptor (repeats for 9 voices)
 \
 \ To start playing an effect on channel n (1-based):
 \   addr   AFX-CH-DESC n 1- 4 * + !   \ set data address
@@ -125,7 +126,7 @@ NEEDS AY                \ AYSETUP, AYSELECT, SHH (lib/AY.f)
 \ To use:
 \   NEEDS INTERRUPTS
 \   \ Load effect data into block 4400:
-\   4400 BLOCK  <address-of-afx-data>  512 CMOVE  UPDATE
+\   <address-of-afx-data>  4400 BLOCK  512 CMOVE  UPDATE
 \   AYSETUP
 \   AFXPLAY
 
@@ -143,12 +144,10 @@ NEEDS AY                \ AYSETUP, AYSELECT, SHH (lib/AY.f)
 \  End: $D0, $20
 
 CREATE AFX-DATA
-    HEX
-    2C C,  F4 C,  01 C,   \ frame 0: volume 12, tone 500
-    08 C,                  \ frame 1: volume 8
-    04 C,                  \ frame 2: volume 4
-    D0 C,  20 C,           \ end marker
-    DECIMAL
+    $2C C,  $F4 C,  $01 C,   \ frame 0: volume 12, tone 500
+    $08 C,                   \ frame 1: volume 8
+    $04 C,                   \ frame 2: volume 4
+    $D0 C,  $20 C,           \ end marker
 
 \ ===========================================================================
 \ 8. Demo: ISR-based AFXFRAME player setup
@@ -194,8 +193,9 @@ NEEDS AFXFRAME
 \ and is slower, but easier to understand and modify.
 \
 \ Turbosound must be enabled (see tutorial 034, ENABLE-TURBOSOUND)
-\ for chips AY2 and AY3 to respond.  AYSETUP calls ENABLE-TURBOSOUND
-\ and ENABLE-MONO for all three chips.
+\ for chips AY2 and AY3 to respond.  AYSETUP does NOT do it: it only
+\ silences the three chips and calls ENABLE-MONO for each of them, so
+\ call ENABLE-TURBOSOUND yourself before using AY2 or AY3.
 
 \ ===========================================================================
 \ 10. Simple tests (requires NEEDS TESTING)

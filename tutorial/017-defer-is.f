@@ -59,7 +59,7 @@ DEFER DISPLAY-ITEM          \ initially: NOOP
 : SHOW-AS-CHAR    ( n -- )  ." Char:   " EMIT CR ;
 
 ." Initial DISPLAY-ITEM calls NOOP (does nothing): " CR
-42 DISPLAY-ITEM
+42 DISPLAY-ITEM  DROP       \ => nothing: DROP 42 to keep the stack clean
 
 ' SHOW-AS-NUMBER  IS  DISPLAY-ITEM
 .( After IS SHOW-AS-NUMBER: ) CR

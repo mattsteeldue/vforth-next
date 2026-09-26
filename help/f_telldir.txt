@@ -2,3 +2,5 @@
 
 Get the current position in the open directory h, as a
 double-cell offset usable with F_SEEKDIR. Returns error flag.
+
+Available after NEEDS F_TELLDIR

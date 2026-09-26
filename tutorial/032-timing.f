@@ -146,7 +146,7 @@ $5C78 CONSTANT FRAMES   \ ZX system tick at 23672: 3-byte counter,
 ;
 
 : STOPWATCH  ( -- )
-    ?VIDEO-HZ           \ auto-detect once at load time
+    ?VIDEO-HZ           \ auto-detect at every run
     0 0 .AT  ." Stopwatch (BREAK to stop)" CR
     0                   ( secs )         \ elapsed seconds
     FRAMES @            ( secs base )    \ tick at the last whole second

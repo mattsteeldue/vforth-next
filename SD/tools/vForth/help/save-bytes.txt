@@ -6,3 +6,5 @@ error if the file already exists; see SAVE-BYTES-FORCE
 to overwrite instead.
 
 example  PAD" test.bin"  $4000 $1000 SAVE-BYTES
+
+Available after NEEDS SAVE-BYTES

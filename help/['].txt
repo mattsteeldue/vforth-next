@@ -2,3 +2,5 @@
 
 Compiles the execution token of
 the next word as a literal.
+
+Available after NEEDS [']

@@ -4,3 +4,5 @@ Create a directory. The path follows MAKEDIR on the
 same input line.
 
 example  MAKEDIR C:/tools/vForth/newdir
+
+Available after NEEDS MAKEDIR

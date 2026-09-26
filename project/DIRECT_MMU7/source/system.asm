@@ -228,7 +228,7 @@ Heap_Ptr        defl    $ - $E000
 
 
 LIMIT_system:   equ     $E000               // Address of first byte beyond last BUFFER
-BUFFERS         equ     6                   // number of buffers available. must be the difference between LIMIT and FIRST divided by 516
+BUFFERS         equ     7                   // number of buffers available. must be the difference between LIMIT and FIRST divided by 516
 FIRST_system:   equ     LIMIT_system - 516*BUFFERS // Address of first BUFFER
 USER_system:    equ     FIRST_system - 80   // User variables zone.
 R0_system:      equ     USER_system         // Address of top of Return Stack. This is S0 + $00A0

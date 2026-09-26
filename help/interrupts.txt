@@ -1,0 +1,11 @@
+    INTERRUPTS  --
+
+Interrupt Service Routine facility: runs a Forth
+definition in background at each 50Hz interrupt,
+via IM 2. Main words:
+  ISR-XT    ISR-ON    ISR-OFF
+
+See the reference manual (.pdf), section
+"Interrupt Service Routine", and tutorial 049.
+
+Available after NEEDS INTERRUPTS

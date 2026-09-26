@@ -243,18 +243,26 @@ $FF . %11111111 . #255 . CR    \ => 255 255 255 -- three spellings, one value
 \ 5. EMIT vs EMITC: masked vs full byte
 \ =============================================================================
 \
-\ EMIT ( c -- ) masks its argument to 7-bit ASCII (0-127) before printing.
-\ EMITC ( c -- ) sends the full byte (0-255) unmasked -- the one to use
-\ for ZX Spectrum UDGs and the extended block-graphics character set
-\ (128-255). Reach for EMIT out of habit when a UDG or extended character
-\ was wanted, and the top bit silently vanishes: the character 128 LOWER
-\ than the one asked for prints instead -- not an error, just the wrong
-\ glyph.
+\ EMIT ( c -- ) is not a plain "print this byte" (core (?EMIT)):
+\   - codes 32-143 print as they are (ASCII plus the 128-143 block
+\     graphics);
+\   - codes 144-255 ($90 and up) lose their top bit and print as 16-127;
+\   - of the control codes, only CR, LF, BS, TAB, BEL and the ZX
+\     print-comma (6) are acted upon: all the others print NOTHING.
+\ EMITC ( c -- ) sends the full byte (0-255) unmasked to the ROM -- the
+\ one to use for ZX Spectrum UDGs (144-164) and BASIC tokens (165-255).
+\ Reach for EMIT out of habit when a UDG or a token was wanted and you
+\ get the character 128 LOWER than the one asked for -- or, when that
+\ lands on a control code, nothing at all.  Not an error, just the
+\ wrong glyph:
 \
-\   144 EMIT     \ prints as if 16 was asked for (144 - 128 masked away)
-\   144 EMITC    \ prints the real extended character 144
+\   144 EMIT     \ prints nothing: 144 - 128 = 16, a control code
+\   144 EMITC    \ prints UDG "A"
+\   200 EMIT     \ prints H  (200 - 128 = 72)
+\   200 EMITC    \ prints the BASIC token  >=
+\   130 EMIT     \ prints block graphic 130: below 144 nothing is masked
 
-16 EMIT  SPACE  144 EMIT  SPACE  144 EMITC  CR   \ first two glyphs match
+72 EMIT  SPACE  200 EMIT  SPACE  200 EMITC  CR   \ first two glyphs match
 
 
 \ =============================================================================

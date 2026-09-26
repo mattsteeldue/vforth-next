@@ -2,3 +2,5 @@
 
 Returns n1 unchanged (character size 1).
 Provided for compatibility.
+
+Available after NEEDS CHARS
