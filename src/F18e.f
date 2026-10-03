@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-09-25
+\ v-Forth 1.8 - NextZXOS version - build 2026-09-26
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -767,22 +767,16 @@ CODE upper ( c1 -- c2 )
 \ On fail, a false flag  (no more: leaves addr unchanged)
 
 \ ( DP and HP model )
-\ Current dictionary
-\   nfa    --> byte + name, same current format
-\   lfa    --> link to previous normal entry
-\   lfa+2  --> this is xt
-\   cfa+3  --> pfa
 
-\ Future Dictionary + Heap
-\   xt-2   --> heap pointer to name                     must use FAR
-\   xt     --> that is actual machine code or CALL aa
-\   xt+3   --> in which case the definition follows     >BODY vs CFA
+\ Dictionary memory structure
+\   xt-2   --> heap-pointer to lfa+2 (use FAR), see <NAME
+\   xt     --> actual machine code, or CALL to definition handler 
+\ ( xt+3 ) --> in which case the definition follows (see >BODY vs CFA)
 \ 
-\ Heap
-\   nfa    --> byte + name, same current format
-\   lfa    --> link to previous heap entry
-\   lfa+2  --> contains xt
-\ 
+\ Heap memory structure
+\   nfa    --> length-byte, name
+\   lfa    --> heap-pointer link to previous heap entry 
+\   lfa+2  --> contains xt in main memory 
 
 CODE (find) ( addr voc -- ff | cfa b tf  )
         \ first save current status of MMU7
@@ -796,15 +790,11 @@ CODE (find) ( addr voc -- ff | cfa b tf  )
         POP     DE|        \ dictionary
         HERE
         
-            \ if dictionary address < 6000h then it's a heap offset
-            LD      A'|    D|
-            SUBN    HEX 060    N,   \ *# /!\ #*
-            JRF     NC'| HOLDPLACE
-                EXDEHL
-                CALL    tofar^ AA, 
-                EXDEHL
-                NEXTREGA DECIMAL 87 P,  \ nextreg 87,a
-            HERE DISP, \ THEN,
+            \ vocabulary head and links are always heap-pointers
+            EXDEHL
+            CALL    tofar^ AA,
+            EXDEHL
+            NEXTREGA DECIMAL 87 P,  \ nextreg 87,a
         
             POP     HL|    \ text to search
             PUSH    HL|
@@ -3366,14 +3356,6 @@ CODE <far ( a n -- ha )
         C;        
         
 
-\ check if address lies on MMU7
-\ tf is passed address is on MMU7
-.( ?IN_MMU7 )
-: ?in_mmu7  ( a -- f )
-    dup [ HEX 0E000 ] Literal u< not
-;
-
-
 \ Convert an "heap-pointer address" (ha) into a real address (a)
 \ between E000h and FFFFh and fit the correct 8K page on MMU7
 \ An "ha" uses the 3 msb as page-number and the lower bits as offset at E000.
@@ -3381,31 +3363,6 @@ CODE <far ( a n -- ha )
 .( FAR )
 : far  (    ha -- a )
     >far mmu7! ;
-
-
-.( ?HEAP_PTR )
-\ check if it's a non-zero heap-pointer 
-\ tf if passed argument is an hp
-\ ff if passed argument isn't hp
-: ?heap_ptr  ( n -- f )
-    dup                 \ n n
-    If                  \ n
-        [ HEX 6300 ] Literal 
-        u<              \ f
-    Then               
-;
-
-
-\ heap correction: given an LFA check if it's a real address or a heap-pointer
-\ address <= 6300h -- except 0000h -- are interpreted as heap-pointers 
-\ and converted to heap address updating MMU7 via FAR
-: ?>heap ( a | hp -- a | ha )
-    dup             \ a a   |  hp hp
-    ?heap_ptr       \ a ff  |  hp tf
-    If              \ a     |  hp
-        far         \ ha
-    Then            \ a     |  ha
-;
 
 
 \
@@ -3448,26 +3405,18 @@ HEX 1EFF constant page-watermark
 
 \ new
 .( >BODY )
-: >body ( cfa -- pfa )
+: >body ( xt -- pfa )
     3 +
     ;
 
 
 \ new
 .( <NAME )
-: <name ( cfa -- nfa )
-    cell-           \ lfa       |   a
-
-    \ check if this is an heap-pointer or the end of a name
-    \ in the new model, this is a number between 0000 and 3FFF
-    dup @           \ lfa n     |   a hp  
-    ?heap_ptr       \ lfa ff    |   a tf
-    If  
-        @ far       \ dereference pointer to heap-address
-        cell-       \ skip heap-lfa pointer.
-    Then
-
-    1-              \ lfa
+: <name ( xt -- nfa )
+    cell-           \ mirror cell, it holds a heap-pointer
+    @ far           \ xt cell in heap
+    cell-           \ lfa
+    1-              \ last character of name
     -1 traverse 
     ;
 
@@ -3494,21 +3443,8 @@ HEX 1EFF constant page-watermark
 
 .( PFA )
 : pfa ( nfa -- pfa )
-    \ shouldn't be, but in case, dereference the heap-pointer
-    ?>heap
-    
     1 traverse 1+   \ lfa
-    cell+           \ cfa
-
-    \ if cfa is in within MMU7, check for special case page 01.
-    ?in_mmu7
-    If
-        mmu7@ 1 -   \ not 01 means real heap dictionary 
-        If
-            @       \ dereference pointer to non-heap-address
-        Then
-    Then
-
+    cell+ @         \ xt
     >body
     ;
 
@@ -4257,7 +4193,7 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
 
 
 .( -FIND )
-: -find ( "ccc" -- cfa b 1 | 0 )
+: -find ( "ccc" -- xt b 1 | 0 )
     bl word         \ a
     2find
 ;
@@ -4305,8 +4241,6 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
 
 .( ID. )
 : id.  ( nfa -- )
-    \ shouldn't be, but in case, dereference the heap-pointer
-    ?>heap
     dup 1 traverse 1+       \ a1 a2
     over - dup >r           \ a1 n      R: n
     pad swap                \ a1 pad n
@@ -4316,11 +4250,22 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
     ;
 
 
+\ Dictionary memory structure
+\   xt-2   --> heap-pointer to lfa+2 (use FAR), see <NAME
+\   xt     --> actual machine code, or CALL to definition handler 
+\ ( xt+3 ) --> in which case the definition follows (see >BODY vs CFA)
+\ 
+\ Heap memory structure
+\   nfa    --> length-byte, name
+\   lfa    --> heap-pointer link to previous heap entry 
+\   lfa+2  --> contains xt in main memory 
+
 .( CODE )
 : code  ( -- cccc )
-    -find       \ cfa b tf | ff
-    If          \ cfa b 
-        drop    \ cfa
+    -find       \ xt b tf | ff
+    \ warning if the word already exists
+    If          \ xt b 
+        drop    \ xt
         <name   \ nfa and correct MMU7 
         id.
         [ 4 ] Literal 
@@ -4328,25 +4273,36 @@ CHAR . C,  CHAR . C,  CHAR . C,  CHAR . C,
         MESSAGE \ ___ forward ___
         space
     Then
+    \ prepare at HERE the Heap structure
     here                                    \ a
+    \ save the total length of the structure to return stack
     dup c@ width @ min 1+                   \ a  n
         dup allot                           \ a  n
         cell+ cell+                         \ a  4+n
         >r                                  \ a       R: 4+n
+    \ set bit 7 (name start) and bit 5 (smudge bit) of count-byte 
     dup     [ decimal 160 ] Literal         \ a  a  160
     toggle                                  \ a
+    \ set last-character msb
     here 1- [ decimal 128 ] Literal         \ a  a1 128
     toggle                                  \ a
-    current @ @ ,                           \ a       compile lfa as heap-ptr
-    dup cell+ ,                             \ a       compile xt  as a+2 !
-\   hp@ ." hp ->  " u. CR
-    hp@ current @ !                         \       
-    hp@ far r@ cmove                        \ a       R: 4+n   copy to heap
+    \ prepare LFA using latest nfa as a heap-pointer 
+    current @ @ ,                           \ a       
+    \ prepare xt value
+    dup cell+ ,                             \ a      
+    \  hp@ ." hp ->  " u. CR  \ debugging
+    \ now we can save new latest
+    hp@ current @ !                         \ a        
+    \ move to Heap the code definition structure just created at HERE
+    hp@ far r@ cmove                        \         R: 4+n   
+    \ restore back Dictionary Pointer at starting HERE
     r@ negate allot                         \ 
+    \ advance Heap Pointer to next free location
     r> hp +!
-    hp@ cell- ,                             \         compile heap-ptr
-    ( this is where the code will be compiled )
-    0 skip-hp-page
+    \ compile heap-ptr mirror, so HERE is the above value xt
+    hp@ cell- ,                             \         
+    \ HERE is where the code will be compiled 
+    0 skip-hp-page           \ check if we need to advance HP to next page
 ;
 
 
@@ -5599,19 +5555,11 @@ decimal
         dup fence @ u< 
         [ decimal 21 ] Literal ?error
     dup nfa                     \ pfa nfa
-
-    \   dup                     \ pfa nfa nfa
-        \ a<E000 or p=1 -->  not ( a>=E000 and p<>1 )
-    \   [ hex E000 ] Literal <  \ pfa nfa nfa<E000
-    \   mmu7@ 1 = or not        \ pfa nfa f
-    \   If
-            mmu7@               \ pfa nfa b
-            <far hp !           \ pfa 
-            dup cfa             \ pfa cfa
-            cell-               \ pfa cfa-2
-    \   Then                    \ pfa { nfa or cfa-2 }
-
-        dp !                    \ pfa 
+        mmu7@                   \ pfa nfa b
+        <far hp !               \ pfa
+        dup cfa                 \ pfa cfa
+        cell-                   \ pfa cfa-2
+        dp !                    \ pfa
         lfa @ context @ !
     ;
 
@@ -5637,16 +5585,12 @@ decimal
         dup @ current   ! cell+     \ a
         \ restore context
         dup @ context   ! cell+     \ a
-        \ get nfa of marker being defined
-        dup @                       \ a nfa 
-        \ if it's in heap then 
-    \   dup ?heap_ptr                  \ a nfa f
-    \   If      
-            \ restore heap pointer
-            dup hp !                \ a nfa
-            \ and provide the correct value of dictionary pointer
-            pfa cfa cell-           \ a lfa  
-    \   Then  
+        \ get nfa of marker being defined, as a heap-pointer
+        dup @                       \ a ha
+        \ restore heap pointer
+        dup hp !                    \ a ha
+        \ and provide the correct value of dictionary pointer
+        far pfa cfa cell-           \ a lfa
         dp       ! cell+            \ a
         \ nfa of previous definition used to restore latest
         @     current @ !  
@@ -6392,13 +6336,10 @@ RENAME   pfa            PFA
 RENAME   nfa            NFA   
 RENAME   cfa            CFA   
 RENAME   lfa            LFA   
-RENAME   ?in_mmu7       ?IN_MMU7
 RENAME   latest         LATEST
 RENAME   skip-hp-page   SKIP-HP-PAGE
 RENAME   page-watermark PAGE-WATERMARK
 RENAME   hp@            HP@
-RENAME   ?>heap         ?>HEAP
-RENAME   ?heap_ptr      ?HEAP_PTR
 RENAME   reg!           REG!
 RENAME   reg@           REG@
 RENAME   far            FAR

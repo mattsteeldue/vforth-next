@@ -488,18 +488,6 @@ Traverse_Begin:                                 // begin
 
 //  ______________________________________________________________________ 
 //
-// ?IN_MMU7        a -- f
-// check if address lies on MMU7
-// tf is passed address is on MMU7
-                Colon_Def QMMU7, "?IN_MMU7", is_normal
-                dw      DUP
-                dw      LIT, $E000
-                dw      ULESS
-                dw      NOT_OP
-                dw      EXIT
-
-//  ______________________________________________________________________ 
-//
 // far          hp -- ha
 // Convert an "heap-pointer address" (ha) into a real address (a)
 // between E000h and FFFFh and fit the correct 8K page on MMU7
@@ -508,36 +496,6 @@ Traverse_Begin:                                 // begin
                 dw      TO_FAR
                 dw      MMU7_STORE
                 dw      EXIT
-
-//  ______________________________________________________________________ 
-//
-// ?HEAP_PTR       n -- n f
-// check if it's a non-zero heap-pointer or less than $6300
-// tf if passed argument is an hp
-// ff if passed argument isn't hp
-                Colon_Def QHEAPP, "?HEAP_PTR", is_normal
-                dw      DUP
-                dw      ZBRANCH
-                dw      QHeap_Skip - $
-                dw          LIT, $6300
-                dw          ULESS
-QHeap_Skip:                                          // endif
-                dw      EXIT                        // ;
-
-//  ______________________________________________________________________ 
-//
-// ?>heap       n1 -- n2
-// heap correction: given an LFA check if it's a real address or a heap-pointer
-// address <= 6300h -- except 0000h -- are interpreted as heap-pointers 
-// and converted to heap address updating MMU7 via FAR
-                Colon_Def QTOHEAP, "?>HEAP", is_normal
-                dw      DUP
-                dw      QHEAPP
-                dw      ZBRANCH
-                dw      Q2Heap_Skip - $
-                dw          FAR
-Q2Heap_Skip:                                          // endif
-                dw      EXIT                        // ;
 
 //  ______________________________________________________________________ 
 //
@@ -589,15 +547,9 @@ Skip_Skip:
 //
 // <name        cfa -- nfa
                 Colon_Def TO_NAME, "<NAME", is_normal
-                dw      CELL_MINUS              // cell-
-                dw      DUP, FETCH
-                dw      QHEAPP
-                dw      ZBRANCH
-                dw      ToName_Skip - $
-                dw          FETCH, FAR
-                dw          CELL_MINUS
-ToName_Skip:                                    // endif
-
+                dw      CELL_MINUS              // cell-    ( mirror cell )
+                dw      FETCH, FAR              // @ far    ( xt cell in heap )
+                dw      CELL_MINUS              // cell-    ( lfa )
                 dw      ONE_SUBTRACT            // 1-
                 dw      NEG_ONE                 // -1
                 dw      TRAVERSE                // traverse
@@ -632,20 +584,10 @@ ToName_Skip:                                    // endif
 //
 // pfa          nfa -- pfa
                 Colon_Def PFA, "PFA", is_normal
-                dw      QTOHEAP
                 dw      ONE                     // 1
                 dw      TRAVERSE                // traverse
-                dw      ONE_PLUS                // 1+
-                dw      CELL_PLUS               // cell+
-                dw      QMMU7
-                dw      ZBRANCH
-                dw      PFA_Skip - $
-                dw          MMU7_FETCH
-                dw          ONE, SUBTRACT
-                dw          ZBRANCH
-                dw          PFA_Skip - $
-                dw              FETCH
-PFA_Skip:                                    // endif
+                dw      ONE_PLUS                // 1+       ( lfa )
+                dw      CELL_PLUS, FETCH        // cell+ @  ( xt )
                 dw      TO_BODY                 // >body
                 dw      EXIT                    // ;
 
@@ -1537,7 +1479,6 @@ Error_Endif_2:                                  // endif
 //
 // id.          nfa --
                 Colon_Def ID_DOT,  "ID.", is_normal
-                dw      QTOHEAP 
                 dw      DUP, ONE, TRAVERSE      // dup 1 traverse
                 dw      ONE_PLUS                // 1+
                 dw      OVER, SUBTRACT          // over -

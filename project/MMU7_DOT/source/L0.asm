@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2026-09-25 ", $0D  // 33
+                db      " Dot-command - build 2026-09-26 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -490,7 +490,7 @@ TO_FAR_rout:
 //
 // (find)       addr voc -- 0 | cfa b 1 
 // vocabulary search, 
-// - voc is starting word's NFA
+// - voc is starting word's NFA as heap-pointer (ha)
 // - addr is the string to be searched for
 // On success, it returns the CFA of found word, the first NFA byte
 // (which contains length and some flags) and a true flag.
@@ -504,14 +504,11 @@ TO_FAR_rout:
 
                 pop     de                      // de has dictionary pointer
 Find_VocabularyLoop:
-                    ld      a, d
-                    sub     $60
-                    jr      nc, Find_far_endif
-                        ex      de, hl
-                        call    TO_FAR_rout
-                        ex      de, hl
-                        nextreg 87, a
-Find_far_endif:
+                    // vocabulary head and links are always heap-pointers
+                    ex      de, hl
+                    call    TO_FAR_rout
+                    ex      de, hl
+                    nextreg 87, a
                     pop     hl                  // string pointer to search for
                     push    hl                  // keep it on stack too for the end.
                     ld      a, (de)             // save NFA length byte

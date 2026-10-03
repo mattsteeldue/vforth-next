@@ -6,5 +6,4 @@ memory address increments after each byte, while the I/O
 port address remains fixed. This operation blocks the CPU
 until completion.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

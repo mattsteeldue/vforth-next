@@ -1,3 +1,6 @@
     NFA  pfa -- nfa
 
-Convert parameter address to NFA.
+Convert PFA to name field address. Reads the heap-pointer
+stored just before the xt and resolves it with FAR, so
+MMU7 is left on the page holding the name.
+

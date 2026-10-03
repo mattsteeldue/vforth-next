@@ -33,10 +33,14 @@
 MARKER NEWTASK
 
 CR
-.( --- Tutorial 054: DMA (Direct Memory Access) loaded. ) CR
+." --- Tutorial 054: DMA (Direct Memory Access) loaded. " CR
 .(     Type NEWTASK to unload.                         ) CR
 
 NEEDS DMA
+NEEDS .BORDER
+NEEDS .PAPER
+NEEDS LAYER0
+NEEDS LAYER12
 
 \ =========================================================================
 \ 1. Basic copy: DMA-COPY transfers a block of memory
@@ -78,8 +82,8 @@ $80   CONSTANT TEST-LEN
 : .DEMO-COPY
     CR
     TEST-SRC TEST-LEN $55 FILL     \ recognizable pattern for DUMP checks
-    .( Copying ) TEST-LEN . .( bytes from ) TEST-SRC HEX . DECIMAL
-    .( to ) TEST-DEST HEX . DECIMAL CR
+    .( Copying ) TEST-LEN . .( bytes from ) TEST-SRC HEX U. DECIMAL
+    .( to ) TEST-DEST HEX U. DECIMAL CR
     TEST-SRC TEST-DEST TEST-LEN DMA-COPY
     .( Done. ) CR ;
 
@@ -99,7 +103,7 @@ $80   CONSTANT FILL-LEN
 
 : .DEMO-FILL
     CR
-    .( Filling ) FILL-LEN . .( bytes at ) FILL-DEST HEX . DECIMAL
+    .( Filling ) FILL-LEN . .( bytes at ) FILL-DEST HEX U. DECIMAL
     .( with byte $AA ) DECIMAL CR
     $AA FILL-DEST FILL-LEN DMA-FILL
     .( Done. ) CR ;
@@ -112,15 +116,80 @@ $80   CONSTANT FILL-LEN
 \ src, incrementing) to an I/O port (fixed address). The destination port
 \ receives all bytes at the same port number in sequence.
 \
-\ Example: write a sequence of bytes to a test port (simulated here, since
-\ actual I/O effects depend on the specific port hardware).
+\ Example: stream colour bands to port $FE, whose bits 2-0 set the border
+\ colour. The ULA draws the border while the bytes arrive, so each byte
+\ colours the stretch of border being drawn at that moment: the transfer
+\ becomes stripes, like a tape loading.
+\
+\ Two things decide whether you see anything:
+\ - the display mode: the border of port $FE shows in LAYER0, so the demo
+\   switches to it (and back to LAYER12 at the end);
+\ - the length: a scanline lasts about 224 T-states at 3.5 MHz, and the
+\   DMA moves a byte every few T-states, so 128 bytes last a handful of
+\   scanlines, once - a flash nobody notices, all of one colour if every
+\   byte is the same (TEST-SRC holds $55: steady cyan, colour 5). Here a
+\   2K buffer of eight-colour bands is sent over and over until [BREAK].
+\
+\   STRIPES ( run -- )   run = bytes per colour band
+\   32 STRIPES           thin bands
+\   256 STRIPES          wide bands
+\
+\ What 32 STRIPES looks like on a real Next at 28 MHz (2026-10-02, frame
+\ captured from the HDMI output: tutorial/054-stripes.png):
+\ - the whole border, top, bottom and sides, fills with horizontal bands
+\   in the Spectrum colour order: black, blue, red, magenta, green, cyan,
+\   yellow, white. A 32-byte band covers about one or two scanlines, so at
+\   this clock the transfer to port $FE moves only some 16-32 bytes per
+\   scanline - much slower than memory to memory. That is ~56-112 clocks
+\   per byte at 28 MHz, but ~7-14 at 3.5 MHz, as if the DMA ran at
+\   3.5 MHz, although the dev guide (sec.3.3.11) says it runs at the CPU
+\   speed. Open question: check 7 REG@ (bits 5-4 = actual speed) and
+\   compare 32 STRIPES after 0 SPEED! and after 3 SPEED!;
+\ - the band edges step sideways from one cycle to the next: the transfer
+\   is not synchronised with the frame, so each band starts wherever the
+\   beam happens to be, part-way along a scanline;
+\ - the white band (colour 7) is much longer than the others, about ten
+\   scanlines instead of one or two. The likely cause is the gap between
+\   two DMA-OUT calls: while the CPU checks ?TERMINAL and programs the
+\   next transfer, port $FE keeps the last byte sent, a 7, and the border
+\   stays white. Not yet confirmed - a full 2K transfer holds eight
+\   colour cycles, so the long white band should appear once every eight
+\   cycles, not after each one. To test it, make the last byte black and
+\   repeat without refilling the buffer: if the long band turns black, it
+\   is the CPU gap.
+\     32 FILL-STRIPES  0 STRIPE-BUF $7FF + C!
+\     LAYER0 BEGIN STRIPE-BUF $FE STRIPE-LEN DMA-OUT ?TERMINAL UNTIL
+\
+\ The DMA runs at the CPU clock: the same run after 0 SPEED! (3.5 MHz)
+\ should give wider bands - not yet tried.
+\ Bit 4 of port $FE drives the speaker and is left at 0 here: OR $10 into
+\ the colour in FILL-STRIPES to hear the transfer as well.
+
+CREATE STRIPE-BUF  $800 ALLOT
+$800  CONSTANT STRIPE-LEN
+
+: FILL-STRIPES  ( run -- )
+    STRIPE-LEN 0 DO           ( run )
+        I OVER / 7 AND        ( run colour )
+        STRIPE-BUF I + C!     ( run )
+    LOOP
+    DROP ;
+
+: STRIPES  ( run -- )
+    FILL-STRIPES
+    LAYER0 CLS
+    .( Sending ) STRIPE-LEN . .( bytes from ) STRIPE-BUF HEX U. DECIMAL
+    .( to port $FE [border] ) CR
+    .( again and again: [BREAK] to stop. ) CR
+    BEGIN
+        STRIPE-BUF $FE STRIPE-LEN DMA-OUT
+        ?TERMINAL
+    UNTIL
+    $5C48 C@ 8 / .BORDER      \ BORDCR still holds the colour set before
+    LAYER12 1 .PAPER ;
 
 : .DEMO-OUT
-    CR
-    .( Sending ) TEST-LEN . .( bytes from ) TEST-SRC HEX . DECIMAL
-    DECIMAL .( to port $FE [border] ) CR
-    TEST-SRC $FE TEST-LEN DMA-OUT
-    .( Done. [Border color affected if on real hardware.] ) CR ;
+    32 STRIPES ;
 
 \ =========================================================================
 \ 4. I/O to Memory: DMA-IN reads port bytes into memory
@@ -138,7 +207,7 @@ $10   CONSTANT IN-LEN
 : .DEMO-IN
     CR
     .( Reading ) IN-LEN . .( bytes from port $FE [keyboard]  ) CR
-    .( into memory at ) IN-DEST HEX . DECIMAL CR
+    .( into memory at ) IN-DEST HEX U. DECIMAL CR
     $FE IN-DEST IN-LEN DMA-IN
     .( Done. ) CR ;
 
@@ -160,12 +229,13 @@ $10   CONSTANT IN-LEN
 : DEMO
     .DEMO-COPY
     .DEMO-FILL
-    .DEMO-OUT
-    .DEMO-IN ;
+    .DEMO-IN
+    .DEMO-OUT ;         \ last: runs until [BREAK]
 
 CR
 .( Type:  DEMO    to run all demonstrations. ) CR
 .( or:     .DEMO-COPY / .DEMO-FILL / .DEMO-OUT / .DEMO-IN  individually. ) CR
+.( or:     n STRIPES  for bands of n bytes, e.g. 256 STRIPES ) CR
 .( or:     NEWTASK  to unload this tutorial. ) CR
 
 \ =========================================================================
@@ -183,11 +253,13 @@ CR
 \   2. Use DUMP to verify that TEST-DEST contains a copy of TEST-SRC
 \      (both hold $55 bytes after .DEMO-COPY).
 \   3. Use DUMP to verify that FILL-DEST is filled with $AA bytes.
-\   4. Observe no crashes when DMA-OUT or DMA-IN are called (port I/O effects
-\      are hardware-dependent and not easily visible).
+\   4. .DEMO-OUT (32 STRIPES) must show eight-colour bands in the border
+\      until [BREAK], then restore the border colour and LAYER12. DMA-IN
+\      must return without crashing (its port effect is not visible).
 \   5. Load/unload the tutorial multiple times: NEWTASK should restore the
 \      dictionary and allow 054 TUTORIAL to reload successfully.
 \
-\ Status: DMA library **NOT YET VERIFIED on CSpect or real hardware**.
-\          Byte-level register traces from the emulator can confirm WR0-WR6
-\          sequences, but real data transfer verification requires CSpect.
+\ Status (2026-10-02): on real hardware NEEDS DMA and DEMO run without
+\          crashing, and 32 STRIPES draws the border bands at 28 MHz
+\          (item 4, see section 3 and tutorial/054-stripes.png); the DUMP
+\          checks (items 2-3) and the 3.5 MHz run still await confirmation.

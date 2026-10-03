@@ -11,7 +11,7 @@
 : HIDE-WORD ( a -- )
   ' >BODY LFA CONTEXT @
   BEGIN
-    @ PFA LFA 2DUP = OVER @ AND
+    @ FAR PFA LFA 2DUP = OVER @ AND
   UNTIL
 ;
 ; DECIMAL

@@ -780,3 +780,22 @@ keeps all 9 bits of the line; lib/bmp-load.f fixed a wrong height.
 Help: "Available after NEEDS ..." added to the pages of inc/ words; DMA pages
 rewritten. Docs: doc/ONBOARDING-2026-09-24.md replaces REVERSE.md (earlier
 versions kept, dated). VS Code extension 0.1.3 is included under tools/.
+
+
+\ build 20260926
+Core binary CHANGED in this build (heap pointers).
+The ?HEAP_PTR threshold is gone: it was a leftover of the 1.6 to 1.7
+transition that guessed a heap address from a physical one by a numeric
+threshold, so a session with HP at $6000 or above made the whole
+dictionary unsearchable. Now the cells of a header always hold a heap
+address and an nfa on the stack is always already resolved; ID., PFA and
+<NAME follow the rule strictly (e.g. LFA @ FAR ID.). src/F18e.f is aligned
+and verified by /check-f18e.
+New library lib/DMA.f (NEEDS DMA): zxnDMA support on port $6B, with
+DMA-COPY DMA-FILL DMA-OUT DMA-IN, the command and status words and the
+low-level DMA! DMA@ DMA-W; NO-DMA removes the module. Hex literals use the
+$ prefix and BASE is never changed. Tutorial 054 is now loadable and gains
+n STRIPES, border bands sent to port $FE by DMA-OUT, checked on a real
+Next at 28 MHz; the DUMP checks of its checklist are still to be confirmed.
+inc/.border.f rewritten with $ literals. Help: the DMA pages now say
+"Available after NEEDS DMA"; new page for .BORDER.

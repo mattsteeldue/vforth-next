@@ -1,3 +1,5 @@
     LFA  pfa -- lfa
 
-Convert parameter address to LFA.
+Converts pfa to its lfa. Both are physical-addresses.
+The cell at lfa holds a heap-pointer: resolve it with @ FAR.
+See also CFA, NFA, PFA, >BODY, <NAME.

@@ -1,0 +1,13 @@
+    DMA  --
+
+Module marker of the zxnDMA library (port $6B). Does
+nothing: it is defined last, so NEEDS DMA succeeds only
+after a complete load. NO-DMA removes the whole module.
+
+Transfers:  DMA-COPY DMA-FILL DMA-OUT DMA-IN
+Commands:   DMA-DISABLE DMA-ENABLE DMA-LOAD DMA-CONTINUE
+            DMA-RESET DMA-RESET-STATUS
+Status:     DMA-STATUS DMA-DONE?
+Low level:  DMA! DMA@ DMA-W
+
+Available after NEEDS DMA

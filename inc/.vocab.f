@@ -7,7 +7,7 @@
 : .VOCAB    ( voc-link -- ) 
     BASE @ SWAP HEX
     DUP U. 
-    CELL- CELL-
+    CELL-                   \ vocabulary's pfa
     NFA ID.
     BASE !
 ;

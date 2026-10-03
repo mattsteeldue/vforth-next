@@ -6,5 +6,4 @@ mode. The source address remains fixed, while the
 destination address increments after each byte. This
 operation blocks the CPU until completion.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

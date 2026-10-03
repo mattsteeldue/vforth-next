@@ -1,3 +1,6 @@
-    ID.  a --
+    ID.  nfa --
 
-Print word name at NFA address a.
+Print the name of the word at nfa. nfa is a resolved
+address in the MMU7 window, as given by LATEST, NFA
+or <NAME. A link read from an LFA is a heap-pointer:
+resolve it first, e.g.  LFA @ FAR ID.

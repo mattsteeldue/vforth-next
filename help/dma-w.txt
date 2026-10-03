@@ -1,0 +1,6 @@
+    DMA-W  n --
+
+Writes the 16-bit value n to the zxnDMA port $6B as two
+bytes, low byte first, as an address or length parameter.
+
+Available after NEEDS DMA

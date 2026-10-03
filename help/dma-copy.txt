@@ -6,5 +6,4 @@ Both source and destination addresses increment after each
 byte is transferred. The operation blocks the CPU until
 completion.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

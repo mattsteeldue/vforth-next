@@ -28,7 +28,7 @@ NEEDS (H")
 \ : DEB-CFA ( pfa -- )  S" Cfa: " TYPE CFA DUP U. 2 CFA NEGATE + @ U. ;
 
 : DEB-NFA ( pfa -- )  ." Nfa: "      NFA DUP U. C@ . CR ;
-: DEB-LFA ( pfa -- )  ." Lfa: "      LFA DUP U. @ DUP U. ID. CR ;
+: DEB-LFA ( pfa -- )  ." Lfa: "      LFA DUP U. @ DUP U. FAR ID. CR ;
 : DEB-CFA ( pfa -- )  ." Cfa: "      CFA DUP U. 2 CFA NEGATE + @ U. ;
 
 

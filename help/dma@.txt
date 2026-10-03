@@ -1,0 +1,6 @@
+    DMA@  -- b
+
+Reads one byte from the zxnDMA port $6B: the next
+register selected by the read mask (see DMA-STATUS).
+
+Available after NEEDS DMA

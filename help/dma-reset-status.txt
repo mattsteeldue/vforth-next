@@ -4,5 +4,4 @@ Sends the WR6 reset-status command to the DMA controller,
 clearing the transfer status flags without affecting other
 configuration.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

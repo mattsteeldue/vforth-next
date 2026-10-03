@@ -1,3 +1,4 @@
-    -FIND  a -- cfa b 1 | a 0
+    -FIND   --  xt b tf  |  ff
 
-Find word or return address if not found.
+Parse the next word from the input stream and search its definition. 
+If found, return xt, length-byte b and a tf. Otherwise only a ff.

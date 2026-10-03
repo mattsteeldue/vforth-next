@@ -6,14 +6,14 @@
 \ disassemble any word, and inspect name/link/code fields directly.
 \
 \ Core words (no NEEDS):
-\   '     ( -- xt )      look up the follwing word; return its xt 
+\   '     (     -- xt )   look up the following word; return its xt 
 \   <NAME (  xt -- nfa )  xt to Name Field Address (NFA) on Heap
 \   >BODY (  xt -- pfa )  xt to Parameter Field Address (PFA)
 \   CFA   ( pfa -- xt  )  pfa to xt (or Code Field Address)
-\   LFA   ( pfa -- lfa ) pfa to Link Field Address (LFA)
-\   NFA   ( pfa -- nfa ) pfa to Name Field Address (NFA)
-\   PFA   ( nfa -- pfa ) nfa to Parameter Field Address (PFA)
-\   ID.   ( nfa -- )     print the name at NFA
+\   LFA   ( pfa -- lfa )  pfa to Link Field Address (LFA)
+\   NFA   ( pfa -- nfa )  pfa to Name Field Address (NFA)
+\   PFA   ( nfa -- pfa )  nfa to Parameter Field Address (PFA)
+\   ID.   ( nfa --     )  print the name at NFA
 \
 \ Words requiring NEEDS:
 \   WORDS   ( -- )       list all words in CONTEXT vocabulary
@@ -45,7 +45,7 @@ NEEDS SEE
 \
 \ ' name ( -- xt )
 \   Returns the xt (Code Field Address) of name.  
-\   When compiled, it delays it operation at run-time when it expects a name
+\   When compiled, it delays its operation at run-time when it expects a name
 \   from the current input source.
 \   Unlike ['] which is immediate and works inside definitions and compiles 
 \   a literal of such execution token.
@@ -65,10 +65,10 @@ NEEDS SEE
 \ ===========================================================================
 \
 \ Each dictionary entry has some fields relative to its xt:
-\   <NAME ( cfa -- nfa )  Name Field Address: length+flags byte then name
-\   >BODY ( cfa -- pfa )  Parameter Field Address: its definition
-\   LFA ( pfa -- lfa )  Link Field Address: points to the previous name entry
-\   ID. ( nfa -- )      print the name stored at nfa
+\   <NAME (  xt -- nfa )  Name Field Address: length+flags byte then name
+\   >BODY (  xt -- pfa )  Parameter Field Address: its definition
+\   LFA   ( pfa -- lfa )  Link Field Address: points to the previous name entry
+\   ID.   ( nfa --     )  print the name stored at nfa
 \ 
 \   n.b. vForth namespace is kept in heap.
 \
@@ -118,7 +118,7 @@ CR
 \
 \ Example: print name and link of the word before DUP in the dictionary.
 
-: .WORD-INFO  ( cfa -- )
+: .WORD-INFO  ( xt -- )
     DUP  <NAME ID.  SPACE
     >BODY LFA  @ DUP IF  FAR ID.  ELSE  DROP ." (end)"  THEN  CR ;
 

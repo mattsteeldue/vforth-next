@@ -5,5 +5,4 @@ all configuration and internal state. Useful for recovering
 from error conditions or cleaning up before a new sequence
 of transfers.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

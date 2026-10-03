@@ -507,18 +507,9 @@ Needs_11:
                 dw      DUP, FENCE, FETCH       // dup fence @ 
                 dw      ULESS, LIT, 21, QERROR  // u< 21 ?error
                 dw      DUP, NFA                // dup nfa 
-                
-            //  dw      DUP
-            //  dw      LIT, $E000, LESS
-            //  dw      MMU7_FETCH, ONE, EQUALS
-            //  dw      OR_OP, NOT_OP
-            //  dw      ZBRANCH
-            //  dw      Forget_then - $
-
                 dw      MMU7_FETCH, FROM_FAR
                 dw      HP, STORE
                 dw      DUP, CFA, CELL_MINUS
-// Forget_then:    
                 dw      DP, STORE               // dp !
                 dw      LFA, FETCH              // lfa @
                 dw      CONTEXT, FETCH, STORE   // context @ !
@@ -545,12 +536,8 @@ Needs_11:
                 dw      DUP, FETCH, CURRENT, STORE, CELL_PLUS
                 dw      DUP, FETCH, CONTEXT, STORE, CELL_PLUS
                 dw      DUP, FETCH
-            //  dw      DUP, QHEAPP
-            //  dw      ZBRANCH
-            //  dw      Marker_then - $
-                dw          DUP, HP, STORE
-                dw          PFA, CFA, CELL_MINUS
-// Marker_then:
+                dw      DUP, HP, STORE          // restore heap-pointer
+                dw      FAR, PFA, CFA, CELL_MINUS
                 dw      DP, STORE, CELL_PLUS
                 dw      FETCH, CURRENT, FETCH, STORE
                 dw      EXIT

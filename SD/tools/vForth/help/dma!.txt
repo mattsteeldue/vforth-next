@@ -1,0 +1,6 @@
+    DMA!  b --
+
+Writes byte b to the zxnDMA port $6B: a register byte,
+a WR6 command or one of their parameters.
+
+Available after NEEDS DMA

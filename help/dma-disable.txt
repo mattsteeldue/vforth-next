@@ -5,5 +5,4 @@ must be done before uploading a new DMA program to prevent
 the controller from executing a partially configured
 transfer.
 
-Under development: not yet loadable by NEEDS.
-Load it with  INCLUDE dev/DMA.f
+Available after NEEDS DMA

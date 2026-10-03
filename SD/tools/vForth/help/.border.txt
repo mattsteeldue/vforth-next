@@ -1,0 +1,6 @@
+    .BORDER  b --
+
+Sets border color to b (0-7) and keeps the
+system variable BORDCR aligned.
+
+Available after NEEDS .BORDER
