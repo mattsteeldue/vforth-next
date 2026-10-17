@@ -1,0 +1,4 @@
+#program 24-the-system-variables-03
+10 PRINT AT 5,10;"Hello";
+20 LET c=33-PEEK 23688: LET r=24-PEEK 23689
+30 PRINT AT 0,0;r,c

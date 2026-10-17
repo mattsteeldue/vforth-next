@@ -1,0 +1,3 @@
+#program 15-colours-03
+10 PRINT AT 5,3;PAPER 6;INK 1;"*"
+20 PRINT AT 6,0;ATTR (5,3)

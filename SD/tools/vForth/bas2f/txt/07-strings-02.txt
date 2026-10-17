@@ -1,0 +1,5 @@
+#program 07-strings-02
+10 LET n$="Spectrum"
+20 LET g$="Hello, "+n$+"!"
+30 PRINT g$
+40 PRINT LEN g$

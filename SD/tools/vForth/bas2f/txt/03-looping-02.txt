@@ -1,0 +1,4 @@
+#program 03-looping-02
+10 FOR n=10 TO 1 STEP -1: PRINT n;" ";: NEXT n
+20 PRINT
+30 FOR n=1 TO 9 STEP 3: PRINT n;" ";: NEXT n

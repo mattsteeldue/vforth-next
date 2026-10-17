@@ -1,0 +1,2 @@
+#program 18-sound-and-music-03
+10 PLAY "c","e","g"

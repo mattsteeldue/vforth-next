@@ -1,0 +1,4 @@
+#program 22-in-out-and-the-next-registers-02
+10 PRINT "Press SPACE"
+20 IF %IN 32766&1 THEN GO TO 20
+30 PRINT "Thank you"

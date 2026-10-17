@@ -1,0 +1,3 @@
+#program 06-expressions-03
+10 %i=7: %p=1: %b=1: %f=0
+20 PRINT %(f<<7)|(b<<6)|(p<<3)|i

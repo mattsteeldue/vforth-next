@@ -1,0 +1,3 @@
+#program 12-conditions-02
+10 INPUT a,b
+20 PRINT (a AND NOT a<b)+(b AND a<b)

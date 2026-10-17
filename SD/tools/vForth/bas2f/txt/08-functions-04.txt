@@ -1,0 +1,5 @@
+#program 08-functions-04
+10 LET a$="ZX Spectrum Next"
+20 PRINT IN (a$," ")
+30 PRINT IN (a$,"N")
+40 PRINT IN (a$,"q")

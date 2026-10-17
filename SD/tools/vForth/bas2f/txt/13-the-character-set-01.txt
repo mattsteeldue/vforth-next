@@ -1,0 +1,4 @@
+#program 13-the-character-set-01
+10 FOR a=65 TO 90: PRINT CHR$ a;: NEXT a
+20 PRINT
+30 FOR a=32 TO 126: PRINT CHR$ a;: NEXT a

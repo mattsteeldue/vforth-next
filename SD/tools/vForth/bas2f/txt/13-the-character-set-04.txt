@@ -1,0 +1,2 @@
+#program 13-the-character-set-04
+10 PRINT "EVIL"<"evil"

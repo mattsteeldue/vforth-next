@@ -1,0 +1,7 @@
+#program 17-time-and-motion-03
+10 SPRITE PRINT 1
+20 FOR %x=32 TO 288 STEP 2
+30 SPRITE 0,%x,128,%x/8&1,1
+40 PAUSE 2
+50 NEXT %x
+60 SPRITE 0,0,0,0,0

@@ -1,0 +1,4 @@
+#program 09-mathematical-functions-02
+10 FOR y=0 TO 10 STEP 5
+20   PRINT y,1000*1.05^y
+30 NEXT y

@@ -1,0 +1,6 @@
+#program 25-using-machine-code-01
+10 CLEAR USR "A"-81
+20 LET addr=USR "A"-80
+30 FOR N=0 TO 3: READ byte: POKE addr+N,byte: NEXT N
+40 PRINT USR addr
+50 DATA 1,80,0,$C9
