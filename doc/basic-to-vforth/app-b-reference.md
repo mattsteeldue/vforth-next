@@ -92,7 +92,7 @@ comes before the word exists:
 10 0 DO                         \ => DO? Can't be executed.
 ```
 
-`T1` and `T2` are not defined: a definition that ends in an error
+`T1` and `T2` are left half-defined: a definition that ends in an error
 cannot be found afterwards. The third line is the opposite case, a word
 that only works inside a definition typed outside one.
 
@@ -103,8 +103,8 @@ T1                              \ => T1? is undefined.
 **A ROM error ends in BASIC.** Codes sent with `EMITC` are read by the
 ROM, as `PRINT` is, and a wrong argument raises a BASIC report: `K
 Invalid colour` after a wrong colour, `5 Out of screen` after an `AT`
-off the screen. The report names a line of the loader, not of your
-program, and `RUN` brings vForth back
+off the screen. The report names a line of the BASIC loader, not of your
+Forth program: in such a situation `RUN` brings vForth back
 ([Chapter 14](14-more-about-print-and-input.md) and
 [Chapter 15](15-colours.md)).
 
@@ -155,13 +155,20 @@ $FF .                           \ => 255
 **Bytes, words and long words.** A *word* of the manual, 16 bits, is a
 Forth *cell*: what `@` reads, what `!` stores and what `.` prints. A
 byte is read with `C@` and stored with `C!`. A *long word*, 32 bits, is
-a *double* cell: it is written with a dot (`100000.`) and printed with
-`D.`. A cell is printed with its sign by `.` and without by `U.`, which
-is why 65535 is also -1:
+a *double* cell: it is written with a punctuation mark among the
+digits, e.g. `100,000`, and printed with `D.`. Five marks are accepted,
+anywhere after the first digit and as many times as you like: the dot
+`.`, the comma `,`, the slash `/`, the hyphen `-` and the colon `:`, so
+a date, a time or a phone number is read as a double. A leading `-` is
+still the sign. A cell is printed with its sign by `.` and without by
+`U.`, which is why 65535 is also -1:
 
 ```forth
 -1 U.                           \ => 65535
 50000. 50000. D+ D.             \ => 100000
+100,000 D.                      \ => 100000
+12:30:45 D.                     \ => 123045
+-1,000 D.                       \ => -1000
 ```
 
 Setting a bit is `OR`, resetting it is `INVERT AND`, testing it is
@@ -230,7 +237,7 @@ NEEDS INVERT
 | `@1010`, `BIN 1010`, `1010b` | `%1010` | `@` is a word of its own. |
 | a word, 16 bits | a cell: `@`, `!`, `.` | `U.` without sign. |
 | a byte | `C@`, `C!` | |
-| a long word, 32 bits | a double: `100000.`, `D.` | |
+| a long word, 32 bits | a double: `100000.` or `100,000`, `D.` | |
 | setting, resetting a bit | `OR`, `INVERT AND` | `NEEDS INVERT`. |
 
 ## No equivalent
