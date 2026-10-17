@@ -1,0 +1,4 @@
+#program 23-the-memory-03
+10 FOR a=23552 TO 23559
+20   PRINT PEEK a;" ";
+30 NEXT a

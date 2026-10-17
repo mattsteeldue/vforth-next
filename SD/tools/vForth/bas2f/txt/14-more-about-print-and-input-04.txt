@@ -1,0 +1,6 @@
+#program 14-more-about-print-and-input-04
+5 POKE 23692,-1
+10 FOR n=1 TO 100
+20   PRINT n
+30   IF n/20=INT (n/20) THEN PRINT "Press a key": PAUSE 0
+40 NEXT n

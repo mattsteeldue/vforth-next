@@ -1,0 +1,7 @@
+#program 17-time-and-motion-04
+10 CLS: PRINT AT 10,10;"EARTHQUAKE!"
+20 FOR %n=1 TO 50
+30 LAYER AT %RND 8,%RND 8
+40 PAUSE 1
+50 NEXT %n
+60 LAYER AT 0,0

@@ -1,0 +1,9 @@
+#program 02-decisions-02
+10 INPUT "Score? ";s
+20 IF s>=90
+30   PRINT "excellent"
+40 ELSE IF s>=60
+50   PRINT "pass"
+60 ELSE
+70   PRINT "fail"
+80 ENDIF

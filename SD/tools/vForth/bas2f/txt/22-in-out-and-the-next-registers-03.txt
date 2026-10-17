@@ -1,0 +1,5 @@
+#program 22-in-out-and-the-next-registers-03
+10 FOR c=0 TO 7
+20   OUT 254,c: PAUSE 10
+30 NEXT c
+40 OUT 254,% PEEK 23624>>3&7

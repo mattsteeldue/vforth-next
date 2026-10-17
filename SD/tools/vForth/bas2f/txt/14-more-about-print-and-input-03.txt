@@ -1,0 +1,4 @@
+#program 14-more-about-print-and-input-03
+10 PAUSE 0: LET k$=INKEY$
+20 IF k$=CHR$ 13 THEN STOP
+30 PRINT k$;: GO TO 10

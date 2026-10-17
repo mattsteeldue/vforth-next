@@ -1,0 +1,6 @@
+#program 03-looping-04
+10 FOR i=1 TO 20
+20   IF i*i>50 THEN EXIT
+30   PRINT i*i;" ";
+40 NEXT i
+50 PRINT "done"

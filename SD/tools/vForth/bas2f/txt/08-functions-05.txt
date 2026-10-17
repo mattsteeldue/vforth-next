@@ -1,0 +1,5 @@
+#program 08-functions-05
+10 DEF FN l$(a$,n)=a$( TO n)
+20 DEF FN t$(a$)=a$(2 TO )
+30 PRINT FN l$("ZX Spectrum Next",4)
+40 PRINT FN t$("ZX Spectrum Next")

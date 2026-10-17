@@ -1,0 +1,7 @@
+#program 16-graphics-03
+10 LAYER 1,2: CLS
+20 FOR n=1 TO 65536
+30   LET r=INT (RND*65536)
+40   PLOT r-512*INT (r/512),32+INT (r/512)
+50 NEXT n
+60 PAUSE 0

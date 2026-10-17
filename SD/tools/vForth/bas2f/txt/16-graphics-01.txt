@@ -1,0 +1,5 @@
+#program 16-graphics-01
+10 FOR n=0 TO 255
+20   LET x=(n-128)/50
+30   IF x<>0 THEN LET y=88+30/x: IF y>=0 AND y<=175 THEN PLOT n,y
+40 NEXT n

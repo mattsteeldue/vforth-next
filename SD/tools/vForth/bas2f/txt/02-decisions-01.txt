@@ -1,0 +1,3 @@
+#program 02-decisions-01
+10 INPUT n
+20 IF n<0 THEN PRINT "negative": ELSE IF n>0 THEN PRINT "positive": ELSE PRINT "zero"

@@ -1,0 +1,9 @@
+#program 04-procedures-and-subroutines-03
+5 PRIVATE CLEAR
+10 FOR i=1 TO 3: PROC ticket(): NEXT i
+20 STOP
+30 DEFPROC ticket()
+40   PRIVATE t=0
+50   t+=1
+60   PRINT "Ticket ";t
+70 ENDPROC

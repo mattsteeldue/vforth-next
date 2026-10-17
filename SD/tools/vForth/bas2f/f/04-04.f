@@ -1,0 +1,26 @@
+\ 04-04.f -- the Forth side of a NextBASIC listing
+\ BASIC: bas2f/txt/04-procedures-and-subroutines-04.txt
+\ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
+\ written by util/guide-forth.py: edit the guide, not this file
+\
+\   10 DIM a(3)
+\   20 FOR i=1 TO 3: LET a(i)=i: NEXT i
+\   30 PROC double(a(),3)
+\   40 PRINT a(1);" ";a(2);" ";a(3)
+\   50 STOP
+\   60 DEFPROC double(REF t(),n)
+\   70   LOCAL i
+\   80   FOR i=1 TO n: LET t(i)=t(i)*2: NEXT i
+\   90 ENDPROC
+
+\ --- the translation
+
+\ 04-procedures-and-subroutines.md:379
+CREATE NUMS  1 , 2 , 3 ,
+: DOUBLE  ( addr n -- )
+    CELLS BOUNDS DO
+        I @ 2*  I !
+    2 +LOOP ;
+: .NUMS  ( -- )  NUMS 3 CELLS BOUNDS DO  I @ .  2 +LOOP ;
+NUMS 3 DOUBLE
+.NUMS                           \ => 2 4 6

@@ -1,0 +1,2 @@
+#program 15-colours-02
+10 PRINT "e";CHR$ 8;OVER 1;"'";OVER 0

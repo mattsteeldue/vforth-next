@@ -1,0 +1,5 @@
+#program 16-graphics-02
+10 FOR n=0 TO 255
+20   LET x=(n-128)/50
+30   IF x<>0 THEN PLOT n,88+30*x*LN (ABS x)
+40 NEXT n

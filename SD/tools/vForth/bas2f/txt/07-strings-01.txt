@@ -1,0 +1,5 @@
+#program 07-strings-01
+10 LET a$="Spectrum"
+20 FOR n=1 TO LEN a$
+30   PRINT a$( TO n)
+40 NEXT n

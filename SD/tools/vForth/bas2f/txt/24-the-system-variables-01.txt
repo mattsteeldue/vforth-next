@@ -1,0 +1,4 @@
+#program 24-the-system-variables-01
+10 POKE 23561,15: POKE 23562,2
+20 INPUT "Hold a key: ";a$
+30 POKE 23561,35: POKE 23562,5

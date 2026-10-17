@@ -1,0 +1,2 @@
+#program 06-expressions-05
+10 PRINT 24*60*60

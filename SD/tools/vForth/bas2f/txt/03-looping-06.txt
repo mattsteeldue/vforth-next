@@ -1,0 +1,6 @@
+#program 03-looping-06
+10 LET n=1000: LET c=0
+20 REPEAT
+30   LET n=INT (n/2): LET c=c+1
+40 REPEAT UNTIL n=0
+50 PRINT c

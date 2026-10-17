@@ -1,0 +1,4 @@
+#program 12-conditions-03
+10 INPUT "Net price? ";n
+20 INPUT "Zero rated (y/n)? ";v$
+30 PRINT n*(1.15 OR v$="y")

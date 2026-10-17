@@ -1,0 +1,3 @@
+#program 12-conditions-06
+10 INPUT a,b,c
+20 IF a<>b AND a<>c THEN PRINT "neither": ELSE PRINT "one of them"

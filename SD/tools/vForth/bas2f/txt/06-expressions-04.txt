@@ -1,0 +1,4 @@
+#program 06-expressions-04
+10 %a=50000
+20 PRINT %a/2
+30 PRINT % SGN {a/2}

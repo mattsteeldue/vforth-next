@@ -1,0 +1,5 @@
+#program 18-sound-and-music-01
+10 FOR n=1 TO 8
+20   READ p: BEEP .25,p
+30 NEXT n
+40 DATA 0,2,4,5,7,9,11,12
