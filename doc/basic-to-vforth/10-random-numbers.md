@@ -210,8 +210,11 @@ zero, which `DIM` does by itself.
 ## Further reading
 
 - `HELP RND`, `HELP RANDOMIZE`, `HELP RANDOM`, `HELP CHOOSE`.
+- Tutorial `068` -- random numbers: both generators, seeding from
+  FRAMES, ranges, why `MOD` is the wrong way to make one, a shuffled
+  deck, a chance in percent.
 - Tutorial `051` and tutorial `056` use `RANDOM` and `CHOOSE` in
-  passing; no tutorial is devoted to random numbers yet.
+  passing.
 - Tutorial `008` -- `@` and `!` on system variables.
 - [Chapter 11](11-arrays.md) -- arrays, used here for the tally.
 - [Chapter 16](16-graphics.md) -- "A screen filled at random": the

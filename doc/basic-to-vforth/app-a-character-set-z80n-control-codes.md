@@ -131,6 +131,12 @@ here.
 165 EMITC 32 EMIT 255 EMITC     \ prints RND COPY
 ```
 
+That is the ROM's way, on Layer 0. On Layer 1,1 the game
+`demo/chomp-chomp/chomp-chomp.f` draws codes 165 to 169 as five more
+UDGs, `V` to `Z`, from a longer table: see "More than 21 UDGs" in
+[Chapter 13](13-the-character-set.md). Codes past 169 have not been
+tried there.
+
 Forth source has no tokens: a word is typed letter by letter, and `RND`
 in a vForth program is three letters, the name of a word of its own
 ([Chapter 10](10-random-numbers.md)).

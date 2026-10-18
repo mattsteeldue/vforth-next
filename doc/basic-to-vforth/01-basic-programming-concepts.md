@@ -444,6 +444,7 @@ Note where the test is: in BASIC the division itself raises the report and
 
 ## Further reading
 
+- Tutorial `074` -- coming from BASIC: this guide in brief, on the SD card.
 - Tutorial `001` -- the stack, arithmetic and `.`: the first thing to read.
 - Tutorial `005` -- `:` and `;`, `CONSTANT`, `VARIABLE`, `VALUE`, `FORGET`.
 - Tutorial `003` -- output: `.`, `."`, `EMIT`, `CR`, `.R`, number bases.

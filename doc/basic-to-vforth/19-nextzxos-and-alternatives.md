@@ -172,11 +172,11 @@ be one: `.vforth`.
 | wildcards | `WILDCARD *.F` before `DIR` | Stays in force for later `DIR`s. |
 | `MKDIR`, `RMDIR` | `MAKEDIR path`, `REMOVEDIR path` | `NEEDS` each. |
 | `CD`, `PWD` | `CD path`, `PWD` | `NEEDS` before `CD`. |
-| `PWD` into a string | `buf F_GETCWD` | Zero-terminated. |
+| `PWD` into a string | `buf F_GETCWD` | Zero-terminated: [Chapter 7](07-strings.md). |
 | `COPY f1 TO f2` | -- | A loop of `F_READ` and `F_WRITE`. |
 | `COPY f TO SCREEN$` | `VIEW file` | `NEEDS VIEW`. |
 | `ERASE f` | `UNLINK file` | No wildcards, no question asked. |
-| `MOVE f1 TO f2` | `src dest F_RENAME` | Names zero-terminated. |
+| `MOVE f1 TO f2` | `src dest F_RENAME` | Names zero-terminated: `," name"` then `1+`, [Chapter 7](07-strings.md). |
 | `MOVE f TO "+p"` | `F_CHMOD` | |
 | `REMOUNT` | `REMOUNT` | Closes the block file too. |
 | default drive | the drive letter in the path | `M_GETSETDRV` for the default. |

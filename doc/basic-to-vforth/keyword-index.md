@@ -99,7 +99,7 @@ How to read the second column:
 | `IF x THEN y` | `x IF y THEN` | [2](02-decisions.md) |
 | `IF x THEN y: ELSE z` | `x IF y ELSE z THEN` | [2](02-decisions.md) |
 | `IN n` | `n P@` | [22](22-in-out-and-the-next-registers.md) |
-| `IN (s$,m$)` | -- | [8](08-functions.md) |
+| `IN (s$,m$)` | `SEARCH`, `NEEDS SEARCH` | [8](08-functions.md) |
 | `INK n` | `n .INK`, `NEEDS .INK` | [15](15-colours.md) |
 | `INKEY$` | `KEY` (waits), `KEY-SCAN`, `NEEDS KEYBOARD` | [14](14-more-about-print-and-input.md) |
 | `INPUT v` | `ACCEPT`, then `EVALUATE` or `>NUMBER` | [14](14-more-about-print-and-input.md) |

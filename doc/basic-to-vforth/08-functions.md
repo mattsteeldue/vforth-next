@@ -14,8 +14,8 @@ built-in functions fare differently. `ABS` is there. `SGN` is one line.
 `LEN` vanishes, because the length of a string is already on the stack.
 `STR$` and `VAL` exist as mechanisms rather than as words: the pictured
 numeric output that makes a string from a number, and `>NUMBER` and
-`EVALUATE` for the way back. `IN`, the search inside a string, has to be
-written.
+`EVALUATE` for the way back. `IN`, the search inside a string, is
+`SEARCH` with a subtraction after it.
 
 ## What changes
 
@@ -235,10 +235,13 @@ A text that is not good Forth stops with the usual error, as it would
 from the keyboard. And since a Forth text has no quotes around its
 numbers, the doubled and quadrupled quotes of `VAL$` are not needed.
 
-**`IN` has to be written, and the name is taken.** vForth has no word
-that searches a string. Looking for one character is a short loop, shown
-in "Side by side"; looking for a substring, backwards, or with a wildcard
-are longer ones. The other `IN` of BASIC, the one that reads a port, is
+**`IN` is `SEARCH`, and the name is taken.** `NEEDS SEARCH` gives the
+word of standard Forth that looks for a string inside another; `NEEDS
+SCAN` gives the one that looks for a single character. Neither gives a
+position: they leave the rest of the string, from what was found on, and
+the position is the length lost on the way, plus one. Both are in "Side
+by side". Looking backwards or with a wildcard is still to be written.
+The other `IN` of BASIC, the one that reads a port, is
 `P@`: [Chapter 22](22-in-out-and-the-next-registers.md).
 
 **The integer functions are the ordinary ones.** NextBASIC has fast
@@ -273,7 +276,7 @@ to 3.
 | `VAL a$` (a number) | `0 0 a u >NUMBER` | `NEEDS >NUMBER`. Stops at the first non-digit. |
 | `VAL a$` (an expression) | `a u EVALUATE` | `NEEDS EVALUATE`. The text is Forth. |
 | `VAL$ a$` | `a u EVALUATE` | |
-| `IN (s$,m$)` | -- | `POS`, below, finds one character. |
+| `IN (s$,m$)` | `SEARCH` | `NEEDS SEARCH`. `POS$`, below, gives the position; `POS` for one character. |
 | `SGN x` | `DUP 0< SWAP 0> -` | `SGN` is defined here. |
 | `ABS x` | `ABS` | |
 | `INT x` | nothing | Integers only. |
@@ -356,28 +359,44 @@ which is the safe way to use it.
 ```
 
 ```forth
-: /STRING  ( a u k -- a2 u2 )  ROT OVER + -ROT - ;
+NEEDS SCAN
 : POS  ( a u c -- n )
-    >R  OVER SWAP
-    BEGIN  DUP WHILE
-        OVER C@ R@ = IF
-            DROP SWAP - 1+  R> DROP EXIT
-        THEN
-        1 /STRING
-    REPEAT
-    R> DROP  2DROP DROP 0 ;
+    >R TUCK R> SCAN NIP
+    DUP IF  - 1+  ELSE  NIP  THEN ;
 : MACHINE  ( -- a u )  S" ZX Spectrum Next" ;
 MACHINE BL POS .                \ => 3
 MACHINE CHAR N POS .            \ => 13
 MACHINE CHAR q POS .            \ => 0
 ```
 
-`POS` is the loop of Chapter 7 that chops the first character off until
-the string is empty, with a test in the middle. The character looked for
-waits on the return stack; the starting address stays at the bottom, so
-that when the character is found the difference between the two addresses
-is its position. `/STRING` is the same word as in Chapter 7. `BL` is the
-code of the space and `CHAR N` the code of the letter N.
+`SCAN` chops the first character off, as the loops of Chapter 7 do, until
+the string is empty or begins with the character looked for. `TUCK` keeps
+a copy of the length below the address, so that what is left at the end
+is the two lengths, before and after: their difference, plus one, is the
+position. An empty rest means the character is not there, and the answer
+is 0. `BL` is the code of the space and `CHAR N` the code of the letter N.
+
+`IN` takes a string as its second argument, not only a character.
+`SEARCH` is the same idea for a string. It leaves a flag as well:
+when nothing is found it gives back the whole string, which a match at
+the very start would give too.
+
+```forth
+NEEDS SEARCH
+: POS$  ( a u a2 u2 -- n )
+    2OVER NIP >R  SEARCH
+    IF  NIP R> SWAP - 1+  ELSE  2DROP R> DROP 0  THEN ;
+: BRAND  ( -- a u )  S" Spectrum" ;
+: QUERY$  ( -- a u )  S" next" ;
+MACHINE BRAND POS$ .            \ => 4
+MACHINE QUERY$ POS$ .           \ => 13
+QUERY$ MACHINE POS$ .           \ => 0
+```
+
+`SEARCH` leaves the rest of the string from the match on, so `POS$`
+keeps the first length on the return stack for the subtraction. Like
+`COMPARE`, it does not tell capitals from small letters at start-up:
+"next" is found in "Next". After `CASEON` it does.
 
 **`LEFT$`, `RIGHT$`, `MID$`, `TL$`.** The functions other BASICs have,
 which the manual suggests writing with `DEF FN`.
@@ -390,6 +409,7 @@ which the manual suggests writing with `DEF FN`.
 ```
 
 ```forth
+NEEDS /STRING
 : LEFT$   ( a u n -- a u2 )   MIN ;
 : RIGHT$  ( a u n -- a2 u2 )  OVER MIN >R  + R@ -  R> ;
 : MID$    ( a u from n -- a2 u2 )  >R 1- /STRING R> MIN ;
@@ -417,7 +437,7 @@ so they are safe on an empty string as well.
 - **`VAL` of an infix expression.** `EVALUATE` runs Forth: `"2*3"` has to
   be written `2 3 *`.
 - **`IN` with a start position, backwards, or with a wildcard.** To start
-  further on, give `POS` a slice. The rest is to be written.
+  further on, give `POS` or `POS$` a slice. The rest is to be written.
 - **`SQR` with decimals** on integers; an error for a negative argument.
 - **Checks on the argument.** No `Invalid argument`: a word given a wrong
   value gives a wrong result.

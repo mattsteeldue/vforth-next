@@ -258,7 +258,8 @@ arguments, written with mnemonics instead of numbers.
 ## Further reading
 
 - Tutorial `027` -- the assembler, `CODE`, `C;`, the register map.
-- Tutorial `057` -- dot commands, ROM calls and `M_P3DOS`.
+- Tutorial `073` -- `CALL#`, a ROM routine with more registers, `M_P3DOS`.
+- Tutorial `057` -- dot commands.
 - Tutorial `059` -- `ZAP`, a program that starts by itself.
 - Tutorial `049` -- interrupts.
 - `HELP CODE`, `HELP CALL#`, `HELP M_P3DOS`.

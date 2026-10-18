@@ -155,6 +155,7 @@ length. `SH` sends a line and drops the answer.
 - Tutorial `047` -- the UART words.
 - Tutorial `048` -- the Raspberry Pi: `RPI0`, `TERM`, the `#` command.
 - Tutorial `041` -- pages and `MMU7!`.
+- Tutorial `072` -- the real-time clock.
 - `HELP IDE_RTC`, `HELP M_GETDATE`, `HELP .NOW`, `HELP .FAT-DATE`,
   `HELP .FAT-TIME`, `HELP RPI0`, `HELP ASK`, `HELP SH`.
 - [Chapter 17](17-time-and-motion.md) -- the time, and `.NOW`.

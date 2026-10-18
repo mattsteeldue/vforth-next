@@ -10,7 +10,9 @@ Everything here carries over, and most of it gets simpler. `GO SUB` with
 `RETURN` and `DEFPROC` with `ENDPROC` are two ways of doing one thing, and
 Forth has one word for both: the colon definition of
 [Chapter 1](01-basic-programming-concepts.md). Parameters and results travel
-on the stack, as many as you like in either direction. `LOCAL` is mostly not
+on the stack, as many as you like in either direction, though the Forth
+way is to keep them few and the words short: *factoring*, splitting a
+word into small ones, is the habit to acquire. `LOCAL` is mostly not
 needed, and when it is there are named locals in a library; `PRIVATE` is a
 `VARIABLE`; `REF` is "pass the address"; recursion is `RECURSE`. What you
 have to relearn: parameters have no names, nobody checks how many you
@@ -170,9 +172,33 @@ or `EXIT`, and it cannot move a value across the `DO` or the `LOOP` of a
 loop, which keeps its counter in the same place. Break the rule and the word
 returns into nowhere.
 
+**Factor: small words, few arguments.** This is the spirit of Forth. A
+BASIC subroutine costs a line number and a `GO SUB`, so programs tend to
+have few of them, and long. A Forth word costs only a name, and calling it
+costs next to nothing, so programs are made of many small ones: a line or
+two each, two or three arguments at most, a name that says what the word
+does. Splitting a word into smaller ones is called *factoring*, and doing
+it again on a word that already works, *refactoring*. When a definition
+is hard to follow, the stack too deep to keep in mind, the usual remedy is
+not a name for each value but a name for each step:
+
+```forth
+: SQUARE  ( n -- n*n )  DUP * ;
+: 4*AC    ( a c -- 4ac )  * 4 * ;
+: DISC    ( a b c -- d )  ROT 4*AC  SWAP SQUARE  SWAP - ;
+1 5 6 DISC .                    \ => 1
+5 SQUARE .                      \ => 25
+```
+
+Each step can be tried at the prompt on its own, as `SQUARE` is on the
+last line, before the word that uses it is written: a small word is tested
+in a moment, a long one is debugged for an evening. And the small words
+are there to be reused: `SQUARE` will serve again.
+
 **Named locals are a library.** With three or four arguments the stack
-shuffling starts to hide the formula. `NEEDS LOCALS` adds `{`, which gives
-the arguments names:
+shuffling starts to hide the formula, and sometimes factoring does not
+help, because the values are all needed together. `NEEDS LOCALS` adds `{`,
+which gives the arguments names:
 
 ```forth
 NEEDS LOCALS
@@ -204,7 +230,7 @@ local hides the word, and it goes on hiding it at the prompt until the next
 Locals are private to their definition and a word that uses them can call
 itself, as a BASIC procedure can. They are not free: each call uses return
 stack, which is small, and each name uses memory for good. Reach for them
-when a word is hard to read without, not by habit.
+when a word is hard to read without and cannot be factored, not by habit.
 
 **`PRIVATE` is a `VARIABLE`.** A value that must survive from one call to
 the next is kept in a variable defined just before the word that uses it,

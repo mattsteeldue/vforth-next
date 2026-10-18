@@ -125,6 +125,22 @@ CREATE TODAY  ," January 1st"
 TODAY COUNT TYPE                \ => January 1st
 ```
 
+After the characters `,"` stores one byte more, a zero, which the length
+does not count. It is not wasted: NextZXOS wants its file names closed by
+a zero, and [Chapter 7](07-strings.md) tells the rest. Here a string is
+a table of bytes like any other, read with `C@`, and the zero at the end
+is a *sentinel*, the same trick as the `-1` a BASIC program puts at the
+end of its `DATA` to know when to stop reading. A loop that reads
+characters until it finds the zero needs no length:
+
+```forth
+: ZTYPE  ( a -- )  BEGIN  COUNT ?DUP WHILE  EMIT  REPEAT  DROP ;
+TODAY 1+ ZTYPE                  \ => January 1st
+```
+
+`TODAY 1+` skips the length byte. `COUNT` fetches a character and steps
+to the next one; the zero ends the loop.
+
 Strings of different lengths cannot be found by multiplying an index, so a
 list of strings is built as a table of *addresses*: see "Side by side".
 
@@ -151,7 +167,7 @@ tried, and thrown away with `FORGET`.
 | `RESTORE` | `0 p !` | `p` is your own index variable. |
 | `RESTORE n` | `k p !` | Or simply another table. |
 | number of items | `HERE t - 2 /` right after the table | Nothing checks it for you. |
-| `DATA "text"` | `CREATE s  ," text"` | Counted string, 255 characters at most. |
+| `DATA "text"` | `CREATE s  ," text"` | Counted string, 255 characters at most, closed by a zero. |
 | `READ a$: PRINT a$` | `s COUNT TYPE` | |
 | `DATA` of small numbers | `C,` to store, `C@` to fetch | One byte each, 0 to 255. |
 | a table that takes its index | `CREATE` ... `DOES>` | See `TABLE:` above. |
@@ -355,6 +371,9 @@ whole Screen in one go, and leaves all its values at once.
 
 ## Further reading
 
+- Tutorial `069` -- data tables: a table that knows its length, `READ`
+  and `RESTORE` with an "out of data" error, search by key, `ON` as a
+  table of words.
 - Tutorial `008` -- memory: `@`, `!`, `C@`, `C!`, `,`, `ALLOT`, `HERE`.
 - Tutorial `010` -- `CREATE` and `DOES>`: words that define tables.
 - Tutorial `023` -- records with named fields.

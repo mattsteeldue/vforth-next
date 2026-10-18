@@ -38,8 +38,9 @@ twice is an error, but nothing stops the program. Check the flag, or
 drop it knowingly.
 
 **Inside a definition, `F_OPEN`.** `OPEN<` works from the prompt only.
-A definition puts the name in `PAD` with `PAD"` and calls `F_OPEN`
-with a mode, the number that stands for `i>`, `o>` or `u>`:
+A definition puts the name in `PAD` with `PAD"`, closed by a zero as
+NextZXOS wants it ([Chapter 7](07-strings.md)), and calls `F_OPEN` with
+a mode, the number that stands for `i>`, `o>` or `u>`:
 
 ```forth
 NEEDS PAD"
@@ -288,10 +289,17 @@ FH F_CLOSE DROP
 **Printing on the printer, or into a file.**
 
 ```
+5 OPEN #3,"s"
 10 LPRINT "Squares"
 20 FOR i=1 TO 5: LPRINT i*i;" ";: NEXT i
 30 LPRINT
+40 CLOSE #3
 ```
+
+`LPRINT` writes to stream 3, and on a Next with no printer attached the
+program stops there. Line 5 sends stream 3 to the screen, so the
+listing can be tried anyway; remove it, and line 40, when a printer is
+there. `CLOSE #3` gives stream 3 back to the printer.
 
 <!-- no-test -->
 ```forth
@@ -302,8 +310,9 @@ FH F_CLOSE DROP
 ```
 
 `SQUARES` prints on the screen; the printer is chosen from outside,
-and the same word serves both. Any stream BASIC has opened works the
-same way. In BASIC, before `RUN` starts vForth (or after `BYE`, and
+and the same word serves both. With no printer, `3 SELECT` stops as
+`LPRINT` does: give `OPEN #3,"s"` in BASIC before `RUN`, as in line 5
+above. Any stream BASIC has opened works the same way. In BASIC, before `RUN` starts vForth (or after `BYE`, and
 `RUN` again), give the direct command `OPEN #13,"o>words.txt"`; then,
 in vForth, `13 SELECT WORDS VIDEO`; and back in BASIC `CLOSE #13`. The
 list of words is in `words.txt`. The wrapper program `Forth18.bas`
@@ -334,6 +343,8 @@ already holds the `OPEN #` and the `CLOSE #` in two comments.
 
 - Tutorial `042` -- file input and output: `PAD"`, `LOAD-BYTES`,
   `SAVE-BYTES`, `F_OPEN`, `F_READ`, the error numbers.
+- Tutorial `070` -- streams: `SELECT`, `VIDEO`, a word that prints
+  anywhere, a stream opened by BASIC.
 - Tutorial `003` -- output words, and the current stream.
 - Tutorial `031` -- screen control codes.
 - Tutorial `047` -- the UART.

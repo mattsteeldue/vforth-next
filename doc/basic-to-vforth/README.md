@@ -15,6 +15,10 @@ third edition: one chapter here for each chapter there, with the same number
 and title. References such as "p. 21" are page numbers of that manual's PDF.
 The manual itself is not quoted: keep it open next to this guide.
 
+The guide is not on the SD card. On the machine, tutorial 074
+(`NEEDS TUTORIAL`, then `074 TUTORIAL`) gives the ten main differences in
+brief, with an example each.
+
 Every chapter is a file of its own and has the same six parts:
 
 1. **In short** -- how much of the chapter carries over.
@@ -49,7 +53,7 @@ Conventions used in the listings:
 The listings are on the SD card too, in the folder `bas2f` of vForth
 (`tools/vForth/bas2f`), one file per listing:
 
-- `bas2f/bas/NN-chapter-MM.bas` -- the BASIC listing, ready to `LOAD`
+- `bas2f/bas/NN-MM.bas` -- the BASIC listing MM of chapter NN, ready to `LOAD`
   from NextBASIC; `bas2f/txt/` has the same listing as plain text.
 - `bas2f/f/NN-MM.f` -- its Forth side, to load from vForth with
   `INCLUDE bas2f/f/NN-MM.f`. Each file is complete: it brings with it

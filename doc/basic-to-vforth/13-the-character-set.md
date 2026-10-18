@@ -147,7 +147,18 @@ CHAR B UDG@ SHAPES - .          \ => 8
 ```
 
 `UDG+` does not check that the letter is one of `A` to `U`: `CHAR Z UDG+`
-gives 169, which is a token.
+gives 169.
+
+**More than 21 UDGs.** The manual stops at 21, `A` to `U`, codes 144 to
+164, but nothing in the table says where it ends: it is just bytes, and
+a longer table holds more patterns. Developing the game
+`demo/chomp-chomp/chomp-chomp.f` showed that the screen goes on past
+`U`: code 165 is drawn from the 22nd pattern, `V`, and so on up to `Z`,
+169, the 26th. The game uses them for the small dot, a wall piece and
+three fruits. Two things have not been tried yet: codes past 169, and
+the same on Layer 0. The game draws on Layer 1,1 (`LAYER11`), and the
+48K ROM of Layer 0 prints its keywords from 165 on
+([Appendix A](app-a-character-set-z80n-control-codes.md)).
 
 **Control codes are sent with `EMITC`.** The codes below 32 do the same
 things as in BASIC, because the same ROM routine receives them: 8 moves
@@ -309,6 +320,8 @@ vForth's `COMPARE` gives 0 unless `CASEON` is on, as `E1` shows above.
 
 ## Further reading
 
+- Tutorial `071` -- block graphics computed from their quadrants, a UDG
+  table of your own, patterns mirrored and rotated.
 - Tutorial `003` -- `EMIT`, `CR`, `SPACE`, printing.
 - Tutorial `060` -- `EMIT` against `EMITC` among the idiomatic traps.
 - Tutorial `019` -- how `[UDG]` is built, as an example of `IMMEDIATE`.

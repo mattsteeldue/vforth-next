@@ -272,6 +272,33 @@ number, not a comparison, stands for a condition, make it a proper flag
 first with `0= 0=`. Logical `NOT` is `NOT`, which is the same word as
 `0=`; the bitwise one, BASIC's `!`, is `INVERT`. More in Chapter 12.
 
+**`OR` is safe, `AND` is the one to watch.** On any two numbers the
+result of `OR` is zero only when both are zero, so it already works as a
+logical OR for `IF`. `AND` is the one that needs flags. The BASIC habit
+of `*` for AND and `+` for OR does not carry over: cells are 16 bits and
+true is -1, so the product of two flags is 1, not a flag, and the trick
+fails on ordinary numbers:
+
+```forth
+1 2 OR .                        \ => 3
+-1 -1 * .                       \ => 1
+256 256 * .                     \ => 0
+1 -1 + .                        \ => 0
+```
+
+256 and 256 are both true, and so are 1 and -1, yet each pair gives 0.
+De Morgan's laws offer a cheaper way to a logical AND than turning both
+numbers into flags: "a and b" is "not (not a or not b)", and `0=` is
+"not". On the stack that reads `0= SWAP 0= OR 0=`:
+
+```forth
+1 2  0= SWAP 0= OR 0= .         \ => -1
+0 2  0= SWAP 0= OR 0= .         \ => 0
+```
+
+The other law, "not (a and b)" is "not a or not b", turns a condition
+the other way round when that reads better.
+
 **The signs have other jobs.** Three characters of this chapter are Forth
 words that do something else, and none of them complains when misused:
 
@@ -372,6 +399,7 @@ SAY                             \ => She said "hi"
 | `a<<n` `a>>n` | `a n LSHIFT` `a n RSHIFT` | By one place: `2*`, `2/` (`2/` keeps the sign). |
 | `a&b` `a\|b` `a^\|b` | `a b AND` `a b OR` `a b XOR` | |
 | `a AND b`, `a OR b` | `a b AND`, `a b OR` | The same words: bitwise, logical only on -1 and 0. |
+| `a AND b` on any numbers | `a b 0= SWAP 0= OR 0=` | De Morgan; `OR` needs no help. |
 | `NOT a` | `a NOT` or `a 0=` | Logical: zero gives -1, anything else 0. |
 | true = 1 | true = -1 | `NEGATE` or `1 AND` to get 1. |
 | `$E3` | `$E3` | Or `HEX E3 DECIMAL`. |

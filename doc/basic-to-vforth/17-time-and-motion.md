@@ -360,11 +360,11 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ROW,
 WALKER 255 + C@ .               \ => 227
 ```
 
-BASIC comes close: an item of `DATA` is an expression, so with a
-variable for each colour, `DATA h,h,o,o` reads their values. But the
-commas break the picture, and the loop of `READ` and `BANK POKE` is
-still to be written. In Forth the constant is the value, and `ROW,`
-takes it as it would take a number.
+BASIC comes close with a string for each row, a letter for each colour,
+as the listing below does. But there the letter is only a letter: the
+program looks it up in a table while it runs, pixel by pixel. In Forth
+the constant is the value, and `ROW,` takes it as it would take a
+number, once, while the source is read.
 
 The second pattern, the other half of the step, differs from the first
 in seven rows: the arms, which hang down, and the legs, which close.
@@ -401,22 +401,50 @@ the 256 bytes as they are (Chapter 19).
 **A sprite that walks.** The two patterns take turns while the man
 crosses the screen from left to right, two pixels at a time, and then
 disappears. It is always the same sprite, slot 0; what changes at every
-step is the pattern it shows:
+step is the pattern it shows. The BASIC program first draws the two
+patterns itself, from the same rows as the Forth source:
 
 ```
-10 SPRITE PRINT 1
-20 FOR %x=32 TO 288 STEP 2
-30 SPRITE 0,%x,128,%x/8&1,1
-40 PAUSE 2
-50 NEXT %x
-60 SPRITE 0,0,0,0,0
+10 GO TO 100
+20 FOR i=1 TO 16: FOR c=1 TO 16: FOR n=1 TO 6
+30 IF r$(i,c)=k$(n) THEN OUT 91,v(n)
+40 NEXT n: NEXT c: NEXT i: RETURN
+100 DIM r$(16,16): DIM v(6): LET k$="_hokst"
+110 FOR i=1 TO 6: READ v(i): NEXT i
+120 FOR i=1 TO 16: READ r$(i): NEXT i
+130 OUT 12347,0: GO SUB 20
+140 FOR j=1 TO 7: READ i: READ r$(i): NEXT j
+150 OUT 12347,1: GO SUB 20
+200 SPRITE PRINT 1
+210 FOR %x=32 TO 288 STEP 2
+220 SPRITE 0,%x,128,%x/8&1,1
+230 PAUSE 2
+240 NEXT %x
+250 SPRITE 0,0,0,0,0
+300 DATA 227,136,246,0,224,3
+310 DATA "______hhhh______","_____hhhhhh_____"
+320 DATA "_____hoooo______","_____ooook______"
+330 DATA "_____ooooooo____","______oooo______"
+340 DATA "_____sssssss____","____sssssssss___"
+350 DATA "___ss_sssss_ss__","__o___sssss___o_"
+360 DATA "______ttttt_____","_____ttt_ttt____"
+370 DATA "_____ttt__ttt___","___ttt_____ttt__"
+380 DATA "_kkk________kkk_","________________"
+400 DATA 8,"_____sssssss____",9,"_____sssssss____"
+410 DATA 10,"______sssss_____",12,"_______ttt______"
+420 DATA 13,"_______ttt______",14,"_______ttt______"
+430 DATA 15,"_______kkkkk____"
 ```
 
-Integer expressions are worked out strictly from left to right, so
-`%x/8&1` is `(x/8)&1`: the pattern changes every 8 pixels, 0, 1, 0, 1.
-The last flag 0 of line 60 makes the sprite invisible. Both programs
-expect the two patterns of the walker in the sprite RAM, as patterns 0
-and 1: in Forth, `WALKER 0 PATTERN!  WALKER2 1 PATTERN!` above.
+`OUT 12347,p` chooses pattern `p` on port `$303B`, and each `OUT 91`
+sends one pixel of it to port `$5B`, 256 for a pattern. Lines 300 to 380
+are the first pattern, with the six colours of `k$` in the same order
+in line 300; lines 400 to 430 are the seven rows of the second pattern
+that differ from the first. Integer expressions are worked out strictly
+from left to right, so `%x/8&1` is `(x/8)&1`: the pattern changes every
+8 pixels, 0, 1, 0, 1. The last flag 0 of line 250 makes the sprite
+invisible. The Forth word expects the two patterns already sent, by
+`WALKER 0 PATTERN!  WALKER2 1 PATTERN!` above.
 
 <!-- no-test -->
 ```forth
@@ -489,12 +517,12 @@ after `SPRITES-ON`: sprites on, under the border.
 pixels, in both directions at random, and then goes back in place:
 
 ```
-10 CLS: PRINT AT 10,10;"EARTHQUAKE!"
+10 LAYER 1,1: CLS: PRINT AT 10,10;"EARTHQUAKE!"
 20 FOR %n=1 TO 50
 30 LAYER AT %RND 8,%RND 8
 40 PAUSE 1
 50 NEXT %n
-60 LAYER AT 0,0
+60 LAYER AT 0,0: LAYER 0
 ```
 
 ```forth
@@ -505,8 +533,10 @@ NEEDS RND
 QUAKE  $26 REG@ .  $27 REG@ .   \ => 0 0
 ```
 
-BASIC moves the current layer, Layer 0 here; vForth writes the offset
-registers of the ULA, `$26` and `$27` in the table above. The ULA is
+BASIC moves the current layer, but not Layer 0: there `LAYER AT` stops
+with `Invalid mode`. `LAYER 1,1` is the same ULA screen, 256 by 192,
+seen as Layer 1, and `LAYER 0` at the end goes back. vForth writes the
+offset registers of the ULA, `$26` and `$27` in the table above. The ULA is
 also the screen vForth types on: `LAYER12` is a Layer 1 mode, so
 `QUAKE` shakes the prompt itself, with no change of mode and nothing to
 load. `8 RND` is `%RND 8`, from 0 to 7 ([Chapter 10](10-random-numbers.md)).
@@ -525,8 +555,8 @@ and the colour into register 65 (`$41`):
 ```
 10 BORDER 0: PAPER 7: CLS
 20 REG 67,0: REG 98,0: REG 97,0
-30 FOR %b=0 TO 31
-40 REG 96,232: REG 96,%b*8
+30 FOR %b=0 TO 38
+40 REG 96,%208+(b>>5): REG 96,%(b*8)&255
 50 REG 96,64: REG 96,16
 60 REG 96,65: REG 96,%b&7*32
 70 NEXT %b
@@ -537,23 +567,30 @@ and the colour into register 65 (`$41`):
 ```
 
 Each instruction is two bytes, the high one first, written to register
-96. A wait has bit 15 set and the line in the low bits: 232 is 128 plus
-twice 52, the position near the end of the line, so the colour changes
-in the right border and not part-way along a line. Index 16 is paper 0,
-the colour of the border here; `PAPER 7` keeps it out of the screen.
-`%b&7*32` is `(b&7)*32`, the three red bits of the colour, and 255,255
-ends the list. 192 in register 98 starts the Copper again at every
-frame; any key stops it, and the last line puts black back.
+96. A wait has bit 15 set, the position in bits 14-9 and the line in
+bits 8-0: 208 is 128 plus twice 40, a position in the flyback after the
+right border, so the colour changes out of sight and not part-way along
+a line. The Copper counts its lines from the top of the paper, not from
+the top of the picture: the top border comes last, lines 256 to 311 at
+50Hz, and a line above 255 needs bit 8, the `b>>5` added to 208. Hence
+39 bands and not 32: with the waits stopping at line 248, the last
+colour stayed on through the top border, a red block above the paper.
+Index 16 is paper 0, the colour of the border here; `PAPER 7` keeps it
+out of the screen. `%b&7*32` is `(b&7)*32`, the three red bits of the
+colour; since 256 is a multiple of eight lines, the band at the top of
+the picture is black. 255,255 ends the list. 192 in register 98 starts
+the Copper again at every frame; any key stops it, and the last line
+puts black back.
 
 <!-- no-test -->
 ```forth
 NEEDS COPPER  NEEDS LAYER0  NEEDS .PAPER  NEEDS .BORDER
 : BAND  ( b -- )                \ eight lines, a shade of red
-    DUP 8 * 52 COP-WAIT
+    DUP 8 * 40 COP-WAIT
     16 $40 COP-MOVE  7 AND 32 * $41 COP-MOVE ;
 : BARS  ( -- )
     LAYER0  7 .PAPER  0 .BORDER  CLS  0 $43 REG!
-    COP-STOP  32 0 DO  I BAND  LOOP  COP-HALT  COP-START
+    COP-STOP  39 0 DO  I BAND  LOOP  COP-HALT  COP-START
     KEY DROP
     COP-STOP  16 $40 REG!  0 $41 REG! ;
 ```
@@ -589,6 +626,8 @@ Copper's stand still.
 ## Further reading
 
 - Tutorial `032` -- `ms`, frame-synchronised loops, a stopwatch.
+- Tutorial `072` -- the real-time clock: the MS-DOS fields, the day of
+  the week, a clock on screen.
 - Tutorial `039` -- the first sprites, with the registers written by
   hand.
 - Tutorial `053` -- the sprite engine that became `NEEDS SPRITE`: slot

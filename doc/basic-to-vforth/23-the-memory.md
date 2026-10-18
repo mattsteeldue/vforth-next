@@ -87,8 +87,8 @@ BYTES BUF 3 CMOVE  BUF 2 + C@ . \ => 3
 
 **`PEEK$` is already done.** An address and a length are a string in
 Forth ([Chapter 7](07-strings.md)): `a n TYPE` prints it, with no copy.
-A string closed by a zero byte, as NextZXOS writes them, needs its
-length counted first:
+A string closed by a zero byte, as NextZXOS writes them
+([Chapter 7](07-strings.md)), needs its length counted first:
 
 ```forth
 : ZLEN  ( a -- n )  DUP BEGIN DUP C@ WHILE 1+ REPEAT SWAP - ;

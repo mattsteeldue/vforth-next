@@ -41,6 +41,41 @@ nothing. `S" text"` leaves `a n` and prints nothing. Both work inside
 a definition and at the prompt. `," text"` stores the text in the
 dictionary, after a `CREATE`, as in [Chapter 5](05-read-data-restore.md).
 
+**`.(` is `."` closed by a bracket.** `.( text)` does exactly what
+`." text"` does, at the prompt and inside a definition alike; only the
+end of the text is marked by `)` instead of `"`. It is the way to print
+a text that contains a quote:
+
+```forth
+.( Say "hi")                    \ => Say "hi"
+: SAY-HI  ( -- )  .( Say "hi") ;
+SAY-HI                          \ => Say "hi"
+```
+
+This is vForth's own. In standard Forth `.(` prints at once even inside
+a definition, while it is being compiled, and compiles nothing: a source
+written for another Forth may use it to show a message while it loads.
+
+**`,"` also closes the text with a zero.** It stores a byte with the
+length, the characters, and then a zero byte that the length does not
+count. Forth does not need it; NextZXOS does. Its services mark the end
+of a string with a zero instead of giving its length: the file name that
+`F_OPEN` and `F_RENAME` take ([Chapter 19](19-nextzxos-and-alternatives.md),
+[Chapter 20](20-channels-streams-drivers-and-windows.md)), the path that
+`F_GETCWD` writes. So one string made with `,"` serves both sides:
+`COUNT` gives Forth its `a n`, and the address plus 1 is the zero-closed
+string NextZXOS wants.
+
+```forth
+CREATE NAME  ," help/rnd.txt"
+NAME COUNT + C@ .               \ => 0
+NAME 1+ HERE 1 F_OPEN .  F_CLOSE .  \ => 0 0
+```
+
+`PAD"` does the same in `PAD`, for a name built inside a definition. The
+way back, from a string closed by a zero to `a n`, means counting up to
+the zero: see `ZLEN` in [Chapter 23](23-the-memory.md).
+
 The text of an `S"` is kept in the heap, a part of memory that vForth
 brings into view when it is needed. Use the pair straight away, as every
 example here does, or copy the text into a buffer of your own; and do not
@@ -87,11 +122,11 @@ a pair keeps at most 31 characters.
 **A slice is arithmetic, and it copies nothing.** To drop characters from
 the front, move the address forward and shorten the length by as much. To
 drop them from the end, shorten the length. That is all a slice is.
-vForth has no word for the first operation; in other Forths it is called
-`/STRING`, and it takes one line:
+The word for the first operation is `/STRING`, standard in Forth 2012
+and one line long, `ROT OVER + -ROT -` (`NEEDS /STRING`):
 
 ```forth
-: /STRING  ( a n k -- a2 n2 )  ROT OVER + -ROT - ;
+NEEDS /STRING
 PLANET 2 /STRING TYPE           \ => ectrum
 PLANET 3 MIN TYPE               \ => Spe
 ```
@@ -163,13 +198,14 @@ Six stars were on offer; four were asked for, starting at character 10.
 To pad with spaces instead, fill the part first: `BLANK` takes an address
 and a length and stores spaces there.
 
-**The modifiers are small loops.** `[+]`, `[-]`, `[<]` and `[>]` have one
-ready-made counterpart, `-TRAILING`, which shortens a pair to leave out
-the spaces at the end. `UPPER` converts one character. The rest is built
+**The modifiers are small loops.** `[+]`, `[-]`, `[<]` and `[>]` have two
+ready-made counterparts: `-TRAILING`, which shortens a pair to leave out
+the spaces at the end, and `BL SKIP` (`NEEDS SKIP`), which leaves out
+those at the start. `UPPER` converts one character. The rest is built
 from them, and each is a line or two: see "Side by side". Mind one
-difference: `-TRAILING` and a word that skips leading spaces only change
-the pair, as a slice does; a word that changes case writes into the
-string itself, so it must work on a copy in a buffer, not on a literal.
+difference: `-TRAILING` and `SKIP` only change the pair, as a slice
+does; a word that changes case writes into the string itself, so it
+must work on a copy in a buffer, not on a literal.
 
 **Comparing is `COMPARE`.** `a$=b$` and `a$<b$` are `COMPARE 0=` and
 `COMPARE 0<` (`NEEDS COMPARE`): see [Chapter 2](02-decisions.md). As
@@ -196,6 +232,7 @@ there for long.
 |---|---|---|
 | `"text"` | `S" text"` | `NEEDS S"`. Leaves `a n`. |
 | `PRINT "text"` | `." text"` | Inside a definition or at the prompt. |
+| `PRINT "say ""hi"""` | `.( say "hi")` | The same as `."`, closed by `)`. |
 | `PRINT a$` | `a n TYPE` | |
 | `a$` (a variable) | `CREATE A$ 32 ALLOT` | Counted string: length byte, then the text. Fixed room. |
 | the value of `a$` | `A$ COUNT` | Leaves `a n`. |
@@ -206,7 +243,7 @@ there for long.
 | `a$(n)` | `A$ n + C@` | The code of the character. From a pair: `DROP n 1- + C@`. |
 | `a$(m TO n)` | `a n m n SLICE` | Defined here. Copies nothing, checks nothing. |
 | `a$( TO n)` | `a n n MIN` | |
-| `a$(m TO )` | `a n m 1- /STRING` | Defined here. |
+| `a$(m TO )` | `a n m 1- /STRING` | `NEEDS /STRING`. |
 | `a$(m TO n)="text"` | `CMOVE` onto `A$ m +` | The length never changes, as in BASIC. |
 | `a$+b$` | `b n A$ $+!` | Appends to `A$`. Defined here. No check of room. |
 | `PRINT a$+b$` | `TYPE` twice | No new string is needed. |
@@ -215,12 +252,13 @@ there for long.
 | `a$[+]` | `UPPER` on each character | `UPCASE`, below. Changes the string in place. |
 | `a$[-]` | -- | `LOWCASE`, below. |
 | `a$[>]` | `a n -TRAILING` | Changes only the length of the pair. |
-| `a$[<]` | -- | `-LEADING`, below. |
+| `a$[<]` | `a n BL SKIP` | `NEEDS SKIP`. `-LEADING`, below, is the same loop. |
 | `a$[(f$,r$)]` | -- | See "No equivalent". |
 | `a$[~]`, `a$[^]` | -- | See "No equivalent". |
 | `{a$}` | -- | No tokens in Forth. |
 | `a$=b$` | `COMPARE 0=` | `NEEDS COMPARE`. Case is ignored at start-up. |
 | `a$<b$` | `COMPARE 0<` | |
+| `IN (a$,b$)` | `SEARCH` | `NEEDS SEARCH`. A position is a subtraction: Chapter 8. |
 | `3 Subscript wrong` | no error | A slice past the end shows other memory. |
 
 ## Side by side
@@ -348,7 +386,8 @@ NAME$ C@ .                      \ => 11
 ```
 
 `-LEADING` chops off the first character for as long as there is one and
-it is a space (`BL` is the code of the space). Trimming only changed the
+it is a space (`BL` is the code of the space). The same loop, for any
+character, is `SKIP` (`NEEDS SKIP`): `-LEADING` is `BL SKIP`. Trimming only changed the
 pair; then the text was copied to `NAME$`, and the copy was put in
 capitals where it lies. `BOUNDS` turns a pair into the two limits that
 `?DO` wants, so that `I` is the address of each character in turn.
@@ -405,7 +444,9 @@ Forth: a new string is made only when it has to be kept.
   its letters. Running a string as Forth is `EVALUATE`, in Chapter 8.
 - **Fractional repetition**, `a$*1.5`. Print the string once, then the
   first part of it with `MIN` on the length.
-- **Searching inside a string.** vForth has no ready-made word for it yet.
+- **Searching backwards, or with a wildcard.** `SEARCH` (`NEEDS
+  SEARCH`) looks for a string from the start, `SCAN` (`NEEDS SCAN`) for
+  one character; see Chapter 8.
 
 ## Further reading
 
@@ -417,7 +458,8 @@ Forth: a new string is made only when it has to be kept.
 - Tutorial `021` -- `EVALUATE`: a string run as Forth.
 - `HELP S"`, `HELP ,"`, `HELP COUNT`, `HELP TYPE`, `HELP CMOVE`,
   `HELP FILL`, `HELP BLANK`, `HELP -TRAILING`, `HELP UPPER`, `HELP BOUNDS`,
-  `HELP COMPARE`, `HELP PAD`.
+  `HELP COMPARE`, `HELP PAD`, `HELP /STRING`, `HELP SKIP`, `HELP SCAN`,
+  `HELP SEARCH`.
 - vForth manual, sections 2.12.6 "Memory" and 2.12.11 "Numbers &
   strings"; the "Heap memory facility" section for where `S"` keeps its
   text.

@@ -330,10 +330,12 @@ quiet, and the program stops only where it chooses. In vForth that
 - Tutorial `031` -- screen control: `INVERSE`, `OVER`, `PAGE`.
 - Tutorial `051` -- `NEEDS KEYBOARD`, scanning keys for a game.
 - Tutorial `021` -- `EVALUATE`.
+- Tutorial `071` -- codes 29 and 30, the size of the characters.
 - `HELP ."`, `HELP .R`, `HELP .AT`, `HELP .TAB`, `HELP ACCEPT`,
   `HELP KEY`, `HELP EVALUATE`, `HELP ?TERMINAL`, `HELP P@`.
 - [Chapter 13](13-the-character-set.md) -- control codes and `EMITC`.
-- Chapter 20 -- streams: printing somewhere else than the screen.
+- Chapter 20 and tutorial `070` -- streams: printing somewhere else
+  than the screen.
 
 <!-- nav -->
 ---

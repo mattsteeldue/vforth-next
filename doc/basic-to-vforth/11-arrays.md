@@ -313,6 +313,7 @@ prints it.
 - Tutorial `010` -- `CREATE ... DOES>`, with cell, byte, string and
   two-dimensional arrays.
 - Tutorial `023` -- `+FIELD`, for records whose fields differ.
+- Tutorial `069` -- tables that check their index.
 - `HELP CREATE`, `HELP ALLOT`, `HELP CELLS`, `HELP ERASE`, `HELP BLANK`,
   `HELP DOES>`, `HELP -TRAILING`.
 - Chapter 7 -- strings as `a n` pairs, `SLICE`.
