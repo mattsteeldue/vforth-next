@@ -1,5 +1,5 @@
 \ 08-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/08-functions-03.txt
+\ BASIC: bas2f/txt/08-03.txt
 \ guide: doc/basic-to-vforth/08-functions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -36,7 +36,7 @@ T3                              \ => 0
 
 \ --- the translation
 
-\ 08-functions.md:339
+\ 08-functions.md:342
 1984 STR$ NIP .                 \ => 4
 1984 STR$ VAL 16 + .            \ => 2000
 S" 2 3 *" EVALUATE .            \ => 6

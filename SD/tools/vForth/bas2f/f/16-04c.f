@@ -1,5 +1,5 @@
 \ 16-04c.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/16-graphics-04.txt
+\ BASIC: bas2f/txt/16-04.txt
 \ guide: doc/basic-to-vforth/16-graphics.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

@@ -1,5 +1,5 @@
 \ 01-05.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/01-basic-programming-concepts-05.txt
+\ BASIC: bas2f/txt/01-05.txt
 \ guide: doc/basic-to-vforth/01-basic-programming-concepts.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

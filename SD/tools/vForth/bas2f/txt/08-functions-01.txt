@@ -1,6 +1,0 @@
-#program 08-functions-01
-10 LET t=20
-20 DEF FN m(a,b)=(a+b)/2
-30 DEF FN d()=t*2
-40 PRINT FN m(4,10)
-50 PRINT FN d()

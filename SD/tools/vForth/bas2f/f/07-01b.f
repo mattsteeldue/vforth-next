@@ -1,5 +1,5 @@
 \ 07-01b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/07-strings-01.txt
+\ BASIC: bas2f/txt/07-01.txt
 \ guide: doc/basic-to-vforth/07-strings.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -16,14 +16,9 @@ NEEDS S"
 PLANET TYPE                     \ => Spectrum
 PLANET NIP .                    \ => 8
 
-\ 07-strings.md:93
-: /STRING  ( a n k -- a2 n2 )  ROT OVER + -ROT - ;
-PLANET 2 /STRING TYPE           \ => ectrum
-PLANET 3 MIN TYPE               \ => Spe
-
 \ --- the translation
 
-\ 07-strings.md:260
+\ 07-strings.md:298
 : TAILS  ( a n -- )
     BEGIN  DUP WHILE
         CR 2DUP TYPE  1 /STRING

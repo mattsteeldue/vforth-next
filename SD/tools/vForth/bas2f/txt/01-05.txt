@@ -1,0 +1,4 @@
+#program 01-05
+10 ON ERROR PRINT "Cannot share among ";n: ON ERROR: STOP
+20 INPUT n
+30 PRINT 100/n

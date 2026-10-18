@@ -1,2 +1,0 @@
-#program 19-nextzxos-and-alternatives-02
-10 PRINT "Hello"

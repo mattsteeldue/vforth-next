@@ -1,6 +1,0 @@
-#program 03-looping-07
-10 LET n=1000: LET c=0
-20 REPEAT: WHILE n>0
-30   LET n=INT (n/2): LET c=c+1
-40 REPEAT UNTIL 0
-50 PRINT c

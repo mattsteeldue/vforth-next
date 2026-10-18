@@ -1,5 +1,5 @@
 \ 05-04.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/05-read-data-restore-04.txt
+\ BASIC: bas2f/txt/05-04.txt
 \ guide: doc/basic-to-vforth/05-read-data-restore.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -10,7 +10,7 @@
 
 \ --- the translation
 
-\ 05-read-data-restore.md:240
+\ 05-read-data-restore.md:256
 CREATE C0  ," red"
 CREATE C1  ," green"
 CREATE C2  ," blue"

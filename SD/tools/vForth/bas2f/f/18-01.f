@@ -1,5 +1,5 @@
 \ 18-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/18-sound-and-music-01.txt
+\ BASIC: bas2f/txt/18-01.txt
 \ guide: doc/basic-to-vforth/18-sound-and-music.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

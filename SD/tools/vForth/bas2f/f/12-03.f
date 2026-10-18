@@ -1,5 +1,5 @@
 \ 12-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/12-conditions-03.txt
+\ BASIC: bas2f/txt/12-03.txt
 \ guide: doc/basic-to-vforth/12-conditions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

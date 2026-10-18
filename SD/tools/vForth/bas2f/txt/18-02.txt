@@ -1,0 +1,6 @@
+#program 18-02
+10 LET k=0: LET c=.4
+20 FOR r=1 TO 2
+30   BEEP c,k: BEEP c,k: BEEP c,k+7: BEEP c,k+7
+40   BEEP c,k+9: BEEP c,k+9: BEEP 2*c,k+7
+50 NEXT r

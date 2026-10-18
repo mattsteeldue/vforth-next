@@ -1,4 +1,0 @@
-#program 12-conditions-01
-10 INPUT "Answer (y/n)? ";a$
-20 INPUT "Number? ";x
-30 IF a$="y" AND x>0 THEN PRINT x: ELSE PRINT "-"

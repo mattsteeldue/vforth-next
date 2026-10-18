@@ -1,0 +1,5 @@
+#program 05-04
+10 FOR i=1 TO 3
+20   READ c$: PRINT c$;" ";
+30 NEXT i
+40 DATA "red","green","blue"

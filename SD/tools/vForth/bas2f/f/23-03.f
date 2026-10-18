@@ -1,5 +1,5 @@
 \ 23-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/23-the-memory-03.txt
+\ BASIC: bas2f/txt/23-03.txt
 \ guide: doc/basic-to-vforth/23-the-memory.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

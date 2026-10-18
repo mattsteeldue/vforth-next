@@ -1,5 +1,5 @@
 \ 04-07.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-07.txt
+\ BASIC: bas2f/txt/04-07.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -14,7 +14,7 @@
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:464
+\ 04-procedures-and-subroutines.md:490
 NEEDS CATCH
 NEEDS THROW
 NEEDS [']

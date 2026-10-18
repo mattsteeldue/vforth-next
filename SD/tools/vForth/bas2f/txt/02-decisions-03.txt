@@ -1,3 +1,0 @@
-#program 02-decisions-03
-10 INPUT "Choice (0-2)? ";c
-20 ON c: PRINT "load": PRINT "save": PRINT "quit": ELSE PRINT "what?"

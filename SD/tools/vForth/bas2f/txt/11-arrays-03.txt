@@ -1,8 +1,0 @@
-#program 11-arrays-03
-10 DIM m$(12,9)
-20 FOR n=1 TO 12: READ m$(n): NEXT n
-30 PRINT "Spring: ";m$(3);m$(4);m$(5)
-40 PRINT "the month of ";m$(5);"ing"
-50 DATA "January","February","March","April"
-60 DATA "May","June","July","August","September"
-70 DATA "October","November","December"

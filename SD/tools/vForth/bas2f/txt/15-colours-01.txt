@@ -1,5 +1,0 @@
-#program 15-colours-01
-10 FOR c=0 TO 7
-20   PAPER c: PRINT "    "
-30 NEXT c
-40 PAPER 7

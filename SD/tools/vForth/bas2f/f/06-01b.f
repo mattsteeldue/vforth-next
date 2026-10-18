@@ -1,5 +1,5 @@
 \ 06-01b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/06-expressions-01.txt
+\ BASIC: bas2f/txt/06-01.txt
 \ guide: doc/basic-to-vforth/06-expressions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:411
+\ 06-expressions.md:439
 : C>F10  ( celsius -- tenths )  90 5 */ 320 + ;
 : .TENTHS  ( n -- )  0 <# # 46 HOLD #S #> TYPE ;
 37 C>F10 .                      \ => 986

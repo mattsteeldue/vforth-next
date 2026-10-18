@@ -1,5 +1,5 @@
 \ 04-05.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-05.txt
+\ BASIC: bas2f/txt/04-05.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -14,7 +14,7 @@
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:409
+\ 04-procedures-and-subroutines.md:435
 : GCD  ( a b -- gcd )
     ?DUP IF  SWAP OVER MOD  RECURSE  THEN ;
 48 18 GCD .                     \ => 6

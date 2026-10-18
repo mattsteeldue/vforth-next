@@ -1,5 +1,5 @@
 \ 21-01c.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/21-optional-features-01.txt
+\ BASIC: bas2f/txt/21-01.txt
 \ guide: doc/basic-to-vforth/21-optional-features.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

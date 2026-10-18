@@ -1,5 +1,5 @@
 \ 22-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/22-in-out-and-the-next-registers-03.txt
+\ BASIC: bas2f/txt/22-03.txt
 \ guide: doc/basic-to-vforth/22-in-out-and-the-next-registers.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

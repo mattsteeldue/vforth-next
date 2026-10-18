@@ -1,0 +1,3 @@
+#program 07-04
+10 LET a$="   hello there   "
+20 PRINT a$[<>+];"."

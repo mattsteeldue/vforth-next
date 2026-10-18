@@ -1,5 +1,5 @@
 \ 07-02b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/07-strings-02.txt
+\ BASIC: bas2f/txt/07-02.txt
 \ guide: doc/basic-to-vforth/07-strings.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -18,6 +18,6 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:301
+\ 07-strings.md:339
 : GREET  ( a n -- )  ." Hello, " TYPE ." !" ;
 PLANET GREET                    \ => Hello, Spectrum!

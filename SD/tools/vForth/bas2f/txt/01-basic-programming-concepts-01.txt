@@ -1,4 +1,0 @@
-#program 01-basic-programming-concepts-01
-10 LET apples=7
-20 LET pears=5
-30 PRINT apples+pears

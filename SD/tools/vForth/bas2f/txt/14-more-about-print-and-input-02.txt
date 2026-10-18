@@ -1,3 +1,0 @@
-#program 14-more-about-print-and-input-02
-10 INPUT "How many? ";n
-20 PRINT n;" doubled is ";n*2

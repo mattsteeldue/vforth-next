@@ -1,0 +1,9 @@
+#program 04-05
+10 PROC gcd(48,18) TO g
+20 PRINT g
+30 STOP
+40 DEFPROC gcd(a,b)
+50   LOCAL r
+60   IF b=0 THEN ENDPROC =a
+70   PROC gcd(b,a MOD b) TO r
+80 ENDPROC =r

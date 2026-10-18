@@ -1,5 +1,5 @@
 \ 04-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-03.txt
+\ BASIC: bas2f/txt/04-03.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -14,7 +14,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 04-procedures-and-subroutines.md:218
+\ 04-procedures-and-subroutines.md:244
 VARIABLE TICKETS
 : TICKET  ( -- n )  1 TICKETS +!  TICKETS @ ;
 TICKET . TICKET . TICKET .      \ => 1 2 3
@@ -23,7 +23,7 @@ TICKET .                        \ => 1
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:358
+\ 04-procedures-and-subroutines.md:384
 0 TICKETS !
 : .TICKET  ( -- )  ." Ticket " TICKET . ;
 .TICKET                         \ => Ticket 1

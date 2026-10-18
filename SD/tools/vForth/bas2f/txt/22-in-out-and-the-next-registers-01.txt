@@ -1,6 +1,0 @@
-#program 22-in-out-and-the-next-registers-01
-10 LET s=% REG 7&3
-20 PRINT "Speed: ";s
-30 RUN AT 0
-40 PRINT "Now: ";% REG 7&3
-50 RUN AT s

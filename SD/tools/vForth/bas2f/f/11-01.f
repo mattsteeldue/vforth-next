@@ -1,5 +1,5 @@
 \ 11-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/11-arrays-01.txt
+\ BASIC: bas2f/txt/11-01.txt
 \ guide: doc/basic-to-vforth/11-arrays.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

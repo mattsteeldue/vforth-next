@@ -1,5 +1,5 @@
 \ 14-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/14-more-about-print-and-input-01.txt
+\ BASIC: bas2f/txt/14-01.txt
 \ guide: doc/basic-to-vforth/14-more-about-print-and-input.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

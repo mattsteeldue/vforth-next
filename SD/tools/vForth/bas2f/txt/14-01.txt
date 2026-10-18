@@ -1,0 +1,4 @@
+#program 14-01
+10 FOR n=1 TO 5
+20   PRINT n;TAB 6;n*n;TAB 12;n*n*n
+30 NEXT n

@@ -1,5 +1,5 @@
 \ 03-04.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/03-looping-04.txt
+\ BASIC: bas2f/txt/03-04.txt
 \ guide: doc/basic-to-vforth/03-looping.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

@@ -1,9 +1,0 @@
-#program 04-procedures-and-subroutines-07
-10 ON ERROR PRINT "outer": ON ERROR: STOP
-20 PROC inner()
-30 PRINT "not reached"
-40 STOP
-50 DEFPROC inner()
-60   ON ERROR PRINT "inner ";: ERROR
-70   PRINT 1/0
-80 ENDPROC

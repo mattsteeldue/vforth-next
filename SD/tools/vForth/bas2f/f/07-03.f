@@ -1,5 +1,5 @@
 \ 07-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/07-strings-03.txt
+\ BASIC: bas2f/txt/07-03.txt
 \ guide: doc/basic-to-vforth/07-strings.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -15,10 +15,10 @@ NEEDS S"
 PLANET TYPE                     \ => Spectrum
 PLANET NIP .                    \ => 8
 
-\ 07-strings.md:54
+\ 07-strings.md:89
 CREATE NAME$  32 ALLOT
 
-\ 07-strings.md:68
+\ 07-strings.md:103
 : $!  ( a n dest -- )  2DUP C!  1+ SWAP CMOVE ;
 PLANET NAME$ $!
 NAME$ COUNT TYPE                \ => Spectrum
@@ -26,7 +26,7 @@ NAME$ C@ .                      \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:314
+\ 07-strings.md:352
 CREATE CARD$  20 ALLOT
 : CARD  ( -- a n )  S" 1234567890123456" ;
 CARD CARD$ $!

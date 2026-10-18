@@ -1,6 +1,0 @@
-#program 04-procedures-and-subroutines-02
-10 PROC rect(3,4) TO a,p
-20 PRINT a;" ";p
-30 STOP
-40 DEFPROC rect(w,h)
-50 ENDPROC =w*h,2*(w+h)

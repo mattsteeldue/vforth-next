@@ -1,0 +1,2 @@
+#program 15-02
+10 PRINT "e";CHR$ 8;OVER 1;"'";OVER 0

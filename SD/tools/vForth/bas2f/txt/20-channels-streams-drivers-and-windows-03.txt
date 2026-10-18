@@ -1,4 +1,0 @@
-#program 20-channels-streams-drivers-and-windows-03
-10 LPRINT "Squares"
-20 FOR i=1 TO 5: LPRINT i*i;" ";: NEXT i
-30 LPRINT

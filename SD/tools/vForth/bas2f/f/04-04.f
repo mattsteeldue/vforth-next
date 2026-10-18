@@ -1,5 +1,5 @@
 \ 04-04.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-04.txt
+\ BASIC: bas2f/txt/04-04.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -15,7 +15,7 @@
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:379
+\ 04-procedures-and-subroutines.md:405
 CREATE NUMS  1 , 2 , 3 ,
 : DOUBLE  ( addr n -- )
     CELLS BOUNDS DO

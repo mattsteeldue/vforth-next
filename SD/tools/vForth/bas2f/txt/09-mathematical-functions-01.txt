@@ -1,2 +1,0 @@
-#program 09-mathematical-functions-01
-10 PRINT 2^10

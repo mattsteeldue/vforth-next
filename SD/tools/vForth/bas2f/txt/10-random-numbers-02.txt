@@ -1,2 +1,0 @@
-#program 10-random-numbers-02
-10 PRINT 10+RND (11)

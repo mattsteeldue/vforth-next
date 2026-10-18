@@ -1,5 +1,5 @@
 \ 06-02b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/06-expressions-02.txt
+\ BASIC: bas2f/txt/06-02.txt
 \ guide: doc/basic-to-vforth/06-expressions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -8,6 +8,6 @@
 
 \ --- the translation
 
-\ 06-expressions.md:441
+\ 06-expressions.md:469
 : F  ( a b c d -- n )  -  -ROT  +  * ;
 2 3 7 4 F .                     \ => 15

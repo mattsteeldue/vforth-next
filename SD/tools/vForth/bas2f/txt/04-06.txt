@@ -1,0 +1,11 @@
+#program 04-06
+10 PROC total("Sum: ",4,8,15,16)
+20 STOP
+30 DEFPROC total(t$,DATA)
+40   LOCAL n
+50   LOCAL s=0
+60   REPEAT: WHILE DATA
+70     READ n: s+=n
+80   REPEAT UNTIL 0
+90   PRINT t$;s
+100 ENDPROC

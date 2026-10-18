@@ -1,5 +1,5 @@
 \ 09-04b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/09-mathematical-functions-04.txt
+\ BASIC: bas2f/txt/09-04.txt
 \ guide: doc/basic-to-vforth/09-mathematical-functions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

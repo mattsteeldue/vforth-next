@@ -1,0 +1,8 @@
+#program 20-02
+10 OPEN #4,"notes.txt"
+20 INPUT #4; LINE a$
+30 RETURN #4 TO p
+40 INPUT #4; LINE a$: INPUT #4; LINE a$
+50 GO TO #4,p
+60 INPUT #4; LINE a$: PRINT p;" ";a$
+70 CLOSE #4

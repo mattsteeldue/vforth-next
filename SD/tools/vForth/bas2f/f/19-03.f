@@ -1,5 +1,5 @@
 \ 19-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/19-nextzxos-and-alternatives-03.txt
+\ BASIC: bas2f/txt/19-03.txt
 \ guide: doc/basic-to-vforth/19-nextzxos-and-alternatives.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

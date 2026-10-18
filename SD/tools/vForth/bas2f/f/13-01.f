@@ -1,5 +1,5 @@
 \ 13-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/13-the-character-set-01.txt
+\ BASIC: bas2f/txt/13-01.txt
 \ guide: doc/basic-to-vforth/13-the-character-set.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

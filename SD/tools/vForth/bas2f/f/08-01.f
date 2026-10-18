@@ -1,5 +1,5 @@
 \ 08-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/08-functions-01.txt
+\ BASIC: bas2f/txt/08-01.txt
 \ guide: doc/basic-to-vforth/08-functions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -17,7 +17,7 @@
 
 \ --- the translation
 
-\ 08-functions.md:302
+\ 08-functions.md:305
 VARIABLE T  20 T !
 : DOUBLE-T  ( -- n )  T @ 2* ;
 4 10 MEAN .                     \ => 7

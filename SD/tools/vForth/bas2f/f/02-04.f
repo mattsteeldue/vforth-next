@@ -1,5 +1,5 @@
 \ 02-04.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/02-decisions-04.txt
+\ BASIC: bas2f/txt/02-04.txt
 \ guide: doc/basic-to-vforth/02-decisions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

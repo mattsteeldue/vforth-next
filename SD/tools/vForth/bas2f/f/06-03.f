@@ -1,5 +1,5 @@
 \ 06-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/06-expressions-03.txt
+\ BASIC: bas2f/txt/06-03.txt
 \ guide: doc/basic-to-vforth/06-expressions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:458
+\ 06-expressions.md:486
 : ATTR  ( ink paper bright flash -- attr )
     7 LSHIFT  SWAP 6 LSHIFT OR
     SWAP 3 LSHIFT OR  OR ;

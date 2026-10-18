@@ -1,0 +1,4 @@
+#program 01-01
+10 LET apples=7
+20 LET pears=5
+30 PRINT apples+pears

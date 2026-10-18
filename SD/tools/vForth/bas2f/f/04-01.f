@@ -1,5 +1,5 @@
 \ 04-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-01.txt
+\ BASIC: bas2f/txt/04-01.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -13,12 +13,12 @@
 
 \ --- words defined earlier in the guide
 
-\ 04-procedures-and-subroutines.md:27
+\ 04-procedures-and-subroutines.md:29
 : RULE  ( n -- )  0 ?DO  ." -"  LOOP ;
 5 RULE                          \ => -----
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:315
+\ 04-procedures-and-subroutines.md:341
 5 RULE                          \ => -----
 12 RULE                         \ => ------------

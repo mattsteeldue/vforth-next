@@ -1,2 +1,0 @@
-#program 09-mathematical-functions-04
-10 PRINT SQR 2

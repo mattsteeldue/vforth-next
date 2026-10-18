@@ -1,5 +1,5 @@
 \ 08-05.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/08-functions-05.txt
+\ BASIC: bas2f/txt/08-05.txt
 \ guide: doc/basic-to-vforth/08-functions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -10,17 +10,11 @@
 
 \ --- words defined earlier in the guide
 
-\ 08-functions.md:358
-: /STRING  ( a u k -- a2 u2 )  ROT OVER + -ROT - ;
+\ 08-functions.md:361
+NEEDS SCAN
 : POS  ( a u c -- n )
-    >R  OVER SWAP
-    BEGIN  DUP WHILE
-        OVER C@ R@ = IF
-            DROP SWAP - 1+  R> DROP EXIT
-        THEN
-        1 /STRING
-    REPEAT
-    R> DROP  2DROP DROP 0 ;
+    >R TUCK R> SCAN NIP
+    DUP IF  - 1+  ELSE  NIP  THEN ;
 : MACHINE  ( -- a u )  S" ZX Spectrum Next" ;
 MACHINE BL POS .                \ => 3
 MACHINE CHAR N POS .            \ => 13
@@ -28,7 +22,8 @@ MACHINE CHAR q POS .            \ => 0
 
 \ --- the translation
 
-\ 08-functions.md:392
+\ 08-functions.md:411
+NEEDS /STRING
 : LEFT$   ( a u n -- a u2 )   MIN ;
 : RIGHT$  ( a u n -- a2 u2 )  OVER MIN >R  + R@ -  R> ;
 : MID$    ( a u from n -- a2 u2 )  >R 1- /STRING R> MIN ;

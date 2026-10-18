@@ -1,4 +1,0 @@
-#program 09-mathematical-functions-05
-10 FOR a=30 TO 60 STEP 30
-20   PRINT 200*SIN (a*PI/180)
-30 NEXT a

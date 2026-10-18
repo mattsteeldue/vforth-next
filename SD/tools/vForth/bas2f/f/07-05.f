@@ -1,5 +1,5 @@
 \ 07-05.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/07-strings-05.txt
+\ BASIC: bas2f/txt/07-05.txt
 \ guide: doc/basic-to-vforth/07-strings.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -16,7 +16,7 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:375
+\ 07-strings.md:414
 : TIMES  ( a n k -- )
     0 ?DO  2DUP TYPE  LOOP  2DROP ;
 : AB  ( -- a n )  S" ab" ;

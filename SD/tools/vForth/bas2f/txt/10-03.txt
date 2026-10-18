@@ -1,0 +1,6 @@
+#program 10-03
+10 LET h=0
+20 FOR n=1 TO 100
+30   LET h=h+RND (2)
+40 NEXT n
+50 PRINT h

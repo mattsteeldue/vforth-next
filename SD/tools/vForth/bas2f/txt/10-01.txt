@@ -1,0 +1,4 @@
+#program 10-01
+10 FOR n=1 TO 2
+20   PRINT 1+RND (20);" ";
+30 NEXT n

@@ -1,5 +1,5 @@
 \ 07-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/07-strings-01.txt
+\ BASIC: bas2f/txt/07-01.txt
 \ guide: doc/basic-to-vforth/07-strings.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -18,7 +18,7 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:237
+\ 07-strings.md:275
 : TRIANGLE  ( a n -- )
     1+ 1 DO  DUP I CR TYPE  LOOP  DROP ;
 PLANET TRIANGLE

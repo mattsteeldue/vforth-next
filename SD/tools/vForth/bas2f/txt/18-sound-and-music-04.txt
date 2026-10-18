@@ -1,2 +1,0 @@
-#program 18-sound-and-music-04
-10 PLAY "UX1000W0c"

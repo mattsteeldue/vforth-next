@@ -1,5 +1,5 @@
 \ 04-06.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-06.txt
+\ BASIC: bas2f/txt/04-06.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -16,7 +16,7 @@
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:439
+\ 04-procedures-and-subroutines.md:465
 : TOTAL  ( n1 .. nk k -- sum )
     0 SWAP  0 ?DO  +  LOOP ;
 4 8 15 16  4 TOTAL .            \ => 43

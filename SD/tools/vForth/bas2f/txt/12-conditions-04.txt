@@ -1,4 +1,0 @@
-#program 12-conditions-04
-10 FOR n=0 TO 2
-20   PRINT n;" item";("s" AND n<>1)
-30 NEXT n

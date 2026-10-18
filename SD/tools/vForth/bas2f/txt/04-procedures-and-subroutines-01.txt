@@ -1,8 +1,0 @@
-#program 04-procedures-and-subroutines-01
-10 LET n=5: GO SUB 100
-20 LET n=12: GO SUB 100
-30 STOP
-100 REM a line of n dashes
-110 FOR i=1 TO n: PRINT "-";: NEXT i
-120 PRINT
-130 RETURN

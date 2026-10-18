@@ -1,7 +1,0 @@
-#program 13-the-character-set-02
-10 FOR n=0 TO 15
-20   READ r: POKE USR "a"+n,r
-30 NEXT n
-40 PRINT CHR$ 144;CHR$ 145
-50 DATA 0,108,254,254,124,56,16,0
-60 DATA 16,56,124,254,124,56,16,0

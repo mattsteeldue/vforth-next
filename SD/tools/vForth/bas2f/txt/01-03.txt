@@ -1,0 +1,6 @@
+#program 01-03
+10 LET total=0
+20 INPUT item
+30 total+=item
+40 PRINT total
+50 GO TO 20

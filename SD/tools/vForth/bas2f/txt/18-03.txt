@@ -1,0 +1,2 @@
+#program 18-03
+10 PLAY "c","e","g"

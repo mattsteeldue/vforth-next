@@ -1,4 +1,0 @@
-#program 03-looping-08
-10 REPEAT
-20   PRINT "Good morning! ";
-30 REPEAT UNTIL 0

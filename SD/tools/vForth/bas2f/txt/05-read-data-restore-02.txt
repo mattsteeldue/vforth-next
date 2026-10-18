@@ -1,5 +1,0 @@
-#program 05-read-data-restore-02
-10 FOR n=1 TO 5
-20   READ d: PRINT d;" ";
-30 NEXT n
-40 DATA 31,28,31,30,31

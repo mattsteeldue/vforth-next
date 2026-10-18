@@ -1,5 +1,5 @@
 \ 05-06.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/05-read-data-restore-06.txt
+\ BASIC: bas2f/txt/05-06.txt
 \ guide: doc/basic-to-vforth/05-read-data-restore.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -11,7 +11,7 @@
 
 \ --- the translation
 
-\ 05-read-data-restore.md:297
+\ 05-read-data-restore.md:313
 NEEDS EVALUATE
 NEEDS S"
 10 CONSTANT DATA-SCR

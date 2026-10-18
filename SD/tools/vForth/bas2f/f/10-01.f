@@ -1,5 +1,5 @@
 \ 10-01.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/10-random-numbers-01.txt
+\ BASIC: bas2f/txt/10-01.txt
 \ guide: doc/basic-to-vforth/10-random-numbers.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

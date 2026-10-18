@@ -1,5 +1,5 @@
 \ 08-02.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/08-functions-02.txt
+\ BASIC: bas2f/txt/08-02.txt
 \ guide: doc/basic-to-vforth/08-functions.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -8,6 +8,6 @@
 
 \ --- the translation
 
-\ 08-functions.md:320
+\ 08-functions.md:323
 : TRI  ( n -- sum )  DUP IF  DUP 1- RECURSE +  THEN ;
 10 TRI .                        \ => 55

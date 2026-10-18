@@ -1,0 +1,7 @@
+#program 19-01
+10 DIM a(10)
+20 FOR i=1 TO 10: LET a(i)=i*i: NEXT i
+30 SAVE "squares.dat" DATA a()
+40 DIM a(10)
+50 LOAD "squares.dat" DATA a()
+60 PRINT a(5)

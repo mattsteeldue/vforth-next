@@ -1,5 +1,5 @@
 \ 04-02.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/04-procedures-and-subroutines-02.txt
+\ BASIC: bas2f/txt/04-02.txt
 \ guide: doc/basic-to-vforth/04-procedures-and-subroutines.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -11,7 +11,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 04-procedures-and-subroutines.md:191
+\ 04-procedures-and-subroutines.md:217
 : RECT  ( w h -- area perimeter )  { W H -- SURFACE PERIM }
     W H *  TO SURFACE
     W H + 2*  TO PERIM ;
@@ -19,7 +19,7 @@
 
 \ --- the translation
 
-\ 04-procedures-and-subroutines.md:334
+\ 04-procedures-and-subroutines.md:360
 VARIABLE SIZE
 VARIABLE EDGE
 3 4 RECT  EDGE !  SIZE !

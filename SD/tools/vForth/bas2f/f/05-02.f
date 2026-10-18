@@ -1,5 +1,5 @@
 \ 05-02.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/05-read-data-restore-02.txt
+\ BASIC: bas2f/txt/05-02.txt
 \ guide: doc/basic-to-vforth/05-read-data-restore.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \
@@ -10,7 +10,7 @@
 
 \ --- the translation
 
-\ 05-read-data-restore.md:191
+\ 05-read-data-restore.md:207
 CREATE MONTHS  31 , 28 , 31 , 30 , 31 ,
 : .MONTHS  ( -- )
     MONTHS 5 CELLS BOUNDS DO

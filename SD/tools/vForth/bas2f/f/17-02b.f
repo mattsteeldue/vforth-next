@@ -1,5 +1,5 @@
 \ 17-02b.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/17-time-and-motion-02.txt
+\ BASIC: bas2f/txt/17-02.txt
 \ guide: doc/basic-to-vforth/17-time-and-motion.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

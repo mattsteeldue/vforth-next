@@ -1,5 +1,5 @@
 \ 24-03.f -- the Forth side of a NextBASIC listing
-\ BASIC: bas2f/txt/24-the-system-variables-03.txt
+\ BASIC: bas2f/txt/24-03.txt
 \ guide: doc/basic-to-vforth/24-the-system-variables.md
 \ written by util/guide-forth.py: edit the guide, not this file
 \

@@ -1,0 +1,2 @@
+#program 09-04
+10 PRINT SQR 2
