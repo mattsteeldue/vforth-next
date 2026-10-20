@@ -1,17 +1,38 @@
 \
-\ z80n-asm.f
+\ assembler.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-04-19            
+\ v-Forth 1.8 - NextZXOS version - build 2026-10-04            
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \
  
-CR DECIMAL 
-
 BASE @
 
-NEEDS <BUILDS                   \ backward compatibiity
+CR DECIMAL 
+
+NEEDS <BUILDS                   \ backward compatibility
 
 INCLUDE SRC/Z80N-ASM.F
+
+\ To remove this library and restore ;CODE you have to give NO-ASSEMBLER
+\ A plain MARKER is not enough: SRC/Z80N-ASM.F ends by storing the xt of
+\ ASSEMBLER over the NOOP kept as 4th xt of ;CODE in the core.
+: NO-ASSEMBLER  ( -- )
+    \ Verify 4th xt inside ;CODE is really ASSEMBLER
+    [ ' ;CODE >BODY 4 CELLS + ] LITERAL
+    DUP @
+    [ ' ASSEMBLER ] LITERAL
+    - #14 ?ERROR
+    \
+    \ Patch ;CODE
+    [ ' NOOP ] LITERAL
+    SWAP !
+    FORGET-ASSEMBLER    \ THIS FORGETS UP TO FORGET-ASSEMBLER
+;
+WARNING @ 
+0 WARNING !
+\ COLD rewinds the dictionary but not the patch to ;CODE
+: COLD NO-ASSEMBLER COLD ;
+WARNING !
 
 BASE !
 

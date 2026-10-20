@@ -1,0 +1,10 @@
+    NO-ASSEMBLER  --
+
+Removes the ASSEMBLER library: restores the NOOP that
+loading it had replaced inside ;CODE, then forgets every
+assembler definition.
+Error #14 if ;CODE is not patched as expected.
+COLD does the same before restarting.
+
+Part of the ASSEMBLER library.
+Available after NEEDS ASSEMBLER

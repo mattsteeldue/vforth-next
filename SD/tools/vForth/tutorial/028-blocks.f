@@ -16,6 +16,7 @@
 \   * LIST / INDEX / (LINE) / .LINE work in SCREEN units (16 lines of 64).
 \ Mixing the two numbering systems is the classic beginner mistake.
 \
+\ Coming from BASIC: Ch.19  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.3, Ch.10  |  vForth screens 882-895
 \ Reference: sec.3 "Block / Screen system"
 \

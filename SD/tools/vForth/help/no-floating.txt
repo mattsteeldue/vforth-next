@@ -1,0 +1,9 @@
+    NO-FLOATING  --
+
+Removes the FLOATING library: restores NUMBER inside
+INTERPRET, switches back to INTEGER and forgets the
+floating-point definitions.
+Error #14 if INTERPRET is not patched as expected.
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

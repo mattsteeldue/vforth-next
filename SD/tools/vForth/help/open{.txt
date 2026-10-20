@@ -1,3 +1,8 @@
     OPEN<  -- fh
 
-Open file for input.
+Used in the form  OPEN< name
+Opens the file name, read only, and leaves its
+handle; error 43 if it cannot. Works only from the
+prompt, not inside a definition: there use F_OPEN.
+
+See F_OPEN, F_CLOSE, OPEN>.

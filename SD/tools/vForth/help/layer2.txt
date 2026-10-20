@@ -1,0 +1,7 @@
+    LAYER2  --
+
+Selects Layer 2: 256x192 pixels, 256 colours, one colour
+per pixel.
+Return to the default text mode with LAYER12.
+
+Available after NEEDS LAYER2 or LAYERS

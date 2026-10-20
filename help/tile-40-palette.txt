@@ -1,0 +1,7 @@
+    TILE-40-PALETTE  --
+
+Selects the first tilemap palette and loads the eight
+preset colours that match the TILE-40 mode.
+
+Part of the LAYER3 library.
+Available after NEEDS LAYER3

@@ -1,0 +1,9 @@
+    TILE-40  --
+
+Enables the tilemap in 40x32 mode with a per-tile
+attribute byte, and disables the ULA output.
+Tilemap at $4000, tile definitions at $4A00.
+Load its colours with TILE-40-PALETTE; TILE-OFF goes back.
+
+Part of the LAYER3 library.
+Available after NEEDS LAYER3

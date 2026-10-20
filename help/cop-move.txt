@@ -1,0 +1,7 @@
+    COP-MOVE  v r --
+
+Appends a MOVE instruction to the Copper list: write the
+value v (0 to 255) to NextReg r (0 to 127).
+
+Part of the COPPER library.
+Available after NEEDS COPPER

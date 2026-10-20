@@ -1,0 +1,8 @@
+    RND  u -- u2
+
+Returns a pseudo-random number between
+0 and u-1. Same formula and same SEED
+system variable (23670) as BASIC RND.
+See RANDOMIZE to set the seed.
+
+Available after NEEDS RND

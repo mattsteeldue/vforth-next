@@ -1,0 +1,8 @@
+    LAYER11  --
+
+Selects Layer 1,1, the standard resolution enhanced ULA
+display: 256x192 pixels, 32x24 attribute cells of two
+colours out of 256.
+Return to the default text mode with LAYER12.
+
+Available after NEEDS LAYER11 or LAYERS

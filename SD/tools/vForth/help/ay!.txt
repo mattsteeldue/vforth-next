@@ -1,0 +1,9 @@
+    AY!  b ayreg --
+
+Writes byte b to register ayreg (0 to 13) of the
+currently selected AY chip.
+
+    15 8 AY!     channel A at maximum volume
+
+Part of the AY library.
+Available after NEEDS AY

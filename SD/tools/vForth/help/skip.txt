@@ -1,0 +1,9 @@
+    SKIP  a n c -- a2 n2
+
+Skip the leading characters c of the string
+a n: a2 n2 begins at the first character other
+than c. BL SKIP drops leading spaces, as
+-TRAILING drops the trailing ones. The match
+is exact, case counts. See also SCAN.
+
+Available after NEEDS SKIP

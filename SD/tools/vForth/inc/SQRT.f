@@ -8,7 +8,7 @@
 NEEDS DSQRT
 
 \
-: SQRT ( d -- n )
+: SQRT ( u -- n )
     0 DSQRT
 ;    
 

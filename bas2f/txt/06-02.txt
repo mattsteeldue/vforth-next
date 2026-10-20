@@ -1,0 +1,3 @@
+#program 06-02
+10 LET a=2: LET b=3: LET c=7: LET d=4
+20 PRINT (a+b)*(c-d)

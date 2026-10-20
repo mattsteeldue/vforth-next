@@ -1,0 +1,6 @@
+#program 05-06
+10 LET x=5
+20 READ a,b,c: PRINT a;" ";b;" ";c
+30 LET x=10: RESTORE
+40 READ a,b,c: PRINT a;" ";b;" ";c
+50 DATA x,x*2,x*x

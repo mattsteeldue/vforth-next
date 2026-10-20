@@ -1,0 +1,7 @@
+    ?MOUSE  -- f
+
+True flag if a mouse button or wheel event is pending.
+The event is not consumed: read and clear it with MOUSE.
+
+Part of the MOUSE library.
+Available after NEEDS MOUSE

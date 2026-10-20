@@ -1,0 +1,7 @@
+    LAYER12  --
+
+Selects Layer 1,2, the Timex HiRes display: 512x192
+pixels, two colours on screen. This is the default text
+mode of vForth, 64 columns wide.
+
+Available after NEEDS LAYER12 or LAYERS

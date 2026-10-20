@@ -1,0 +1,7 @@
+#program 10-04
+10 DIM t(6)
+20 FOR n=1 TO 600
+30   LET d=1+RND (6)
+40   LET t(d)=t(d)+1
+50 NEXT n
+60 FOR d=1 TO 6: PRINT t(d);" ";: NEXT d

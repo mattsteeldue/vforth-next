@@ -1,0 +1,6 @@
+#program 19-03
+10 MKDIR "games"
+20 CD "games"
+30 SAVE "maze.dat" CODE 32768,1024
+40 CD ".."
+50 CAT "games"

@@ -1,0 +1,7 @@
+    TILE-80-PALETTE  --
+
+Selects the first tilemap palette and loads the eight
+preset colours that match the TILE-80 mode.
+
+Part of the LAYER3 library.
+Available after NEEDS LAYER3

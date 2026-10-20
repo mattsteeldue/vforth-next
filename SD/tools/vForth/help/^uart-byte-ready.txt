@@ -1,0 +1,7 @@
+    ?UART-BYTE-READY  -- f
+
+Non-zero flag if the UART has received a byte that
+UART-RX-BYTE can read, zero otherwise.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

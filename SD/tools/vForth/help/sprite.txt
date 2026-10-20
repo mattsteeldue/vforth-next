@@ -1,0 +1,18 @@
+    SPRITE  -- a
+
+The shared sprite structure: fill its fields, then send
+them to a hardware slot with SPRITE-UPDATE.
+  _xcoord   X, 9 bits: 0 to 511, 32 = left of paper
+  _ycoord   Y, 0 to 255
+  _spriteid the PATTERN shown, 0 to 63 (not the slot)
+  _rotmir   rotate/mirror bits: SPRITE-ROT SPRITE-VFLIP
+            SPRITE-HFLIP
+  _pattern  palette offset in bits 7-4 (keep 0 unless
+            wanted: garbage here shifts every colour)
+The same structure serves every slot: the slot is the
+argument of SPRITE-UPDATE.
+
+Example:  100 SPRITE _xcoord !  2 SPRITE _spriteid !
+          SPRITE 0 SPRITE-UPDATE
+Available after NEEDS SPRITE.  Tutorial 053.
+

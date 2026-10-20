@@ -1,0 +1,9 @@
+    RPI0-INIT  --
+
+Selects the Raspberry Pi Zero UART at 115200 baud.
+As a side effect it sets the CPU speed to 28 MHz and
+sends CR ^C ^C to the Pi.
+It is run once when the library is loaded, and by RPI0.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

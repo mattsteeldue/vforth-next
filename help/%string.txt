@@ -1,0 +1,13 @@
+    /STRING  a n k -- a+k n-k
+
+Drop the first k characters of the string a n:
+the address moves forward by k, the length
+shrinks by as much. Nothing is copied.
+
+    S" Spectrum" 2 /STRING TYPE   \ ectrum
+
+A negative k gives back characters dropped
+earlier. Keeping the first k characters is
+just k MIN on the length.
+
+Available after NEEDS /STRING

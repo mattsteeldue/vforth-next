@@ -1,0 +1,14 @@
+    ASSEMBLER  --
+
+IMMEDIATE. Selects the assembler vocabulary as CONTEXT.
+NEEDS ASSEMBLER loads the Z80 / Z80N assembler: CODE
+then switches to it by itself, and C; ends a definition.
+
+    CODE 2DUP+  POP HL|  POP DE|  PUSH DE|  PUSH HL|
+        ADDHL DE|  PUSH HL|  NEXT  C;
+
+Loading it patches ;CODE in the core: remove it with
+NO-ASSEMBLER, never with a plain FORGET.
+See tutorial 027 and the manual.
+
+Available after NEEDS ASSEMBLER

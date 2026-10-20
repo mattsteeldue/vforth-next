@@ -1,0 +1,11 @@
+    AFXFRAME  --
+
+Plays one frame of the AYFX sound effects on the three AY
+chips, advancing every active channel of AFX-CH-DESC.
+Machine-code routine meant to be called 50 times per
+second, usually from the interrupt routine (see HELP
+ISR-XT). Initialise the chips first with AYSETUP.
+
+See HELP AFX-CH-DESC and tutorials 050 and 055.
+
+Available after NEEDS AFXFRAME

@@ -1,5 +1,11 @@
-    ?DO  --
+    ?DO  n1 n2 --
 
-Like DO but skips loop body if
-limit = initial value.
-Used with LOOP or +LOOP.
+Marks start of a ?DO...LOOP or
+?DO...+LOOP structure, with limit n1
+and initial index n2. Like DO, but
+the loop is skipped when n1 = n2.
+
+Only "equal" is caught: an index
+already past the limit wraps round.
+
+See also: DO, LOOP, +LOOP, I, LEAVE.

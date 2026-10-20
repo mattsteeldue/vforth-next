@@ -1,0 +1,13 @@
+    PLAY"  --
+
+Plays the text that follows, up to the next ",
+as one music string on channel A of AY1: the
+same as S" text" 1 PLAY. At the prompt it plays
+at once; inside a definition it is compiled and
+plays when the word runs.
+
+    PLAY" T180O5cdefgabC"
+    : FANFARE  PLAY" O4ceg7C" ;
+
+See PLAY for the language of the string.
+Available after NEEDS PLAY

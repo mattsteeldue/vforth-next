@@ -1,0 +1,11 @@
+    AY  -- a
+
+Variable holding the number (1, 2 or 3) of the AY sound
+chip currently selected by AYSELECT.
+
+NEEDS AY loads the AY / Turbo Sound support words:
+  AYSELECT  AY!  AY!!  SHH  AYSETUP
+  ENABLE-TURBOSOUND  ENABLE-MONO  DISABLE-MONO
+NO-AY removes them.
+
+Available after NEEDS AY

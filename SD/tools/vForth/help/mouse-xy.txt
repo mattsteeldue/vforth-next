@@ -1,0 +1,9 @@
+    MOUSE-XY  -- x y
+
+Returns the current mouse position, updated at every
+frame by the interrupt routine.
+  x : vertical distance from the top-left corner
+  y : horizontal distance from the top-left corner
+
+Part of the MOUSE library.
+Available after NEEDS MOUSE

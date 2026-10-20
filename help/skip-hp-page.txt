@@ -1,7 +1,10 @@
-    SKIP-HP-PAGE    ha -- a
+    SKIP-HP-PAGE    n --
 
-Given a heap address ha, checks whether it lies past
-PAGE-WATERMARK within its 8K page; if so, advances HP
-to the start of the next page instead. Keeps a single
-dictionary entry from straddling an MMU7 page
-boundary. See also HP, PAGE-WATERMARK.
+Checks whether n more bytes fit in the current 8K
+heap page without going past PAGE-WATERMARK; if not,
+moves HP to the start of the next page (offset 2).
+CREATE calls it as 0 SKIP-HP-PAGE after writing each
+header, so that no entry straddles an MMU7 page
+boundary; lib/heap.f calls it with the size of the
+block about to be allocated. See also HP,
+PAGE-WATERMARK.

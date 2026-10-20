@@ -1,0 +1,6 @@
+#program 20-03
+5 OPEN #3,"s"
+10 LPRINT "Squares"
+20 FOR i=1 TO 5: LPRINT i*i;" ";: NEXT i
+30 LPRINT
+40 CLOSE #3

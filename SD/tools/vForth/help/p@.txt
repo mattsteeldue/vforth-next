@@ -1,3 +1,8 @@
     P@  p -- b
 
-Fetch paged byte from address p.
+Reads one byte from the I/O port p, a full 16-bit
+address: BASIC's IN p. The upper byte counts, as
+for the keyboard half-rows:
+    65278 P@ 1 AND     \ 0 when CAPS SHIFT is down
+
+See P!, REG@.

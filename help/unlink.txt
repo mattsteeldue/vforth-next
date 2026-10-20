@@ -1,0 +1,12 @@
+    UNLINK  -- cccc
+
+Deletes from disk the file whose name follows. There is
+no way to recover it. Without a drive letter the current
+default drive is used.
+
+    UNLINK c:/dot/hello
+
+On failure it prints message #43 and the name.
+See HELP F_UNLINK for the underlying primitive.
+
+Available after NEEDS UNLINK

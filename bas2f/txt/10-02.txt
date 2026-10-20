@@ -1,0 +1,2 @@
+#program 10-02
+10 PRINT 10+RND (11)

@@ -1,0 +1,8 @@
+    COORD-CHECK  x y -- x y f
+
+Leaves a true flag if (x,y) is a valid pixel in the
+current graphic mode, that is x < V-RANGE and
+y < H-RANGE (unsigned). The coordinates are kept.
+
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

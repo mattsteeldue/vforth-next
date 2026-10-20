@@ -1,0 +1,14 @@
+    MOUSE  -- s
+
+Returns the pending mouse event status s and clears it;
+0 when no event is pending. Event bits:
+  $0001 right button down    $0100 right button up
+  $0002 left  button down    $0200 left  button up
+  $0004 wheel button down    $0400 wheel button up
+  $0010 wheel rotation up    $1000 wheel rotation down
+
+NEEDS MOUSE installs the Kempston mouse driver on the
+50Hz interrupt and shows an arrow on hardware sprite 0.
+See HELP MOUSE-XY, HELP ?MOUSE, HELP NO-MOUSE.
+
+Available after NEEDS MOUSE

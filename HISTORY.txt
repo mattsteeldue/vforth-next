@@ -799,3 +799,22 @@ n STRIPES, border bands sent to port $FE by DMA-OUT, checked on a real
 Next at 28 MHz; the DUMP checks of its checklist are still to be confirmed.
 inc/.border.f rewritten with $ literals. Help: the DMA pages now say
 "Available after NEEDS DMA"; new page for .BORDER.
+
+
+\ build 20261019
+Core binary CHANGED in this build (F_GETLINE, +32 bytes).
+F_GETLINE no longer writes outside its buffer: it reads at most m-2
+characters and puts a NUL after them, so a line longer than the buffer is
+split instead of overrunning it, a last line without its newline is read
+like any other, and the byte before the buffer is never touched. INCLUDE
+and NEEDS no longer need the file to end with an empty line (checked on
+CSpect). src/F18e.f is aligned and verified by /check-f18e.
+New guide doc/basic-to-vforth/: NextBASIC to vForth, 25 chapters and four
+appendices; its listings are in bas2f/ (tokenised .bas in bas2f/bas/, the
+Forth side to try with INCLUDE in bas2f/f/). New tutorials 067 (PLAY) and
+068-074; tutorials 001-029 point to the guide.
+New libraries: lib/PLAY.f, NextBASIC music strings on the AY chips;
+lib/MDR.f, catalogue and read-only get from .MDR images. New words in
+inc/: /STRING SCAN SKIP SEARCH, with test/STRING-TESTS.f and
+test/PLAY-TESTS.f. Help: F_GETLINE, EMITC, CASEON rewritten; new pages for
+POINT, PAINT, the SPRITE words, COP-NOOP and the string words.

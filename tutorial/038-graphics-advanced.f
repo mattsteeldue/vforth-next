@@ -130,17 +130,20 @@ NEEDS ms
 \
 \   PAINT ( x y -- )
 \
+\ PAINT is not part of GRAPHICS: load it after the library with
+\   NEEDS PAINT
+\
 \ PAINT flood-fills the region containing (x, y) using the current
-\ ATTRIB color.  It starts from (x, y) and expands in the vertical
-\ direction (using PAINT-HITX) then horizontal (PAINT-HIT).
+\ ATTRIB color, one horizontal span at a time (Scanline Span Fill).
 \
 \ The fill boundary is determined by the EDGE deferred word:
 \   In ULA modes: any non-zero pixel is treated as a boundary.
 \   In LAYER10/LAYER2: a pixel matching the current ATTRIB is a
 \   boundary (same-color stop).
 \
-\ Warning: PAINT can be slow on large areas and may overflow the
-\ return stack on complex shapes.  Use with care.
+\ The pending spans are kept in an 8K page of their own, not on the
+\ return stack, so large areas are safe.  A pathological shape (a
+\ fine comb) can exhaust the 2048 slots: part of it is left unfilled.
 \
 \ Since the boundary is "same colour as ATTRIB", in LAYER10/LAYER2 the
 \ fill colour MUST be the outline colour: fill with a different colour

@@ -1,0 +1,9 @@
+    PLACES  n --
+
+Sets to n the number of decimal places printed by F.
+and F.R .
+
+    2 PLACES  PI F.
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

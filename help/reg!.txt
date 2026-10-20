@@ -1,3 +1,8 @@
     REG!  b n --
 
-Write NextZXOS system register.
+Writes byte b to Next register n: BASIC's REG n,b
+with the value first. Selects n on port $243B and
+writes port $253B, inside one word.
+    $80 $7F REG!       \ $7F is the user register
+
+See REG@, P!, SPEED!.

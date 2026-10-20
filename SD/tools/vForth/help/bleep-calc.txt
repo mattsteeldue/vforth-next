@@ -1,0 +1,9 @@
+    BLEEP-CALC  ms n -- n1 n2
+
+Converts a duration in milliseconds and a frequency
+multiplied by 8 into the two parameters BLEEP expects.
+
+    500 3520 BLEEP-CALC BLEEP    440 Hz for half a second
+
+Part of the BLEEP library.
+Available after NEEDS BLEEP

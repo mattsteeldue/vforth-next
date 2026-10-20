@@ -1,4 +1,15 @@
     SELECT  n --
 
-Select NextZXOS layer or memory page.
-NextZXOS-specific word for page selection.
+Makes stream n the current output: every word that
+prints (EMIT, TYPE, . and ." among them) sends its
+characters there. 2 is the screen, 3 the printer;
+4 to 15 work only if BASIC opened them with OPEN #
+before vForth started. Calls the ROM routine
+CHAN-OPEN ($1601).
+
+The screen comes back with VIDEO, and by itself when
+vForth waits for a line at the prompt, after the ok:
+end the line with VIDEO.  Example:
+    3 SELECT 10 LIST VIDEO
+
+See VIDEO, DEVICE.

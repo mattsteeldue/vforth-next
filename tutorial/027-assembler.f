@@ -24,6 +24,7 @@
 \       jpf pe| AA, and illustrates how CODE words preserve the vForth
 \       register map via exx.
 \
+\ Coming from BASIC: Ch.25, App.A  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): no Brodie counterpart (vForth extension)
 \ Reference: sec.3.9
 \

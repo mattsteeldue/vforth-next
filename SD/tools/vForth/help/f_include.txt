@@ -1,3 +1,8 @@
-    F_INCLUDE  a --
+    F_INCLUDE  fh --
 
-Include source file. NextZXOS specific.
+Interprets the source file already open as fh, line
+by line, then closes it. Lines are read with
+F_GETLINE into BLOCK 1, and BLK is 1 meanwhile.
+INCLUDE is OPEN< followed by F_INCLUDE.
+
+See INCLUDE, NEEDS, F_GETLINE.

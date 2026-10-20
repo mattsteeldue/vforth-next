@@ -121,8 +121,16 @@ CREATE TUT-TABLE
     H" tutorial/064-scaled-integer-math.f" ,
     H" tutorial/065-fedora-silhouette.f" ,
     H" tutorial/066-kempston-joystick.f" ,
+    H" tutorial/067-play-music-strings.f" ,
+    H" tutorial/068-random-numbers.f" ,
+    H" tutorial/069-data-tables.f" ,
+    H" tutorial/070-streams.f" ,
+    H" tutorial/071-characters-and-udg.f" ,
+    H" tutorial/072-real-time-clock.f" ,
+    H" tutorial/073-rom-and-nextzxos-calls.f" ,
+    H" tutorial/074-coming-from-basic.f" ,
 
-66 CONSTANT TUT-MAX
+74 CONSTANT TUT-MAX
 
 
 \ ---------------------------------------------------------------------------

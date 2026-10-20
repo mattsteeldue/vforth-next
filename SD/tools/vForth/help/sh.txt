@@ -1,0 +1,9 @@
+    SH  --
+
+Used in the form  SH command
+Sends the rest of the line to the Raspberry Pi Zero,
+as ASK does, and drops the answer.
+
+See ASK, RPI0.
+
+Available after NEEDS SH

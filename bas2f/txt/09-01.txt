@@ -1,0 +1,2 @@
+#program 09-01
+10 PRINT 2^10

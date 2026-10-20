@@ -163,7 +163,7 @@ $00 $13 $80 %11101001 TILE-MODE:  TILE-TXT  \ 80 col text mode, defs at $5400
 ;
 
 \
-\ TILE-40-PALETTE  —  8 pairs,  no extra reg
+\ TILE-40-PALETTE  --  8 pairs,  no extra reg
 8 0 TILE-PALETTE:  TILE-40-PALETTE
     %00000001 $01  PAL,     \ blue
     %11011000 $06  PAL,     \ yellow
@@ -174,7 +174,7 @@ $00 $13 $80 %11101001 TILE-MODE:  TILE-TXT  \ 80 col text mode, defs at $5400
     %00000001 $31  PAL,     \ blue
     %11011011 $36  PAL,     \ white
 
-\ TILE-80-PALETTE  —  8 pairs,  no extra reg
+\ TILE-80-PALETTE  --  8 pairs,  no extra reg
 8 0 TILE-PALETTE:  TILE-80-PALETTE
     %11111001 $01  PAL,    \ light yellow
     %00000001 $00  PAL,    \ on blue     
@@ -185,7 +185,7 @@ $00 $13 $80 %11101001 TILE-MODE:  TILE-TXT  \ 80 col text mode, defs at $5400
     %11000001 $07  PAL,    \ magenta     
     %00000001 $06  PAL,    \ on blue     
 
-\ TILE-TXT-PALETTE  —  2 pairs,  extra  0 $6C REG!  at end
+\ TILE-TXT-PALETTE  --  2 pairs,  extra  0 $6C REG!  at end
 2 $6C TILE-PALETTE:  TILE-TXT-PALETTE
     %00000001 $00  PAL,    \ dark blue
     %11111001 $01  PAL,    \ light yellow

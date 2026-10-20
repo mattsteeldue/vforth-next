@@ -1,4 +1,15 @@
     F_OPEN  a1 a2 b -- fh f
 
-Open file. a1=path, a2=filename, b=mode.
-Returns file handle and error flag.
+Opens the file named by the zero-terminated string at
+a1. Mode b: $01 read, $02 write, plus one of
+  $00 open an existing file
+  $08 open, or create if missing
+  $04 create, error if it exists
+  $0C create, emptying it if it exists
+and $40 to read or write the +3DOS header, kept in
+the 8 bytes at a2 (otherwise a2 is not used).
+Leaves the handle fh and a flag, 0 on success.
+
+Example: PAD" name" PAD HERE 1 F_OPEN
+
+See OPEN<, F_CLOSE, F_READ, F_WRITE.

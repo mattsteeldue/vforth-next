@@ -1,0 +1,9 @@
+    ISR-OFF  --
+
+Disables the Forth interrupt routine and returns the CPU
+to the standard interrupt mode 1.
+Call it before changing ISR-XT and before forgetting the
+definition it points to.
+
+Part of the INTERRUPTS library.
+Available after NEEDS INTERRUPTS

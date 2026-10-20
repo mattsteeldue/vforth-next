@@ -1,0 +1,7 @@
+    MMU0!  n --
+
+Maps 8K RAM page n (0 to 223) into MMU slot 0, addresses
+$0000-$1FFF, which normally holds the ROM.
+NextZXOS-specific word.
+
+Available after NEEDS MMU0!

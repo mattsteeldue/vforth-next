@@ -33,61 +33,61 @@ NEEDS FIXED88
 \ --- COMPLEX ARITHMETIC (POLAR ADVANTAGES) ---
 
 : C*   ( mag1 ang1 mag2 ang2 -- mag3 ang3 )
-  \ Multiplication: (r1,ß1) * (r2,ß2) = (r1*r2, ß1+ß2)
-  ROT FP+           \ Add angles: ß1 + ß2
+  \ Multiplication: (r1,b1) * (r2,b2) = (r1*r2, b1+b2)
+  ROT FP+           \ Add angles: b1 + b2
   NORMALIZE-ANGLE   \ Keep in [0,2Pi)
   -ROT FP*          \ Multiply magnitudes: r1 * r2
   SWAP ;
 
 : C/   ( mag1 ang1 mag2 ang2 -- mag3 ang3 )
-  \ Division: (r1,ß1) / (r2,ß2) = (r1/r2, ß1-ß2)
-  NEGATE ROT FP+    \ Subtract angles:  -ß2 + ß1 
+  \ Division: (r1,b1) / (r2,b2) = (r1/r2, b1-b2)
+  NEGATE ROT FP+    \ Subtract angles:  -b2 + b1 
   NORMALIZE-ANGLE
   -ROT FP/          \ Divide magnitudes: r1 / r2
   SWAP ;
 
 : C-CONJ   ( mag ang -- mag -ang )
-  \ Complex conjugate: (r,ß) --> (r,-ß)
+  \ Complex conjugate: (r,b) --> (r,-b)
   NEGATE NORMALIZE-ANGLE ;
 
 : C-NEGATE   ( mag ang -- mag ang+Pi )
-  \ Negation: (r,ß) --> (r,ß+Pi)
+  \ Negation: (r,b) --> (r,b+Pi)
   FP-PI FP+ NORMALIZE-ANGLE ;    
 
 : C-INV   ( mag ang -- mag ang )
-  \ Reciprocal: 1/(r,ß) = (1/r,-ß)
+  \ Reciprocal: 1/(r,b) = (1/r,-b)
   NEGATE NORMALIZE-ANGLE
   SWAP FP-1.0 SWAP FP/ SWAP ;
 
 \ --- POWER OPERATIONS (VERY EFFICIENT IN POLAR) ---
 
-: C-SQUARE   ( mag ang -- mag² ang*2 )
-  \ Square: (r,ß)² = (r²,2ß)
+: C-SQUARE   ( mag ang -- mag^2 ang*2 )
+  \ Square: (r,b)^2 = (r^2,2b)
   2* NORMALIZE-ANGLE
   SWAP FP-SQUARE SWAP ;
 
-: C-CUBE   ( mag ang -- mag³ ang*3 )
-  \ Cube: (r,ß)³ = (r³,3ß)
+: C-CUBE   ( mag ang -- mag^3 ang*3 )
+  \ Cube: (r,b)^3 = (r^3,3b)
   3 * NORMALIZE-ANGLE
   SWAP DUP FP* FP* SWAP ;
 
 : C-POW-N   ( mag ang n -- mag^n ang*n )
-  \ Integer power: (r,ß)^n = (r^n,nß)
-  TUCK                    \ r n ß n
+  \ Integer power: (r,b)^n = (r^n,nb)
+  TUCK                    \ r n b n
   FP* NORMALIZE-ANGLE     \ Multiply angle by n
-  -ROT FP-1.0 SWAP        \ ß*n r 1.0 n 
-  0 ?DO                   \ ß*n r 1.0
+  -ROT FP-1.0 SWAP        \ b*n r 1.0 n 
+  0 ?DO                   \ b*n r 1.0
     OVER FP*              
-  LOOP                    \ ß*n r r^n  
+  LOOP                    \ b*n r r^n  
   NIP SWAP ;
 
 : C-SQRT   ( mag ang -- sqrt-mag ang/2 )
-  \ Square root: sqrt(r,ß) = (sqrt r,ß/2)
+  \ Square root: sqrt(r,b) = (sqrt r,b/2)
   2/ 
   SWAP FP-SQRT SWAP ;
 
 : C-ROOT-N   ( mag ang n -- root-mag ang/n )
-  \ Nth root: sqrt(r,ß) = (ªsqrt r,ß/n)
+  \ Nth root: n-root(r,b) = (n-root r,b/n)
   >R 
   R@ /              \ Divide angle by n
   SWAP 
@@ -113,19 +113,19 @@ NEEDS FIXED88
 \ --- POLAR TO CARTESIAN CONVERSION ---
 
 : C>XY   ( mag ang-rad -- x y )
-  \ Convert polar to cartesian: x = r*cos(ß), y = r*sin(ß)
-  2DUP              \ r ß r ß
-  FCOS              \ r ß r cosß
-  FP*               \ r ß rcosß
-  -ROT              \ rcosß r ß 
-  FSIN              \ rcosß r sinß 
-  FP*               \ rcosß rsinß 
+  \ Convert polar to cartesian: x = r*cos(b), y = r*sin(b)
+  2DUP              \ r b r b
+  FCOS              \ r b r cosb
+  FP*               \ r b rcosb
+  -ROT              \ rcosb r b 
+  FSIN              \ rcosb r sinb 
+  FP*               \ rcosb rsinb 
 ; 
 
 \ --- CARTESIAN TO POLAR CONVERSION ---
 
 : XY>C   ( x y -- mag ang )
-  \ Convert cartesian to polar: magnitude = sqrt(x²+y²)
+  \ Convert cartesian to polar: magnitude = sqrt(x^2+y^2)
   2DUP VEC2-LEN     \ x y mag
   -ROT              \ mag x y 
   ATAN2 ;

@@ -1,6 +1,8 @@
-    SQRT  d -- n
+    SQRT  u -- n
 
-Returns square root of double-cell
-number d as integer.
+Returns the integer square root of
+the single-cell unsigned number u,
+rounded down. For a double-cell
+number use DSQRT.
 
 Available after NEEDS SQRT

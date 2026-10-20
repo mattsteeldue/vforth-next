@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      111
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2026-09-26 ", $0D  // 37
+                db      " Heap Vocabulary - build 2026-10-19 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -737,7 +737,7 @@ C_Compare_Equal:
                 dec     hl                  // decrement counter 16-bit
                 ld      a, h
                 or      l                   // Z = 1 if counter is zero
-s                exx                         // restore a1/a2;  Z survives a exx
+                exx                         // restore a1/a2;  Z survives a exx
                 jr      nz, C_Compare_Loop
 
 C_Compare_Return_Equal:
@@ -922,7 +922,7 @@ C_Emit_Tab:     ld      a, COMMA_CHAR
             //  exx
             //  next
 
-C_Emit_NL       ld      a, CR_CHAR           // 0x0A --> 0x0D  à la Spectrum
+C_Emit_NL       ld      a, CR_CHAR           // 0x0A --> 0x0D  a` la Spectrum
                 jr      C_Emit_Printable
             //  push    hl
             //  exx

@@ -1,3 +1,6 @@
     VIDEO  --
 
-Set video mode (NextZXOS specific).
+Sends the output back to the screen: stores 2 in
+DEVICE and does 2 SELECT.
+
+See SELECT, DEVICE.

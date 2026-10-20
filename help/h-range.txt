@@ -1,0 +1,9 @@
+    H-RANGE  -- n
+
+VALUE holding the horizontal size in pixels of the
+current graphic mode, the limit of the y coordinate:
+256 in most modes, 512 in LAYER12, 128 in LAYER10.
+
+See HELP V-RANGE and HELP COORD-CHECK.
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

@@ -1,0 +1,7 @@
+    .FAT-DATE  date --
+
+Prints an MS-DOS format date as YYYY-MM-DD.
+Bits 0-4 day, 5-8 month, 9-15 year from 1980.
+Example:  22186 .FAT-DATE  prints 2023-05-10
+
+Available after NEEDS .FAT-DATE

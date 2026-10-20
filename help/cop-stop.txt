@@ -1,0 +1,7 @@
+    COP-STOP  --
+
+Stops the Copper and resets the upload index to 0.
+Use it before building a new Copper list.
+
+Part of the COPPER library.
+Available after NEEDS COPPER

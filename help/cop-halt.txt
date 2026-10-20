@@ -1,0 +1,8 @@
+    COP-HALT  --
+
+Appends the end-of-list instruction to the Copper list:
+a WAIT for a position never reached, so the Copper does
+nothing more until the next frame.
+
+Part of the COPPER library.
+Available after NEEDS COPPER

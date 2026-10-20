@@ -259,7 +259,8 @@ CR
 \   5. Load/unload the tutorial multiple times: NEWTASK should restore the
 \      dictionary and allow 054 TUTORIAL to reload successfully.
 \
-\ Status (2026-10-02): on real hardware NEEDS DMA and DEMO run without
-\          crashing, and 32 STRIPES draws the border bands at 28 MHz
-\          (item 4, see section 3 and tutorial/054-stripes.png); the DUMP
-\          checks (items 2-3) and the 3.5 MHz run still await confirmation.
+\ Status (2026-10-04): tested by the author on real hardware. NEEDS DMA and
+\          DEMO run without crashing, and 32 STRIPES draws the border
+\          bands at 28 MHz (item 4, see section 3): the evidence that the
+\          DMA works is tutorial/054-stripes.png, captured from the Next's
+\          video output through OBS.

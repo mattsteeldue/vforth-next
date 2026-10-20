@@ -1,0 +1,3 @@
+#program 21-01
+10 .date
+20 .time

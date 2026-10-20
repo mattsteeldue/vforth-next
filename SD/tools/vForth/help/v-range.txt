@@ -1,0 +1,9 @@
+    V-RANGE  -- n
+
+VALUE holding the vertical size in pixels of the current
+graphic mode, the limit of the x coordinate:
+192 in most modes, 96 in LAYER10.
+
+See HELP H-RANGE and HELP COORD-CHECK.
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

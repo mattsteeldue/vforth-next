@@ -1,0 +1,4 @@
+#program 12-05
+10 LET a$="pear": LET b$="apple"
+20 IF b$<a$ THEN LET t$=a$: LET a$=b$: LET b$=t$
+30 PRINT a$;" ";("<" AND a$<b$);("=" AND a$=b$);" ";b$

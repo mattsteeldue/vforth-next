@@ -11,6 +11,7 @@
 \ shuffled explicitly.  The diagrams below use the convention
 \   ( before -- after )   with the rightmost item being TOS.
 \
+\ Coming from BASIC: Ch.4, 6, 12  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.2, Ch.5  |  vForth screens 805-814, 821-825
 \ Reference: sec.2.12.2
 \

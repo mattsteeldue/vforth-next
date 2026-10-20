@@ -1,0 +1,9 @@
+    SPRITE-HIDE  n --
+
+Hides the sprite in hardware slot n, writing zero to its
+four attribute bytes (the visible bit is in the fourth).
+The pattern in the sprite RAM is not touched.
+
+Example:  0 SPRITE-HIDE
+Available after NEEDS SPRITE.  Tutorial 053.
+

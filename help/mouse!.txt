@@ -1,0 +1,7 @@
+    MOUSE!  f --
+
+Shows the mouse arrow if f is true, hides it if f is
+false, then redraws the sprite.
+
+Part of the MOUSE library.
+Available after NEEDS MOUSE

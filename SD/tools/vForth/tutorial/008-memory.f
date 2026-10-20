@@ -15,6 +15,7 @@
 \ Dictionary allocation (HERE, ALLOT, , C,) is also covered here because
 \ it follows the same address/store model.
 \
+\ Coming from BASIC: Ch.1, 4, 5, 7, 10, 11, 13, 23, 24  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.8  |  vForth screens 850-867
 \ Reference: sec.2.12.6, 4.2, 4.3
 \

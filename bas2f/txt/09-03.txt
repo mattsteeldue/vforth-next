@@ -1,0 +1,3 @@
+#program 09-03
+10 INPUT r
+20 PRINT 2*PI*r,PI*r*r

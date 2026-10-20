@@ -176,13 +176,13 @@ CODE D<<8 ( ud -- ud' )
   FP+ FP-SQRT ;
 
 
-\ Temperature conversion Celsius → Fahrenheit
+\ Temperature conversion Celsius -> Fahrenheit
 : C>F   ( celsius-fp -- fahrenheit-fp )
   \ F = C * 9/5 + 32
   9 5 */ 32 >FP FP+ ;
 
 
-\ Temperature conversion Fahrenheit → Celsius
+\ Temperature conversion Fahrenheit -> Celsius
 : F>C   ( fahrenheit-fp -- celsius-fp )
   \ C = (F - 32) * 5/9
   32 >FP FP- 5 9 */ ;
@@ -301,7 +301,7 @@ DECIMAL
     >W >W 5 FOP         \               F: intg frac/256
     #15 FOP             \               F: intg+frac/256
     R> 0<               \ fp-sign?
-    IF #27 FOP THEN     \               F: �intg+frac/256
+    IF #27 FOP THEN     \               F: +/-intg+frac/256
 ;
     
 \ move fp from Spectrum's floating-point stack to Forth calculator stack

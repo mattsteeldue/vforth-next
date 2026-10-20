@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-09-26
+\ v-Forth 1.8 - NextZXOS version - build 2026-10-19
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -3374,6 +3374,11 @@ CODE <far ( a n -- ha )
     hp @ ;
 
 
+\ The tail of every heap page, $1EFF-$1FFF (257 bytes), is never
+\ allocated: a header just written by CREATE may run past the
+\ watermark (36 bytes at most) without crossing the page, and a stray
+\ write to BASIC's UDG area $FF58-$FFFF (offsets $1F58-$1FFF), made
+\ while MMU7 holds a heap page, lands in this margin.
 HEX 1EFF constant page-watermark
 
 \
@@ -5271,43 +5276,45 @@ LIMIT @ FIRST @ - decimal 516 / constant #buff
     
 
 .( F_GETLINE )
-\ Given an open filehandle read at most  m  characters to get next line
+\ Given an open filehandle read at most m-2 characters to get next line
 \ terminated with $0D or $0A.
-\ n is the actual number of byte read, that is the length of line.
-\ Buffer must be m bytes long to accommodate a trailing 0x00 at m-th byte.
+\ n is the length of line plus one (the terminator), 0 at end of file.
+\ The buffer at a must be m bytes long: the line is left at a, blank
+\ padded, with a trailing 0x00 at its m-th byte.
 decimal
 : f_getline ( a m fh -- n )
     >r tuck                                     \ m a m         R: fh
     r@ f_fgetpos [ 35 ] Literal ?error          \ m a m  d
     2swap                                       \ m  d  a m
-    over 1+                                     \ m  d  a m a+1
-    swap                                        \ m  d  a a+1 m 
-    r@ f_read [ 35 ] Literal ?error             \ m  d  a k 
-    If \ at least 1 chr was read                \ m  d  a k
+    over 1+ swap 2-                             \ m  d  a a+1 m-2
+    r@ f_read [ 35 ] Literal ?error             \ m  d  a k
+    ?dup If \ at least 1 chr was read           \ m  d  a k
+        2dup + 1+ 0 swap c!                     \ m  d  a k     nul sentinel
+        >r                                      \ m  d  a       R: fh k
+        bl over c!                              \ m  d  a       bl at a
         [ 10 ] Literal enclose                  \ m  d  a n1 b n3
-        drop nip swap                           \ m  d  b a 
-        [ 13 ] Literal enclose                  \ m  d  b a n1 c n3  
+        drop nip swap                           \ m  d  b a
+        [ 13 ] Literal enclose                  \ m  d  b a n1 c n3
         drop nip rot                            \ m  d  a c b
         min                                     \ m  d  a n
-        dup span !                              \ m  d  a
-        dup >r                                  \ m  d  a n       R: fh n
-        2swap r>                                \ m a n  d   n    R: fh
-        0 d+                                    \ m a n d+n
+        dup span !                              \ m  d  a n
+        dup r> min >r                           \ m  d  a n     R: fh u
+        2swap r>                                \ m a n  d  u   R: fh
+        0 d+                                    \ m a n d+u
         r> f_seek [ 36 ] Literal ?error         \ m a n
     Else                                        \ m  d  a
-        r> 2swap                                \ m a fh  d 
-        2drop drop                              \ m a 
+        r> 2swap                                \ m a fh  d
+        2drop drop                              \ m a
         0                                       \ m a 0
-    Then
-    >r                                          \ m a             R: n|0
-    dup dup 1+ swap                             \ m a a+1 a
-    r@ cmove                                    \ m a
-    2dup +                                      \ m a m+a
-    0 swap cell- !                              \ m a
-    r@ + 1-                                     \ m a+n-1
-    swap r@ -                                   \ a+n-1 m-n
-    blank  
-    r>                                          \ n|0
+    Then                                        \ m a n
+    >r                                          \ m a           R: n
+    dup 1+ over r@                              \ m a a+1 a n
+    cmove                                       \ m a
+    2dup + 1- 0 swap c!                         \ m a      0 at a+m-1
+    r@ 1- 0 max                                 \ m a t    t text length
+    tuck + -rot - 1-                            \ a+t m-t-1
+    blank
+    r>                                          \ n
 ;
 
 

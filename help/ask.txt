@@ -1,0 +1,13 @@
+    ASK  -- n
+
+Used in the form  ASK command
+Sends the rest of the line to the Raspberry Pi Zero
+through the UART and collects its answer in PAD, up
+to 1024 bytes; leaves the length. All the line goes
+to the Pi, so use the answer on the next line:
+    ASK uname -m
+    PAD SWAP TYPE
+
+See SH, RPI0.
+
+Available after NEEDS ASK

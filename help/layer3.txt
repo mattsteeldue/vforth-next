@@ -1,0 +1,12 @@
+    LAYER3  --
+
+MARKER of the Layer 3 (tilemap) library: executing LAYER3
+forgets the library. To use the tilemap do not call it,
+call one of the mode words instead.
+NEEDS LAYER3 loads:
+  TILE-OFF  TILE-40  TILE-80  TILE-TXT
+  TILE-40-PALETTE  TILE-80-PALETTE  TILE-TXT-PALETTE
+  SET-PAL  GET-PAL  TILE-MODE:  TILE-PALETTE:
+See tutorial 058.
+
+Available after NEEDS LAYER3

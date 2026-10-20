@@ -1,3 +1,7 @@
     P!  b p --
 
-Store paged byte at address p.
+Writes byte b to the I/O port p, a full 16-bit
+address: BASIC's OUT p,b with the value first.
+    2 254 P!           \ red border, BORDCR unchanged
+
+See P@, REG!, .BORDER.

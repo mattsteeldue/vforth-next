@@ -1,0 +1,12 @@
+    SPRITES-ON  --
+
+Turns the sprite engine on: loads the identity palette
+in the first sprite palette (colour i = i), sets $E3 as
+the transparent colour (NextReg $14) and writes 3 to
+NextReg $15, sprites visible and over the border.
+NextReg $43 is left on the sprite palette: give 0 $43 REG!
+before writing the ULA palette with $40/$41 again.
+SPRITES-OFF turns the engine off.
+
+Available after NEEDS SPRITE.  Tutorial 053.
+

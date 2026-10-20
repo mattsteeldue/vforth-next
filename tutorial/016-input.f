@@ -21,6 +21,7 @@
 \ Printable characters: 32-127 ($20-$7F).
 \ ZX Spectrum specific: DELETE=12, EDIT=7, depends on ROM.
 \
+\ Coming from BASIC: Ch.1, 7, 14  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.10  |  vForth screens 877-895
 \ Reference: sec.2.12.10
 \

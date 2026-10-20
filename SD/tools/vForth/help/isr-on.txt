@@ -1,0 +1,9 @@
+    ISR-ON  --
+
+Enables the Forth interrupt routine: sets up the IM 2
+vector table and switches the CPU to interrupt mode 2,
+so the definition stored in ISR-XT runs at every 50Hz
+interrupt.
+
+Part of the INTERRUPTS library.
+Available after NEEDS INTERRUPTS

@@ -5,7 +5,7 @@
 \
 .( LAYER2 )
 \
-\ Layer 2 – 256 w x 192 h pixels, 256 colours total, one colour per pixel
+\ Layer 2 - 256 w x 192 h pixels, 256 colours total, one colour per pixel
 \
 
 BASE @

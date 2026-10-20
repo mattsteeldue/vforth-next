@@ -85,7 +85,7 @@ HEX
 
 : L22-INITIALIZE
     10  70 REG!                 \ Layer 2 Control: 320x256 resolution
-    0   1C REG!                 \ reset clip-window index
+    1   1C REG!                 \ bit 0: reset Layer 2 clip-window index
     0   18 REG!  #159 18 REG!   \ X clip 0..159  (=> 0..319, 2-pixel units)
     0   18 REG!  #255 18 REG!   \ Y clip 0..255
     RGB-COLORS

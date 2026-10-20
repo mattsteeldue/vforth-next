@@ -1,0 +1,10 @@
+    COP-NOOP  --
+
+Appends a no-operation instruction to the Copper list
+(the MOVE 0,0 of NextBASIC): the Copper does nothing for
+a moment, about one horizontal position, a finer delay
+than COP-WAIT, which moves in steps of 8 pixels.
+
+Part of the COPPER library.
+Available after NEEDS COPPER
+

@@ -1,0 +1,7 @@
+    LAYER0  --
+
+Selects Layer 0, the standard Spectrum (ULA) display:
+256x192 pixels, 32x24 attribute cells of two colours.
+Return to the default text mode with LAYER12.
+
+Available after NEEDS LAYER0 or LAYERS

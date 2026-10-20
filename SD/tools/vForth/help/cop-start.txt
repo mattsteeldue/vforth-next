@@ -1,0 +1,7 @@
+    COP-START  --
+
+Starts the Copper from the beginning of its list, in the
+mode that restarts the list at every vertical blank.
+
+Part of the COPPER library.
+Available after NEEDS COPPER

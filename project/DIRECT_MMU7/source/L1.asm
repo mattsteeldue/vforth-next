@@ -507,12 +507,21 @@ Traverse_Begin:                                 // begin
 //  ______________________________________________________________________ 
 //
 // page-watermark   -- n
-// how much a 8K page can be filled..
+// how much a 8K page can be filled: the tail of every heap page, from
+// $1EFF to $1FFF, is never allocated. The 257-byte margin (a) lets the
+// header that CREATE has just written run past the watermark without
+// crossing the page (the longest is about 36 bytes, ending below $1F24)
+// and (b) absorbs stray writes to BASIC's UDG area, $FF58-$FFFF (offsets
+// $1F58-$1FFF), made by code that believes it is still poking BASIC's
+// RAM: while vForth runs, MMU7 holds whichever heap page was fitted
+// last, so such a write lands in this margin, not on a heap entry.
                 Constant_Def PAGE_WATERMARK,   "PAGE-WATERMARK", $1EFF  
 
 //  ______________________________________________________________________ 
 //
-// skip-hp-page ha -- a
+// skip-hp-page n --
+// if n more bytes do not fit below PAGE-WATERMARK in the current heap
+// page, move HP to the start of the next 8K page (offset 2)
                 Colon_Def SKIP_HP_PAGE, "SKIP-HP-PAGE", is_normal
                 dw      HP_FETCH                // hp@
                 dw      LIT, $1FFF, AND_OP      // 1FFF and

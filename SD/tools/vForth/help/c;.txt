@@ -1,0 +1,9 @@
+    C;  --
+
+IMMEDIATE. Ends a CODE definition written with the
+assembler: restores CONTEXT to the CURRENT vocabulary,
+checks that the last instruction is complete (errors #26
+and #27) and makes the new word findable with SMUDGE.
+
+Part of the ASSEMBLER library.
+Available after NEEDS ASSEMBLER

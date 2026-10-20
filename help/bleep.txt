@@ -1,0 +1,10 @@
+    BLEEP  n1 n2 --
+
+Calls the ROM beeper routine at $03B5 with raw
+parameters, for a tone of f Hz lasting t seconds:
+  n1 = f * t                    (number of cycles)
+  n2 = ( 3500000 / f - 241 ) / 8        (pitch)
+The ROM timing assumes a CPU speed of 3.5 MHz.
+BLEEP-CALC computes the two numbers; BEEP does it all.
+
+Available after NEEDS BLEEP

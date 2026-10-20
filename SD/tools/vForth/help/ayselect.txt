@@ -1,0 +1,8 @@
+    AYSELECT  n --
+
+Selects the active AY sound chip: 1 = AY1, 2 = AY2,
+3 = AY3. The number is also stored in the variable AY.
+0 is a no-op that leaves the previous chip selected.
+
+Part of the AY library.
+Available after NEEDS AY

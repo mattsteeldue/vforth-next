@@ -1,0 +1,11 @@
+    COPPER  --
+
+Does nothing: it is the name NEEDS looks for.
+NEEDS COPPER loads the ZX Next Copper words:
+  COP-STOP  COP-WAIT  COP-MOVE  COP-NOOP  COP-HALT
+  COP-START
+A list is built with COP-STOP, then COP-WAIT / COP-MOVE
+instructions, then COP-HALT, and is run by COP-START.
+NO-COPPER removes the library. See tutorial 045.
+
+Available after NEEDS COPPER

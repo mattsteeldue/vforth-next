@@ -1,0 +1,11 @@
+    ATTRIB  -- b
+
+VALUE holding the current drawing colour used by PLOT,
+DRAW-LINE and CIRCLE. In the ULA modes it is an attribute
+byte, in Layer 2 it is the 8-bit colour of the pixel.
+It is normally set through .INK, .PAPER, .BRIGHT and
+.FLASH; it can be set directly with  b TO ATTRIB .
+Each graphic mode keeps its own ATTRIB.
+
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

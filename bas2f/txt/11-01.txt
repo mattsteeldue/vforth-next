@@ -1,0 +1,7 @@
+#program 11-01
+10 DIM m(10)
+20 FOR n=1 TO 10: READ m(n): NEXT n
+30 LET t=0
+40 FOR n=1 TO 10: LET t=t+m(n): NEXT n
+50 PRINT t/10
+60 DATA 7,4,9,6,8,5,10,6,7,8

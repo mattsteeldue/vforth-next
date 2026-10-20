@@ -1,0 +1,7 @@
+    .NOW  --
+
+Prints the date and time of the real time clock as
+2023-05-10 16:55 (no seconds), from IDE_RTC through
+.FAT-DATE and .FAT-TIME. The startup banner uses it.
+
+Available after NEEDS .NOW

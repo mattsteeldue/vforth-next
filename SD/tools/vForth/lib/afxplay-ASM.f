@@ -234,7 +234,7 @@ CODE AFXADDR ( n -- a )
  
  
 \ Lancio di un effetto su un canale libero. In assenza di      ;
-\ i canali liberi sono selezionati per il suono pi� lungo.     ;
+\ i canali liberi sono selezionati per il suono piu` lungo.     ;
 
 CODE AFXPLAY ( a -- )
         pop     hl|
@@ -242,7 +242,7 @@ CODE AFXPLAY ( a -- )
         push    ix|
         push    bc|
 
-        ldx     de| 0 NN,   \  in DE il tempo pi� lungo durante la ricerca
+        ldx     de| 0 NN,   \  in DE il tempo piu` lungo durante la ricerca
         
         ldx     hl| afxChDesc AA, \ descrittore 3 canali
         ldn     b'| 3 N,
@@ -250,7 +250,7 @@ CODE AFXPLAY ( a -- )
 \ afxPlay0
         incx    hl|
         incx    hl|
-        ld      a'| (hl)|   \ confronta il tempo del canale con il pi� grande
+        ld      a'| (hl)|   \ confronta il tempo del canale con il piu` grande
         incx    hl|
         cpa     e|    
         jrf     cy'| HOLDPLACE \ afxPlay1       ; salta se e > (hl)
@@ -258,7 +258,7 @@ CODE AFXPLAY ( a -- )
         ld      a'| (hl)|      
         cpa     d|                \ salta se anche e > (hl)
         jrf     cy'| HOLDPLACE \ afxPlay1
-        ld      e'| c|                \ ricorda il tempo pi� lungo in DE
+        ld      e'| c|                \ ricorda il tempo piu` lungo in DE
         ld      d'! a|
         push    hl|                \ salva l'indirizzo del canale+3 in IX
         pop     ix|
@@ -272,7 +272,7 @@ CODE AFXPLAY ( a -- )
         pop     de|          \ riprendiamo l'indirizzo dell'effetto dallo stack
         ld(ix+  -3 )| e|            \ entra nel descrittore del canale
         ld(ix+  -2 )| d|     
-        ld(ix+  -1 )| b|            \ azzerando il tempo del suono ( B � zero )
+        ld(ix+  -1 )| b|            \ azzerando il tempo del suono ( B e` zero )
         ld(ix+  -0 )| b|
 
         pop     bc| 

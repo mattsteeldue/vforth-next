@@ -183,35 +183,45 @@ Flush_Do:                                       // do
 //  ______________________________________________________________________ 
 //
 // f_getline    a m fh -- n
-// Given an open filehandle read next line (terminated with $0D or $0A)
-// Address a is left for subsequent processing
-// and n as the actual number of byte read, that is the length of line 
+// Given an open filehandle read at most m-2 characters to get next line
+// (terminated with $0D or $0A).
+// n is the length of line plus one (the terminator), 0 at end of file.
+// The buffer at a must be m bytes long: the line is left at a, blank
+// padded, with a trailing 0x00 at its m-th byte.
                 Colon_Def F_GETLINE, "F_GETLINE", is_normal
                 dw      TO_R                    // >r               ( a  m  )     \  fh
                 dw      TUCK                    // tuck             ( m a m )
                 dw      R_OP, F_FGETPOS         // r f_fgetpos      ( m a m d f ) 
-                dw      LIT, 35, QERROR         // 44 ?error        ( m a m d )     
+                dw      LIT, 35, QERROR         // 35 ?error        ( m a m d )     
                 
-                dw      TWO_SWAP, OVER          // 2swap over       ( m d a m )
+                dw      TWO_SWAP, OVER          // 2swap over       ( m d a m a )
                 dw      ONE_PLUS, SWAP          // 1+ swap          ( m d a a+1 m )
+                dw      TWO_MINUS               // 2-               ( m d a a+1 m-2 )
 
-                dw      R_OP, F_READ            // r f_read         ( m d a n f ) 
-                dw      LIT, 35, QERROR         // 46 ?error        ( m d a n )  
+                dw      R_OP, F_READ            // r f_read         ( m d a k f ) 
+                dw      LIT, 35, QERROR         // 35 ?error        ( m d a k )  
+                dw      QDUP                    // ?dup
                                                 // if ( at least 1 chr was read )  \  fh
                 dw      ZBRANCH
                 dw      FGetline_Else - $
+                dw          TWO_DUP, PLUS       //      2dup +           ( m d a k a+k )
+                dw          ONE_PLUS            //      1+               ( m d a k a+k+1 )
+                dw          ZERO, SWAP, CSTORE  //      0 swap c!        ( m d a k )      \ nul sentinel
+                dw          TO_R                //      >r               ( m d a )        \ fh k
+                dw          BL, OVER, CSTORE    //      bl over c!       ( m d a )        \ non-delimiter at a
                 dw          LIT, 10, ENCLOSE    //      10 enclose       ( m d a x b x )
                 dw          DROP, NIP           //      drop nip         ( m d a b )
-                dw          SWAP                //      drop swap        ( m d b a )
+                dw          SWAP                //      swap             ( m d b a )
                 dw          LIT, 13, ENCLOSE    //      13 enclose       ( m d b a x c x )
                 dw          DROP, NIP           //      drop nip         ( m d b a c )
                 dw          ROT, MIN            //      rot min          ( m d a n )
                 dw          DUP, SPAN, STORE    //      dup span !       ( m d a n )
-                dw          DUP, TO_R           //      dup >r           ( m d a n )      \ fh n
-                dw          TWO_SWAP, R_TO      //      2swap r>         ( m a n d n )    \ fh
-                dw          ZERO, DPLUS         //      0 d+             ( m a n d+n )
+                dw          DUP, R_TO, MIN      //      dup r> min       ( m d a n u )    \ fh
+                dw          TO_R                //      >r               ( m d a n )      \ fh u
+                dw          TWO_SWAP, R_TO      //      2swap r>         ( m a n d u )    \ fh
+                dw          ZERO, DPLUS         //      0 d+             ( m a n d+u )
                 dw          R_TO, F_SEEK        //      r> f_seek        ( m a n f )    
-                dw          LIT, 36, QERROR     //      45 ?error        ( m a n )
+                dw          LIT, 36, QERROR     //      36 ?error        ( m a n )
                                                 // else                
                 dw      BRANCH
                 dw      FGetline_Endif - $
@@ -220,15 +230,17 @@ FGetline_Else:
                 dw          TWO_SWAP, TWO_DROP  //      2swap 2drop     ( m a fh )
                 dw          DROP, ZERO          //      drop, 0         ( m a 0 )
 FGetline_Endif:                                 // endif
-                dw      TO_R, DUP, DUP          // >r dup dup           ( m a a a )
-                dw      ONE_PLUS, SWAP          // 1+ swap              ( m a a+1 a )
+                dw      TO_R                    // >r                   ( m a )      \ n
+                dw      DUP, ONE_PLUS, OVER     // dup 1+ over          ( m a a+1 a )
                 dw      R_OP, CMOVE             // r cmove              ( m a )
-                dw      TWO_DUP, PLUS           // 2dup +               ( m a m+a )
-                dw      ZERO, SWAP              // 0 swap
-                dw      CELL_MINUS,  STORE      // cell-  !             ( m a )
-                dw      R_OP, PLUS, ONE_SUBTRACT// r + 1-               ( m a+n1 )
-                dw      SWAP, R_OP, SUBTRACT    // swap r -             ( a+n+1 m-n )           
-                dw      BLANK                   // blank 
+                dw      TWO_DUP, PLUS           // 2dup +               ( m a a+m )
+                dw      ONE_SUBTRACT            // 1-                   ( m a a+m-1 )
+                dw      ZERO, SWAP, CSTORE      // 0 swap c!            ( m a )
+                dw      R_OP, ONE_SUBTRACT      // r 1-                 ( m a n-1 )
+                dw      ZERO, MAX               // 0 max                ( m a t )
+                dw      TUCK, PLUS, DASH_ROT    // tuck + -rot          ( a+t m t )
+                dw      SUBTRACT, ONE_SUBTRACT  // - 1-                 ( a+t m-t-1 )
+                dw      BLANK                   // blank
                 dw      R_TO                    // r>                   ( n )
                 dw      EXIT                    // ;
 

@@ -1,0 +1,11 @@
+    IDE_RTC  -- x time date
+
+Reads the real time clock through the NextZXOS call
+IDE_RTC ($01CC). date and time are in MS-DOS format,
+as file dates: .FAT-DATE and .FAT-TIME print them.
+x is the extra value of the call (seconds and 100ths,
+on clock modules that give them); DROP it otherwise.
+Without a clock module the values mean nothing: use
+M_GETDATE, whose flag tells.
+
+Available after NEEDS IDE_RTC

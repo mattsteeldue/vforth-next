@@ -1,0 +1,8 @@
+    PI  -- fp
+
+Pushes the floating-point constant pi (3.14159...).
+
+    FLOATING  PI F.
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -1,0 +1,9 @@
+    SCAN  a n c -- a2 n2
+
+Look for the character c in the string a n.
+a2 n2 begins at the first c found, or is the
+empty string at a+n when there is none:
+test n2 to know. The match is exact, case
+counts. See also SKIP, SEARCH.
+
+Available after NEEDS SCAN

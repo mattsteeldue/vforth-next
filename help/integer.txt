@@ -1,0 +1,8 @@
+    INTEGER  --
+
+Switches number interpretation back to integers: a number
+with a decimal point is read as a double integer again.
+FLOATING does the opposite.
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

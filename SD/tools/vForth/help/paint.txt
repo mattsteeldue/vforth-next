@@ -1,0 +1,16 @@
+    PAINT  x y --
+
+Flood-fills with the current colour ATTRIB the region
+that contains the pixel (x,y), one row span at a time.
+The boundary is decided by EDGE: in Layer 0 and Layer 1,1
+-1,3 any ink pixel; in Layer 1,0 and Layer 2 any pixel of
+the colour ATTRIB, so there the fill colour must be the
+outline colour, or the fill floods the whole screen.
+Pending spans live in an 8K page of their own (page 40,
+reserved from NextZXOS while PAINT runs): up to 2048, and
+a very jagged shape may be left partly unfilled.
+[BREAK] stops the fill.
+
+Not part of GRAPHICS: load it after the library with
+NEEDS PAINT.  See also: PLOT  POINT.  Tutorial 038.
+

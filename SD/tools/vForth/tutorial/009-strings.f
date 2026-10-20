@@ -20,6 +20,7 @@
 \ work.  Its address can move after ALLOT -- never store PAD across calls
 \ that may modify the dictionary.
 \
+\ Coming from BASIC: Ch.2, 5, 7, 8, 11, 12  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.10  |  vForth screens 877-895
 \ Reference: sec.2.12.6, 6.1
 \

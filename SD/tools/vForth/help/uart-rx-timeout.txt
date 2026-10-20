@@ -1,0 +1,7 @@
+    UART-RX-TIMEOUT  n -- c
+
+Waits up to n milliseconds for a byte from the UART.
+Returns the byte c, or 0 if nothing arrived in time.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

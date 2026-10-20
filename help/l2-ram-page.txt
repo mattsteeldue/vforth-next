@@ -1,0 +1,8 @@
+    L2-RAM-PAGE  -- n
+
+Constant: the first 8K page of the Layer 2 framebuffer,
+to be mapped with MMU7! . It is computed once at load
+time as twice the 16K bank number held in NextReg $12.
+The 256x192 framebuffer takes six consecutive 8K pages.
+
+Available after NEEDS L2-RAM-PAGE

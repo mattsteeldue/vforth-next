@@ -1,0 +1,14 @@
+    MDR-CAT  -- cccc
+
+Catalogue of a ZX Microdrive cartridge image (.MDR file)
+whose name follows on the same input line. One line per
+file, sorted by name: type (Prog, Numb, Char, Code, Scrn,
+Prnt), length, name, and for non-PRINT files the start
+address, the bytes actually used and, for a program, the
+vars offset and the autostart line. Totals of used, bad
+and free space follow.
+
+Read-only: the cartridge is never written.
+Example: MDR-CAT M2.MDR
+
+See MDR-GET. Available after NEEDS MDR

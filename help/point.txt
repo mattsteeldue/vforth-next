@@ -1,0 +1,12 @@
+    POINT  x y -- c
+
+Returns the colour or state of the pixel at (x,y) in the
+current graphic mode; x is vertical, y horizontal.
+Layer 0 and Layer 1,1-1,3: 128 if the pixel is ink, 0 if
+it is paper. Layer 1,0 and Layer 2: the colour byte of
+the pixel (RRRGGGBB), or -1 for out-of-range coordinates,
+since 0 is a valid colour (black).
+
+Available after NEEDS GRAPHICS or NEEDS LAYERxx-GRAPHICS
+See also: PLOT  PAINT  EDGE.  Tutorial 038.
+

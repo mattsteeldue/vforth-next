@@ -1,0 +1,14 @@
+    BMP-LOAD  a --
+
+Loads a 256-colour 256x192 .bmp file straight into Layer 2
+video RAM. a is the address of a counted z-string holding
+the filename, the kind compiled by ," :
+
+    CREATE PIC  ," tutorial/bmp/jaws.bmp"
+    LAYER2  PIC BMP-LOAD  WAIT-KEY  LAYER12
+
+The "BM" signature and the size are checked first.
+Errors: #41 open, #46 read, #38 not a valid BMP, #45 seek.
+See HELP BMP-LOAD" for the quote-delimited form.
+
+Available after NEEDS BMP-LOAD

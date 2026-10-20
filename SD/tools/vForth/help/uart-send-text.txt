@@ -1,0 +1,8 @@
+    UART-SEND-TEXT  a n --
+
+Sends the n bytes of text starting at address a to the
+UART, one byte at a time through UART-TX-BYTE.
+No end-of-line is added: follow it with UART-SEND-CR.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

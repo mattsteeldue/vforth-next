@@ -1,0 +1,12 @@
+    CALL#  n1 a -- n2
+
+Calls the machine code at address a, like BASIC's
+USR: n1 goes into BC and its low byte into A, the
+code ends with ret, and BC comes back as n2. The
+registers of Forth (BC, DE, IX) are saved around it.
+    CREATE MC  1 C, 99 C, 0 C, 201 C,
+    0 MC CALL# .        \ 99: ld bc,99 : ret
+
+For code of your own a CODE word is the usual form.
+
+Available after NEEDS CALL#

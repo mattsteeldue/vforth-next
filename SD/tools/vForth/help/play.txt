@@ -1,0 +1,21 @@
+    PLAY  a1 n1 ... ak nk k --
+
+Plays k music strings (1 to 9) in NextBASIC's PLAY
+language: strings 1-3 on channels A, B, C of AY1,
+4-6 on AY2, 7-9 on AY3. Waits until the music ends;
+H in a string or BREAK stops it.
+
+  notes c..b C..B, # sharp, $ flat, O0-O8 octave
+  1-12 duration, _ tie, & rest, N separator
+  V0-V15 volume, U W0-W7 X envelope, M0-M63 mixer
+  T60-T240 tempo (first string), ( ) repeat,
+  ! comment !, H halt, L R S stereo
+
+    S" O4ceg" S" O4egC" 2 PLAY
+
+The strings must stay readable while they play.
+Errors: #19 bad character, -24 number out of
+range, #15 BREAK.
+
+See PLAY", AY!, SHH.
+Available after NEEDS PLAY

@@ -364,7 +364,7 @@ DECIMAL
     S>D D>F ;
 
 
-: FIX    ( fp -- a n )
+: FIX    ( fp -- n )
     F>D DROP ;
 
 

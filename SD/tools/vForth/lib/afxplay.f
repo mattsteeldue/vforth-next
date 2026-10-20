@@ -18,7 +18,7 @@ VARIABLE  afxNoiseMix  \ valore noise-mixer
           6 ALLOT
 
 \ channel descriptors, 4 byte per canale:
-\ +0 (2) current address (il canale è libero se high byte = #00)
+\ +0 (2) current address (il canale e` libero se high byte = #00)
 \ +2 (2) tempo di effetto
 \ ...
 

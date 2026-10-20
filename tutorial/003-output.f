@@ -12,6 +12,7 @@
 \ EMITC bypasses that filter and sends the raw byte -- use it only when
 \ you know the peripheral can handle it directly.
 \
+\ Coming from BASIC: Ch.1, 7, 13, 14, 20  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.1  |  vForth screens 800-804
 \ Reference: sec.2.12.4, 2.9
 \

@@ -1,0 +1,13 @@
+\
+\ test/skip.f
+\
+
+NEEDS TESTING
+
+TESTING String - SKIP
+
+T{ S3 BL SKIP -> S3 DROP 3 + 3 }T
+T{ S1 BL SKIP -> S1 }T
+T{ S3 DROP 3 BL SKIP -> S3 DROP 3 + 0 }T
+T{ S1 DROP 0 BL SKIP -> S1 DROP 0 }T
+

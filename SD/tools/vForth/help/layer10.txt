@@ -1,0 +1,7 @@
+    LAYER10  --
+
+Selects Layer 1,0, the LoRes display: 128x96 pixels,
+256 colours, one colour per pixel.
+Return to the default text mode with LAYER12.
+
+Available after NEEDS LAYER10 or LAYERS

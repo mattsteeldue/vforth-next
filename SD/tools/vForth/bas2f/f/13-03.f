@@ -14,7 +14,7 @@
 
 \ --- the translation
 
-\ 13-the-character-set.md:274
+\ 13-the-character-set.md:285
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 CREATE FONT  768 ALLOT

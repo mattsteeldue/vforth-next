@@ -1,0 +1,5 @@
+#program 05-05
+10 FOR i=1 TO 2
+20   READ n$,p: PRINT n$;" ";p
+30 NEXT i
+40 DATA "tea",120,"cake",250

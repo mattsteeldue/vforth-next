@@ -1,0 +1,5 @@
+#program 01-02
+10 REM inches to millimetres
+20 INPUT "Inches? ";i
+30 PRINT i;" in = ";i*25.4;" mm"
+40 GO TO 20

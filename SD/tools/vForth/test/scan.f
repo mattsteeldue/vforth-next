@@ -1,0 +1,14 @@
+\
+\ test/scan.f
+\
+
+NEEDS TESTING
+
+TESTING String - SCAN
+
+T{ S1 CHAR N SCAN -> S1 DROP 9 + 4 }T
+T{ S1 CHAR S SCAN -> S1 }T
+T{ S1 CHAR t SCAN -> S1 DROP 4 + 9 }T
+T{ S1 CHAR n SCAN -> S1 + 0 }T
+T{ S1 DROP 0 CHAR S SCAN -> S1 DROP 0 }T
+

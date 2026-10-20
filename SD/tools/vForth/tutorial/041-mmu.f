@@ -2,12 +2,14 @@
 \ 041-mmu.f
 \ MMU and memory banking: mapping 8K pages into the Z80 address space.
 \
-\ The ZX Next has 2 MB of RAM organized as 256 banks of 8K (pages
-\ numbered 0-255).  The Z80 sees a 64K address space divided into
-\ eight 8K slots (MMU0-MMU7, addresses $0000-$FFFF).  vForth uses
-\ slot 7 ($E000-$FFFF) for its dictionary (in heap).  MMU7! maps a
-\ different 8K page into that window temporarily; it is restored 
-\ automatically at Forth prompt, but at run-time is your responsibility.
+\ The ZX Next has 2 MB of RAM; the first 256K hold ROMs and firmware,
+\ the rest is 224 pages of 8K (0-223; 0-95 on a 1 MB Next).  The Z80
+\ sees a 64K address space divided into eight 8K slots (MMU0-MMU7,
+\ addresses $0000-$FFFF).  vForth uses slot 7 ($E000-$FFFF) for its
+\ dictionary (in heap).  MMU7! maps a
+\ different 8K page into that window temporarily.  It stays there until
+\ vForth maps a page of names (compiling a definition does), even at
+\ the prompt: save and restore it in the same word (section 5).
 \
 \ Reference: sec.5.3
 \
@@ -52,8 +54,11 @@ NEEDS ms
 \   6     $C000-$DFFF     $56       vForth continued
 \   7     $E000-$FFFF     $57       vForth heap (current page)
 \
-\ Each slot can hold any of the 256 available 8K pages.
-\ Page 0 = first 8K of physical RAM, page 255 = last 8K.
+\ Each slot can hold any of the 224 available 8K pages (96 on a 1 MB
+\ Next).  Page 0 is physical address $40000, just after the 256K of
+\ ROMs and firmware; 255 in slot 0 or 1 shows the ROM instead.  Many
+\ pages are already in use (NextZXOS, BASIC, Layer 2, the vForth heap
+\ in pages 32-39): a free one is asked of NextZXOS with IDE_BANK.
 
 \ ===========================================================================
 \ 2. MMU7! and MMU7@ -- map slot 7

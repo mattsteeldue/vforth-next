@@ -1,0 +1,13 @@
+    AFX-CH-DESC  -- a
+
+Address of the channel descriptor table used by AFXFRAME:
+48 bytes, one 4-byte descriptor per voice, 9 voices
+(3 AY chips x 3 channels), the last 12 bytes spare.
+  +0  current address in the effect data; a zero high
+      byte means the channel is free
+  +2  effect timer
+To start an effect on voice n (1-based):
+  addr  AFX-CH-DESC n 1- 4 * +  !
+
+Part of the AFXFRAME library.
+Available after NEEDS AFXFRAME

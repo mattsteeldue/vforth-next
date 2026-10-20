@@ -1,0 +1,3 @@
+#program 07-05
+10 PRINT "ab"*3
+20 PRINT "Spectrum"*-1

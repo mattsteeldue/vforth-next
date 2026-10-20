@@ -1,3 +1,7 @@
     REG@  n -- b
 
-Read NextZXOS system register.
+Reads Next register n: BASIC's REG n. Selects n on
+port $243B and reads port $253B, inside one word.
+    7 REG@ 3 AND .     \ CPU speed asked for, 0-3
+
+See REG!, P@, SPEED@.

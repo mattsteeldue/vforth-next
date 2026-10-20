@@ -17,12 +17,17 @@
 \ Sign is the msb of H, so you can check for sign in the integer-way.
 \ Exponent +128 is stored in the following 8 bits of HL
 \ Mantissa is stored in L and 16 bits of DE. B is defaulted.
-\ 
+\
 \ A floating point number is stored in Spectrum's calculator stack as 5 bytes.
 \ Exponent in A, sign in msb of E, mantissa in the rest of E and DCB.
 \  H   <->  A    # 0   -> a
 \  LDE <->  EDC  # 0DE -> eCD
-\  x   <->  B    # x 
+\  x   <->  B    # x
+\
+\ The lost byte B (2026-10-12): W> rounds the 24-bit mantissa to nearest
+\ instead of truncating it, and >W gives B back as 0. Before, W> truncated
+\ and >W defaulted B to $A2 to compensate on average, which made inexact
+\ even the values that fit in 24 bits. See planners/FLOATING-5BYTE-PLAN.md
 
 MARKER FP-INTERFACE
 
@@ -58,7 +63,7 @@ CODE >W
     $CB C, $15 C,   \ RL       L|         \ To keep sign as the msb of H,   
     $CB C, $14 C,   \ RL       H|         \ so you can check for sign in the
     $CB C, $1D C,   \ RR       L|         \ integer-way. Sorry.
-    $06 C, $A2 C,   \ LDN     B'|    HEX 00 N,  
+    $06 C, $00 C,   \ LDN     B'|    HEX 00 N,  \ was $A2: see W> rounding
     $4B C,          \ LD      C'|    E|    
     $5D C,          \ LD      E'|    L|    
     $7C C,          \ LD      A'|    H|    
@@ -92,6 +97,19 @@ CODE W>
     $CB C, $15 C,   \ RL       L|         \ To keep sign as the msb of H,
     $CB C, $1C C,   \ RR       H|         \ so you can check for sign in the 
     $CB C, $1D C,   \ RR       L|         \ integer-way. Sorry.
+                    \ round to nearest on the lost byte B, unless the
+                    \ exponent in A is 0 (small integer) or $FF (no room)
+    $3D C,          \ DEC      A|
+    $FE C, $FE C,   \ CPN     HEX FE N,
+    $30 C, $0A C,   \ JRF    NC'|   HOLDPLACE
+    $CB C, $78 C,   \     BIT   7 B|         \ lost byte >= $80 ?
+    $28 C, $06 C,   \     JRF     Z'|   HOLDPLACE
+    $13 C,          \         INCX    DE|    \ 32-bit increment of HLDE:
+    $7A C,          \         LD      A'|    D|  \ a carry out of the
+    $B3 C,          \         ORA      E|    \ mantissa bumps the exponent
+    $20 C, $01 C,   \         JRF    NZ'|   HOLDPLACE
+    $23 C,          \             INCX    HL|
+                    \ HERE DISP, \ THEN, THEN, THEN,
     $D5 C,          \ PUSH DE
     $E5 C,          \ PUSH HL
     $D9 C,          \ EXX

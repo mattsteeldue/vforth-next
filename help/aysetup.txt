@@ -1,0 +1,8 @@
+    AYSETUP  --
+
+Initialises the three AY chips: selects each one in turn,
+silences it with SHH and enables its mono output.
+On exit AY1 is the selected chip.
+
+Part of the AY library.
+Available after NEEDS AY

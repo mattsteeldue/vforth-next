@@ -1,0 +1,15 @@
+    MDR-GET  -- cccc cccc cccc
+
+Extract a file from a ZX Microdrive cartridge image
+(.MDR file). Three names follow on the input line: the
+cartridge, the file inside it, the new host file.
+
+A PRINT file is written as plain bytes; a program, code
+or array file with its +3DOS header, so NextBASIC can
+LOAD it. The host file must not exist yet (error #41).
+A wrong data checksum is reported, not fatal.
+
+Read-only: the cartridge is never written.
+Example: MDR-GET M2.MDR !Blocks BLOCKS.TXT
+
+See MDR-CAT. Available after NEEDS MDR

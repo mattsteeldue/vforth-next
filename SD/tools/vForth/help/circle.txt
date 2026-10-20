@@ -1,0 +1,10 @@
+    CIRCLE  x y r --
+
+Draws a circle of radius r pixels centred at (x,y) with
+the current colour ATTRIB. x is the centre row
+(vertical), y the centre column (horizontal).
+
+    96 128 40 CIRCLE
+
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

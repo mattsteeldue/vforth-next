@@ -1,0 +1,7 @@
+    .FAT-TIME  time --
+
+Prints an MS-DOS format time as HH:MM, without the
+seconds. Bits 0-4 seconds halved, 5-10 minutes, 11-15
+hours.  Example:  34544 .FAT-TIME  prints 16:55
+
+Available after NEEDS .FAT-TIME

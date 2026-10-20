@@ -1,0 +1,11 @@
+    SPRITE-INIT  id --
+
+Sends the 256 bytes of SPRITE-BUFFER to the sprite RAM as
+pattern id, 0 to 63: one byte per pixel, 16 rows of 16,
+colour RRRGGGBB, $E3 for a transparent pixel. Fill
+SPRITE-BUFFER first, e.g. with CMOVE from a table.
+
+Example, with a 256-byte table MAN:
+  MAN SPRITE-BUFFER 256 CMOVE  0 SPRITE-INIT
+Available after NEEDS SPRITE.  Tutorial 053.
+

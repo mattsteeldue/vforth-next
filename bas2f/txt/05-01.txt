@@ -1,0 +1,4 @@
+#program 05-01
+10 READ w,h,d
+20 PRINT w*h*d
+30 DATA 2,3,4

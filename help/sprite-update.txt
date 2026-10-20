@@ -1,0 +1,13 @@
+    SPRITE-UPDATE  a n --
+
+Sends the sprite structure at a (normally SPRITE) to the
+hardware slot n, 0 to 127, and makes it visible: the four
+attribute bytes go to port $57 after selecting the slot
+on port $303B.
+The slot is n, not the pattern: the pattern shown is the
+field _spriteid. To animate, send different patterns to
+the same slot.
+
+Example:  SPRITE 0 SPRITE-UPDATE
+Available after NEEDS SPRITE.  Tutorial 053.
+

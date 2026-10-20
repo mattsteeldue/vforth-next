@@ -1,0 +1,10 @@
+    AY!!  n ayreg --
+
+Writes the 16-bit value n to a pair of AY registers:
+low byte to ayreg, high byte to ayreg + 1. Used for the
+tone period, ayreg being 0, 2 or 4 for channel A, B or C.
+
+    248 0 AY!!   tone period of channel A
+
+Part of the AY library.
+Available after NEEDS AY

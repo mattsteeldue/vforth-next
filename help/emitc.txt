@@ -1,3 +1,14 @@
-    EMITC  --
+    EMITC  c --
 
-Internal emit handler (see EMIT).
+Sends the character c, all eight bits, to the current
+channel through the ROM print routine (rst $10): no
+translation and no masking, unlike EMIT, and OUT is not
+updated. Codes 128-255 print block graphics, UDG and
+tokens; codes 0-31 are the control codes of the ROM
+(16 INK, 17 PAPER, 22 AT, ...) and take their arguments
+from the next EMITCs. A bad argument (e.g. 99 for INK)
+is a ROM error: the machine drops to BASIC, not to ok.
+Use SELECT to change the current stream.
+
+See also: EMIT  TYPE  SELECT
+

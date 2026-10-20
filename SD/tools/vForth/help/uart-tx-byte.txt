@@ -1,0 +1,8 @@
+    UART-TX-BYTE  b --
+
+Sends byte b to the UART. There is no transmit buffer:
+the word waits until the previous transmission is over,
+or [BREAK] is pressed, then sends the byte.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

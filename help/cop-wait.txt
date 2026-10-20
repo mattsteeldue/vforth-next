@@ -1,0 +1,8 @@
+    COP-WAIT  v h --
+
+Appends a WAIT instruction to the Copper list: wait for
+raster line v (0 to 311) and horizontal position h
+(0 to 55).
+
+Part of the COPPER library.
+Available after NEEDS COPPER

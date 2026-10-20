@@ -1,0 +1,9 @@
+    XPLOT  x y --
+
+Inverts the pixel at (x,y) in the current graphic mode.
+Calling it twice on the same pixel restores the original
+content: useful for rubber-band lines and simple
+animation. x is vertical, y is horizontal.
+
+Part of the GRAPHICS library.
+Available after NEEDS GRAPHICS

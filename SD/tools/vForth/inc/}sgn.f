@@ -16,7 +16,7 @@
         drop                \ d a
         1+                  \ d a+1
         1 dpl +!            \ d a+1
-        1                   \ d aè1 tf
+        1                   \ d a+1 tf
     Else                    \ d a c
         [ CHAR + ] Literal  \ d a c +
         =                   \ d a c=+

@@ -1,3 +1,9 @@
     CASEON  --
 
-Enable case-sensitive mode for word matching.
+Makes vForth case-sensitive: dictionary search, COMPARE
+and UPPER stop folding lower case to upper case, so
+"dup" no longer finds DUP and "next" differs from "NEXT".
+At start vForth is case-insensitive. CASEOFF goes back.
+
+See also: CASEOFF  UPPER  COMPARE
+

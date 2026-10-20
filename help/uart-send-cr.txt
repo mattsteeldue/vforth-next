@@ -1,0 +1,6 @@
+    UART-SEND-CR  --
+
+Sends a carriage return ($0D) to the UART.
+
+Part of the RPI0 library.
+Available after NEEDS RPI0

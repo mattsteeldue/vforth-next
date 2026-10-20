@@ -1,0 +1,6 @@
+    MS  n --
+
+Waits n milliseconds. The delay loop adapts to the
+current CPU speed. n should be less than 8192.
+
+Available after NEEDS MS

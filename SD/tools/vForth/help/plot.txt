@@ -1,0 +1,11 @@
+    PLOT  x y --
+
+Plots the pixel at (x,y) using the current colour ATTRIB,
+in the current graphic mode. x is vertical (top to
+bottom), y is horizontal (left to right); (0,0) is the
+top-left pixel. Out-of-range coordinates are ignored.
+
+Available after NEEDS GRAPHICS or NEEDS LAYERxx-GRAPHICS
+
+NEEDS PLOT alone loads instead a small Layer 2 only
+version taking the colour from the stack:  x y c --

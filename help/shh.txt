@@ -1,0 +1,8 @@
+    SHH  --
+
+Silences the currently selected AY chip by writing $FF
+to the mixer (register 7), which disables tone and noise
+on all three channels.
+
+Part of the AY library.
+Available after NEEDS AY

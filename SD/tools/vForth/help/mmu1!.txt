@@ -1,0 +1,7 @@
+    MMU1!  n --
+
+Maps 8K RAM page n (0 to 223) into MMU slot 1, addresses
+$2000-$3FFF, which normally holds the ROM.
+NextZXOS-specific word.
+
+Available after NEEDS MMU1!

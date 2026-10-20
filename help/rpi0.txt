@@ -1,0 +1,10 @@
+    RPI0  --
+
+Opens an interactive terminal session with the Raspberry
+Pi Zero accelerator through the UART: calls RPI0-INIT,
+sends ^C and ^D, then enters the terminal loop.
+[BREAK] ends the session.
+
+Loading the library already runs RPI0-INIT once.
+
+Available after NEEDS RPI0

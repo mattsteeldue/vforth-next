@@ -28,6 +28,7 @@
 \ All four require NEEDS: CATCH, THROW, ABORT" (already in 006),
 \ and ABORT is core.
 \
+\ Coming from BASIC: Ch.1, 4, App.B  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): no Brodie counterpart (vForth extension)
 \ Reference: sec.5
 \

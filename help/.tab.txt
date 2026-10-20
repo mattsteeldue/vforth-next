@@ -1,4 +1,9 @@
     .TAB  n --
 
-Sets tab stop or text formatting.
-Escape sequence control.
+Moves the print position to column n, as TAB n in
+BASIC: sends control code 23 followed by the low and
+the high byte of n. Spaces are printed up to that
+column; if it is behind the current one, on the next
+line. The column is taken modulo the screen width.
+
+Available after NEEDS .TAB

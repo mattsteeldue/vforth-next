@@ -1,0 +1,12 @@
+    SEARCH  a1 n1 a2 n2 -- a3 n3 f
+
+Search the string a1 n1 for the string a2 n2.
+Found: f is true and a3 n3 is the rest of
+a1 n1 from the first match on. Not found:
+f is false and a3 n3 is a1 n1 itself.
+The position, from 1, is n1 - n3 + 1.
+
+Like COMPARE, case is ignored at start-up
+and counts after CASEON.
+
+Available after NEEDS SEARCH

@@ -17,6 +17,7 @@
 \ LAYER12 text mode is fine.  It edits the CURRENT screen (the SCR
 \ variable); LIST sets SCR, hence the idiom  n LIST EDIT.
 \
+\ Coming from BASIC: Ch.19  |  doc/basic-to-vforth/
 \ Starting FORTH (Brodie): Ch.3 "The Editor"  |  vForth screens 815
 \ Reference: sec.3 "The Full Screen Editor Utility" (LED at sec.3.3)
 \

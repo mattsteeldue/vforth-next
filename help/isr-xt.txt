@@ -1,0 +1,12 @@
+    ISR-XT  -- a
+
+Address of the cell holding the xt of the definition run
+at every 50Hz interrupt. Change it with interrupts off:
+
+    ISR-OFF  ' cccc ISR-XT !  ISR-ON
+
+Inside a colon-definition use ['] instead of ' .
+The definition must leave the stack as it found it.
+
+Part of the INTERRUPTS library.
+Available after NEEDS INTERRUPTS

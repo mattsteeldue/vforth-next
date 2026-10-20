@@ -1,0 +1,8 @@
+    NO-MOUSE  --
+
+Removes the MOUSE library: hides the arrow, disables the
+Forth interrupt routine with ISR-OFF and forgets every
+definition loaded by NEEDS MOUSE.
+
+Part of the MOUSE library.
+Available after NEEDS MOUSE

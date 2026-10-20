@@ -1,0 +1,13 @@
+    BEEP  ms pitch --
+
+Plays a note on the beeper, like the BASIC command BEEP.
+ms is the duration in milliseconds; pitch is in
+semitones from middle C: 0 = C, 9 = A 440 Hz, 12 = C one
+octave above, negative values go below.
+The CPU speed is set to 3.5 MHz while the note plays and
+restored afterwards.
+
+    500 9 BEEP
+
+Part of the BLEEP library.
+Available after NEEDS BLEEP

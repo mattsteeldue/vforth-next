@@ -4,4 +4,8 @@ Constant. The offset within an 8K MMU7 page (0..
 $1FFF) beyond which SKIP-HP-PAGE forces HP on to the
 start of the next page, leaving a small unusable tail
 rather than splitting an entry across a page
-boundary. See also HP, SKIP-HP-PAGE, FAR.
+boundary. The 257-byte tail ($1EFF-$1FFF) also
+covers BASIC's UDG area, $FF58-$FFFF: a write meant
+for the UDGs, made while MMU7 holds a heap page,
+falls there and harms no entry. See also HP,
+SKIP-HP-PAGE, FAR.
