@@ -31,8 +31,9 @@ T{ READ-20-BLOCKS  1 2 + -> 3 }T
 T{ READ-20-BLOCKS READ-20-BLOCKS  #BUFF -> #BUFF }T
 
 \ 3. BLOCK 1 still holds this very line: F_INCLUDE stores it from
-\    offset 1, so the "{" of "T{" is at offset 2
-T{ READ-20-BLOCKS  1 BLOCK 2 + C@ -> CHAR { }T
+\    offset 0 (offset 1 up to build 2026-10-19), so the "{" of "T{"
+\    is at offset 1
+T{ READ-20-BLOCKS  1 BLOCK 1+ C@ -> CHAR { }T
 
 \ 4. FLUSH inside an INCLUDE no longer wipes the source line
 T{ READ-20-BLOCKS FLUSH  4 5 + -> 9 }T

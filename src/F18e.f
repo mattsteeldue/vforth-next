@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-10-19
+\ v-Forth 1.8 - NextZXOS version - build 2026-10-20
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -5334,7 +5334,7 @@ decimal
     If 
         r@ f_fgetpos [ 44 ] Literal ?error 
         \ must rewind to the beginning of the current line
-        >in @ 2-  span @  -  s>d d+
+        >in @ 1-  span @  -  s>d d+
     Else 
         0 0         \ 0 0 fake handle-position
     Then 
@@ -5345,9 +5345,7 @@ decimal
     \ read text from file using  block #1 as a temporary buffer.
     Begin
         1 block                 \ a
-        b/buf 2dup blank        \ a n
-        swap 1+                 \ n a+1
-        swap cell-              \ a+1 n-2
+        b/buf                   \ a n
         source-id @                 
         f_getline     \ a source text line can be up to 510 characters
       \ ?terminal not and

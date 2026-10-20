@@ -259,8 +259,8 @@ FGetline_Endif:                                 // endif
                 dw      FInclude_Else_1 - $
                 dw          R_OP, F_FGETPOS     //      r f_getpos
                 dw          LIT, 44, QERROR     //      44 ?error
-                dw          TO_IN, FETCH        //      >in @ 2-
-                dw          TWO_MINUS           
+                dw          TO_IN, FETCH        //      >in @ 1-
+                dw          ONE_SUBTRACT        
                 dw          SPAN, FETCH         //      span @ -
                 dw          SUBTRACT 
                 dw          S_TO_D, DPLUS       //      s>d d+
@@ -275,9 +275,6 @@ FInclude_Endif_1:
                 dw      SOURCE_ID, STORE        // source-id !
 FInclude_Begin:                                 // begin
                 dw          ONE, BLOCK, BBUF    //      1 block b/buf
-                dw          TWO_DUP, BLANK      //      2dup blank 
-                dw          SWAP, ONE_PLUS      //      swap 1+
-                dw          SWAP, CELL_MINUS    //      swap cell-
                 dw          SOURCE_ID, FETCH    //      source-id @
                 dw          F_GETLINE           //      f_getline
                                                 // while

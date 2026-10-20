@@ -11,7 +11,7 @@
 
 \ --- the translation
 
-\ 20-channels-streams-drivers-and-windows.md:305
+\ 20-channels-streams-drivers-and-windows.md:306
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : SQUARES  ( -- )

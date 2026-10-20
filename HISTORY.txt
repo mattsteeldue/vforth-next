@@ -818,3 +818,18 @@ lib/MDR.f, catalogue and read-only get from .MDR images. New words in
 inc/: /STRING SCAN SKIP SEARCH, with test/STRING-TESTS.f and
 test/PLAY-TESTS.f. Help: F_GETLINE, EMITC, CASEON rewritten; new pages for
 POINT, PAINT, the SPRITE words, COP-NOOP and the string words.
+
+
+\ build 20261020
+Core binary CHANGED in this build (F_INCLUDE, -12 bytes).
+F_INCLUDE no longer blanks BLOCK 1 before each line: it hands the whole
+block to F_GETLINE, which already pads the line with blanks and ends the
+buffer with a 0, so the line now starts at byte 0 of BLOCK 1 and can be
+up to 510 characters long. The position a nested INCLUDE or NEEDS
+returns to in the outer file moves with it (>IN 1- instead of >IN 2-).
+test/BLOCK1-PIN-TESTS.f follows the new layout. src/F18e.f is aligned
+and verified by /check-f18e on CSpect, where the NEEDS inside F18e.f
+exercise the nested INCLUDE.
+Guide, chapter 20: F_GETLINE is no longer said to write outside its
+buffer; the chapter keeps its own GET-LINE, since F_GETLINE counts the
+end of line in n and reads a CRLF file as an empty line after each line.

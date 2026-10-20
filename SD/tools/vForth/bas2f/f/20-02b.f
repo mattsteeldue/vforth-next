@@ -29,7 +29,7 @@ OPEN< help/rnd.txt TO FH
 GET-CHAR . GET-CHAR . GET-CHAR .    \ => 32 32 32
 GET-CHAR . GET-CHAR EMIT            \ => 32 R
 
-\ 20-channels-streams-drivers-and-windows.md:90
+\ 20-channels-streams-drivers-and-windows.md:91
 VARIABLE LASTC                      \ the byte read before
 : NEXT-CHAR  ( -- c )               \ GET-CHAR, a LF after a CR skipped
     GET-CHAR  DUP 10 =  LASTC @ 13 = AND
@@ -49,7 +49,7 @@ LINEBUF 80 GET-LINE . .         \ => -1 0
 
 \ --- the translation
 
-\ 20-channels-streams-drivers-and-windows.md:279
+\ 20-channels-streams-drivers-and-windows.md:280
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS F_FSTAT

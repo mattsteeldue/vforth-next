@@ -79,11 +79,12 @@ GET-CHAR . GET-CHAR . GET-CHAR .    \ => 32 32 32
 GET-CHAR . GET-CHAR EMIT            \ => 32 R
 ```
 
-**A line is built from bytes.** `INPUT #n; LINE` has no ready-made
-counterpart: the core has `F_GETLINE`, but it is the part of `INCLUDE`
-that reads sources, and it needs a buffer prepared the way `INCLUDE`
-prepares it, or it writes outside it. `GET-LINE` reads up to the end of
-the line, a carriage return (13, as BASIC writes it), a line feed (10,
+**A line is built from bytes.** `INPUT #n; LINE` has no exact
+counterpart. The core has `F_GETLINE ( a m fh -- n )`, the word
+`INCLUDE` reads sources with, but its `n` counts the end of the line
+too and is 0 only at the end of the file, and a file whose lines end
+in both CR and LF reads as an empty line after each line. `GET-LINE`,
+built on `GET-CHAR`, reads up to the end of the line, a carriage return (13, as BASIC writes it), a line feed (10,
 as PC editors do) or both. It leaves the length, without the end, and a
 flag that is false only at the end of the file:
 
