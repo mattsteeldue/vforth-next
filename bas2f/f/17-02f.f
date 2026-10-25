@@ -18,14 +18,14 @@
 
 \ --- words defined earlier in the guide
 
-\ 17-time-and-motion.md:324
+\ 17-time-and-motion.md:332
 : ROW!  ( n1 ... n16 a -- )
     15 +  16 0 DO  SWAP OVER C!  1-  LOOP  DROP ;
 : ROW,  ( n1 ... n16 -- )  HERE ROW!  16 ALLOT ;
 CREATE PROBE  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 ROW,
 PROBE C@ .  PROBE 15 + C@ .     \ => 1 16
 
-\ 17-time-and-motion.md:336
+\ 17-time-and-motion.md:344
 $E3 CONSTANT _                  \ transparent
 $88 CONSTANT h                  \ hair, brown
 $F6 CONSTANT o                  \ skin
@@ -51,7 +51,7 @@ _ k k k _ _ _ _ _ _ _ _ k k k _ ROW,
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ROW,
 WALKER 255 + C@ .               \ => 227
 
-\ 17-time-and-motion.md:373
+\ 17-time-and-motion.md:381
 CREATE WALKER2  256 ALLOT
 WALKER WALKER2 256 CMOVE
 : ROW2!  ( n1 ... n16 r -- )  16 * WALKER2 + ROW! ;
@@ -66,7 +66,7 @@ WALKER2 14 16 * + 7 + C@ .      \ => 0
 
 \ --- the translation
 
-\ 17-time-and-motion.md:390
+\ 17-time-and-motion.md:398
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS SPRITE

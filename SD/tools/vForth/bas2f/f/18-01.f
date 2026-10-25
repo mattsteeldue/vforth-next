@@ -10,6 +10,6 @@
 
 \ --- the translation
 
-\ 18-sound-and-music.md:244
+\ 18-sound-and-music.md:283
 CREATE SCALE  0 C, 2 C, 4 C, 5 C, 7 C, 9 C, 11 C, 12 C,
 : MAJOR  ( -- )  8 0 DO  250  SCALE I + C@  BEEP  LOOP ;

@@ -17,12 +17,12 @@
 
 \ --- words defined earlier in the guide
 
-\ 17-time-and-motion.md:68
+\ 17-time-and-motion.md:76
 : RESET-TIMER  ( -- )  0 23672 !  0 23674 C! ;
 : TIMER  ( -- u )  23672 @ ;
 RESET-TIMER
 
 \ --- the translation
 
-\ 17-time-and-motion.md:258
+\ 17-time-and-motion.md:266
 : DISPLAY  ( -- )  CR  23672 @ .  TIMER . ;

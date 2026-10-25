@@ -12,7 +12,7 @@
 
 \ --- the translation
 
-\ 16-graphics.md:334
+\ 16-graphics.md:344
 NEEDS RND
 23670 CONSTANT SEED
 : NEXT-RND  ( -- u )  SEED @ NEXT-SEED  DUP SEED ! ;

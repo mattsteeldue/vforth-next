@@ -35,7 +35,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:503
+\ 17-time-and-motion.md:511
 : CLIP-SPRITES  ( x1 y1 x2 y2 -- )
     ROT SWAP                    \ x1 x2 y1 y2
     2 $1C REG!                  \ start again from the first one

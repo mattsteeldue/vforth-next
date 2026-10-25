@@ -18,7 +18,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:324
+\ 17-time-and-motion.md:332
 : ROW!  ( n1 ... n16 a -- )
     15 +  16 0 DO  SWAP OVER C!  1-  LOOP  DROP ;
 : ROW,  ( n1 ... n16 -- )  HERE ROW!  16 ALLOT ;

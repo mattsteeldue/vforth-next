@@ -885,8 +885,8 @@ Count_Here:
 
 //  ______________________________________________________________________ 
 //
-// curs         a n --
-// Sends to current output channel n characters starting at address a.
+// curs         --
+// Shows a flashing cursor until a key is available; the key is left to KEY.
                 Colon_Def CURS, "CURS", is_normal
 
                 dw      TWO, SELECT                 //    2 select

@@ -39,8 +39,11 @@ NEEDS ms
 ```
 
 So `PAUSE 50` is `50 WAIT-FRAMES` or `1000 ms`. The first follows the
-display: one second at 50 Hz, less at 60 Hz. The second is always a
-second, but it is a busy loop that knows nothing of the display.
+display: one second at 50 Hz, less at 60 Hz. The second is a busy loop
+that knows nothing of the display, timed on the CPU speed, and it does
+not suspend the interrupts: the time the ROM's interrupt takes at every
+frame is added to the loop, so `n ms` waits *at least* `n`
+milliseconds, a little longer in practice.
 
 **A key does not cut the wait short.** Neither word looks at the
 keyboard: a pause that a key can end, as `PAUSE` does, has to say so.
@@ -55,7 +58,12 @@ NEEDS KEYBOARD
 ```
 
 `PAUSE 0` waits for a key with no time limit, and that is `KEY DROP`.
-`KEY` shows the cursor and takes the character. `NEEDS WAIT-KEY` gives
+`KEY` waits for a key and takes the character, but shows no cursor. In
+the first versions of vForth it did; the part that shows the flashing
+cursor and waits has long since become a word of its own, `CURS`,
+which waits for a key and leaves it to be read. `CURS KEY` joins the
+two waits into one: the cursor flashes until a key is pressed, and
+`KEY` takes it at once. `NEEDS WAIT-KEY` gives
 `WAIT-KEY`, which shows nothing and leaves the key where it is: like
 BASIC, it waits for the keyboard to be free and then for a new key.
 

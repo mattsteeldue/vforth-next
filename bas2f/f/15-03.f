@@ -8,14 +8,14 @@
 
 \ --- words defined earlier in the guide
 
-\ 15-colours.md:84
+\ 15-colours.md:92
 : ATTR-ADDR  ( row col -- a )  SWAP 32 * +  $5800 + ;
 : ATTR  ( row col -- b )  ATTR-ADDR C@ ;
 5 3 ATTR-ADDR .                 \ => 22691
 
 \ --- the translation
 
-\ 15-colours.md:220
+\ 15-colours.md:248
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS .AT

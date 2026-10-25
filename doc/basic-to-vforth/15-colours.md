@@ -70,10 +70,18 @@ contrasting ink, and `8 .BRIGHT` is `0 .BRIGHT`. For 8 (transparent) and
 **One word per layer.** BASIC's `LAYER m,n` becomes `LAYER0`, `LAYER10`,
 `LAYER11`, `LAYER12`, `LAYER13` and `LAYER2`, each loaded with `NEEDS`
 and its own name. They change the mode and set the character width that
-suits it. `LAYER12` (Timex HiRes, 64 columns) is the mode vForth normally
-works in: a program that changes layer should go back to it before it
-returns to the prompt. For drawing in a layer there are the graphics
-libraries of Chapter 16; `LAYER22-GRAPHICS` and
+suits it. `LAYER12` (Timex HiRes, 64 columns) is the mode vForth starts
+in and normally works in: a program that changes layer should go back
+to it before it returns to the prompt. It is the default because its 512
+pixels give 64 columns natively, with characters of the ordinary width
+(`LAYER12` sends `WIDECHAR`, 8 pixels). The modes 256 pixels wide reach
+the same 64 columns only with narrow characters: `LAYER11`, `LAYER13`
+and `LAYER2` send `NARROWCHAR`, 4 pixels, and so does `LAYER10`. Only
+`LAYER0` stays at 32 columns: Layer 0 has no narrow characters. `HELP`
+goes one step further: its files may have lines of up to 80 columns, so
+it prints them with characters 6 pixels wide, 85 to a row on `LAYER12`,
+and sets the width back to 8 at the end. For drawing in a layer there
+are the graphics libraries of Chapter 16; `LAYER22-GRAPHICS` and
 `LAYER24-GRAPHICS` even reach the 320x256 and 640x256 modes of Layer 2,
 which BASIC does not offer.
 
@@ -127,6 +135,26 @@ fits the 8-bit format by dropping the lowest blue bit:
 
 That is an orange: red 7, green 3, blue 0. With the 9-bit format the blue
 bit that `2/` dropped goes in the second byte written to `$44`.
+
+**vForth changes its own blue.** The start-up colours, yellow on blue,
+are not quite the standard ones. Screen 11 and `lib/autoexec.f` rewrite
+two entries of the ULA palette before the banner appears: entry 25, the
+blue of the paper, becomes a darker blue, since the standard one is too
+light for the author's taste, and entry 14, the yellow of the ink, a
+lighter yellow. In the terms of the table above:
+
+<!-- no-test -->
+```forth
+0 $43 REG!                      \ write the first ULA palette
+25 $40 REG!  %00000001 $41 REG! \ entry 25: a darker blue
+14 $40 REG!  %11111001 $41 REG! \ entry 14: a lighter yellow
+17 EMITC 1 EMITC                \ PAPER 1
+```
+
+It is a matter of taste, and both places are yours to edit: remove the
+lines to keep the palette of NextZXOS, or choose other colours. They are
+in both places on purpose: a change of layer may change the colours,
+and `11 LOAD` puts the dark blue paper back at any time.
 
 **`LAYER OVER` is three bits of register `$15`.** The eight orders of the
 manual are the values 0 to 7 in bits 4 to 2 of the register, in the same

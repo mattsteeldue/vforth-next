@@ -1,0 +1,17 @@
+    SCREEN-FROM-FILE    n -- cccc
+
+Fills Screen n with the first 16 lines of the text
+file cccc, each blank-padded to 64 characters; a
+shorter file leaves the remaining lines blank. The
+name follows on the same line, without quotes.
+
+    10 SCREEN-FROM-FILE data.txt
+
+Lines should be 64 characters at most. The blocks
+are marked with UPDATE: FLUSH writes them to the
+card. Sets SCR to n, so LIST and EDIT show it.
+Uses the BLOCK 1 buffer to read each line.
+
+See SCREEN-TO-FILE, LIST, EDIT.
+Available after NEEDS SCREEN-FROM-FILE
+

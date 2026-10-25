@@ -335,7 +335,9 @@ A Screen is 16 lines of 64 characters, kept in two 512-byte blocks:
 `DATA-LINE` finds the block of line `n` and the place of the line in it.
 `LINE!` writes a line and marks the block with `UPDATE`, so that vForth
 saves it to the file; `FLUSH` saves it at once. On the machine the lines
-are usually typed with `EDIT` rather than with `LINE!`. `READ-LINE` copies
+are usually typed with `EDIT` (`10 LIST EDIT`,
+[Chapter 19](19-nextzxos-and-alternatives.md)) rather than with
+`LINE!`. `READ-LINE` copies
 the line to `PAD` and hands it to `EVALUATE`, the interpreter itself, which
 runs it with the value `X` has at that moment. `RESTORE-LINE` is
 `RESTORE n`, with a line number in place of a BASIC line number.
@@ -347,6 +349,19 @@ the interpreter takes as a whole program. And the data outlives the
 program: it stays in the block file between sessions, and can be changed
 with `EDIT` without compiling anything again. `10 LOAD` interprets the
 whole Screen in one go, and leaves all its values at once.
+
+The lines need not be typed on the machine at all. Two small utilities
+copy a Screen to and from an ordinary text file, which can then be
+written or kept on a PC. `10 SCREEN-FROM-FILE name` fills Screen 10
+with the first 16 lines of the file, 64 characters each at most, and
+`10 SCREEN-TO-FILE name` writes Screen 10 out, one line of text per
+line of the Screen, without the trailing spaces, to a new file: if the
+file is already there it stops with `NextZXOS Write error.` and leaves
+it alone. Each is loaded with
+`NEEDS` and its own name. The name is read from the line,
+without quotes, as `OPEN<` does in
+[Chapter 20](20-channels-streams-drivers-and-windows.md). Tutorial `063`
+uses them, and keeps binary data in blocks too.
 
 ## No equivalent
 
@@ -379,6 +394,8 @@ whole Screen in one go, and leaves all its values at once.
 - Tutorial `023` -- records with named fields.
 - Tutorial `007` -- `DO` loops and `BOUNDS`.
 - Tutorial `009` -- counted strings, `COUNT` and `TYPE`.
+- Tutorial `063` -- blocks as a store of data: `SCREEN-TO-FILE`,
+  `SCREEN-FROM-FILE`, `LOAD2BLOCK`.
 - `HELP CREATE`, `HELP ,`, `HELP C,`, `HELP ,"`, `HELP CELLS`,
   `HELP BOUNDS`, `HELP DOES>`, `HELP ALLOT`, `HELP HERE`, `HELP COUNT`.
 - vForth manual, sections 2.12.6 "Memory" and 2.12.9 "Definition related".

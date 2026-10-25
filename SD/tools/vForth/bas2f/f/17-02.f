@@ -18,7 +18,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 17-time-and-motion.md:96
+\ 17-time-and-motion.md:104
 : HOURS    ( time -- h )  11 RSHIFT ;
 : MINUTES  ( time -- m )  5 RSHIFT 63 AND ;
 : SECONDS  ( time -- s )  31 AND 2* ;
@@ -26,7 +26,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:295
+\ 17-time-and-motion.md:303
 NEEDS IDE_RTC
 : NOW  ( -- h m s )
     IDE_RTC DROP NIP

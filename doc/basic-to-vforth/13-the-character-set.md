@@ -199,8 +199,22 @@ CASEOFF
 The last line but one is the trap. `CASEON` does not belong to `COMPARE`:
 it is a switch of the whole system, and it also makes the *names of words*
 case-sensitive. While it is on, `dup` is no longer `DUP`, and a library
-written in small letters cannot be loaded. Switch it on around the
-comparisons that need it, and off again.
+written in small letters cannot be loaded. The switch is a vForth
+feature, there to let you type in small letters: with `CASEOFF`, the
+state at start-up, the dictionary search ignores case, so `dup` finds
+`DUP`. Unfortunately the primitive behind `COMPARE` shares with the
+dictionary search the routine that folds case, so one switch drives
+both. Switch it on around the comparisons that need it, and off again.
+`?CASEON` (`NEEDS ?CASEON`) tells which state is on, so a word can leave
+the system as it found it:
+
+```forth
+NEEDS ?CASEON
+: COMPARE-CASE  ( a1 n1 a2 n2 -- n )
+    ?CASEON >R  CASEON  COMPARE  R> 0= IF  CASEOFF  THEN ;
+: E4  S" EVIL" S" evil" COMPARE-CASE . ;
+E4 ?CASEON .                    \ => -1 0
+```
 
 **Swapping two strings copies nothing.** BASIC's `a$,b$=b$,a$` becomes
 `2SWAP`: the two address-length pairs change places on the stack, and the
@@ -223,7 +237,7 @@ order is in [Chapter 12](12-conditions.md).
 | `CHR$ 8` | `8 EMITC` | Back one place. |
 | `CHR$ 13` | `CR` | Or `13 EMITC`. |
 | codes 16 to 23 | `.INK`, `.PAPER`, `.AT`, ... | Or `EMITC`, at your own risk. |
-| `a$<b$`, `a$=b$` | `COMPARE 0<`, `COMPARE 0=` | `NEEDS COMPARE`. Ignores case unless `CASEON`. |
+| `a$<b$`, `a$=b$` | `COMPARE 0<`, `COMPARE 0=` | `NEEDS COMPARE`. Ignores case unless `CASEON`; `?CASEON` tells. |
 | `a$,b$=b$,a$` | `2SWAP` | |
 | `DPOKE 23606,a-256` | `a 256 - 23606 !` | A font of your own, 768 bytes. |
 | tokens (165 to 255) | -- | Forth source is plain text. |
@@ -232,23 +246,35 @@ order is in [Chapter 12](12-conditions.md).
 ## Side by side
 
 **The printable characters.** BASIC prints the whole set; here only the
-capitals, then everything from the space to the `~`.
+capitals, then everything from the space to the copyright sign, code 127.
 
 ```
 10 FOR a=65 TO 90: PRINT CHR$ a;: NEXT a
 20 PRINT
-30 FOR a=32 TO 126: PRINT CHR$ a;: NEXT a
+30 FOR a=32 TO 127: PRINT CHR$ a;: NEXT a
 ```
 
 ```forth
 : CAPITALS  ( -- )  [CHAR] Z 1+ [CHAR] A DO  I EMIT  LOOP ;
 CAPITALS                        \ => ABCDEFGHIJKLMNOPQRSTUVWXYZ
-: CHARSET  ( -- )  127 32 DO  I EMIT  LOOP ;
+: SMALLS  ( -- )  [CHAR] z 1+ [CHAR] a DO  I EMIT  LOOP ;
+SMALLS                          \ => abcdefghijklmnopqrstuvwxyz
+CHAR Z . CHAR z .               \ => 90 122
+: CHARSET  ( -- )  128 32 DO  I EMIT  LOOP ;
 CHARSET
 ```
 
-`[CHAR] Z 1+` is the limit, because `DO` stops one before it. Code 127 is
-the copyright sign, outside ASCII: `127 EMITC` prints it.
+`[CHAR] Z 1+` is the limit, because `DO` stops one before it. `[CHAR] Z`
+and `[CHAR] z` are two different numbers, 90 and 122: `CHAR` and
+`[CHAR]` give the code of the character exactly as typed, and here case
+always counts, whether `CASEON` or `CASEOFF` is on. The switch touches
+only the names of words and `COMPARE`, never a character code.
+
+Code 127 is one of the places where the Spectrum parts from ASCII:
+ASCII has a control code there (DEL), the Spectrum the copyright sign,
+which `CHARSET` prints last. `I EMIT` is enough for it, since `EMIT`
+drops the top bit only from 144 up. The other two such codes, 94 and 96,
+are in [Appendix A](app-a-character-set-z80n-control-codes.md).
 
 **Two UDGs.** A heart and a diamond on `A` and `B`.
 
@@ -332,7 +358,7 @@ vForth's `COMPARE` gives 0 unless `CASEON` is on, as `E1` shows above.
 - Tutorial `058` -- Layer 3, the tilemap.
 - `demo/chomp-chomp.f` -- a game drawn with UDGs, with its own table.
 - `HELP EMIT`, `HELP EMITC`, `HELP CHAR`, `HELP [CHAR]`, `HELP CASEON`,
-  `HELP CASEOFF`, `HELP COMPARE`.
+  `HELP CASEOFF`, `HELP ?CASEON`, `HELP COMPARE`.
 - [Chapter 5](05-read-data-restore.md) -- tables built with `C,`.
 - [Chapter 7](07-strings.md) -- strings as an address and a length.
 

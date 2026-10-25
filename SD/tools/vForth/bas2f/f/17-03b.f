@@ -35,7 +35,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:474
+\ 17-time-and-motion.md:482
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : MOVE-ALL  ( -- )

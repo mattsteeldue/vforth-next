@@ -7,7 +7,7 @@
 
 \ --- the translation
 
-\ 18-sound-and-music.md:283
+\ 18-sound-and-music.md:322
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS PLAY

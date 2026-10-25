@@ -55,7 +55,10 @@ standard codes of `THROW`, the same in every Forth (-13 "is undefined",
 ```
 
 The texts are lines of Screens 2 to 8 of the block file: `9 LOAD` lists
-them all, page by page, and `EDIT` can change them. The variable
+them all, page by page, and `EDIT` can change them: from 0 up, message
+`n` is line `n MOD 16` of Screen `4 + n/16`, so `4 LIST EDIT` opens
+messages 0 to 15; the negative ones are in Screens 2 and 3
+([Chapter 19](19-nextzxos-and-alternatives.md)). The variable
 `WARNING` decides how much is shown: 1, the default, prints the text;
 0 prints only the number; -1 stops without a word.
 
@@ -104,7 +107,9 @@ T1                              \ => T1? is undefined.
 ROM, as `PRINT` is, and a wrong argument raises a BASIC report: `K
 Invalid colour` after a wrong colour, `5 Out of screen` after an `AT`
 off the screen. The report names a line of the BASIC loader, not of your
-Forth program: in such a situation `RUN` brings vForth back
+Forth program: in such a situation `RUN` brings vForth back, as long as
+that program is still the wrapper `Forth18.bas`; under the dot command
+`.vforth` the report ends vForth for good
 ([Chapter 14](14-more-about-print-and-input.md) and
 [Chapter 15](15-colours.md)).
 

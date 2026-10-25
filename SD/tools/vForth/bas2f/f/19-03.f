@@ -11,7 +11,7 @@
 
 \ --- the translation
 
-\ 19-nextzxos-and-alternatives.md:256
+\ 19-nextzxos-and-alternatives.md:285
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS MAKEDIR  NEEDS CD  NEEDS DIR

@@ -18,7 +18,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:306
+\ 17-time-and-motion.md:314
 : .00  ( n -- )  0 <# # # #> TYPE ;
 : .HMS  ( h m s -- )
     ROT .00 [CHAR] : EMIT  SWAP .00 [CHAR] : EMIT  .00 ;

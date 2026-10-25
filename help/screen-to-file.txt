@@ -1,0 +1,16 @@
+    SCREEN-TO-FILE    n -- cccc
+
+Writes Screen n to a new text file cccc, one line
+of text per line of the Screen, trailing spaces
+removed, LF line ends. The name follows on the
+same line, without quotes.
+
+    10 SCREEN-TO-FILE data.txt
+
+The file must not exist yet: if it does, it stops
+with error #47 and the file is left as it was.
+Also sets SCR to n.
+
+See SCREEN-FROM-FILE, LIST, EDIT.
+Available after NEEDS SCREEN-TO-FILE
+

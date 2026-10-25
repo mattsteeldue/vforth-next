@@ -11,20 +11,20 @@
 
 \ --- words defined earlier in the guide
 
-\ 18-sound-and-music.md:89
+\ 18-sound-and-music.md:91
 NEEDS VALUE
 0 VALUE KEY#
 400 VALUE CROTCHET
 : Q  ( pitch -- )  CROTCHET  SWAP KEY# +  BEEP ;
 : H  ( pitch -- )  CROTCHET 2*  SWAP KEY# +  BEEP ;
 
-\ 18-sound-and-music.md:263
+\ 18-sound-and-music.md:302
 : TWINKLE  ( -- )  0 Q 0 Q 7 Q 7 Q 9 Q 9 Q 7 H ;
 : TUNE  ( -- )  2 0 DO  TWINKLE  LOOP ;
 
 \ --- the translation
 
-\ 18-sound-and-music.md:272
+\ 18-sound-and-music.md:311
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 2 TO KEY#  300 TO CROTCHET  TUNE

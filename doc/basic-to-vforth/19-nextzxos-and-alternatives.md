@@ -129,13 +129,42 @@ after a word that is not found. `SCREEN-TO-FILE` and `SCREEN-FROM-FILE`
 copy a Screen to a text file and back (tutorial `063`).
 
 **Two editors on the machine.** `EDIT` is the editor of the block file:
-`NEEDS EDIT`, then `n LIST EDIT` opens Screen n full screen. The cursor
-moves with SHIFT and 5 to 8; EDIT followed by a letter gives a command:
-`N` and `B` go to the next and the previous Screen, `H` keeps the current
-line in `PAD` and `R` puts it back elsewhere, `D` deletes a line, `U`
-reads the Screen again from the card, undoing the changes, and `Q`
-leaves. Every change marks its block with `UPDATE`, so `FLUSH`, or `BYE`,
-writes it back. `LED`, the Large file EDitor, does the same for a text
+`NEEDS EDIT` (the start-up script loads it too, when you answer yes to
+"load utilities"), then `n LIST EDIT`. `LIST` chooses the Screen and
+`EDIT` opens it full screen, the 16 lines between two rulers, with the
+row, the column and the code of the character under the cursor below
+them, the line held in `PAD` and a reminder of the commands. It needs
+64 columns: `LAYER12`, where vForth starts, or another layer with
+narrow characters, not `LAYER0` ([Chapter 15](15-colours.md)).
+
+What you type replaces the character under the cursor. The cursor moves
+with SHIFT and 5 to 8, ENTER goes to the start of the next line, DELETE
+removes the character on the left and BREAK opens a space under the
+cursor. EDIT (SHIFT and 1) followed by a letter gives a command:
+
+- `N` and `B` go to the next and the previous Screen;
+- `H` holds the current line in `PAD`, `R` replaces the current line
+  with it, `I` inserts it as a new line;
+- `D` deletes the current line and keeps it in `PAD`, so `D` and then
+  `I` elsewhere moves a line; `S` inserts an empty line. Both `I` and
+  `S` push the lines below down, and the last line of the Screen is
+  lost;
+- `P` takes two hexadecimal digits and puts that byte under the cursor,
+  for the characters the keyboard cannot type;
+- `U` undoes the changes to the Screen, `Q` leaves.
+
+Every change marks its block with `UPDATE`, and the block goes back to
+the card at `FLUSH`, at `BYE`, or earlier, when vForth needs its buffer
+for another block. `U` only throws away what is still in memory: it
+cannot undo a block already written.
+
+Screens 0 to 11 belong to vForth: the error messages are in Screens 2
+to 8 ([Appendix B](app-b-reference.md)), and Screen 11 is the start-up
+Screen, loaded at the first start. `EDIT` changes them like any other,
+which is how they are customised, but do it knowingly; the rest of the
+file is yours.
+
+`LED`, the Large file EDitor, does the same for a text
 file: `NEEDS LED`, then `LED name` loads the whole file into free 8K
 pages, lines of up to 85 characters, and EDIT followed by `W` writes it
 back. `LED` is derived for the most part from `EDIT`, and the commands

@@ -1,0 +1,10 @@
+    ?CASEON  -- f
+
+True if vForth is case-sensitive, i.e. after CASEON;
+false after CASEOFF, the state at start.
+Reads the byte that CASEON and CASEOFF patch at the
+beginning of the uppercase routine used by UPPER.
+Available after NEEDS ?CASEON.
+
+See also: CASEON  CASEOFF  UPPER
+

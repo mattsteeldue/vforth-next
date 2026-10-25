@@ -13659,8 +13659,8 @@
  885+ 6EFC
  886+ 6EFC              //  ______________________________________________________________________
  887+ 6EFC              //
- 888+ 6EFC              // curs         a n --
- 889+ 6EFC              // Sends to current output channel n characters starting at address a.
+ 888+ 6EFC              // curs         --
+ 889+ 6EFC              // Shows a flashing cursor until a key is available; the key is left to KEY.
  890+ 6EFC                              Colon_Def CURS, "CURS", is_normal
  890+ 6EFC             >                New_Def  CURS, "CURS", Enter_Ptr, is_normal ; ok
  890+ 6EFC             >

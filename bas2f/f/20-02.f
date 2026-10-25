@@ -20,7 +20,7 @@ OPEN< help/rnd.txt TO FH
 FH F_CLOSE .                    \ => 0
 FH F_CLOSE .                    \ => -1
 
-\ 20-channels-streams-drivers-and-windows.md:72
+\ 20-channels-streams-drivers-and-windows.md:81
 CREATE CH  0 C,
 : GET-CHAR  ( -- c )                \ next byte of FH, -1 at the end
     CH 1 FH F_READ 46 ?ERROR
@@ -29,7 +29,7 @@ OPEN< help/rnd.txt TO FH
 GET-CHAR . GET-CHAR . GET-CHAR .    \ => 32 32 32
 GET-CHAR . GET-CHAR EMIT            \ => 32 R
 
-\ 20-channels-streams-drivers-and-windows.md:91
+\ 20-channels-streams-drivers-and-windows.md:100
 VARIABLE LASTC                      \ the byte read before
 : NEXT-CHAR  ( -- c )               \ GET-CHAR, a LF after a CR skipped
     GET-CHAR  DUP 10 =  LASTC @ 13 = AND
@@ -49,7 +49,7 @@ LINEBUF 80 GET-LINE . .         \ => -1 0
 
 \ --- the translation
 
-\ 20-channels-streams-drivers-and-windows.md:261
+\ 20-channels-streams-drivers-and-windows.md:270
 NEEDS 2VARIABLE
 2VARIABLE SPOT
 OPEN< help/rnd.txt TO FH

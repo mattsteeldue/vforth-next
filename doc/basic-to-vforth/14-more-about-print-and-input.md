@@ -14,7 +14,9 @@ the shape of the two statements. There is no `PRINT` with a list of items
 and separators, only words that print one thing each. And there is no
 `INPUT` that prints a caption, reads a line and converts it in one go:
 `ACCEPT` reads, `EVALUATE` converts. The lower part of the screen, the
-`scroll?` question, `SCREEN$` and `INKEY$` are not there.
+`scroll?` question, `SCREEN$` and `INKEY$` are not there. Since these
+words hand their arguments to the ROM, a wrong one ends in BASIC, as it
+would stop a BASIC program.
 
 ## What changes
 
@@ -55,6 +57,35 @@ same ROM, and the report it raises leaves Forth altogether: you find
 yourself at the BASIC prompt, and `RUN` brings vForth back. The same
 happens with any control code given a wrong argument. Keep the arguments
 in range: rows 0 to 21 and columns 0 to 31 on Layer 0.
+
+The words of this chapter are the ones most exposed to it. `.AT`,
+`.TAB`, the codes 26, 29 and 30, like the colours of
+[Chapter 15](15-colours.md), hand their arguments to the ROM, which
+checks them as BASIC's `PRINT` does; the rest of vForth reports its
+errors itself, with a message and the `ok` prompt. The line number in
+the report belongs to the BASIC wrapper, not to your Forth program.
+
+**`RUN` needs the wrapper.** `RUN` brings vForth back because the BASIC
+program in memory is the wrapper `Forth18.bas`, which
+`Forth18_loader.bas` loads: its `RUN` calls vForth again, with a warm
+start that keeps your words. That is the normal case. If another BASIC
+program has taken its place, `RUN` runs that one instead: load
+`Forth18.bas` again first. The dot command `.vforth` has no wrapper: a
+dot command never really leaves BASIC, and a report of the ROM ends it
+for good. There is no way back to the words you had: `.vforth` starts
+afresh.
+
+**The wrapper can be changed.** It is an ordinary BASIC program, and it
+may open a stream before it calls vForth and close it afterwards: an
+`OPEN #` to a file for output, for instance, so that `n SELECT` sends
+there anything vForth prints. Two lines of the wrapper already hold
+such an example, in two comments: `OPEN #13,"o>out.txt"` before the
+call and `CLOSE #13` after it. `"o>"` writes the file anew every time
+it is opened, so each `RUN` starts `out.txt` empty. Streams, `SELECT`
+and files are the subject of
+[Chapter 20](20-channels-streams-drivers-and-windows.md).
+After a fall to BASIC the `CLOSE #` has not run: give it by hand, or
+the end of the file may be lost.
 
 **Character size, as in BASIC.** On the layers other than 0, codes 30 and
 29 set the width and the height of the characters. `WIDECHAR`
@@ -335,7 +366,9 @@ quiet, and the program stops only where it chooses. In vForth that
   `HELP KEY`, `HELP EVALUATE`, `HELP ?TERMINAL`, `HELP P@`.
 - [Chapter 13](13-the-character-set.md) -- control codes and `EMITC`.
 - Chapter 20 and tutorial `070` -- streams: printing somewhere else
-  than the screen.
+  than the screen, and the streams the wrapper may open.
+- [Appendix B](app-b-reference.md) -- the reports of the ROM, and the
+  other ways vForth reports an error.
 
 <!-- nav -->
 ---

@@ -31,6 +31,15 @@ FH F_CLOSE .                    \ => 0
 FH F_CLOSE .                    \ => -1
 ```
 
+**Handles and streams are two numberings.** A stream is a number from 0
+to 15 that BASIC joins to a channel with `OPEN #`; a handle is a number
+NextZXOS gives back to `F_OPEN`. They are not the same thing even when
+they are the same number: handle 13 is not stream 13. A file BASIC
+opened on a stream is reached with `n SELECT`, for output, and never
+with `F_READ` or `F_WRITE`; a file opened with `F_OPEN` is reached
+through its handle only, and neither `SELECT` nor BASIC's `CLOSE #` can
+touch it.
+
 `OPEN<` reads the name from the line, without quotes, and stops with
 `File not found.` if the file is not there. Every `F_` word leaves a
 flag on top, 0 when all went well and -1 when NextZXOS refused: closing
@@ -315,11 +324,18 @@ there. `CLOSE #3` gives stream 3 back to the printer.
 `SQUARES` prints on the screen; the printer is chosen from outside,
 and the same word serves both. With no printer, `3 SELECT` stops as
 `LPRINT` does: give `OPEN #3,"s"` in BASIC before `RUN`, as in line 5
-above. Any stream BASIC has opened works the same way. In BASIC, before `RUN` starts vForth (or after `BYE`, and
-`RUN` again), give the direct command `OPEN #13,"o>words.txt"`; then,
-in vForth, `13 SELECT WORDS VIDEO`; and back in BASIC `CLOSE #13`. The
-list of words is in `words.txt`. The wrapper program `Forth18.bas`
-already holds the `OPEN #` and the `CLOSE #` in two comments.
+above. Any stream BASIC has opened works the same way. In BASIC,
+before `RUN` starts vForth (or after `BYE`, and `RUN` again), give the
+direct command `OPEN #13,"o>words.txt"`; then, in vForth,
+`13 SELECT WORDS VIDEO`; and back in BASIC `CLOSE #13`. The list of
+words is in `words.txt`. The wrapper program `Forth18.bas` already
+holds the `OPEN #` and the `CLOSE #` in two comments, around the call
+to vForth: remove the `;` that starts each of the two lines and every
+`RUN` opens the stream, a `BYE` closes it. Since `"o>"` overwrites the
+file each time it is opened, every `RUN` starts it empty: rename it, or
+copy it, before running again what you want to keep. A fall to BASIC
+after an error of the ROM skips the `CLOSE #`
+([Chapter 14](14-more-about-print-and-input.md)): give it by hand.
 
 ## No equivalent
 

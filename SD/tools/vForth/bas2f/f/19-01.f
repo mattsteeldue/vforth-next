@@ -12,7 +12,7 @@
 
 \ --- the translation
 
-\ 19-nextzxos-and-alternatives.md:209
+\ 19-nextzxos-and-alternatives.md:238
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS PAD"  NEEDS SAVE-BYTES  NEEDS LOAD-BYTES

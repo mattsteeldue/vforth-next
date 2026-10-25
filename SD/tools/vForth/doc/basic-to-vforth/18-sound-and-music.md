@@ -10,7 +10,9 @@ Manual: Chapter 18, pp. 144-156.
 and a pitch in the same order as BASIC, with the duration in
 milliseconds. `PLAY` carries over too: `NEEDS PLAY` loads a `PLAY` that
 reads the same music strings and drives the three sound chips (AY) of
-the Next, up to nine channels. Under it there is direct access to the
+the Next, up to nine channels; and `NEEDS PLAY-ON` plays the same strings
+in the background, while the program goes on, which BASIC's `PLAY`
+cannot do. Under it there is direct access to the
 chips, register by register, through `NEEDS AY`, and a player of
 ready-made effects and tunes that runs in the interrupt (AFX). Every
 command of a `PLAY` string has a register behind it, and this chapter
@@ -114,7 +116,8 @@ S" O4ceg" S" O4egC" S" O3c))" 3 PLAY
 The language is the manual's, command for command: notes, `#`, `$`, `O`,
 durations and triplets, `_`, `&`, `N`, `V`, `U`, `W`, `X`, `T`, `( )`,
 `! !`, `H`, `M`, `L`, `R` and `S`. `O5 c` is middle C. Like BASIC's,
-`PLAY` waits until the music ends; `H` or BREAK stops it. A few
+`PLAY` waits until the music ends; `H` or BREAK stops it (`PLAY-ON`,
+below, does not wait). A few
 differences:
 
 - an empty string, `S" "` or `PAD 0` (any address, length 0), leaves
@@ -194,10 +197,45 @@ to. `ENABLE-MONO` and `DISABLE-MONO` correspond to `S`, more or less.
 yourself with `P!`.
 
 **Music while the program runs.** BASIC's `BEEP` and `PLAY` both keep the
-program waiting. vForth can do better: `NEEDS AFXFRAME` loads a player
-that the interrupt calls fifty times a second, while your program goes
-on. It plays effects and tunes in the `.afx` format, prepared with an
-editor on a PC. Tutorials `050` and `055` show how.
+program waiting. Here vForth goes beyond BASIC: `PLAY-ON`
+(`NEEDS PLAY-ON`) takes the same strings as `PLAY`, in the same way,
+and returns at once. The frame interrupt plays one step of the music at
+every frame, 50 or 60 times a second, while your program goes on,
+drawing, reading the keyboard, computing. `PLAYING?` tells whether the
+music is still going, `PLAY-OFF` stops it and quiets the chips.
+
+<!-- no-test -->
+```forth
+NEEDS PLAY-ON
+S" O4ceg))" S" O3c))" 2 PLAY-ON
+: DOTS  ( -- )  BEGIN  [CHAR] . EMIT  1FRAME  PLAYING? 0= UNTIL ;
+DOTS
+```
+
+The dots go on appearing while the chord plays, and stop with it. A
+game can have its tune and its sound effects in the same frame, with no
+timing of its own to keep. What to know:
+
+- the time is counted in frames, not with `MS`, so the tempo does not
+  depend on the CPU speed;
+- the strings are copied when the music starts, 1024 bytes in all, so
+  two `S"` typed at the prompt are fine here;
+- the first notes are checked by `PLAY-ON` itself and reported at once;
+  a mistake further on halts the music, and `PLAY-ERROR` gives its
+  number;
+- BREAK does not stop the music: `PLAY-OFF` does;
+- while the disk is busy the interrupts are off, the music slows down,
+  and it does not catch up afterwards.
+
+`NEEDS AFXFRAME` loads another player that the interrupt calls, for
+effects and tunes in the `.afx` format, prepared with an editor on a
+PC; tutorials `050` and `055` show how. The two can share the
+interrupt: load `AFXFRAME` first, then start `PLAY-ON`, and the effects
+follow the music in the same frame. Both write the chips, though, and
+`AFXFRAME` rewrites registers 6 and 7 at every frame, so a tune and
+effects on the same chip may disturb each other. Under the dot command
+`.vforth`, `PLAY-ON` is still being tried: there the music slows down
+while the screen scrolls.
 
 **The keyboard does not click.** `POKE 23609,n` sets the length of
 BASIC's key click. vForth's `KEY` makes no click at all, so the variable
@@ -215,6 +253,7 @@ has no effect while Forth runs.
 | `POKE 23609,n` | -- | `KEY` does not click. |
 | `PLAY a$` | `a n 1 PLAY`, `PLAY" ..."` | `NEEDS PLAY`. |
 | `PLAY a$,b$,c$` | `a1 n1 a2 n2 a3 n3 3 PLAY` | Up to nine strings. By hand: `0`, `2`, `4 AY!!`. |
+| (not in BASIC) `PLAY` in the background | `a1 n1 ... k PLAY-ON` | `NEEDS PLAY-ON`. `PLAYING?`, `PLAY-OFF`. |
 | `PLAY ""` for a silent channel | `S" "` or `PAD 0` | An empty string. |
 | note names, `O` | `hz PERIOD reg AY!!` | Defined above. |
 | `V n` | `n 8 AY!` (A), `9` (B), `10` (C) | |
@@ -337,9 +376,6 @@ Write register 13 again to pluck again.
 - **Durations and tempo inside the chip.** The chip holds a note until it
   is told otherwise; `PLAY`, or the program, measures the time.
 - **MIDI (`Y`, `Z`).** `PLAY` reads them and ignores them.
-- **Music while the program runs, from a string.** `PLAY` waits until
-  the music ends, as BASIC's does; playing in the background is done
-  today with AFX.
 - **Digital audio.** The players of WAV, MOD and PT3 are dot commands,
   which vForth cannot launch. The DACs of the Next are reachable through
   the Next registers `$2C` to `$2E`, but there is no player.
@@ -354,9 +390,12 @@ Write register 13 again to pluck again.
 - Tutorial `055` -- an AFX sound board.
 - Tutorial `032` -- timing: `MS` and frames.
 - `HELP PLAY`, `HELP PLAY"`, `HELP BEEP`, `HELP MS`, `HELP AY!`,
-  `HELP SHH`, `HELP AYSELECT`.
+  `HELP SHH`, `HELP AYSELECT`, `HELP PLAY-ON`, `HELP PLAYING?`,
+  `HELP PLAY-OFF`, `HELP PLAY-ERROR`.
 - `lib/PLAY.f` -- the string interpreter, and the choices it makes where
   the manual says nothing.
+- `lib/PLAY-ON.f` -- `PLAY` on the frame interrupt: how the time is
+  kept, and how it shares the interrupt with `AFXFRAME`.
 - [Chapter 17](17-time-and-motion.md) -- time, frames, interrupts.
 
 <!-- nav -->

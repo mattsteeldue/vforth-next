@@ -41,7 +41,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:450
+\ 17-time-and-motion.md:458
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS SPRITE

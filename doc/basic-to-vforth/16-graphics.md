@@ -180,10 +180,15 @@ LAYER2  CLS
 96 128 40 CIRCLE  96 128 PAINT
 ```
 
-**`CIRCLE` on HiRes.** `row col r CIRCLE` draws the whole circle, as in
-BASIC. On `LAYER12`, where a pixel is half as wide as it is tall, `r`
-is counted in columns and the library halves it in the vertical
-direction, so the circle comes out round.
+**Circles are round in every mode.** `row col r CIRCLE` draws the whole
+circle, as in BASIC, and the graphics libraries take the shape of the
+pixels into account. Each layer library sets `XY-RATIO`, a deferred
+word that `CIRCLE` applies to every vertical offset: on `LAYER12` and on
+the 640x256 mode of `LAYER24-GRAPHICS`, where a pixel is half as wide
+as it is tall, it is `2/`, so `r` is counted in columns and halved in
+the vertical direction; on the modes with square pixels it does
+nothing. The circle comes out round whatever the mode, with no change
+to the program.
 
 ## Correspondence table
 
@@ -262,12 +267,17 @@ turned upside down.
 ```
 
 Forth has no logarithm without the floating-point library
-([Chapter 9](09-mathematical-functions.md), `FLN`). But the logarithm
-is the area under the hyperbola: `LN a` is the area under `1/t` from 1
-to `a`. Walking along the x axis one pixel at a time, from `u` to
-`u+1`, the area grows by a thin slice, very nearly `2/(2u+1)`. So the
-logarithm can be added up slice by slice: no table and no floating
-point. `LN50` holds `LN (u/50)`, 5000 times larger:
+([Chapter 9](09-mathematical-functions.md), `FLN`). But for `x>0` the
+derivative of `LN x` is `1/x`, the hyperbola just drawn; so `LN a` is
+the area under that curve between `x=1` and `x=a`. On the screen `x`
+is `u/50`, where `u` counts pixels. Walking along the x axis one pixel
+at a time, from `u` to `u+1`, the area grows by a thin slice 1/50
+wide. Its height changes little across the pixel: taken at the middle,
+`1/x` is `50/(u+1/2)`, so the slice is very nearly
+`1/50*50/(u+1/2)`, that is `2/(2u+1)`. So the logarithm can be
+added up slice by slice: no table and no floating point. `LN50` holds
+`LN (u/50)`, 5000 times larger, and `SLICE` gives a slice in the same
+units, `10000/(2u+1)`:
 
 ```forth
 NEEDS VALUE

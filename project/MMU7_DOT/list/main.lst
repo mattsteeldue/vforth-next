@@ -13642,8 +13642,8 @@
  885+ 2BAA
  886+ 2BAA              //  ______________________________________________________________________
  887+ 2BAA              //
- 888+ 2BAA              // curs         a n --
- 889+ 2BAA              // Sends to current output channel n characters starting at address a.
+ 888+ 2BAA              // curs         --
+ 889+ 2BAA              // Shows a flashing cursor until a key is available; the key is left to KEY.
  890+ 2BAA                              Colon_Def CURS, "CURS", is_normal
  890+ 2BAA             >                New_Def  CURS, "CURS", Enter_Ptr, is_normal ; ok
  890+ 2BAA             >

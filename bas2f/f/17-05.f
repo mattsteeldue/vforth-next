@@ -17,7 +17,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:586
+\ 17-time-and-motion.md:594
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS COPPER  NEEDS LAYER0  NEEDS .PAPER  NEEDS .BORDER

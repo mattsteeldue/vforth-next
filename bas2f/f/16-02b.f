@@ -10,7 +10,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 16-graphics.md:272
+\ 16-graphics.md:282
 NEEDS VALUE
 NEEDS TO
 NEEDS +TO
@@ -22,7 +22,7 @@ NEEDS +TO
 
 \ --- the translation
 
-\ 16-graphics.md:291
+\ 16-graphics.md:301
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : TWIN  ( u -- )                \ the point at u and its mirror at -u
