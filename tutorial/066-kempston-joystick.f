@@ -173,7 +173,7 @@ NEEDS .AT
 \ JOY@ depends on physical/emulated hardware state and cannot be tested
 \ automatically; RIGHT?/LEFT?/DOWN?/UP?/FIRE? can, against a fed byte.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  9   RIGHT? ->  1  }T   \ $09 = RIGHT+UP: bit 0 set
 \ T{  9   UP?    ->  8  }T   \ $09 = RIGHT+UP: bit 3 set
 \ T{  9   LEFT?  ->  0  }T

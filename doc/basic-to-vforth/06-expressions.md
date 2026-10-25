@@ -227,7 +227,6 @@ the double 25 and `1E3` is still undefined. `FLOATING` sets `NMODE` to 1,
 other four marks are an error, and so is a second dot. An exponent may
 follow, with or without the dot before it.
 
-<!-- no-test -->
 ```forth
 NEEDS FLOATING
 2.5 D.                          \ => 25

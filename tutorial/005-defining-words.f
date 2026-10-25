@@ -176,7 +176,7 @@ CR
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  7 DOUBLE       -> 14         }T
 \ T{  7 TRIPLE       -> 21         }T
 \ T{  THE-ANSWER     -> 42         }T

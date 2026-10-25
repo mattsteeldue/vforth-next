@@ -201,6 +201,6 @@ NEEDS AFXFRAME
 \ 10. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  AFX-CH-DESC 0=  ->  0   }T   \ AFX-CH-DESC is not null
 \ T{  AFX-DATA C@  ->  44   }T     \ $2C = 44 decimal

@@ -11,7 +11,7 @@
 
 \ --- the translation
 
-\ 10-random-numbers.md:165
+\ 10-random-numbers.md:211
 : HEADS  ( tosses -- heads )  0 SWAP 0 ?DO  2 RND +  LOOP ;
 1 RANDOMIZE
 100 HEADS .                     \ => 45

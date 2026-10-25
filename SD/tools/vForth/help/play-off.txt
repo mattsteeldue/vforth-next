@@ -1,0 +1,9 @@
+    PLAY-OFF  --
+
+Stops the music started by PLAY-ON, silences the
+chips and gives ISR-XT back the word it held.
+When that is NOOP, interrupt mode 1 is restored.
+PLAY calls it first. Call it also before NO-PLAY.
+
+See PLAY-ON, PLAYING?.
+Available after NEEDS PLAY-ON

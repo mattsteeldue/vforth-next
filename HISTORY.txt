@@ -833,3 +833,20 @@ exercise the nested INCLUDE.
 Guide, chapter 20: F_GETLINE is no longer said to write outside its
 buffer; the chapter keeps its own GET-LINE, since F_GETLINE counts the
 end of line in n and reads a CRLF file as an empty line after each line.
+Refreshed on 2026-10-25, core binary unchanged (same forth18e.bin, ram8.bin
+and dot/vforth as above).
+FLOATING now works under the dot-command .vforth: lib/FP-INTERFACE.f picks
+RST $18 or CALL at load time, as lib/bleep.f does, and runs the calculator
+from a small routine in main RAM; NO-FLOATING and COLD tried on CSpect.
+test/FLOATING-TESTS.f: FTAN tested at PI/4 and 3PI/4, a test for F*/.
+New XRND XRANDOMIZE XSEED XNEXT in inc/: NextBASIC's RND, xorshift32
+(8,9,23), with test/XRND-TESTS.f; RND keeps the 48K formula. Guide
+chapter 10, help and tutorial 068 updated.
+Heap strings: new inc/parse.f (PARSE); H" S" +" PAD" no longer skip a
+leading quote, so an empty text is an empty string; H" across a page
+boundary, +" and +C fixed, with test/HEAP-STRING-TESTS.f.
+lib/PLAY-ON.f: PLAY in the background on the frame interrupt.
+lib/MDR.f: MDR-SECTORS, MDR-INFO and the MDR-DUMP words.
+Tutorial 073: ROM-BEEP uses RST $18 under .vforth.
+Help pages for every public word of FLOATING, BEEP-PITCH and more; guide
+updates (UDG beyond 164 on every layer, bas2f/bas/more-udgs.bas).

@@ -1,0 +1,15 @@
+    MDR-INFO  -- cccc
+
+One line for each sector of a .MDR cartridge image, in
+the order of the file, as mdr.pl -v: sector number,
+record number, RECFLG and RECLEN in hex, file name, then
+what it is: bad, free, PRN (a PRINT file), EOF (the last
+record). A wrong checksum is shown as hd! (header), de!
+(record descriptor) or da! (data, used sectors only); the
+label follows when it is not the one in the Header line.
+[BREAK] stops the list.
+
+Read-only: the cartridge is never written.
+Example: MDR-INFO M1.MDR
+
+See MDR-CAT, MDR-SECTORS. Available after NEEDS MDR

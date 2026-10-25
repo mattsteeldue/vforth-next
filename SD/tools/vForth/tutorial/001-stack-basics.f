@@ -149,7 +149,7 @@ CR
 \
 \ Uncomment the block below after:  NEEDS TESTING
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  3 4 +       -> 7          }T
 \ T{  10 3 -      -> 7          }T
 \ T{  6 7 *       -> 42         }T

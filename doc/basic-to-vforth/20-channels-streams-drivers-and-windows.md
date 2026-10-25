@@ -126,8 +126,10 @@ TYPE-LINES
     RND  u -- u2
 
 Returns a pseudo-random number between
-0 and u-1. Same formula and same SEED
-system variable (23670) as BASIC RND.
+0 and u-1, with the 48K BASIC formula
+and its SEED system variable (23670).
+NextBASIC RND now uses another formula:
+same seed, other numbers.
 See RANDOMIZE to set the seed.
 
 Available after NEEDS RND
@@ -283,7 +285,7 @@ NEEDS F_FSTAT
     LINEBUF SWAP F_FSTAT 44 ?ERROR
     LINEBUF 7 + @  LINEBUF 9 + @ ;
 OPEN< help/rnd.txt TO FH
-FH FSIZE D.                     \ => 191
+FH FSIZE D.                     \ => 257
 FH F_CLOSE DROP
 ```
 

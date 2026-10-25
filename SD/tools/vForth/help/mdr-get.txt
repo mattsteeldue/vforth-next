@@ -12,4 +12,4 @@ A wrong data checksum is reported, not fatal.
 Read-only: the cartridge is never written.
 Example: MDR-GET M2.MDR !Blocks BLOCKS.TXT
 
-See MDR-CAT. Available after NEEDS MDR
+See MDR-CAT, MDR-DUMP. Available after NEEDS MDR

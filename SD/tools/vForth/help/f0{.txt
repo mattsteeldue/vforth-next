@@ -1,0 +1,8 @@
+    F0<  fp -- f
+
+True if fp is negative.
+
+    FLOATING  -0.5 F0< .         \ -1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -1,0 +1,10 @@
+    F*/  fp1 fp2 fp3 -- fp4
+
+Multiplies fp1 by fp2 and divides the result by fp3,
+like */ for integers. Stops with "Division by zero."
+when fp3 is zero. DEG>RAD and RAD>DEG are made of it.
+
+    FLOATING  3.0 4.0 2.0 F*/ F.  \ 6.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

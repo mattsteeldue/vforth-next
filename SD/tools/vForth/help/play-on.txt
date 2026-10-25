@@ -1,0 +1,21 @@
+    PLAY-ON  a1 n1 ... ak nk k --
+
+Like PLAY, but the music plays in the background,
+one step per frame interrupt, while the program
+goes on. The time is counted in frames (50 or 60
+a second), so it does not depend on the CPU speed.
+The strings are copied (1024 bytes in all), so a
+string typed with S" may be used.
+
+    S" O4ceg))" S" O3c))" 2 PLAY-ON
+
+A word already in ISR-XT (e.g. AFXFRAME) keeps
+running after the music step. Install it first.
+Errors in the first notes are reported at once;
+later ones halt the music: see PLAY-ERROR.
+BREAK does not stop it: PLAY-OFF does.
+Disk access disables the interrupt: meanwhile the
+music slows down, and it does not catch up later.
+
+See PLAY, PLAY-OFF, PLAYING?, PLAY-ERROR.
+Available after NEEDS PLAY-ON

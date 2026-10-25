@@ -481,5 +481,5 @@ CR ."  side effect on your SD card -- run them yourself)." CR
 \                        -- read this one once the pattern above feels
 \                        comfortable.
 
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  GREETING 1+ TESTER  ->  }T   \ prints "Hello, World!", no stack effect

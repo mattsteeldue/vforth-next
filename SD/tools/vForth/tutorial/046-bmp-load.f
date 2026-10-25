@@ -234,5 +234,5 @@ CREATE DEMO-FILE  ," tutorial/bmp/jaws.bmp"
 \ BMP-LOAD requires an SD card and specific files.
 \ Only structural tests are possible here.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  DEMO-FILE C@  ->  21  }T    \ "tutorial/bmp/jaws.bmp" length

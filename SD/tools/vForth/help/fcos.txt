@@ -1,0 +1,8 @@
+    FCOS  fp1 -- fp2
+
+The cosine of an angle in radians: BASIC's COS.
+
+    FLOATING  PI 3.0 F/ FCOS F.  \ 5.0000e-1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -134,7 +134,7 @@ CR
 \ 7. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  1 2    SWAP  -> 2 1       }T
 \ T{  1 2    OVER  -> 1 2 1     }T
 \ T{  1 2 3  ROT   -> 2 3 1     }T

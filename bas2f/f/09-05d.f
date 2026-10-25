@@ -9,7 +9,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 09-mathematical-functions.md:327
+\ 09-mathematical-functions.md:319
 NEEDS VALUE
 NEEDS TO
 NEEDS +TO
@@ -24,7 +24,7 @@ NEEDS +TO
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:352
+\ 09-mathematical-functions.md:344
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : WAVE  ( -- )

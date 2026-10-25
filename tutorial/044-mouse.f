@@ -231,5 +231,5 @@ NEEDS GRAPHICS
 \ ===========================================================================
 \
 \ Mouse tests require hardware interaction.
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 0 =  ->  -1  }T   \ placeholder test

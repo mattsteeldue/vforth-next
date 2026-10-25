@@ -172,6 +172,6 @@ CREATE TEST-MSG  ," Hello from vForth!"
 \
 \ UART tests require hardware connection.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  UART-RX-PORT  ->  5179   }T   \ $143B
 \ T{  UART-TX-PORT  ->  4923   }T   \ $133B

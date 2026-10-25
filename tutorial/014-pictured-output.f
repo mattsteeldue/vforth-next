@@ -148,7 +148,7 @@ CR
 \ (Pictured output builds strings; tests check the string length/content
 \ indirectly via TYPE to the output stream.)
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  255 0 <# #S #>  NIP  -> 3    }T   \ "255" is 3 chars long
 \ T{  0   0 <# #S #>  NIP  -> 1    }T   \ "0" is 1 char
 \ T{  $FF 0 HEX <# # # #> DECIMAL NIP -> 2 }T

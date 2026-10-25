@@ -427,6 +427,6 @@ PAD .ZSTRING CR                        \ => beta -- alpha silently lost
 \   10. Screens/Blocks                 -- NUL kills LOAD silently; no
 \                                          structure may span a Block
 
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  5 RUN-HANDLER  ->  10  }T
 \ T{  DEMO-COUNT @    ->  42  }T

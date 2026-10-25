@@ -1,7 +1,11 @@
     BLEEP-CALC  ms n -- n1 n2
 
 Converts a duration in milliseconds and a frequency
-multiplied by 8 into the two parameters BLEEP expects.
+multiplied by 8 into the two parameters BLEEP expects,
+rounding n2 as BASIC's BEEP does.
+n below 54 (6.75 Hz) stops with "Invalid numeric
+argument.", more than 65535 cycles with "Result out of
+range."
 
     500 3520 BLEEP-CALC BLEEP    440 Hz for half a second
 

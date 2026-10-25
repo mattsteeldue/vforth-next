@@ -16,9 +16,10 @@
 \   - While vForth runs, the ROM paged in at $0000-$3FFF is the 48K BASIC
 \     ROM: vForth itself prints through its RST $10 and selects streams
 \     through its CHAN-OPEN at $1601.  The ROM addresses below are those
-\     of the 48K ROM.
-\   - The headless emulator has no ROM, so sections 3 and 4 are for the
-\     machine or CSpect only; sections 2 and 5 run anywhere.
+\     of the 48K ROM.  Under the dot-command .vforth it is not paged in,
+\     and the call goes through RST $18 (section 4).
+\   - Sections 3 and 4 need the real 48K ROM: on the machine, CSpect, or
+\     the headless emulator, which loads it since 2026-10-22.
 \
 \ Coming from BASIC: Ch.25  |  doc/basic-to-vforth/
 \ no Brodie counterpart (ZX Spectrum Next extension)
@@ -114,6 +115,14 @@ CREATE TWICE
 \ cannot load DE and HL, so a CODE word does: it takes the two numbers
 \ off the data stack, saves Forth's registers on it, and calls the ROM.
 \ It is the pattern of inc/call#.f, with two arguments instead of one.
+\
+\ Under the dot-command .vforth the ROM at $0000 is not the 48K ROM, and
+\ a plain CALL $03B5 would land in NextZXOS.  There, RST $18 followed by
+\ an address pages the 48K ROM in, calls the address, and pages it out
+\ again.  The opcode is chosen while the word is compiled: 0 +ORIGIN is
+\ $2000 only under .vforth.  The two lines give $DF (RST $18) or $CD
+\ (CALL), as lib/bleep.f does for the same BEEPER.  CALL# does the same
+\ thing inside, so ROM-BORDER above needs nothing.
 
 CODE ROM-BEEP  ( cycles length -- )
     $D9 C,              \ exx            alternate set: arguments
@@ -124,7 +133,9 @@ CODE ROM-BEEP  ( cycles length -- )
     $D5 C,              \ push de        save Forth's registers
     $C5 C,              \ push bc
     $D9 C,              \ exx            arguments in HL and DE
-    $CD C, $03B5 ,      \ call $03B5     BEEPER
+    0 +ORIGIN $2000 - NOT 1 AND $DF *   \ RST $18 under .vforth
+    0 +ORIGIN $2000 = NOT 1 AND $CD * + \ CALL otherwise
+    C, $03B5 ,          \ call $03B5     BEEPER
     $C1 C,              \ pop bc         Forth's registers back
     $D1 C,              \ pop de
     $DD C, $E1 C,       \ pop ix

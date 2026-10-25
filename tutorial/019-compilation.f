@@ -197,6 +197,6 @@ IMMEDIATE
 \ 7. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  COMPILE-TIME-DEMO  -> 5    }T
 \ T{  5 TRIPLE           -> 5 5 5 }T

@@ -270,7 +270,7 @@ VARIABLE SAVED-Y-OFFSET
 \ The animation is purely visual and needs SPLIT-SCROLL-DEMO run
 \ interactively; only the register constants can be tested here.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  COP-CTRL-LO  ->  97   }T    \ $61
 \ T{  COP-CTRL-HI  ->  98   }T    \ $62
 \ T{  COP-WRITE    ->  99   }T    \ $63

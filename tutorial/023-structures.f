@@ -162,7 +162,7 @@ $0001 $0000  2CONSTANT  ONE-D
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  POINT-SIZE      -> 4      }T
 \ T{  MY-POINT pt.x @ -> 10     }T
 \ T{  MY-POINT pt.y @ -> 20     }T

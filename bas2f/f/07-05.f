@@ -16,7 +16,7 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:414
+\ 07-strings.md:426
 : TIMES  ( a n k -- )
     0 ?DO  2DUP TYPE  LOOP  2DROP ;
 : AB  ( -- a n )  S" ab" ;

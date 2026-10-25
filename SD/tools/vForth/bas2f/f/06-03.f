@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:486
+\ 06-expressions.md:485
 : ATTR  ( ink paper bright flash -- attr )
     7 LSHIFT  SWAP 6 LSHIFT OR
     SWAP 3 LSHIFT OR  OR ;

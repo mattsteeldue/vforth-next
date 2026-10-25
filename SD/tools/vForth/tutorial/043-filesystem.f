@@ -161,5 +161,5 @@ NEEDS DIR
 \ CD and PWD have side effects (filesystem state changes) and require
 \ an SD card.  They cannot be tested automatically here.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0  ->  0  }T   \ placeholder: no automatic filesystem tests

@@ -7,9 +7,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:264
-\ no-test in the guide: it waits for keys, never ends or
-\ needs hardware the emulator lacks
+\ 09-mathematical-functions.md:257
 FLOATING
 2.0 FSQRT F.                    \ => 1.4142e0
 INTEGER

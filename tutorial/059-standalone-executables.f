@@ -353,7 +353,7 @@ CR
 \                         a standalone program, unrelated machinery, useful
 \                         point of comparison with ZAP"'s .nex approach.
 
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ This tutorial deliberately performs no file writes and no COLD patch of
 \ its own (sections 4 and 8 explain why that would not be safe to do simply
 \ by loading a tutorial). Verifying ZAP/ZAP" end to end means: NEEDS ZAP,

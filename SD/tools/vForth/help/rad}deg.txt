@@ -1,0 +1,8 @@
+    RAD>DEG  fp1 -- fp2
+
+Converts an angle from radians to degrees.
+
+    FLOATING  PI RAD>DEG F.      \ 1.8000e2
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

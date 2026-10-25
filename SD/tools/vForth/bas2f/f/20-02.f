@@ -49,7 +49,7 @@ LINEBUF 80 GET-LINE . .         \ => -1 0
 
 \ --- the translation
 
-\ 20-channels-streams-drivers-and-windows.md:259
+\ 20-channels-streams-drivers-and-windows.md:261
 NEEDS 2VARIABLE
 2VARIABLE SPOT
 OPEN< help/rnd.txt TO FH

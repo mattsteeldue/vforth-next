@@ -1,0 +1,8 @@
+    FTAN  fp1 -- fp2
+
+The tangent of an angle in radians: BASIC's TAN.
+
+    FLOATING  PI 4.0 F/ FTAN F.  \ 1.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

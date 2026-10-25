@@ -155,10 +155,13 @@ a longer table holds more patterns. Developing the game
 `demo/chomp-chomp/chomp-chomp.f` showed that the screen goes on past
 `U`: code 165 is drawn from the 22nd pattern, `V`, and so on up to `Z`,
 169, the 26th. The game uses them for the small dot, a wall piece and
-three fruits. Two things have not been tried yet: codes past 169, and
-the same on Layer 0. The game draws on Layer 1,1 (`LAYER11`), and the
-48K ROM of Layer 0 prints its keywords from 165 on
-([Appendix A](app-a-character-set-z80n-control-codes.md)).
+three fruits. The game draws on Layer 1,1 (`LAYER11`). Tried by the
+author in BASIC on every layer: on all of them but Layer 0 the UDGs go
+on up to code 255, the 112th pattern, and the codes the table does not
+hold show whatever bytes follow it, random shapes. Layer 0 is the
+exception: there the 48K ROM prints its keywords from 165 on, never a
+pattern ([Appendix A](app-a-character-set-z80n-control-codes.md)). A
+table for all of them takes 112 times 8 bytes, 896.
 
 **Control codes are sent with `EMITC`.** The codes below 32 do the same
 things as in BASIC, because the same ROM routine receives them: 8 moves

@@ -78,7 +78,6 @@ floating-point words, which use the ROM's own calculator, and
 ([Chapter 9](09-mathematical-functions.md)). The manual's example, 10
 divided by 5, then times `PI`, then times `ATN 60`:
 
-<!-- no-test -->
 ```forth
 NEEDS FLOATING
 FLOATING

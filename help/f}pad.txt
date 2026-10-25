@@ -1,0 +1,11 @@
+    F>PAD  fp -- a n
+
+Converts a floating-point number into the text that F.
+prints, held in the pictured numeric output area as <#
+... #> leaves it: address and length. The text is
+overwritten by the next number printed.
+
+    FLOATING  2.5 F>PAD TYPE     \ 2.5000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

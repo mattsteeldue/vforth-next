@@ -10,9 +10,12 @@ This chapter carries over almost unchanged. `RND` (`NEEDS RND`) is the
 integer form that NextBASIC writes `RND (n)` or `%RND n`: you give it a
 number and it leaves a random integer from 0 to one less than that.
 `RANDOMIZE` (`NEEDS RANDOMIZE`) sets the starting point. Both work on the
-same system variable as BASIC, with the same formula. The one thing
-missing is the plain `RND` that gives a fraction between 0 and 1, and
-that is by choice: the manual itself recommends the integer form.
+same system variable as BASIC, with the formula of the 48K Spectrum:
+NextBASIC has since moved to a generator of its own, so the numbers are
+not the ones BASIC gives (see below); `XRND` (`NEEDS XRND`) is that
+generator, for when they must be. The one thing missing is the
+plain `RND` that gives a fraction between 0 and 1, and that is by
+choice: the manual itself recommends the integer form.
 
 ## What changes
 
@@ -65,18 +68,38 @@ Do it once, at the start of the program, and preferably after waiting
 for a key: the moment the player presses it is the only truly unknown
 quantity in the machine.
 
-**It is the same generator, kept in the same place.** `RND` uses BASIC's
-formula and keeps its state in BASIC's system variable SEED, at address
-23670; `RANDOMIZE` simply stores a number there. The sequence has 65536
-values and then repeats. Since vForth runs on top of NextBASIC, a seed
-set before leaving BASIC is the one Forth starts from.
+**It is the 48K generator, kept in BASIC's place.** `RND` uses the
+formula of the 48K Spectrum's BASIC, SEED -> 75*(SEED+1) MOD 65537 - 1,
+and keeps its state in BASIC's system variable SEED, at address 23670;
+`RANDOMIZE` simply stores a number there. The sequence has 65536 values
+and then repeats. Since vForth runs on top of NextBASIC, a seed set
+before leaving BASIC is the one Forth starts from.
+
+**NextBASIC no longer uses that formula.** Its `RND` (checked on NextZXOS
+2.08) is a xorshift generator of 32 bits, Marsaglia's with the shifts 8,
+9 and 23. SEED holds only the lower half of its state; the upper half is
+kept in memory of the operating system that neither BASIC nor Forth can
+reach. Three things follow:
+
+- The same seed gives other numbers. After `RANDOMIZE 1`, NextBASIC's
+  `RND (100)` does not give the 0 17 87 of the example above: just after
+  switching on it gives 0 1 97.
+- BASIC's `RANDOMIZE n` sets only SEED, and the hidden half moves on at
+  every `RND`: the same `RANDOMIZE 1` gives one sequence just after
+  switching on and another after a few calls of `RND`.
+- Its sequence is 4294967295 numbers long, and `RND (n)` throws away and
+  draws again any value out of range, so no number is favoured. The
+  vForth `RND`, with its 65536 values, is the generator of the 48K, good
+  enough for games and tests.
 
 The cycle can be seen. Within it each of the 65536 values of SEED comes
 exactly once, so one value per pixel, its low 9 bits as the column and
 its high 7 as the row, lights every pixel of a band 512 by 128 once and
 only once, with no gap and no repeat: "A screen filled at random" in
-[Chapter 16](16-graphics.md) does it, in BASIC and in Forth, and shows
-the generator back at its starting value after 65536 steps.
+[Chapter 16](16-graphics.md) does it in Forth, and shows the generator
+back at its starting value after 65536 steps. The BASIC listing next to
+it shows the difference on a Next: it leaves about a third of the band
+dark.
 
 **There is a second generator.** `RANDOM` (`NEEDS RANDOM`) leaves a
 random 16-bit number and `n CHOOSE` (`NEEDS CHOOSE`) a number from 0 to
@@ -91,6 +114,28 @@ NEEDS CHOOSE
 10 CHOOSE . 10 CHOOSE . 10 CHOOSE .     \ => 5 9 8
 ```
 
+**NextBASIC's numbers, when they must be the same.** `n XRND`
+(`NEEDS XRND`) is NextBASIC's `RND (n)`: the same xorshift of 32 bits,
+the same rule that throws away a value out of range. Its state is the
+double number `XSEED`, all inside vForth, and `d XRANDOMIZE`
+(`NEEDS XRANDOMIZE`) sets it; SEED is not touched, so `RND`, `RANDOM`
+and `CHOOSE` go on undisturbed. BASIC's hidden half is out of reach, so
+the numbers agree only from the same state: just after switching on that
+half is 0, and BASIC's `RANDOMIZE 1` is `1 0 XRANDOMIZE`, the double
+number 1.
+
+```forth
+NEEDS XRND
+NEEDS XRANDOMIZE
+1 0 XRANDOMIZE
+100 XRND . 100 XRND . 100 XRND .   \ => 0 1 97
+```
+
+The same three numbers come from `RANDOMIZE 1: PRINT RND (100);" ";RND
+(100);" ";RND (100)` typed in NextBASIC after a reset. Keep `XRND` for
+a program that must match BASIC, or that wants the longer sequence;
+`RND` is shorter and is the one the rest of this guide uses.
+
 **No abbreviation.** BASIC accepts `RAND` for `RANDOMIZE`. If you miss
 it, it is one definition: `: RAND  RANDOMIZE ;`.
 
@@ -98,7 +143,8 @@ it, it is one definition: `: RAND  RANDOMIZE ;`.
 
 | NextBASIC | vForth | Note |
 |---|---|---|
-| `RND (n)`, `%RND n` | `n RND` | `NEEDS RND`. From 0 to `n-1`. |
+| `RND (n)`, `%RND n` | `n RND` | `NEEDS RND`. From 0 to `n-1`. The 48K formula: not NextBASIC's numbers. |
+| `RND (n)`, `%RND n` (the same numbers) | `n XRND` | `NEEDS XRND`. NextBASIC's xorshift; its state is `XSEED`, set with `d XRANDOMIZE`. |
 | `INT (RND*n)` | `n RND` | |
 | `1+INT (RND*6)` | `6 RND 1+` | |
 | `a+INT (RND*(b-a+1))` | `a b RND-IN` | Defined below. From `a` to `b`, both included. |
@@ -106,7 +152,7 @@ it, it is one definition: `: RAND  RANDOMIZE ;`.
 | `RANDOMIZE n` | `n RANDOMIZE` | `NEEDS RANDOMIZE`. |
 | `RANDOMIZE`, `RANDOMIZE 0` | `23672 @ RANDOMIZE` | The seed taken from FRAMES, by hand. |
 | `RAND` | -- | `: RAND  RANDOMIZE ;` |
-| the system variable SEED | `23670 @`, `23670 !` | Shared with BASIC. |
+| the system variable SEED | `23670 @`, `23670 !` | Shared with BASIC; in NextBASIC only the lower half of the state. |
 | (not in BASIC) | `RANDOM`, `n CHOOSE` | `NEEDS RANDOM`, `NEEDS CHOOSE`. Another formula. |
 
 ## Side by side
@@ -209,7 +255,8 @@ zero, which `DIM` does by itself.
 
 ## Further reading
 
-- `HELP RND`, `HELP RANDOMIZE`, `HELP RANDOM`, `HELP CHOOSE`.
+- `HELP RND`, `HELP RANDOMIZE`, `HELP RANDOM`, `HELP CHOOSE`,
+  `HELP XRND`, `HELP XRANDOMIZE`, `HELP XSEED`, `HELP XNEXT`.
 - Tutorial `068` -- random numbers: both generators, seeding from
   FRAMES, ranges, why `MOD` is the wrong way to make one, a shuffled
   deck, a chance in percent.
@@ -218,7 +265,8 @@ zero, which `DIM` does by itself.
 - Tutorial `008` -- `@` and `!` on system variables.
 - [Chapter 11](11-arrays.md) -- arrays, used here for the tally.
 - [Chapter 16](16-graphics.md) -- "A screen filled at random": the
-  cycle of 65536 values of `RND`, drawn one pixel per value.
+  cycle of 65536 values of `RND`, drawn one pixel per value, and what
+  NextBASIC's generator does instead.
 
 <!-- nav -->
 ---

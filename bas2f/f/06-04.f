@@ -9,6 +9,6 @@
 
 \ --- the translation
 
-\ 06-expressions.md:517
+\ 06-expressions.md:516
 50000 0 2 UM/MOD NIP .          \ => 25000
 50000 2 / .                     \ => -7768

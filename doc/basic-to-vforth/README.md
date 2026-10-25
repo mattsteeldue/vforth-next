@@ -38,8 +38,8 @@ Conventions used in the listings:
   a `NEEDS` are always available.
 - Every Forth listing is typed into vForth, in an emulator, and its
   output compared with the guide, except those that wait for a key, never
-  end, or need a part of the machine the emulator does not have (floating
-  point, graphics, sound).
+  end, or need a part of the machine the emulator does not have (graphics,
+  sound).
 - A Forth line is carried out from left to right, but it is not always
   read that way by a human: a word takes values from its left (the stack)
   and may take a name from its right (the text that follows). `20 TO B`

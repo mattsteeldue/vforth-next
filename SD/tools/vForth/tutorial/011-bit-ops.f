@@ -199,7 +199,7 @@ CR
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  %1010 %1100 AND    -> %1000         }T
 \ T{  %1010 %1100 OR     -> %1110         }T
 \ T{  %1010 %1100 XOR    -> %0110         }T

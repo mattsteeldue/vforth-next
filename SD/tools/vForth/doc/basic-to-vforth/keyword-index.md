@@ -188,7 +188,7 @@ How to read the second column:
 | `RETURN` | `;`, or `EXIT` in the middle | [4](04-procedures-and-subroutines.md) |
 | `RETURN #n,v` | `fh F_FGETPOS` | [20](20-channels-streams-drivers-and-windows.md) |
 | `RMDIR path` | `REMOVEDIR path`, `NEEDS REMOVEDIR` | [19](19-nextzxos-and-alternatives.md) |
-| `RND` | `n RND`, `NEEDS RND`; no fraction | [10](10-random-numbers.md) |
+| `RND` | `n RND`, `NEEDS RND`; no fraction; NextBASIC's own numbers: `n XRND`, `NEEDS XRND` | [10](10-random-numbers.md) |
 | `RUN` | the name of the word | [1](01-basic-programming-concepts.md) |
 | `RUN AT s` | `s SPEED!`, `NEEDS SPEED!` | [19](19-nextzxos-and-alternatives.md), [22](22-in-out-and-the-next-registers.md) |
 | `SAVE f` (a program) | -- (the source is a file) | [19](19-nextzxos-and-alternatives.md) |

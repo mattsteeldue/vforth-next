@@ -239,7 +239,7 @@ CR
 .( or:     NEWTASK  to unload this tutorial. ) CR
 
 \ =========================================================================
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ =========================================================================
 \
 \ The demonstrations above are not automated unit tests because DMA behavior

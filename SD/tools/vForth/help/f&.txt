@@ -1,0 +1,8 @@
+    F*  fp1 fp2 -- fp3
+
+Multiplies two floating-point numbers.
+
+    FLOATING  1.5 4.0 F* F.      \ 6.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -1,0 +1,11 @@
+    XRND  u -- u2
+
+Returns a pseudo-random number between
+0 and u-1, as NextBASIC RND (n) does:
+32-bit xorshift, no value favoured.
+The state is XSEED, not SEED: the same
+numbers as BASIC only from the same
+state. See XRANDOMIZE to set it.
+0 XRND and 1 XRND give 0.
+
+Available after NEEDS XRND

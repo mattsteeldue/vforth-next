@@ -12,15 +12,16 @@ NEEDS SPEED!
 \ BLEEP 
 \ invokes standard ROM BEEP routine.
 \ Input parameters are:
-\  n1 = ( 3.5M/Hz - 241 ) / 8 --> hl
-\  n2 = sec * Hz              --> de
-\ One second central A (220Hz) is  : hl=07A7 (1959), de=00DC (220)
+\  n1 = sec * Hz              --> de  ( number of cycles )
+\  n2 = ( 3.5M/Hz - 241 ) / 8 --> hl  ( timing, i.e. pitch )
+\ One second of A (220Hz) is : de=00DC (220), hl=07A7 (1959)
+\ i.e.  $00DC $07A7 BLEEP
 
 HEX
 CODE  BLEEP  ( n1 n2 -- )
     D9 C,                   \  exx
-    E1 C,                   \  pop hl    ; s*Hz
-    D1 C,                   \  pop de    ; ( 3.5M / Hz - 241 ) / 8 
+    E1 C,                   \  pop hl    ; ( 3.5M / Hz - 241 ) / 8 
+    D1 C,                   \  pop de    ; s*Hz
     D9 C,                   \ exx
     DD C, E5 C,             \ push ix
     D5 C,                   \ push de
@@ -45,15 +46,23 @@ SMUDGE
 \  n1  : duration in milliseconds
 \  n2  : sound frequency in Hertz x 8
 \ Output parameters are suitable numbers for BLEEP routine
+\  n3  : number of cycles = ms * Hz / 1000, unsigned
+\  n4  : timing = 437500 / Hz - 30.125, rounded as the ROM's BEEP does
+\ Errors:
+\  -24 Invalid numeric argument : n2 below 54 (6.75 Hz), timing overflows
+\  -11 Result out of range      : more than 65535 cycles, i.e. about
+\                                 9 seconds at 7040 Hz, more below
 DECIMAL
 : BLEEP-CALC  ( n1 n2 -- n3 n4 )
-    >R                      \  ms                  R: 8*Hz
-    R@ 8000 */              \  s*Hz 
-    28000.000               \  s*Hz   28M
-    R> UM/MOD               \  s*Hz   rem   3.5M/Hz  
-    233 -                   \  s*Hz   rem   3.5M/Hz - 241
-    NIP                     \  s*Hz   (3.5M/Hz - 241) 
-    3 RSHIFT                \  s*Hz   (3.5M/Hz - 241) / 8
+    DUP 54 U< -24 ?ERROR    \  ms  hz8
+    >R                      \  ms                  R: hz8
+    R@ UM*                  \  ms*hz8 as a double
+    DUP 8000 U< 0= -11 ?ERROR
+    8000 UM/MOD NIP         \  s*Hz
+    R@ 3 UM* 8 UM/MOD NIP   \  s*Hz  3*hz8/8
+    3500000. ROT 0 D+       \  s*Hz  3.5M+3*hz8/8
+    R> UM/MOD NIP           \  s*Hz  3.5M/hz8+0.375
+    30 -                    \  s*Hz  (3.5M/Hz - 241) / 8 , rounded
 ;
 
 
@@ -146,9 +155,12 @@ DECIMAL
 \  9  -->  440 Hz  A
 \ -3  -->  220 Hz  A  1 octave below
 \ 12  -->  C 1 octave above.
+\ Valid range is -60 (C, 8.2 Hz) to 57 (A, 7040 Hz), else error -24.
+\ BASIC goes up to 69, but 8*freq would not fit in a cell above 57.
 : BEEP-PITCH  ( n -- n2 )
+    DUP 57 > OVER -60 < OR -24 ?ERROR
     \ pitch is calculated starting from the maximum frequency possible. 
-    57 SWAP - ABS       \  57-n 
+    57 SWAP -           \  57-n 
     12/MOD              \  note  octave
     SWAP CELLS          \  octave note*2
     FREQ-TABLE + @      \  octave freq

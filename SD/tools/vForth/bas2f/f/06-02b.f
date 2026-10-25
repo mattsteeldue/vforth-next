@@ -8,6 +8,6 @@
 
 \ --- the translation
 
-\ 06-expressions.md:469
+\ 06-expressions.md:468
 : F  ( a b c d -- n )  -  -ROT  +  * ;
 2 3 7 4 F .                     \ => 15

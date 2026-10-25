@@ -9,9 +9,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:203
-\ no-test in the guide: it waits for keys, never ends or
-\ needs hardware the emulator lacks
+\ 09-mathematical-functions.md:198
 FLOATING
 : SAVINGS  ( years -- fp )  FLOAT 1.05 2SWAP F**  1000.0 F* ;
 INTEGER

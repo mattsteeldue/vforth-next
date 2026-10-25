@@ -189,7 +189,7 @@ INTEGER   \ switch back to integer mode for safety
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ FLOATING
 \ T{  3.0 2.0 F+    -> (fp=5.0)   }T   \ manual check
 \ T{  4.0 FSQRT     -> (fp=2.0)   }T

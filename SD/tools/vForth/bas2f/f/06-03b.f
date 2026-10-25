@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:495
+\ 06-expressions.md:494
 : INK@    ( attr -- ink )    7 AND ;
 : PAPER@  ( attr -- paper )  3 RSHIFT 7 AND ;
 : BIT?    ( n bit -- flag )  1 SWAP LSHIFT AND 0= 0= ;

@@ -153,6 +153,6 @@ CR
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  S" 2 3 +" EVALUATE  -> 5  }T
 \ T{  S" 10 NEGATE" EVALUATE  -> -10  }T

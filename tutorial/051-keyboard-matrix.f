@@ -223,7 +223,7 @@ VARIABLE RT-PORT    VARIABLE RT-MASK
 \ The pure index-arithmetic words are deterministic and can be checked
 \ without a keypress; KEY-DOWN?, KEY-SCAN and GET-KEY need real keys.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{   0 KEY#>PORT  ->  $FEFE  }T   \ CAPS-shift row
 \ T{  12 KEY#>PORT  ->  $FBFE  }T   \ Q-W-E-R-T row
 \ T{  12 KEY#>MASK  ->  4      }T   \ E is column 2 -> $04

@@ -11,6 +11,7 @@
 \ strings 7-9 those of AY3 (Turbosound is enabled when there are more
 \ than three). An empty string leaves its channel silent. PLAY waits until
 \ the music ends, as in BASIC; H in any string and the BREAK key stop it.
+\ To play while the program goes on: NEEDS PLAY-ON (lib/PLAY-ON.f).
 \
 \ The language is NextBASIC's: notes c..b and C..B, # sharp, $ flat,
 \ O0-O8 octave, 1-12 durations, _ tie, & rest, N separator, V0-V15
@@ -24,7 +25,9 @@
 \   AY has (about 27 Hz, in O0 and O1) is played at that lowest period;
 \ - on a channel whose noise is on (M), a note also sets the noise
 \   period: the tone period, limited to 31;
-\ - with U, every note restarts the envelope.
+\ - with U, every note restarts the envelope;
+\ - a string that repeats from its start with no note or rest since the
+\   last time (e.g. "V5))") ends there, instead of looping for ever.
 \
 \ The strings must stay readable while they play: in the dictionary, or
 \ in the heap only if they lie in the same 8K page (an S" typed at the
@@ -74,6 +77,8 @@ PL-FIELD PL-ENV            \ true after U, false after V
 PL-FIELD PL-SHAPE          \ W, as a shape of the AY envelope
 PL-FIELD PL-ACC            \ 1 after #, -1 after $
 PL-FIELD PL-DEPTH          \ number of ( still open
+PL-FIELD PL-HEARD          \ a note or a rest since the start, or the last
+                           \ repeat from the start
 PL-FIELD PL-STACK          \ five pairs: offset after the (, repeated flag
 18 +
 CONSTANT PL-SIZE
@@ -86,6 +91,10 @@ VARIABLE PL-COUNT       \ number of strings
 VARIABLE PL-TEMPO       \ T, crotchets per minute
 VARIABLE PL-HALT        \ true after H
 VARIABLE PL-REM         \ remainder of the last division to milliseconds
+VARIABLE PL-BG          \ true while lib/PLAY-ON.f plays in the background
+VARIABLE PL-ERR         \ the error that stopped it, 0 if none
+VARIABLE PL-STOP        \ xt run before PLAY: PLAY-OFF once PLAY-ON is loaded
+' NOOP PL-STOP !
 CREATE PL-STEREO 3 ALLOT    \ per chip: $60 both sides, $40 L, $20 R
 CREATE PL-MIXER  3 ALLOT    \ per chip: the last M
 
@@ -112,9 +121,17 @@ CREATE PL-MIXER  3 ALLOT    \ per chip: the last M
     LOOP
     AY @ ?DUP 0= IF  1  THEN  AYSELECT ;
 
-: PL-?ERROR  ( f n -- )  OVER IF  PL-SILENCE  THEN  ?ERROR ;
+\ In the background there is no one to tell: the error is kept in PL-ERR
+\ and the music halts; the caller goes on, so it must not harm anything.
 
-: PL-BREAK  ( -- )  ?TERMINAL 15 PL-?ERROR ;
+: PL-?ERROR  ( f n -- )
+    PL-BG @ IF
+        SWAP IF  PL-ERR !  -1 PL-HALT !  ELSE  DROP  THEN
+    ELSE
+        OVER IF  PL-SILENCE  THEN  ?ERROR
+    THEN ;
+
+: PL-BREAK  ( -- )  PL-BG @ 0= IF  ?TERMINAL 15 PL-?ERROR  THEN ;
 
 \ ____________________________________________________________________
 \
@@ -198,9 +215,15 @@ CREATE PL-STEPS  9 C, 11 C, 0 C, 2 C, 4 C, 5 C, 7 C,   \ a b c d e f g
     DUP [CHAR] a < IF  [CHAR] A - 12  ELSE  [CHAR] a - 0  THEN
     SWAP PL-STEPS + C@ +
     PL-OCT @ 12 * +  PL-ACC @ +  0 PL-ACC !
-    PL-SOUND  PL-LENGTH PL-LEFT ! ;
+    PL-SOUND  PL-LENGTH PL-LEFT +!  -1 PL-HEARD ! ;
 
-: PL-REST  ( -- )  0 PL-VOLUME  0 PL-ACC !  PL-LENGTH PL-LEFT ! ;
+: PL-REST  ( -- )
+    0 PL-VOLUME  0 PL-ACC !  PL-LENGTH PL-LEFT +!  -1 PL-HEARD ! ;
+
+\ PL-LEFT is added to, not set: in the background a frame may take a
+\ note past its end, and the next note is that much shorter.
+
+: PL-END  ( -- )  0 PL-ON !  0 PL-VOLUME ;
 
 \ ____________________________________________________________________
 \
@@ -211,13 +234,18 @@ CREATE PL-STEPS  9 C, 11 C, 0 C, 2 C, 4 C, 5 C, 7 C,   \ a b c d e f g
 : PL-ENTRY  ( -- a )  PL-DEPTH @ 2* CELLS PL-STACK + ;
 
 : PL-OPEN  ( -- )
-    PL-DEPTH @ 4 > 19 PL-?ERROR
-    PL-POS @ PL-ENTRY !  0 PL-ENTRY CELL+ !  1 PL-DEPTH +! ;
+    PL-DEPTH @ 4 >  DUP 19 PL-?ERROR
+    0= IF  PL-POS @ PL-ENTRY !  0 PL-ENTRY CELL+ !  1 PL-DEPTH +!  THEN ;
 
 : PL-CLOSE  ( -- )
     PL-BREAK
     PL-DEPTH @ 0= IF
-        0 PL-ENTRY !  1 PL-ENTRY CELL+ !  1 PL-DEPTH +!  0 PL-POS !
+        PL-HEARD @ IF
+            0 PL-HEARD !
+            0 PL-ENTRY !  1 PL-ENTRY CELL+ !  1 PL-DEPTH +!  0 PL-POS !
+        ELSE
+            PL-END
+        THEN
     ELSE
         -1 PL-DEPTH +!
         PL-ENTRY CELL+ @ 0= IF
@@ -281,10 +309,8 @@ CREATE PL-COMMANDS
 \
 \ Playing.
 
-: PL-END  ( -- )  0 PL-ON !  0 PL-VOLUME ;
-
 : PL-STEP  ( -- )           \ read the string up to a note or a rest
-    BEGIN  PL-LEFT @ 0=  PL-ON @ AND  PL-HALT @ 0= AND  WHILE
+    BEGIN  PL-LEFT @ 1 <  PL-ON @ AND  PL-HALT @ 0= AND  WHILE
         PL-MORE? IF  PL-CHAR PL-COMMAND  ELSE  PL-END  THEN
     REPEAT ;
 
@@ -303,6 +329,7 @@ CREATE PL-COMMANDS
     MS ;
 
 : PL-INIT  ( a1 n1 ... ak nk k -- )
+    0 PL-BG !  0 PL-ERR !
     DUP 1- 9 U< 0= -24 PL-?ERROR
     DUP PL-COUNT !  120 PL-TEMPO !  0 PL-HALT !  0 PL-REM !
     3 > IF  ENABLE-TURBOSOUND  THEN
@@ -317,7 +344,7 @@ CREATE PL-COMMANDS
     LOOP ;
 
 : PLAY  ( a1 n1 ... ak nk k -- )
-    PL-INIT
+    PL-STOP @ EXECUTE  PL-INIT
     BEGIN
         PL-COUNT @ 0 DO  I PL-CHANNEL  PL-STEP  LOOP
         PL-SHORTEST  PL-HALT @ IF  DROP 0  THEN

@@ -301,7 +301,7 @@ CREATE RR 642 ALLOT
 \ 9. Tests
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 SIN                   ->  0      }T
 \ T{  90 SIN                  ->  10000  }T
 \ T{  180 SIN                 ->  0      }T

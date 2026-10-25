@@ -228,7 +228,7 @@ CREATE .NAME  ," vForth"
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  TROMBONES        -> 76     }T
 \ T{  SCREEN-ADDR      -> $4000  }T
 \ T{  42 0 SCORES !  0 SCORES @  -> 42  }T

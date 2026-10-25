@@ -219,7 +219,7 @@ CR
 \ 9. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  42 X !  X @       -> 42          }T
 \ T{  1  X +! X @       -> 43          }T
 \ T{  $41 BUF C!  BUF C@ -> $41       }T

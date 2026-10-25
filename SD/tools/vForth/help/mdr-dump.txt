@@ -1,0 +1,12 @@
+    MDR-DUMP  -- cccc cccc cccc
+
+Like MDR-GET, but the new host file gets the bytes only:
+no +3DOS header, and for a program, code or array file
+not even the 9 bytes that open its record 0. A PRINT
+file comes out as with MDR-GET. The same as mdr.pl dump=
+(and text=, which on extraction does the same).
+
+Read-only: the cartridge is never written.
+Example: MDR-DUMP M1.MDR forth16.by FORTH16.BIN
+
+See MDR-GET, MDR-DUMP32. Available after NEEDS MDR

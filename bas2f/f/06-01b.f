@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:439
+\ 06-expressions.md:438
 : C>F10  ( celsius -- tenths )  90 5 */ 320 + ;
 : .TENTHS  ( n -- )  0 <# # 46 HOLD #S #> TYPE ;
 37 C>F10 .                      \ => 986

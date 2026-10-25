@@ -136,7 +136,7 @@ DEFER ODD?             \ forward reference
 \ 5. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  ' SHOW-AS-NUMBER  IS DISPLAY-ITEM
 \     ACTION-OF DISPLAY-ITEM  ' SHOW-AS-NUMBER  =  -> -1  }T
 \ T{  4 EVEN?   -> -1  }T

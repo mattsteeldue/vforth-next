@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 10-random-numbers.md:127
+\ 10-random-numbers.md:173
 : D20  ( -- n )  20 RND 1+ ;
 : THROW  ( -- )  D20 .  D20 . ;
 1 RANDOMIZE

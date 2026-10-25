@@ -147,8 +147,8 @@ CREATE BOTTOM  ," O3c3gCg7c"
 \ moves each one on when its own note ends. PLAY returns when the
 \ longest string is over.
 \
-\ An empty string leaves its channel silent. Write it PAD 0 (any address,
-\ length 0): S" " does not give an empty text in vForth (TODO.md).
+\ An empty string leaves its channel silent: S" " or PAD 0 (any address,
+\ length 0).
 \
 \   TOP COUNT  PAD 0  BOTTOM COUNT  3 PLAY     => melody and bass only
 
@@ -303,6 +303,6 @@ CREATE VOICE-3  ," O3 9&&&& (5CDEC)(5EF7G)(3GAGF5EC)(5Cg7C)"
 \ the chips.
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{ TOP COUNT NIP ->  7 }T
 \ T{ 1 2 PLAY" c"  ->  1 2 }T         \ PLAY leaves the stack as it was

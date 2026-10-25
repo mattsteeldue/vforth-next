@@ -81,6 +81,19 @@ brings into view when it is needed. Use the pair straight away, as every
 example here does, or copy the text into a buffer of your own; and do not
 write into it.
 
+**The text of an `S"` ends with a zero too.** The heap keeps it the way
+`,"` keeps its own: a length byte, the characters, and a zero that the
+length does not count. So the byte just past the pair is 0, and the
+address that `S"` leaves is already a string closed by a zero:
+
+```forth
+PLANET + C@ .                   \ => 0
+```
+
+NextZXOS can take it as it is, as long as nothing brings another part of
+the heap into view in between. A file name to be kept, or passed on
+later, is better made with `,"` or `PAD"`.
+
 **A string variable is a buffer you reserve.** `LET a$="..."` finds room
 for whatever you assign. In Forth you decide the room once, when you
 create the variable, and it never grows. The usual shape is the *counted
@@ -109,9 +122,8 @@ NAME$ C@ .                      \ => 8
 
 `CMOVE` copies bytes: from, to, how many. `$!` is to strings what `!` is
 to numbers. `LET b$=a$` is `A$ COUNT B$ $!`, and the empty string is a
-zero in the length byte: `0 NAME$ C!`. Do not try to write an empty
-literal: `S" "` is not the empty string, it swallows the rest of the
-line.
+zero in the length byte: `0 NAME$ C!`. The empty literal is `S" "`, the
+closing quote right after the blank that ends `S"`.
 
 **Nothing checks the room.** `$!` copies as many characters as it is
 given. Forty characters sent to `NAME$` overwrite whatever comes after it

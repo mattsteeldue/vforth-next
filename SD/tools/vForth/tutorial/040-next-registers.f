@@ -186,7 +186,7 @@ NEEDS ms
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  $00 REG@  ->  8  }T           \ machine ID: 8 on CSpect, 10 on Next
 \ T{  0 SPEED!  SPEED@  ->  0  }T   \ set and read back
 \ T{  2 SPEED!  SPEED@  ->  2  }T

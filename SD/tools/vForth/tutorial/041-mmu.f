@@ -177,7 +177,7 @@ $12 REG@ 2 * CONSTANT L2-FIRST-PAGE
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  L2-FIRST-PAGE 0>  ->  -1  }T   \ Layer 2 page must be > 0
 \ T{  0 0 L2-OFFSET  ->  0   }T      \ top-left row 0, col 0
 \ T{  0 1 L2-OFFSET  ->  1   }T      \ top-left row 0, col 1

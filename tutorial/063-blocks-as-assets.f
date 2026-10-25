@@ -167,7 +167,7 @@ NEEDS DUMP
 \ 8. Tests (geometry only; payload is file-dependent)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  MAX-PAYLOAD          ->  448   }T
 \ T{  C/L                  ->  64    }T
 \ T{  DEMO-BLK 2 /         ->  10    }T   \ block 20 is the start of screen 10

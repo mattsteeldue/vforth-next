@@ -7,7 +7,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:183
+\ 09-mathematical-functions.md:179
 : **  ( n u -- n^u )  1 SWAP 0 ?DO  OVER *  LOOP  NIP ;
 2 10 ** .                       \ => 1024
 3 4 ** .                        \ => 81

@@ -194,6 +194,6 @@ UNSETUP
 \
 \ PLOT / CIRCLE have visual side effects only; ATTRIB is a readable VALUE.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  _WHITE _BLUE 3 LSHIFT +  ->  15  }T   \ white ink + blue paper
 \ T{  ATTRIB 255 AND  ->  ATTRIB 255 AND  }T

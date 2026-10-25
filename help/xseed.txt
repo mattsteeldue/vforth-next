@@ -1,0 +1,7 @@
+    XSEED  -- a
+
+2VARIABLE: the 32-bit state of XRND,
+used by XNEXT and set by XRANDOMIZE.
+It starts at 0, taken as 1.
+
+Available after NEEDS XSEED

@@ -435,5 +435,5 @@ CR .( Try:  DEMO   for both, one after the other ) CR
 \ Screens 340, 420-436 ("TILEMAP study") in !Blocks-64.bin -- an
 \ earlier, block-based exploration of the same hardware.
 
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  TILE3-40-DEMO  ->  }T   \ visual only, no stack effect

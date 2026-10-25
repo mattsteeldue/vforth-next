@@ -1,0 +1,8 @@
+    FLOAT  n -- fp
+
+Converts a single integer to floating point.
+
+    FLOATING  42 FLOAT 1.5 F* F.  \ 6.3000e1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

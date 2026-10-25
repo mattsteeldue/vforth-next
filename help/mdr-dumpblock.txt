@@ -1,0 +1,12 @@
+    MDR-DUMPBLOCK  -- cccc cccc cccc
+
+Like MDR-DUMP32, but every 16 lines, i.e. every 512
+bytes, a header is written: two empty lines, then
+"\ Screen# n" counting from 1. The !Blocks file of an
+old Microdrive vForth becomes a source file, one Screen
+after the other. The same as mdr.pl dumpblock=.
+
+Read-only: the cartridge is never written.
+Example: MDR-DUMPBLOCK M2.MDR !Blocks BLOCKS.F
+
+See MDR-DUMP32, MDR-DUMP. Available after NEEDS MDR

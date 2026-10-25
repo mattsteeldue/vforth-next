@@ -195,6 +195,6 @@ _ _ _ _ _ v v | " " " _ _ _ _ _ \ F
 \ Sprite words write to hardware ports and cannot be verified
 \ automatically.  Only the port constants are testable.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  SPRITE-SLOT-PORT  ->  12347  }T   \ $303B
 \ T{  SPRITE-ATTR-PORT  ->    87   }T   \ $0057

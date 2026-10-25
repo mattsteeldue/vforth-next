@@ -221,5 +221,5 @@ UNSETUP
 \ 10. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  LAYER2  ATTRIB  ->  ATTRIB  }T   \ ATTRIB is readable

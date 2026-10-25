@@ -1,0 +1,10 @@
+    FASIN  fp1 -- fp2
+
+The arc-sine, in radians: BASIC's ASN.
+Stops with "Invalid floating point." when fp1 is
+outside -1 to 1.
+
+    FLOATING  1.0 FASIN F.       \ 1.5708e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

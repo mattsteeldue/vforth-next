@@ -1,0 +1,12 @@
+    PARSE  c -- a n
+
+Parse the text up to the delimiter c from the input
+stream and leave its address and length, inside the
+input buffer. Unlike WORD, leading delimiters are not
+skipped, so the text may be empty, and nothing is
+copied to HERE. >IN moves past the delimiter; at the
+end of the line the text stops there.
+H", S", +" and PAD" parse with it: S" " is empty.
+Forth-2012 CORE EXT. See also WORD.
+
+Available after NEEDS PARSE

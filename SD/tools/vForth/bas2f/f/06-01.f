@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 06-expressions.md:426
+\ 06-expressions.md:425
 : C>F  ( celsius -- fahrenheit )  9 5 */ 32 + ;
 100 C>F .                       \ => 212
 -40 C>F .                       \ => -40

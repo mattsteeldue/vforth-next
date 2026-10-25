@@ -242,7 +242,7 @@ C;
 \ 7. Quick-reference tests (uncomment to run)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ NEEDS CHECKSUM
 \
 \ T{ DECIMAL 448 60 CHECKSUM2 -> 67 }T

@@ -8,9 +8,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:234
-\ no-test in the guide: it waits for keys, never ends or
-\ needs hardware the emulator lacks
+\ 09-mathematical-functions.md:228
 FLOATING
 : CIRC  ( fp -- fp2 )  2.0 F* PI F* ;
 : AREA  ( fp -- fp2 )  2DUP F* PI F* ;

@@ -8,12 +8,12 @@
 
 \ --- words defined earlier in the guide
 
-\ 07-strings.md:89
+\ 07-strings.md:102
 CREATE NAME$  32 ALLOT
 
 \ --- the translation
 
-\ 07-strings.md:398
+\ 07-strings.md:410
 NEEDS WITHIN
 : LOWER  ( c -- c2 )  DUP 65 91 WITHIN IF  32 +  THEN ;
 : LOWCASE  ( a n -- )

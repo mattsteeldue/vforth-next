@@ -1,0 +1,8 @@
+    FABS  fp1 -- fp2
+
+The absolute value: BASIC's ABS.
+
+    FLOATING  -2.5 FABS F.       \ 2.5000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -7,7 +7,7 @@
 
 \ --- the translation
 
-\ 10-random-numbers.md:144
+\ 10-random-numbers.md:190
 : RND-IN  ( lo hi -- n )  OVER - 1+ RND + ;
 1 RANDOMIZE
 10 20 RND-IN . 10 20 RND-IN . 10 20 RND-IN .        \ => 10 11 19

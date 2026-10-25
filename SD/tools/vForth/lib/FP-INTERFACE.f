@@ -36,20 +36,32 @@ MARKER FP-INTERFACE
 
 \ FOP    ( n -- )
 \ Floating-Point-Operation.
-\ it calls the FP calculator which is a small Stack-Machine
-CODE FOP 
-    $E1 C,          \ POP     HL|     
+\ it calls the FP calculator which is a small Stack-Machine.
+\ The calculator reads its operation and end-calc bytes after the
+\ return address of RST $28, so they must follow an RST $28 executed
+\ while ROM 3 is paged at $0000. In a dot-command the low 16K is the
+\ NextZXOS ROM: RST $18 pages ROM 3 in and calls the small routine
+\ compiled after NEXT, which does the RST $28 in main RAM. The other
+\ variant reaches the same routine with a plain CALL.
+CODE FOP
+    $E1 C,          \ POP     HL|
     $C5 C,          \ PUSH    BC|
     $D5 C,          \ PUSH    DE|
     $7D C,          \ LD      A'|    L|
-    $32 C, HERE 0 , \ LD()A   HERE 0 AA,   
-    $EF C,          \ RST     28|
-    HERE SWAP !     \         HERE SWAP !  *THIS BYTE IS PATCHED*
-    $38 C,          \         HEX 38 C, \ this location is patched each time
-    $38 C,          \         HEX 38 C, \ end of calculation
+    $32 C, HERE 0 , \ LD()A   op         ; address resolved below
+    \ compile RST $18 if dot-command, CALL if not, as lib/bleep.f
+    0 +ORIGIN $2000 - NOT 1 AND $DF *
+    0 +ORIGIN $2000 = NOT 1 AND $CD * +
+       C, HERE 0 ,  \         routine    ; address resolved below
     $D1 C,          \ POP     DE|
     $C1 C,          \ POP     BC|
     $DD C, $E9 C,   \ NEXT
+    HERE SWAP !     \ routine:
+    $EF C,          \ RST     28|
+    HERE SWAP !     \ op:     *THIS BYTE IS PATCHED* each time
+    $38 C,          \
+    $38 C,          \         end of calculation
+    $C9 C,          \ RET
     SMUDGE          \ C;
 
 
@@ -73,7 +85,9 @@ CODE >W
     $51 C,          \     LD      D'|    C|
     $4C C,          \     LD      C'|    H|
                     \ HERE DISP, \ THEN,       
-    $CD C, $2AB6 ,  \ CALL    HEX 2AB6 AA,
+    0 +ORIGIN $2000 - NOT 1 AND $DF *   \ RST $18 if dot-command
+    0 +ORIGIN $2000 = NOT 1 AND $CD * + \ CALL if not, as FOP
+       C, $2AB6 ,   \         STK-STORE in ROM 3
     $D9 C,          \ EXX
     $DD C, $E9 C,   \ NEXT
     SMUDGE          \ C;
@@ -84,7 +98,9 @@ CODE >W
 \ pop a number from floating-pointer stack and push it to top of calculator stack 
 CODE W>
     $D9 C,          \ EXX
-    $CD C, $2BF1 ,  \ CALL    HEX 2BF1 AA,
+    0 +ORIGIN $2000 - NOT 1 AND $DF *   \ RST $18 if dot-command
+    0 +ORIGIN $2000 = NOT 1 AND $CD * + \ CALL if not, as FOP
+       C, $2BF1 ,   \         STK-FETCH in ROM 3
     $A7 C,          \ ANDA     A|
     $20 C, $03 C,   \ JRF    NZ'|   HOLDPLACE
     $62 C,          \     LD      H'|    D|  \ swap C and D 

@@ -202,7 +202,7 @@ NEEDS EXEC:
 \ 7. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 DESCRIBE  ->       }T    \ side effect only
 \ T{  1 DESCRIBE  ->       }T
 \ T{  42 DESCRIBE ->       }T

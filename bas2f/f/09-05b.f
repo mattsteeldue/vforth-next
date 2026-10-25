@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:303
+\ 09-mathematical-functions.md:295
 CREATE SINES
     0 , 1736 , 3420 , 5000 , 6428 ,
     7660 , 8660 , 9397 , 9848 , 10000 ,

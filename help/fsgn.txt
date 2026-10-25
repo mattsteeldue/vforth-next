@@ -1,0 +1,9 @@
+    FSGN  fp1 -- fp2
+
+The sign, as a floating-point number: -1.0, 0.0 or 1.0.
+BASIC's SGN.
+
+    FLOATING  -2.5 FSGN F.       \ -1.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

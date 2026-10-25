@@ -26,7 +26,6 @@ manual's: semitones from middle C, negative below it, 12 to the octave.
 The duration is an integer, so it is given in thousandths of a second:
 `BEEP .5,7` is `500 7 BEEP`.
 
-<!-- no-test -->
 ```forth
 NEEDS BLEEP
 500 0 BEEP  500 4 BEEP  500 7 BEEP  1000 12 BEEP
@@ -46,26 +45,23 @@ NEEDS BLEEP
 9 BEEP-PITCH .                  \ => 3520
 ```
 
-**No `Integer out of range`.** BASIC stops a pitch it cannot play.
-`BEEP` checks nothing, and today its useful range is narrower than
-BASIC's: from -27, the A at 55 Hz, to 47, the B four octaves above middle
-C. Outside it the note is wrong and no error is given:
-
-- from 48 up, the note lasts several seconds, whatever duration was asked:
-  the number of cycles is computed with signed arithmetic, and from 48 the
-  frequency times 8 no longer fits in a positive cell;
-- above 57 the pitch folds back down, so 58 sounds like 56;
-- below -27 the timing overflows and the note comes out too high.
+**`Integer out of range` has two names.** BASIC stops a note it cannot
+play; so does `BEEP`, with one of the standard error messages. The pitch
+goes from -60, the C at 8.2 Hz, to 57, the A at 7040 Hz: one octave less
+than BASIC at the top, where BASIC reaches 69. Outside it `BEEP-PITCH`
+stops with `Invalid numeric argument.` The duration is limited by the
+number of cycles, which must fit in a cell: about nine seconds at the
+highest pitch, more below. Beyond that `BLEEP-CALC` stops with `Result
+out of range.`, where BASIC's limit is ten seconds whatever the pitch.
 
 ```forth
-500 47 BEEP-PITCH BLEEP-CALC DROP U.    \ => 1975
-500 48 BEEP-PITCH BLEEP-CALC DROP U.    \ => 63533
-58 BEEP-PITCH  56 BEEP-PITCH  = .       \ => -1
+500 48 BEEP-PITCH BLEEP-CALC DROP U.    \ => 2093
+58 BEEP-PITCH                           \ => Invalid numeric argument.
+10000 57 BEEP                           \ => Result out of range.
 ```
 
-The first two lines show the number of cycles for half a second: 1975 at
-pitch 47, right, and 63533 at pitch 48, about fifteen seconds. The fix is
-in `TODO.md`; until it is made, keep tunes between -27 and 47.
+The first line shows the number of cycles for half a second at pitch 48,
+the C at 4186 Hz: 2093, half its frequency.
 
 **Fractions of a semitone become frequencies.** `BEEP .5,0.5`, the
 quarter tone, and the natural scale with its `2.039` and `3.86`, need a
@@ -121,8 +117,8 @@ durations and triplets, `_`, `&`, `N`, `V`, `U`, `W`, `X`, `T`, `( )`,
 `PLAY` waits until the music ends; `H` or BREAK stops it. A few
 differences:
 
-- an empty string, for a silent channel, is `PAD 0`: `S" "` does not
-  give an empty text;
+- an empty string, `S" "` or `PAD 0` (any address, length 0), leaves
+  its channel silent;
 - the strings are read while they play, so they must stay where they
   are: in the dictionary, or in the heap only in the same 8K page (two
   `S"` typed at the prompt may not be);
@@ -213,13 +209,13 @@ has no effect while Forth runs.
 |---|---|---|
 | `BEEP d,p` | `ms p BEEP` | `NEEDS BLEEP`. Milliseconds, whole semitones. |
 | `BEEP d,p` with a fractional `p` | `ms hz8 BEEP-HZ8` | Defined above: frequency times 8. |
-| pitch out of range | -- | No error: keep to -27 ... 47. |
+| pitch out of range | `Invalid numeric argument.` | -60 ... 57; BASIC goes up to 69. |
 | `key+p` | `KEY# +` | `KEY` reads the keyboard. |
 | `crotchet` | `CROTCHET` | A `VALUE`, in milliseconds. |
 | `POKE 23609,n` | -- | `KEY` does not click. |
 | `PLAY a$` | `a n 1 PLAY`, `PLAY" ..."` | `NEEDS PLAY`. |
 | `PLAY a$,b$,c$` | `a1 n1 a2 n2 a3 n3 3 PLAY` | Up to nine strings. By hand: `0`, `2`, `4 AY!!`. |
-| `PLAY ""` for a silent channel | `PAD 0` | `S" "` is not empty. |
+| `PLAY ""` for a silent channel | `S" "` or `PAD 0` | An empty string. |
 | note names, `O` | `hz PERIOD reg AY!!` | Defined above. |
 | `V n` | `n 8 AY!` (A), `9` (B), `10` (C) | |
 | `U`, `W n`, `X n` | volume 16, `shape 13 AY!`, `n 11 AY!!` | |
@@ -348,7 +344,7 @@ Write register 13 again to pluck again.
   which vForth cannot launch. The DACs of the Next are reachable through
   the Next registers `$2C` to `$2E`, but there is no player.
 - **`POKE 23609`.** vForth's keyboard makes no click.
-- **A pitch error.** `BEEP` plays what it computes, right or wrong.
+- **Pitches 58 to 69.** `BEEP` stops at 57, the A at 7040 Hz.
 
 ## Further reading
 

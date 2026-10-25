@@ -12,7 +12,7 @@
 
 \ --- the translation
 
-\ 10-random-numbers.md:187
+\ 10-random-numbers.md:233
 CREATE TALLY  6 CELLS ALLOT
 : THROWS  ( n -- )
     TALLY 6 CELLS ERASE

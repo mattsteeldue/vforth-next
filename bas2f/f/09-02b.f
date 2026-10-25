@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:214
+\ 09-mathematical-functions.md:209
 : YEARS  ( n years -- n2 )  0 ?DO  105 100 */  LOOP ;
 1000 10 YEARS .                 \ => 1623
 10000 10 YEARS .                \ => 16284

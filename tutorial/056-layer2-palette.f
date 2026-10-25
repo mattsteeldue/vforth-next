@@ -306,5 +306,5 @@ $14 CONSTANT L2-TRANSPARENT
 \ 9. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  PAL-EDIT-1ST  0 PAL-INDEX!  PAL-COLOR@  ->  0  }T

@@ -49,7 +49,7 @@ LINEBUF 80 GET-LINE . .         \ => -1 0
 
 \ --- the translation
 
-\ 20-channels-streams-drivers-and-windows.md:280
+\ 20-channels-streams-drivers-and-windows.md:282
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS F_FSTAT
@@ -57,5 +57,5 @@ NEEDS F_FSTAT
     LINEBUF SWAP F_FSTAT 44 ?ERROR
     LINEBUF 7 + @  LINEBUF 9 + @ ;
 OPEN< help/rnd.txt TO FH
-FH FSIZE D.                     \ => 191
+FH FSIZE D.                     \ => 257
 FH F_CLOSE DROP

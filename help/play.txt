@@ -17,5 +17,5 @@ The strings must stay readable while they play.
 Errors: #19 bad character, -24 number out of
 range, #15 BREAK.
 
-See PLAY", AY!, SHH.
+See PLAY", PLAY-ON, AY!, SHH.
 Available after NEEDS PLAY

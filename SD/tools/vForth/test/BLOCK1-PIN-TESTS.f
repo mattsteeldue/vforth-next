@@ -6,7 +6,7 @@
 \ file that read more distinct blocks than the pool holds used to recycle
 \ its own line -- WORD re-read BLOCK 1 from disk (metadata) and a random
 \ word came out "undefined".  Since build 2026-09-25 BUFFER never evicts
-\ BLOCK 1 (planners/PLAN-MITIGATION-BLOCK-1-BUG.md).
+\ BLOCK 1 (planners/archive/PLAN-MITIGATION-BLOCK-1-BUG.md).
 \
 \ Every test below reads 20 distinct blocks (Screens 50..59, read only,
 \ never UPDATEd) while this very file is being interpreted, then keeps

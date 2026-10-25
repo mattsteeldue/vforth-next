@@ -24,8 +24,8 @@
         [CHAR] Y =
     UNTIL
     0 0 0 1 [ HEX ] 01D2 M_P3DOS \ invoke IDE_MOUNT NextZXOS service
-    DROP 2DROP 2DROP            \ ingnore everything.
+    DROP 2DROP 2DROP            \ ignore everything.
   THEN                          \ if it works, then you can...
-  BLK-INIT [ DECIMAL ]          \ reopen BLOCKs f!ile using BLK-FNAME.
+  BLK-INIT [ DECIMAL ]          \ reopen BLOCKs file using BLK-FNAME.
 ;
 

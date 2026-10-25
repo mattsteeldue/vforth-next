@@ -1,0 +1,11 @@
+    F/MOD  fp1 fp2 -- fp3 fp4
+
+Divides fp1 by fp2: fp4 is the whole quotient, rounded
+down as FINT does, fp3 the remainder, fp1 - fp2*fp4.
+Stops with "Division by zero." when fp2 is zero.
+See also FMOD.
+
+    FLOATING  7.0 2.0 F/MOD F. F.  \ 3.0000e0 1.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

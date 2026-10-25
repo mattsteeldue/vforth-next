@@ -1,6 +1,12 @@
     +"  ha -- ha
 
-Appends string to Heap.
-Part of heap memory facility.
+Parse a string up to the next " and append it to the
+counted string at ha, extended in place. ha must be
+the last block created on Heap, as just after H".
+The string stays a counted z-string.
+Errors: #-18 more than 255 characters, #14 ha is not
+the last heap block, #12 the block would grow into
+the tail of the page, offset $1F58 on (the UDG area).
+Part of heap memory facility. See also H" +C.
 
 Available after NEEDS +"

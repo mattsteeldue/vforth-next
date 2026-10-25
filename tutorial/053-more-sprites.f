@@ -313,7 +313,7 @@ CODE SPRITE-DATA>  ( a -- )
 \ The sprite words write to hardware I/O ports and cannot be checked
 \ automatically -- only the constant port numbers are testable.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  SPRITE-ATTRIBUTE-PORT     ->     87 }T
 \ T{  SPRITE-SLOT-SELECT-PORT   ->  12347 }T
 \ T{  SPRITE-PATTERN-PORT       ->     91 }T

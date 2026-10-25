@@ -16,16 +16,16 @@ NEEDS S"
 PLANET TYPE                     \ => Spectrum
 PLANET NIP .                    \ => 8
 
-\ 07-strings.md:89
+\ 07-strings.md:102
 CREATE NAME$  32 ALLOT
 
-\ 07-strings.md:103
+\ 07-strings.md:116
 : $!  ( a n dest -- )  2DUP C!  1+ SWAP CMOVE ;
 PLANET NAME$ $!
 NAME$ COUNT TYPE                \ => Spectrum
 NAME$ C@ .                      \ => 8
 
-\ 07-strings.md:170
+\ 07-strings.md:182
 : $+!  ( a n dest -- )
     >R  DUP R@ C@ +  -ROT
     R@ COUNT + SWAP CMOVE
@@ -37,7 +37,7 @@ NAME$ C@ .                      \ => 13
 
 \ --- the translation
 
-\ 07-strings.md:326
+\ 07-strings.md:338
 CREATE G$  40 ALLOT
 : GREETING  ( a n -- )
     S" Hello, " G$ $!   G$ $+!   S" !" G$ $+! ;

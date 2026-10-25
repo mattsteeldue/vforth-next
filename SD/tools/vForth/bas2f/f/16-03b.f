@@ -12,7 +12,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 16-graphics.md:328
+\ 16-graphics.md:334
 NEEDS RND
 23670 CONSTANT SEED
 : NEXT-RND  ( -- u )  SEED @ NEXT-SEED  DUP SEED ! ;
@@ -22,7 +22,7 @@ NEEDS RND
 
 \ --- the translation
 
-\ 16-graphics.md:338
+\ 16-graphics.md:344
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS GRAPHICS

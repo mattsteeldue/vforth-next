@@ -1,0 +1,8 @@
+    F0>  fp -- f
+
+True if fp is greater than zero.
+
+    FLOATING  0.0 F0> .          \ 0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

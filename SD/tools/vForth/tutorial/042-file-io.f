@@ -186,7 +186,7 @@ CREATE DATA-BUF  256 ALLOT
 \ File tests require an SD card and cannot run without hardware.
 \ The DATA-BUF fill logic can be verified:
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  FILL-BUF  DATA-BUF 0 + C@  ->  0   }T
 \ T{             DATA-BUF 1 + C@  ->  1   }T
 \ T{             DATA-BUF 255 + C@  ->  255  }T

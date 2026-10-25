@@ -1,0 +1,9 @@
+    F>D  fp -- d
+
+Converts a floating-point number to a double integer,
+dropping the fraction (towards zero: -3.7 gives -3).
+
+    FLOATING  -3.7 F>D D.         \ -3
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

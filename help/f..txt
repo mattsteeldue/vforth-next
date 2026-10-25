@@ -1,0 +1,11 @@
+    F.  fp --
+
+Prints a floating-point number in scientific notation,
+a mantissa, the letter e and an exponent, followed by a
+space. PLACES sets the number of decimals (4 at load).
+
+    FLOATING  1.5 F.             \ 1.5000e0
+    2 PLACES  -1000.0 F.         \ -1.00e3
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

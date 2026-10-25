@@ -7,7 +7,7 @@
 
 \ --- words defined earlier in the guide
 
-\ 18-sound-and-music.md:150
+\ 18-sound-and-music.md:146
 NEEDS AY
 NEEDS MS
 : PERIOD  ( hz -- p )  16 * >R  1750000. R> UM/MOD NIP ;
@@ -15,7 +15,7 @@ NEEDS MS
 
 \ --- the translation
 
-\ 18-sound-and-music.md:325
+\ 18-sound-and-music.md:321
 : PLUCK  ( -- )
     1 AYSELECT
     262 PERIOD 0 AY!!

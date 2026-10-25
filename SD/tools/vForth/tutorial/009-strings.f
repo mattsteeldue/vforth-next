@@ -200,7 +200,7 @@ CR
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  S1 1+ S1 1+ S1 C@ (COMPARE)  ->  0   }T
 \ T{  S1 1+ S2 1+ S1 C@ (COMPARE)  ->  -1  }T   \ ! < ?
 \ T{  S2 1+ S1 1+ S1 C@ (COMPARE)  ->  1   }T

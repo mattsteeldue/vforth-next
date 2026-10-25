@@ -1,0 +1,8 @@
+    FSIN  fp1 -- fp2
+
+The sine of an angle in radians: BASIC's SIN.
+
+    FLOATING  PI 6.0 F/ FSIN F.  \ 5.0000e-1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

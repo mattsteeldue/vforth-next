@@ -10,9 +10,16 @@
 \   - Both generators keep their state in the BASIC system variable SEED
 \     (23670), so RANDOMIZE serves both and a seed set in NextBASIC
 \     before entering vForth is the one Forth starts from.
-\   - RND is BASIC's own generator, word for word; RANDOM and CHOOSE are
-\     the Starting FORTH pair.  None of them is in the core: each one is
-\     a NEEDS away (inc/RND.f, inc/random.f, inc/choose.f).
+\   - RND is the generator of the 48K Spectrum's BASIC, word for word;
+\     RANDOM and CHOOSE are the Starting FORTH pair.  None of them is in
+\     the core: each one is a NEEDS away (inc/RND.f, inc/random.f,
+\     inc/choose.f).
+\   - NextBASIC's RND is no longer the 48K one: since NextZXOS it is a
+\     32-bit xorshift, of which SEED holds only the lower half.  The same
+\     seed gives other numbers in NextBASIC than in vForth.  When they
+\     must be the same, NEEDS XRND: NextBASIC's generator, with a 32-bit
+\     state of its own (XSEED) that leaves SEED alone; this tutorial
+\     does not use it.
 \   - There is no fraction between 0 and 1: ask for the integer you want.
 \
 \ Coming from BASIC: Ch.10  |  doc/basic-to-vforth/
@@ -47,13 +54,18 @@ NEEDS CHOOSE
 \ the sequence and derives its result from it.  vForth keeps the seed
 \ where BASIC keeps it, in the system variable SEED at address 23670.
 \
-\   n RND     ( n -- 0..n-1 )   BASIC's generator, the one behind
-\                               RND and %RND: seed -> 75*(seed+1) MOD
-\                               65537, minus 1.  inc/RND.f
+\   n RND     ( n -- 0..n-1 )   the 48K BASIC generator, the one behind
+\                               its RND: seed -> 75*(seed+1) MOD 65537,
+\                               minus 1.  inc/RND.f
 \   RANDOM    ( -- u )          Brodie's generator: seed -> 31421*seed
 \                               + 6927 MOD 65536.  inc/random.f
 \   n CHOOSE  ( n -- 0..n-1 )   RANDOM scaled to a range.  inc/choose.f
 \   n RANDOMIZE  ( n -- )       stores n into SEED.  inc/randomize.f
+\
+\ A third generator, n XRND (inc/xrnd.f), gives NextBASIC's own numbers:
+\ its state is not SEED but the 2VARIABLE XSEED, set by d XRANDOMIZE, so
+\ it never meets the two above.  After a reset, BASIC's RANDOMIZE 1 is
+\ 1 0 XRANDOMIZE.
 \
 \ Both sequences run through all 65536 values before repeating.  Pick
 \ one generator per program: the two share the seed, so mixing them
@@ -157,7 +169,7 @@ NEEDS CHOOSE
 \ (DO ... LOOP works only inside a definition, hence the two little
 \ words: typed at the prompt, DO answers "Can't be executed".)
 \
-\ RND uses the same scaling on top of BASIC's generator (whose low bits
+\ RND uses the same scaling on top of the 48K generator (whose low bits
 \ are fine, as it happens, but the scaling costs nothing).  Rule: to get
 \ a range, never apply MOD to RANDOM; use CHOOSE, or RND.
 

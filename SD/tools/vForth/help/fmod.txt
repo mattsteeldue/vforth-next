@@ -1,0 +1,9 @@
+    FMOD  fp1 fp2 -- fp3
+
+The remainder of fp1 divided by fp2: F/MOD without the
+quotient.
+
+    FLOATING  7.5 2.0 FMOD F.     \ 1.5000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -27,6 +27,7 @@ MARKER TESTING-DONE
     NEEDS UNLOOP
     NEEDS ['] 
     NEEDS EVALUATE
+    NEEDS PARSE
     NEEDS BINARY
     NEEDS CHARS
     NEEDS COMPILE,
@@ -353,6 +354,7 @@ TESTING \ F.3.18 Parser Input Source Control
    INCLUDE  test/source.f          
    INCLUDE  test/}in.f      \ >IN  \ *** N.B. nested EVALUATE still has bug ***
    INCLUDE  test/word.f            \ *** N.B. Blank lines return zero-length strings ***
+   INCLUDE  test/parse.f
 
 
 TESTING \ F.3.19 Number Patterns

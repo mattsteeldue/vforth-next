@@ -198,7 +198,7 @@ PAD" tutorial/afx/zxgames/exolon_5.afx"        4407 LOAD2BLOCK  .PAD CR
 \ 9. Tests (geometry only -- the sound itself needs ears)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  SFX-BANK             ->  4402  }T
 \ T{  SFX-BANK 2 /         ->  2201  }T   \ first half of Screen 2201
 \ T{  AFX-CH-DESC 0=       ->  0     }T

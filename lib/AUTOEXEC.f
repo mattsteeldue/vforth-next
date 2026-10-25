@@ -110,7 +110,7 @@ MARKER FORGET-THIS-TASK-3
     UPPER 
     [ CHAR N ] LITERAL = 
     IF ( in-key == N )
-        ." ok " 
+        SPACE ." ok"  
         FORGET-THIS-TASK-3 
         QUIT 
     ELSE 

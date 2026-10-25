@@ -164,7 +164,7 @@ CR
 \
 \ These test numeric output indirectly via BASE behaviour.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  $FF          -> 255  }T
 \ T{  #255         -> 255  }T
 \ T{  %11111111    -> 255  }T

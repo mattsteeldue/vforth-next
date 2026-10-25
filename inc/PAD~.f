@@ -16,6 +16,7 @@
 
 NEEDS S"
 NEEDS >ZPAD
+NEEDS PARSE
 
 \
 : PAD" ( -- )  \
@@ -25,8 +26,7 @@ NEEDS >ZPAD
         [COMPILE] S"        \ a+1 n
         COMPILE   >ZPAD     
     ELSE                    \ ." interpreter " CR
-        [CHAR] " WORD       \ a (counted-string)
-        COUNT               \ a+1   n
+        [CHAR] " PARSE      \ a n   PARSE: PAD" " is empty
         >ZPAD
     THEN
 ;    

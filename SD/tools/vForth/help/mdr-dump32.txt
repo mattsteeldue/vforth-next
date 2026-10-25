@@ -1,0 +1,11 @@
+    MDR-DUMP32  -- cccc cccc cccc
+
+Like MDR-DUMP, but the bytes are cut in lines of 32, each
+ended by LF, its trailing blanks and NULs removed: the
+32-column screens of the old Microdrive vForth become a
+text file. The same as mdr.pl dump32=.
+
+Read-only: the cartridge is never written.
+Example: MDR-DUMP32 M2.MDR !Blocks BLOCKS.TXT
+
+See MDR-DUMPBLOCK, MDR-DUMP. Available after NEEDS MDR

@@ -1,0 +1,9 @@
+    FEXP  fp1 -- fp2
+
+e raised to fp1: BASIC's EXP. Not to be confused with
+the core variable EXP, used by the number parser.
+
+    FLOATING  1.0 FEXP F.        \ 2.7183e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

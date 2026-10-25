@@ -446,7 +446,7 @@ CREATE COLOR-TAB
 \ 12. Tests
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  100 CENTI               ->  256    }T
 \ T{  220 CENTI               ->  563    }T
 \ T{  384 384 S*              ->  576    }T   \ 1.5 * 1.5 = 2.25

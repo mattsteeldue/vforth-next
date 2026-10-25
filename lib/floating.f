@@ -376,32 +376,58 @@ DECIMAL
 ;
 
 
-: F>PAD    ( fp -- u ) 
+: (D10*)  ( d -- d*10 )
+    2DUP 2DUP D+ 2DUP D+ D+     \ 5*d
+    2DUP D+                     \ 10*d
+;
+
+
+\ 10 to the n, as a double
+: (10^N)  ( n -- d )
+    1 0 ROT ?DUP IF 0 DO (D10*) LOOP THEN
+;
+
+
+\ The exponent is the floor of the logarithm in base 10, so that the
+\ mantissa is normalised to 1 <= m < 10 (0.05 is 5.0000e-2). When the
+\ logarithm comes out a hair below a whole number (1000.0) or the
+\ rounding carries (9.99996 with 4 places) the mantissa is 10: then it
+\ becomes 1 and the exponent goes up by one.
+: F>PAD    ( fp -- a n )
     BASE @ >R DECIMAL
-    2DUP FABS 2DUP OR            \ non zero
+    DUP >R                          \ fp          R: base sign
+    FABS 2DUP OR                    \ non zero
     IF
-        FLN 10 0 FLN F/ F>D         \ magnitude
-    THEN
-    TUCK 2DUP >R >R                 \ save sign and
-    DABS
-    <# #S ROT SIGN 2DROP [CHAR] e HOLD  \ exponential part lower case "e"
-    10 0  R>  R@   DABS F**         \ magnitude
-    R> 0< 
-    IF 
-        F* 
+        2DUP FLN 10 0 FLN F/ FINT F>D DROP  \ |fp| e
     ELSE
-        F/ 
-    THEN 
-    TUCK
-    FABS 10 0  PLACE @ 0 F** F*
+        0                           \ |fp| 0
+    THEN
+    >R                              \ |fp|        R: base sign e
+    10 0  R@ ABS 0  F**             \ |fp| 10^|e|
+    R@ 0<
+    IF
+        F*
+    ELSE
+        F/
+    THEN                            \ m
+    10 0  PLACE @ 0 F** F*
     1/2 F+    \ rounding
-    F>D 
+    F>D                             \ d = m * 10^places
+    2DUP PLACE @ 1+ (10^N)          \ d d 10^(places+1)
+    DNEGATE D+ NIP 0< 0=            \ d f       mantissa is 10
+    IF
+        2DROP PLACE @ (10^N)        \ 10^places
+        R> 1+ >R
+    THEN
+    <#
+    R> DUP ABS 0 #S 2DROP SIGN      \ exponential part
+    [CHAR] e HOLD                   \ lower case "e"
     PLACE @ ?DUP
     IF 
         0 DO # LOOP 
         [CHAR] . HOLD
     THEN
-    #S ROT SIGN #> 
+    #S R> SIGN #> 
     R> BASE !
 ;
 

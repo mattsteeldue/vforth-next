@@ -6,6 +6,9 @@ semitones from middle C: 0 = C, 9 = A 440 Hz, 12 = C one
 octave above, negative values go below.
 The CPU speed is set to 3.5 MHz while the note plays and
 restored afterwards.
+Pitch goes from -60 to 57 (BASIC: up to 69), else
+"Invalid numeric argument."; a note longer than 65535
+cycles (9 s at the top pitch) is "Result out of range."
 
     500 9 BEEP
 

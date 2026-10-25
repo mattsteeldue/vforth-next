@@ -1,0 +1,8 @@
+    FATAN  fp1 -- fp2
+
+The arc-tangent, in radians: BASIC's ATN.
+
+    FLOATING  1.0 FATAN F.       \ 7.8540e-1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -1,6 +1,12 @@
     H"  -- ha
 
-Stores string in Heap, returns
-heap-address. Part of heap facility.
+Parse a string up to the next " and store it on Heap
+as a counted string, returning its heap-address ha.
+The zero cell HEAP lays after the data makes it a
+counted z-string too: ha FAR 1+ is null-terminated,
+as NextZXOS wants a file name. If the string does not
+fit the current 8K page, HEAP moves to the next one
+and ha is there. Use FAR just before reading it.
+Part of heap facility. See also +" +C S" FAR.
 
 Available after NEEDS H"

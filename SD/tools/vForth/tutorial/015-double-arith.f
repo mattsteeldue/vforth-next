@@ -153,7 +153,7 @@ RESET-TOTAL
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  42 S>D       -> 42 0          }T
 \ T{  -1 S>D       -> -1 -1         }T
 \ T{  0  S>D D0=   -> -1            }T

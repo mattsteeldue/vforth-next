@@ -265,7 +265,7 @@ UNSETUP
 \ 10. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 0 COORD-CHECK  ->  0 0 -1  }T   \ top-left is in range
 \ T{  191 255 COORD-CHECK  ->  191 255 -1  }T
 \ T{  192 0 COORD-CHECK  ->  192 0  0  }T   \ row 192 out of range 

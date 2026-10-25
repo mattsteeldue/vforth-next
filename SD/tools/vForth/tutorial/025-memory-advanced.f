@@ -176,7 +176,7 @@ ROOM
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 ALIGNED  -> 0   }T
 \ T{  1 ALIGNED  -> 2   }T
 \ T{  2 ALIGNED  -> 2   }T

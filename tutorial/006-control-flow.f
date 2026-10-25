@@ -198,7 +198,7 @@ CR
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  5  .POSITIVE ->        }T    \ side effect only; stack clean
 \ T{  5  ABS-VAL  -> 5      }T
 \ T{  -5 ABS-VAL  -> 5      }T

@@ -214,6 +214,6 @@ CR
 \ ms has no return value and cannot be verified automatically.
 \ The following are structural tests only.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 ms  ->  }T     \ zero ms does nothing
 \ T{  1 ms  ->  }T     \ 1 ms delay

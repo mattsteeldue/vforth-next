@@ -1,7 +1,8 @@
     MDR  --
 
-Show the syntax of MDR-CAT and MDR-GET, the read-only
-access to ZX Microdrive cartridge images (.MDR files)
-loaded by NEEDS MDR. NO-MDR unloads the module.
+Show the syntax of the read-only words that access ZX
+Microdrive cartridge images (.MDR files), loaded by
+NEEDS MDR. NO-MDR unloads the module.
 
-See MDR-CAT, MDR-GET.
+See MDR-CAT, MDR-SECTORS, MDR-INFO, MDR-GET, MDR-DUMP,
+MDR-DUMP32, MDR-DUMPBLOCK.

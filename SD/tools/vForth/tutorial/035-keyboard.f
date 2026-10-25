@@ -210,6 +210,6 @@ HELPER
 \ KEY and WAIT-KEY require user interaction and cannot be tested
 \ automatically.  ?ESCAPE can only be tested on real hardware.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  CHAR Y  ->  89  }T     \ ASCII Y
 \ T{  CHAR Q  ->  81  }T     \ ASCII Q

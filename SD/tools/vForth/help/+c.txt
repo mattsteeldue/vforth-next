@@ -1,0 +1,11 @@
+    +C  ha c -- ha
+
+Append character c to the counted string at ha,
+extended in place. ha must be the last block created
+on Heap, as just after H". The string stays a counted
+z-string. Errors as +": #-18 more than 255 characters,
+#14 ha is not the last heap block, #12 the block would
+grow into the tail of the page (the UDG area).
+Part of heap memory facility. See also H" +".
+
+Available after NEEDS +C

@@ -140,7 +140,7 @@ CR
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  1 >R 2  R>   -> 2 1        }T
 \ T{  5 >R   R@    -> 5          }T
 \ T{  5 >R   R> DROP -> ( empty) }T

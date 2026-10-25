@@ -1,0 +1,11 @@
+    BEEP-PITCH  pitch -- hz8
+
+Converts a pitch, in semitones from middle C as in BEEP,
+into its frequency in Hz multiplied by 8, the value
+BLEEP-CALC expects. The range is -60 (8.2 Hz) to 57
+(7040 Hz); outside it, "Invalid numeric argument."
+
+    9 BEEP-PITCH .               \ 3520 (440 Hz)
+
+Part of the BLEEP library.
+Available after NEEDS BLEEP

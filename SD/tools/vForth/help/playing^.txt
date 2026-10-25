@@ -1,0 +1,10 @@
+    PLAYING?  -- f
+
+True while the music started by PLAY-ON is still
+playing: false once every string is over, after
+H, after an error, or after PLAY-OFF.
+
+    BEGIN  PLAYING?  WHILE  ...  REPEAT
+
+See PLAY-ON, PLAY-ERROR.
+Available after NEEDS PLAY-ON

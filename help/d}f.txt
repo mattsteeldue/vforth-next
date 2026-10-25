@@ -1,0 +1,10 @@
+    D>F  d -- fp
+
+Converts a double integer to floating point. Mind that
+after FLOATING a number with a dot is no longer a double:
+0 1 is the double 65536.
+
+    FLOATING  0 1 D>F F.         \ 6.5536e4
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

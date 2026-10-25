@@ -1,0 +1,10 @@
+    PLAY-ERROR  -- n
+
+The error that halted the music of PLAY-ON in the
+background, 0 if none: 19 a bad character, -24 a
+number out of range. Reset by PLAY-ON and PLAY.
+
+    PLAY-ERROR ?DUP IF  ERROR  THEN
+
+See PLAY-ON, PLAYING?.
+Available after NEEDS PLAY-ON

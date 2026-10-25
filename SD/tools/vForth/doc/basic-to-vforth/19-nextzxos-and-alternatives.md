@@ -233,7 +233,6 @@ this runs as soon as it is loaded:
 
 The file `hello.f`, written with an editor:
 
-<!-- no-test -->
 ```forth
 : HELLO  ( -- )  ." Hello" CR ;
 HELLO

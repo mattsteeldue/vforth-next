@@ -25,7 +25,6 @@ pi, growth and sines are done with integers.
 interpreter to read a number with a dot as a floating-point number, and
 `INTEGER` tells it to go back to normal.
 
-<!-- no-test -->
 ```forth
 NEEDS FLOATING
 FLOATING
@@ -58,13 +57,12 @@ is the natural logarithm, `FEXP` its inverse. `F**` is the power, with the
 base first and the exponent second. `FSQRT` is `SQR`, `FINT` is `INT`,
 `FABS` is `ABS`, `FSGN` is `SGN`, `FNEGATE` changes the sign.
 
-<!-- no-test -->
 ```forth
 FLOATING
 PI F.                           \ => 3.1416e0
 2.0 FSQRT F.                    \ => 1.4142e0
 1.0 FEXP F.                     \ => 2.7183e0
-PI 6.0 F/ FSIN F.               \ => 0.5000e0
+PI 6.0 F/ FSIN F.               \ => 5.0000e-1
 INTEGER
 ```
 
@@ -85,7 +83,6 @@ you say it: `FLOAT` turns a single integer into floating point, `D>F`
 does it for a double; `F>D` goes back to a double integer, dropping the
 fraction, and `FIX` to a single one.
 
-<!-- no-test -->
 ```forth
 FLOATING
 42 FLOAT 1.5 F* F.              \ => 6.3000e1
@@ -161,8 +158,8 @@ reader. Words of yours defined after `NEEDS FLOATING` go with it.
 ## Side by side
 
 Each example gives the BASIC listing, then the floating-point words, then
-the way it is done with integers. The floating-point listings need the
-real machine or CSpect, with `NEEDS FLOATING` already given.
+the way it is done with integers. The floating-point listings take
+`NEEDS FLOATING` as already given.
 
 **A power.**
 
@@ -170,7 +167,6 @@ real machine or CSpect, with `NEEDS FLOATING` already given.
 10 PRINT 2^10
 ```
 
-<!-- no-test -->
 ```forth
 FLOATING
 2.0 10.0 F** F.                 \ => 1.0240e3
@@ -199,7 +195,6 @@ nothing says so.
 30 NEXT y
 ```
 
-<!-- no-test -->
 ```forth
 FLOATING
 : SAVINGS  ( years -- fp )  FLOAT 1.05 2SWAP F**  1000.0 F* ;
@@ -230,7 +225,6 @@ mean to show, and the error stays in the digits you do not show.
 20 PRINT 2*PI*r,PI*r*r
 ```
 
-<!-- no-test -->
 ```forth
 FLOATING
 : CIRC  ( fp -- fp2 )  2.0 F* PI F* ;
@@ -260,7 +254,6 @@ centimetre.
 10 PRINT SQR 2
 ```
 
-<!-- no-test -->
 ```forth
 FLOATING
 2.0 FSQRT F.                    \ => 1.4142e0
@@ -286,7 +279,6 @@ and at 60?
 30 NEXT a
 ```
 
-<!-- no-test -->
 ```forth
 FLOATING
 : HEIGHT  ( degrees -- fp )  FLOAT DEG>RAD FSIN  200.0 F* ;

@@ -95,6 +95,14 @@ CR
 \
 \ CONTEXT @  gives the address of the current context vocabulary PFA.
 \ CURRENT @  gives the address of the current compilation vocabulary PFA.
+\
+\ NEEDS ?VOCAB gives a word that shows both, then every vocabulary in
+\ the VOC-LINK chain, newest first (the addresses vary):
+\   NEEDS ?VOCAB
+\   SHAPES ?VOCAB
+\   \ => Current  753E FORTH
+\   \    Context  8203 SHAPES
+\   \    Voc-Link 8203 SHAPES  753E FORTH
 
 
 \ ===========================================================================
@@ -132,7 +140,8 @@ CR
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
+\ NEEDS .VOCAB
 \ T{  CURRENT @ .VOCAB  -> }T   \ prints "FORTH"
 \ T{  SHAPES  CONTEXT @ .VOCAB -> }T  \ prints "SHAPES"
 \ T{  FORTH    CONTEXT @ .VOCAB -> }T   \ prints "FORTH"

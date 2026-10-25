@@ -240,7 +240,7 @@ CR
 \ The color control words have side effects (screen changes) and
 \ cannot be verified automatically.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 0 0 0 MAKE-ATTRIB  ->  0  }T
 \ T{  7 0 0 0 MAKE-ATTRIB  ->  7  }T
 \ T{  0 7 0 0 MAKE-ATTRIB  ->  56 }T

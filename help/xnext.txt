@@ -1,0 +1,8 @@
+    XNEXT  d1 -- d2
+
+One step of the generator of XRND and
+of NextBASIC RND: xorshift on 32 bits,
+x^=x<<8  x^=x>>9  x^=x<<23 (0 as 1).
+Period 2^32-1.
+
+Available after NEEDS XNEXT

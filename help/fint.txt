@@ -1,0 +1,10 @@
+    FINT  fp1 -- fp2
+
+The largest whole number not greater than fp1, as BASIC's
+INT: it rounds down, so -2.5 gives -3.0. F>D and FIX
+drop the fraction instead, towards zero.
+
+    FLOATING  -2.5 FINT F.       \ -3.0000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

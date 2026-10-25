@@ -15,10 +15,10 @@ NEEDS S"
 PLANET TYPE                     \ => Spectrum
 PLANET NIP .                    \ => 8
 
-\ 07-strings.md:89
+\ 07-strings.md:102
 CREATE NAME$  32 ALLOT
 
-\ 07-strings.md:103
+\ 07-strings.md:116
 : $!  ( a n dest -- )  2DUP C!  1+ SWAP CMOVE ;
 PLANET NAME$ $!
 NAME$ COUNT TYPE                \ => Spectrum
@@ -26,7 +26,7 @@ NAME$ C@ .                      \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:352
+\ 07-strings.md:364
 CREATE CARD$  20 ALLOT
 : CARD  ( -- a n )  S" 1234567890123456" ;
 CARD CARD$ $!

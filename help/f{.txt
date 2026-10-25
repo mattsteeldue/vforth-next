@@ -1,0 +1,8 @@
+    F<  fp1 fp2 -- f
+
+True if fp1 is less than fp2.
+
+    FLOATING  1.5 2.0 F< .       \ -1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -1,0 +1,9 @@
+    F/  fp1 fp2 -- fp3
+
+Divides fp1 by fp2.
+Stops with "Division by zero." when fp2 is zero.
+
+    FLOATING  7.0 2.0 F/ F.      \ 3.5000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

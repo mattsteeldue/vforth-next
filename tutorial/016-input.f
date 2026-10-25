@@ -157,5 +157,5 @@ CR
 \
 \ (Interactive words cannot be tested automatically; use manually.)
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  ( interactive: press a key and check result ) }T

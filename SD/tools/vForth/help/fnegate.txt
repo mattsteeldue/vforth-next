@@ -1,0 +1,8 @@
+    FNEGATE  fp1 -- fp2
+
+Changes the sign of a floating-point number.
+
+    FLOATING  2.5 FNEGATE F.     \ -2.5000e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

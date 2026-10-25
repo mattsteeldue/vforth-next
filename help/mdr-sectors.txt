@@ -1,0 +1,13 @@
+    MDR-SECTORS  -- cccc
+
+Like MDR-CAT, but each file is followed by the numbers of
+its sectors, from the highest, eight at most (then ...).
+Then the erased files: free sectors grouped by the name
+they still hold, marked by "-" after it, and used files
+of 0 bytes; the bad sectors; the totals, with "total
+erased" too. The same as mdr.pl -l -s -f.
+
+Read-only: the cartridge is never written.
+Example: MDR-SECTORS M1.MDR
+
+See MDR-CAT, MDR-INFO. Available after NEEDS MDR

@@ -146,6 +146,6 @@ CR
 \ 7. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  ' DUP  NFA  C@  $3F AND  -> 3  }T   \ "DUP" is 3 chars
 \ T{  ' +    NFA  C@  $3F AND  -> 1  }T   \ "+" is 1 char

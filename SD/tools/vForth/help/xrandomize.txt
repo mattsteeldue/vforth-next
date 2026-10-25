@@ -1,0 +1,8 @@
+    XRANDOMIZE  d --
+
+Sets XSEED, the 32-bit state of XRND.
+After a reset NextBASIC RANDOMIZE 1
+matches 1. XRANDOMIZE (or 1 0).
+SEED (23670) is not touched.
+
+Available after NEEDS XRANDOMIZE

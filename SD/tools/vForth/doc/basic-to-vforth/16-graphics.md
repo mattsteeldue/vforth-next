@@ -320,8 +320,14 @@ each pixel of a band 512 wide and 128 high:
 60 PAUSE 0
 ```
 
-`RND` is the new value of the system variable SEED divided by 65536,
-so `INT (RND*65536)` is SEED itself. In Forth the step of the
+On the 48K Spectrum `RND` was the new value of the system variable
+SEED divided by 65536, so `INT (RND*65536)` was SEED itself and this
+listing lit every pixel of the band. NextBASIC's `RND` is another
+generator, of 32 bits ([Chapter 10](10-random-numbers.md)):
+`INT (RND*65536)` is the upper half of its state, some values come out
+twice and others never, and on the Next the listing lights only about
+63% of the band, what 65536 draws at random are expected to hit.
+vForth's `RND` keeps the 48K formula, and in Forth the step of the
 generator is a word of its own, `NEXT-SEED`, which `NEEDS RND` loads
 with `RND`:
 
@@ -348,7 +354,7 @@ The two nested loops of 256 make the 65536 steps. `LAYER12` is vForth's
 own text screen, the same 512 by 192 as `LAYER 1,2`; `PLOT` takes the
 row first.
 
-The screen shows something about `RND` itself. The generator is a
+The Forth screen shows something about `RND` itself. The generator is a
 cycle: each value of SEED gives the next, and after 65536 steps it is
 back where it started, as the two lines above show from 1. Within one
 cycle no value comes twice, so no pixel is drawn twice and none is
@@ -356,7 +362,10 @@ missed: the band fills up completely, with no gap left at the end. A
 better test of that is `2DUP POINT IF ... THEN` before `PLOT`, which
 would catch a pixel already lit. Run it a second time and the very
 same dots appear in the very same order: a random sequence that
-repeats is the price of a generator of 16 bits, in BASIC as in Forth.
+repeats is the price of a generator of 16 bits, as the 48K's was.
+NextBASIC's, of 32 bits, repeats only after 4294967295 numbers, and for
+the same reason cannot fill the band: within 65536 draws some values
+come twice.
 
 **A frame that leaves no trace.** Four lines along the edges of the
 screen; draw them, and draw them again.

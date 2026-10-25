@@ -4,7 +4,7 @@ NEEDS FLOATING includes a few definitions.
   INTEGER   D>F     FIX     PI    FLOAT  
   FLOATING  F>D     F.R     F.    F>PAD  
   FNEGATE   F-      F+      F*    F/
-  F/MOD     FABS    FMOD    F**   F/MOD
+  F/MOD     FABS    FMOD    F**   FSGN
   F*/       F<      F>      F0<   F0>
   FSQRT     FINT    FEXP    FLN   
   FTAN      FCOS    FSIN

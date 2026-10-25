@@ -353,7 +353,7 @@ NEEDS RECURSE
 \     hand back and TO-driven bookkeeping reads clearer than juggling
 \     the return stack by hand.
 
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  2 3 4 MULADD-STACK   ->  10   }T
 \ T{  2 3 4 MULADD         ->  26   }T
 \ T{  30 40 CLAMP-ADD      ->  70   }T

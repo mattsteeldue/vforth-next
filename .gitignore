@@ -13,3 +13,7 @@ lib/GRAPHICS-20220215.F
 lib/GRAPHICS-20220217.F
 lib/GRAPHICS.20220220.f
 project/DIRECT_MMU7/list/Edit1
+dot/asm
+dot/sync
+SD/dot/asm
+SD/dot/sync

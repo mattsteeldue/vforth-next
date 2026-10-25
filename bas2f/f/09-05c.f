@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:327
+\ 09-mathematical-functions.md:319
 NEEDS VALUE
 NEEDS TO
 NEEDS +TO

@@ -1,0 +1,11 @@
+    F**  fp1 fp2 -- fp3
+
+Raises fp1 to the power fp2, as BASIC's ^: the base
+first, the exponent second.
+Stops with "Invalid floating point." when both are
+negative.
+
+    FLOATING  2.0 10.0 F** F.    \ 1.0240e3
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -237,7 +237,7 @@ CREATE NOTE$  ," ( tutorial 028 wrote here )"
 \ 11. Simple tests (requires NEEDS TESTING; geometry only -- no disk writes)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  B/BUF           ->  512   }T
 \ T{  B/SCR           ->  2     }T
 \ T{  C/L L/SCR *     ->  1024  }T

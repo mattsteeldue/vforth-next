@@ -1,0 +1,10 @@
+    FLN  fp1 -- fp2
+
+The natural logarithm: BASIC's LN.
+Stops with "Invalid floating point." when fp1 is
+negative, "Division by zero." when it is zero.
+
+    FLOATING  10.0 FLN F.        \ 2.3026e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

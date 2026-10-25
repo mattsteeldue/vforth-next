@@ -190,7 +190,7 @@ CR
 \ 6. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 THROW          ->      }T    \ 0 THROW is a no-op
 \ T{  10 2 PROTECTED-DIV -> 5  }T
 \ T{  10 0 PROTECTED-DIV -> 0  }T   \ error caught, returns 0

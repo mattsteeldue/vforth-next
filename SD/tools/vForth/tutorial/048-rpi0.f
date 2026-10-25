@@ -188,5 +188,5 @@ NEEDS S"
 \
 \ RPi0 tests require physical hardware.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  UART-META @  ->  1  }T   \ meta-command enabled by default

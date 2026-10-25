@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:246
+\ 09-mathematical-functions.md:240
 : CIRC  ( r -- c )  2* 355 113 */ ;
 : AREA  ( r -- a )  DUP * 355 113 */ ;
 100 CIRC .                      \ => 628

@@ -1,0 +1,8 @@
+    DEG>RAD  fp1 -- fp2
+
+Converts an angle from degrees to radians.
+
+    FLOATING  30.0 DEG>RAD FSIN F.  \ 5.0000e-1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -228,7 +228,7 @@ CR
 \ 9. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  5  SUM-1-TO  -> 15        }T
 \ T{  10 SUM-1-TO  -> 55        }T
 \ T{  0 .SAFE-RANGE ->          }T   \ no output, no crash

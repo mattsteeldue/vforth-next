@@ -223,5 +223,5 @@ VARIABLE FLASH-STATE
 \ 9. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  ISR-XT @  ->  ISR-XT @  }T    \ ISR-XT is readable

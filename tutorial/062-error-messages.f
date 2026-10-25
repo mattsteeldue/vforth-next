@@ -489,7 +489,7 @@ NEEDS WHERE
 \ The error paths themselves cannot be tested with T{ ... }T -- they end
 \ in QUIT rather than returning a value -- but the arithmetic can.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  #0    MSG-AT     ->  4 0      }T
 \ T{  #13   MSG-AT     ->  4 13     }T
 \ T{  #57   MSG-AT     ->  7 9      }T     \ LOCALS: bad count

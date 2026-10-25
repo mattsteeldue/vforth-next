@@ -1,0 +1,9 @@
+    FIX  fp -- n
+
+Converts a floating-point number to a single integer,
+dropping the fraction, as F>D does.
+
+    FLOATING  3.7 FIX .           \ 3
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

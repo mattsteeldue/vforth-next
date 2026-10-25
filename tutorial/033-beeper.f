@@ -45,21 +45,21 @@ NEEDS BLEEP
 \
 \   BLEEP ( n1 n2 -- )
 \
-\   n1 = ( 3.5 MHz / Hz - 241 ) / 8     pitch parameter for ROM
-\   n2 = seconds * Hz                    duration parameter for ROM
+\   n1 = seconds * Hz                    duration parameter for ROM
+\   n2 = ( 3.5 MHz / Hz - 241 ) / 8     pitch parameter for ROM
 \
 \ The ROM routine at $03B5 is called directly.  Both parameters
 \ must be pre-computed.  The ROM requires the CPU to be at 3.5 MHz.
 \
 \ Example: A3 (220 Hz) for 1 second
-\   $07A7 $00DC BLEEP
-\   ( n1 = (3500000/220 - 241)/8 = 1959 = $07A7 )
-\   ( n2 = 1 * 220 = 220 = $00DC )
+\   $00DC $07A7 BLEEP
+\   ( n1 = 1 * 220 = 220 = $00DC )
+\   ( n2 = (3500000/220 - 241)/8 = 1959 = $07A7 )
 \
 \ The A above it (440 Hz) for 1 second:
-\   $03C4 $01B8 BLEEP
-\   ( n1 = (3500000/440 - 241)/8 = 964 = $03C4 )
-\   ( n2 = 1 * 440 = 440 = $01B8 )
+\   $01B8 $03C4 BLEEP
+\   ( n1 = 1 * 440 = 440 = $01B8 )
+\   ( n2 = (3500000/440 - 241)/8 = 964 = $03C4 )
 
 \ ===========================================================================
 \ 3. BLEEP-CALC -- compute BLEEP parameters from friendly values
@@ -69,6 +69,10 @@ NEEDS BLEEP
 \
 \   ms    : duration in milliseconds
 \   8*Hz  : frequency in Hz multiplied by 8
+\
+\ It rounds n2 as BASIC's BEEP does.  8*Hz below 54 (6.75 Hz) stops
+\ with "Invalid numeric argument.", more than 65535 cycles (about 9
+\ seconds at 7040 Hz, more below) with "Result out of range."
 \
 \ Example: 500 ms at 440 Hz:
 \   500  3520  BLEEP-CALC   \ 3520 = 440 * 8
@@ -95,6 +99,10 @@ NEEDS BLEEP
 \   11  B4
 \   12  C5  (one octave above middle C)
 \  -12  C3  (one octave below middle C)
+\
+\ The range is -60 (C, 8.2 Hz) to 57 (A, 7040 Hz); outside it
+\ BEEP-PITCH stops with "Invalid numeric argument."  BASIC's BEEP
+\ goes up to 69.
 \
 \ Example:
 \   9 BEEP-PITCH .   \ => frequency*8 for 440 Hz A4
@@ -198,5 +206,6 @@ CR
 \ BEEP produces audio side-effects; it cannot be verified automatically.
 \ BEEP-PITCH is a pure function and can be tested.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  9 BEEP-PITCH  ->  3520  }T   \ 440 Hz * 8
+\ T{  500 3520 BLEEP-CALC  ->  220 964  }T   \ cycles, timing

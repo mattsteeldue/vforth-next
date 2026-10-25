@@ -7,7 +7,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:274
+\ 09-mathematical-functions.md:267
 NEEDS DSQRT
 2000000. DSQRT .                \ => 1414
 200000000. DSQRT .              \ => 14142

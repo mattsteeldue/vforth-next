@@ -7,6 +7,6 @@
 
 \ --- the translation
 
-\ 06-expressions.md:531
+\ 06-expressions.md:530
 24 60 * 60 * .                  \ => 20864
 24 60 * 60 M* D.                \ => 86400

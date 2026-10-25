@@ -9,9 +9,7 @@
 
 \ --- the translation
 
-\ 09-mathematical-functions.md:290
-\ no-test in the guide: it waits for keys, never ends or
-\ needs hardware the emulator lacks
+\ 09-mathematical-functions.md:282
 FLOATING
 : HEIGHT  ( degrees -- fp )  FLOAT DEG>RAD FSIN  200.0 F* ;
 INTEGER

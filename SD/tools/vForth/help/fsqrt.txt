@@ -1,0 +1,10 @@
+    FSQRT  fp1 -- fp2
+
+The square root: BASIC's SQR.
+Stops with "Invalid floating point." when fp1 is
+negative.
+
+    FLOATING  2.0 FSQRT F.       \ 1.4142e0
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

@@ -182,7 +182,7 @@ CR
 \ 8. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  7 0 0 0 ATTR-BYTE  ->  7    }T
 \ T{  0 7 0 0 ATTR-BYTE  ->  56   }T
 \ T{  0 0 1 0 ATTR-BYTE  ->  64   }T

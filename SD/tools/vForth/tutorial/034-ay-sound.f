@@ -213,5 +213,5 @@ CR
 \ AY words have hardware side effects.  Only the period calculation
 \ can be tested as a pure function.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  0 0  ->  0  }T   \ placeholder: AY tests require hardware

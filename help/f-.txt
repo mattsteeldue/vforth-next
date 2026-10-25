@@ -1,0 +1,8 @@
+    F-  fp1 fp2 -- fp3
+
+Subtracts fp2 from fp1.
+
+    FLOATING  1.0 0.25 F- F.     \ 7.5000e-1
+
+Part of the FLOATING library.
+Available after NEEDS FLOATING

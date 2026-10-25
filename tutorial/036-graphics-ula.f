@@ -224,6 +224,6 @@ UNSETUP
 \ PLOT and CIRCLE have visual side effects only.
 \ ATTRIB is a readable VALUE.
 \
-\ NEEDS TESTING
+\ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
 \ T{  ATTRIB 255 AND  ->  ATTRIB 255 AND  }T   \ ATTRIB is well-formed
 
