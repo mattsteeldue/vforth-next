@@ -850,3 +850,10 @@ lib/MDR.f: MDR-SECTORS, MDR-INFO and the MDR-DUMP words.
 Tutorial 073: ROM-BEEP uses RST $18 under .vforth.
 Help pages for every public word of FLOATING, BEEP-PITCH and more; guide
 updates (UDG beyond 164 on every layer, bas2f/bas/more-udgs.bas).
+Refreshed on 2026-10-25, core binary unchanged: help for SCREEN-TO-FILE
+and SCREEN-FROM-FILE; CURS, KEY, MS and EDIT help corrected (CURS takes
+nothing; EDIT S inserts an empty line). Guide: falling back to BASIC and
+the wrapper (ch. 14), handles vs streams (ch. 20), the start-up palette
+and the 64-column layers (ch. 15), round circles on every layer and the
+logarithm from the hyperbola (ch. 16), MS and CURS KEY (ch. 17), PLAY-ON
+(ch. 18), EDIT (ch. 19), Screens to and from text files (ch. 5).
