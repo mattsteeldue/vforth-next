@@ -59,9 +59,10 @@ underneath. vForth's errors do not go through ERR NR, and its words are
 not BASIC lines. Read them if you like; do not write them, or the return
 to BASIC may go wrong.
 
-**What has no effect.** PIP (23609), the key click: vForth's `KEY` does
-not click ([Chapter 18](18-sound-and-music.md)). RASP (23608), the
-warning buzz: vForth does not buzz. SCR CT (23692): vForth sets it back
+**What has no effect.** RASP (23608), the warning buzz: vForth does not
+buzz. PIP (23609), the key click, is the exception: since build
+2026-10-28 `KEY` clicks when it is not 0, and 0, the value at start-up,
+is silence ([Chapter 18](18-sound-and-music.md)). SCR CT (23692): vForth sets it back
 to 255 after every character, so a `POKE` to it is undone at once
 ([Chapter 14](14-more-about-print-and-input.md)). COORDS (23677): the
 graphics of vForth do not go through the ROM's `PLOT`.
@@ -108,7 +109,8 @@ its number.
 | ATTR P 23693 and the others | `.INK`, `.PAPER`, ... | [Chapter 15](15-colours.md). |
 | S POSN 23688-23689 | `COL`, `ROW` | Defined below; Layer 0. |
 | SCR CT 23692 | -- | Always 255. |
-| PIP 23609, RASP 23608 | -- | No click, no buzz. |
+| PIP 23609 | `n 23609 C!` | Key click; 0 is silence. |
+| RASP 23608 | -- | No buzz. |
 | COORDS 23677 | -- | Not updated by vForth's graphics. |
 | PROG, VARS, PPC, ERR NR, ... | -- | They describe the BASIC loader. |
 | RAMTOP 23730 | -- | Fixed at `$61FF`: do not move it. |

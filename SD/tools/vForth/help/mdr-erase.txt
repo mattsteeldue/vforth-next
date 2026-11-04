@@ -1,0 +1,12 @@
+    MDR-ERASE  -- cccc cccc
+
+Erase a file from a .MDR cartridge image, in place. Two
+names follow: the cartridge and the file; error #43 if
+the file is not there. The sectors become free but keep
+name and record number, so MDR-SECTORS still lists them
+as an erased file, marked by a -. Their data is cleared:
+an erased file cannot be recovered.
+
+    MDR-ERASE M2.MDR old
+
+See MDR-PUT, MDR-SECTORS.

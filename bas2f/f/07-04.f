@@ -25,7 +25,7 @@ NAME$ C@ .                      \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:383
+\ 07-strings.md:382
 : -LEADING  ( a n -- a2 n2 )
     BEGIN
         DUP IF  OVER C@ BL =  ELSE  0  THEN

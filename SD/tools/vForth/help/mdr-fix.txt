@@ -1,0 +1,12 @@
+    MDR-FIX  -- cccc
+
+Correct the wrong checksums of a .MDR cartridge image, as
+mdr.pl -x, and tell how many sectors changed: header and
+descriptor checksums of each sector, and the data
+checksum of a bad sector only. A used sector whose data
+does not match keeps its checksum, since the error there
+is in the data: MDR-INFO shows it as da!.
+
+    MDR-FIX M2.MDR
+
+See MDR-INFO.

@@ -12,9 +12,9 @@
 \ COUNT ( addr -- addr+1 len ) converts a counted string to addr/len form.
 \ Most output and comparison words expect addr/len.
 \
-\ String comparison uses the core primitive (COMPARE) rather than the
-\ higher-level COMPARE word (which requires NEEDS and has a different
-\ stack signature).  (COMPARE) is the raw primitive: ( a1 a2 n -- b ).
+\ String comparison uses COMPARE ( a1 c1 a2 c2 -- n ), a core word since
+\ build 2026-10-28.  Up to then the core had only the primitive
+\ (COMPARE) ( a1 a2 n -- b ), now a compatibility word in inc/.
 \
 \ PAD is a scratch buffer above the dictionary, used for temporary string
 \ work.  Its address can move after ALLOT -- never store PAD across calls
@@ -126,26 +126,29 @@ CREATE PADDED  ," Hello   "
 
 
 \ ===========================================================================
-\ 5. String comparison: (COMPARE)
+\ 5. String comparison: COMPARE
 \ ===========================================================================
 \
-\ (COMPARE) ( a1 a2 n -- b )
-\   Core primitive.  Compares n bytes at a1 with n bytes at a2.
-\   Returns:  0 if equal
-\             positive if a1 > a2
-\             negative if a1 < a2
+\ COMPARE ( a1 c1 a2 c2 -- n )
+\   Core word.  Compares two addr/len strings byte by byte.
+\   Returns:   0 if equal
+\              1 if a1 c1 > a2 c2
+\             -1 if a1 c1 < a2 c2
 \
-\ Note: (COMPARE) takes two addresses and a *single* length -- both strings
-\ must have the same length.  For strings of different lengths, compare the
-\ shorter length first; if equal, the longer one is "greater".
+\ The first min(c1,c2) bytes decide.  When they all match, the shorter
+\ string is the lesser: "zoo" comes before "zoology", as in a dictionary.
+\ Case is ignored at start-up, as in dictionary search; CASEON makes it
+\ count, CASEOFF goes back.
 \
-\ The higher-level COMPARE ( a1 b1 a2 b2 -- n ) handles unequal lengths
-\ and returns -1/0/1, but requires NEEDS COMPARE (loads from inc/).
+\ On a core older than build 2026-10-28, NEEDS COMPARE loads it from inc/.
+\ The old primitive (COMPARE) ( a1 a2 n -- b ), one length for both
+\ strings, survives as NEEDS (COMPARE).
 \
 \   CREATE S1  ," Hello!"
 \   CREATE S2  ," Hello?"
-\   S1 1+  S2 1+  S1 C@  (COMPARE) .    => negative  (! < ? in ASCII)
-\   S1 1+  S1 1+  S1 C@  (COMPARE) .    => 0          (equal)
+\   S1 COUNT  S2 COUNT  COMPARE .        => -1        (! < ? in ASCII)
+\   S1 COUNT  S1 COUNT  COMPARE .        => 0         (equal)
+\   S1 COUNT  S1 COUNT 1-  COMPARE .     => 1         (longer is greater)
 
 CREATE S1  ," Hello!"
 CREATE S2  ," Hello?"
@@ -175,16 +178,8 @@ CREATE S2  ," Hello?"
 
 : SAME-STRING?  ( a1 n1 a2 n2 -- f )
     \ Return true (-1) if two addr/len strings are identical.
-    ROT         ( a1 a2 n2 n1 )
-    OVER        ( a1 a2 n2 n1 n2 )
-    - IF        ( a1 a2 n2 )
-        2DROP   ( a1 )
-        DROP    ( )
-        0       ( ff )
-    ELSE        ( a1 a2 n2 )
-        (COMPARE)   ( b )
-        0=          ( tf )
-    THEN ;
+    COMPARE     ( n )
+    0= ;        ( f )
 
 : .COUNTED  ( addr -- )
     \ Print a counted string with a trailing CR.
@@ -193,7 +188,7 @@ CR
 .( Try: GREETING .COUNTED                         ) CR
 .( Try: S1 COUNT S2 COUNT SAME-STRING? .          ) CR
 .( Try: S1 COUNT 1- S1 COUNT 1- SAME-STRING? .    ) CR
-." Try: S1 1+  S2 1+  S1 C@  (COMPARE) .          " CR
+.( Try: S1 COUNT S2 COUNT COMPARE .              ) CR
 
 
 \ ===========================================================================
@@ -201,8 +196,9 @@ CR
 \ ===========================================================================
 \
 \ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
-\ T{  S1 1+ S1 1+ S1 C@ (COMPARE)  ->  0   }T
-\ T{  S1 1+ S2 1+ S1 C@ (COMPARE)  ->  -1  }T   \ ! < ?
-\ T{  S2 1+ S1 1+ S1 C@ (COMPARE)  ->  1   }T
+\ T{  S1 COUNT S1 COUNT COMPARE  ->  0   }T
+\ T{  S1 COUNT S2 COUNT COMPARE  ->  -1  }T   \ ! < ?
+\ T{  S2 COUNT S1 COUNT COMPARE  ->  1   }T
+\ T{  S1 COUNT S1 COUNT 1- COMPARE  ->  1   }T
 \ T{  S1 COUNT S1 COUNT SAME-STRING?  -> -1  }T
 \ T{  S1 COUNT S2 COUNT SAME-STRING?  ->  0  }T

@@ -16,6 +16,7 @@
 // ZX-Spectrum standard system variables
 SCR_CT          equ     $5C8C                   // SCR-CT system variable
 LASTK           equ     $5C08                   // LASTK system variable
+PIP             equ     $5C39                   // PIP system variable
 BORDCR          equ     $5C48                   // BORDCR system variable
 FLAGS2          equ     $5C6A                   // for caps-lock
 RAMTOP          equ     $5CB2

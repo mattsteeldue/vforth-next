@@ -4,5 +4,5 @@ Reads one byte from the UART receive port.
 Returns 0 if no byte is available, so test the port
 first with ?UART-BYTE-READY, or use UART-RX-TIMEOUT.
 
-Part of the RPI0 library.
-Available after NEEDS RPI0
+Part of the UART library, shared by RPI0 and ESP.
+Available after NEEDS UART (or NEEDS RPI0, NEEDS ESP)

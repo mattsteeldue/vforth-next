@@ -11,14 +11,14 @@
 
 \ --- words defined earlier in the guide
 
-\ 23-the-memory.md:128
+\ 23-the-memory.md:129
 : PAGE-C!  ( b page off -- )
     $E000 +  SWAP  MMU7@ >R  MMU7!  C!  R> MMU7! ;
 : PAGE-C@  ( page off -- b )
     $E000 +  SWAP  MMU7@ >R  MMU7!  C@  R> MMU7! ;
 99 60 10 PAGE-C!  60 10 PAGE-C@ .   \ => 99
 
-\ 23-the-memory.md:172
+\ 23-the-memory.md:173
 : PAGE-FILL  ( page c -- )
     SWAP  MMU7@ >R  MMU7!  $E000 8192 ROT FILL  R> MMU7! ;
 CREATE XBUF 1024 ALLOT
@@ -32,6 +32,6 @@ CREATE XBUF 1024 ALLOT
 
 \ --- the translation
 
-\ 23-the-memory.md:264
+\ 23-the-memory.md:313
 60 65 PAGE-FILL  60 62 PAGE-COPY
 62 100 PAGE-C@ EMIT             \ => A

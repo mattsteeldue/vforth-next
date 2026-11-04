@@ -1,6 +1,15 @@
     COMPARE  a1 u1 a2 u2 -- n
 
-Compares two strings. Returns -1 if
-a1 < a2, 0 if equal, 1 if a1 > a2.
+Compares two strings byte by byte.
+Returns 0 if equal, 1 if a1 u1 > a2 u2,
+-1 if a1 u1 < a2 u2. When one string is
+the beginning of the other, the shorter
+is the lesser: "zoo" < "zoology".
 
-Available after NEEDS COMPARE
+Case is ignored at start-up and counts
+after CASEON, as in dictionary search.
+
+In the core since build 2026-10-28; on an
+older core, NEEDS COMPARE.
+
+See also: (COMPARE)  SEARCH  CASEON  CASEOFF

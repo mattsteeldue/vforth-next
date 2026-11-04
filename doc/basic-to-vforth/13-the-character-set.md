@@ -177,14 +177,13 @@ in BASIC, not at the `ok` prompt: `RUN` brings vForth back. The words
 `.INK`, `.PAPER`, `.AT` and the like keep the arguments in range, and are
 the subject of Chapters 14 and 15.
 
-**String order follows the codes, except for case.** `COMPARE`
-(`NEEDS COMPARE`) puts strings in order exactly by the rule of the manual,
+**String order follows the codes, except for case.** `COMPARE` puts
+strings in order exactly by the rule of the manual,
 character by character and the shorter first, with one exception: at
 start-up it does not distinguish capitals from small letters. `CASEON`
 makes it do so, as BASIC does.
 
 ```forth
-NEEDS COMPARE
 NEEDS S"
 : E1  S" EVIL" S" evil" COMPARE . ;
 : E2  S" zoo" S" zoology" COMPARE . ;
@@ -202,7 +201,7 @@ case-sensitive. While it is on, `dup` is no longer `DUP`, and a library
 written in small letters cannot be loaded. The switch is a vForth
 feature, there to let you type in small letters: with `CASEOFF`, the
 state at start-up, the dictionary search ignores case, so `dup` finds
-`DUP`. Unfortunately the primitive behind `COMPARE` shares with the
+`DUP`. Unfortunately `COMPARE` shares with the
 dictionary search the routine that folds case, so one switch drives
 both. Switch it on around the comparisons that need it, and off again.
 `?CASEON` (`NEEDS ?CASEON`) tells which state is on, so a word can leave
@@ -237,7 +236,7 @@ order is in [Chapter 12](12-conditions.md).
 | `CHR$ 8` | `8 EMITC` | Back one place. |
 | `CHR$ 13` | `CR` | Or `13 EMITC`. |
 | codes 16 to 23 | `.INK`, `.PAPER`, `.AT`, ... | Or `EMITC`, at your own risk. |
-| `a$<b$`, `a$=b$` | `COMPARE 0<`, `COMPARE 0=` | `NEEDS COMPARE`. Ignores case unless `CASEON`; `?CASEON` tells. |
+| `a$<b$`, `a$=b$` | `COMPARE 0<`, `COMPARE 0=` | Ignores case unless `CASEON`; `?CASEON` tells. |
 | `a$,b$=b$,a$` | `2SWAP` | |
 | `DPOKE 23606,a-256` | `a 256 - 23606 !` | A font of your own, 768 bytes. |
 | tokens (165 to 255) | -- | Forth source is plain text. |

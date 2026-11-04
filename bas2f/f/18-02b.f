@@ -18,13 +18,13 @@ NEEDS VALUE
 : Q  ( pitch -- )  CROTCHET  SWAP KEY# +  BEEP ;
 : H  ( pitch -- )  CROTCHET 2*  SWAP KEY# +  BEEP ;
 
-\ 18-sound-and-music.md:302
+\ 18-sound-and-music.md:306
 : TWINKLE  ( -- )  0 Q 0 Q 7 Q 7 Q 9 Q 9 Q 7 H ;
 : TUNE  ( -- )  2 0 DO  TWINKLE  LOOP ;
 
 \ --- the translation
 
-\ 18-sound-and-music.md:311
+\ 18-sound-and-music.md:315
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 2 TO KEY#  300 TO CROTCHET  TUNE

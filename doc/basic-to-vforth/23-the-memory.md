@@ -14,6 +14,7 @@ with `BANK n PEEK`, `BANK n POKE` and so on. vForth reaches the rest of
 the memory through one 8K window at `$E000`, a page at a time, with
 `MMU7!`. You ask NextZXOS for the pages yourself, and every `BANK`
 command becomes a few lines: map a page, use it, put the old one back.
+For data under 8K a chunk of the heap, `n HEAP`, is a lighter way.
 `CLEAR` and RAMTOP have no part in this: the memory map of vForth is
 fixed.
 
@@ -185,6 +186,53 @@ CREATE XBUF 1024 ALLOT
 For large blocks the DMA of the Next does the copy without the CPU:
 `NEEDS DMA` and tutorial `054`.
 
+**Chunks in the heap.** Between `ALLOT`, some 20K in all, and a whole
+page from `NEW-PAGE`, there is a third way: the heap, where `S"` keeps
+its text ([Chapter 7](07-strings.md)). It is the 64K of pages 32 to 39
+that already hold the names of the words, reserved by vForth itself,
+so no call to NextZXOS is needed. `NEEDS HEAP` gives `n HEAP`, which
+takes a chunk of *n* bytes, up to 7933, a little under 8K: a matrix, an
+image, a sound sample. It returns a heap-pointer, one cell that holds
+both the page (the top three bits) and the offset, and `FAR` turns it
+into an address in the window, with the page mapped there. `POINTER`
+names a chunk as `CONSTANT` names a number, and does the `FAR` each
+time the name is used:
+
+```forth
+NEEDS HEAP  NEEDS POINTER
+MARKER -PIC
+6144 HEAP POINTER PIC           \ 256 x 24 pixels, one byte each
+PIC 6144 227 FILL
+PIC 6143 + C@ .                 \ => 227
+```
+
+A structure larger than 8K is a table of heap-pointers in the
+dictionary, a chunk per row, each row mapped when it is used:
+
+```forth
+CREATE ROWS  4 CELLS ALLOT
+: ROWS-INIT  ( -- )  4 0 DO  3900 HEAP  ROWS I CELLS + !  LOOP ;
+: ROW  ( row -- a )  CELLS ROWS + @ FAR ;
+ROWS-INIT
+7  3 ROW 1000 + C!  3 ROW 1000 + C@ .   \ => 7
+-PIC
+```
+
+The rules are those of `PAGE-C@`, plus a few of the heap's own:
+
+- the address from `FAR` (and from `PIC` or `ROW`) holds only until
+  the next `FAR` or `MMU7!`, and the interpreter maps pages of names
+  between one line and the next: use it inside the word that got it;
+- a chunk that does not fit in what is left of a page starts the next
+  one, and the rest of the page stays to the names: 3900 bytes are two
+  rows a page, 4000 would be one;
+- the heap is shared with the names: `-1 HP @ - U.` says how much is
+  left, as the banner does at boot;
+- a chunk larger than 7933 bytes, or one that no longer fits in the
+  last page, stops with `Heap full.`, BASIC's `Out of memory`;
+- `MARKER` (here `-PIC`) and `FORGET` give the chunks back together
+  with the words; there is no freeing a chunk on its own.
+
 **The other ways of paging are not for vForth.** The ports `7FFDh`,
 `1FFDh` and `DFFDh`, the all-RAM modes and taking the ROM away are
 NextZXOS's business, and vForth needs the ROM to print and to read the
@@ -208,6 +256,7 @@ shows them.
 | `CLEAR` | -- | Nothing to wipe, no RAMTOP to move. |
 | `CLEAR n`, making room | `CREATE name n ALLOT` | `UNUSED` says how much is left. |
 | `BANK NEW v` | `NEW-PAGE` | Defined above; 8K, not 16K. |
+| `BANK NEW v`, for less than 8K | `n HEAP`, then `FAR` | `NEEDS HEAP`; shared with the names. |
 | `BANK n CLEAR` | `page FREE-PAGE` | |
 | `BANK n POKE o,v` | `v page o PAGE-C!` | `BANK>PAGE` for a 16K bank. |
 | `BANK n PEEK o` | `page o PAGE-C@` | |
@@ -303,9 +352,11 @@ system variables, then the same with `DUMP`.
 - Tutorial `008` -- `C@`, `C!`, `@`, `!`, `CREATE`, `ALLOT`.
 - Tutorial `025` -- the dictionary and its memory.
 - Tutorial `054` -- the DMA: `DMA-COPY`, `DMA-FILL`.
-- `HELP MMU7!`, `HELP CMOVE`, `HELP FILL`, `HELP DUMP`, `HELP UNUSED`.
+- `HELP MMU7!`, `HELP CMOVE`, `HELP FILL`, `HELP DUMP`, `HELP UNUSED`,
+  `HELP FAR`, `HELP POINTER`.
 - The vForth manual, "Dictionary memory structure": how the dictionary
-  and the names are laid out.
+  and the names are laid out; "Heap memory facility": `HEAP`, `FAR`,
+  the heap-pointer.
 
 <!-- nav -->
 ---

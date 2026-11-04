@@ -18,7 +18,7 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:287
+\ 07-strings.md:286
 : TRIANGLE  ( a n -- )
     1+ 1 DO  DUP I CR TYPE  LOOP  DROP ;
 PLANET TRIANGLE

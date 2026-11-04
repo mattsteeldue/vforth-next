@@ -680,16 +680,19 @@ Dashes_Begin:
                 dw      LIT, 128, OUT, STORE
                 dw      CONTEXT, FETCH, FETCH
 Words_Begin:        
-                dw          FAR // Q TO HEAP
-                dw          DUP, CFETCH, LIT, $1F, AND_OP
+                // no resolved address survives any output: the link is
+                // read first, the name is resolved again after CR
+                dw          DUP, FAR                //  ha a
+                dw          ONE, TRAVERSE, ONE_PLUS, FETCH, SWAP
+                dw          DUP, FAR                //  ha' ha a
+                dw          CFETCH, LIT, $1F, AND_OP
                 dw          OUT, FETCH, PLUS
                 dw          CL, LESS, ZEQUAL
                 dw          ZBRANCH
                 dw          Words_Endif - $
                 dw              CR, ZERO, OUT, STORE
 Words_Endif:    
-                dw          DUP, ID_DOT
-                dw          ONE, TRAVERSE, ONE_PLUS, FETCH
+                dw          FAR, ID_DOT             //  ha'
                 dw          DUP, ZEQUAL
                 dw          QTERMINAL, OR_OP
                 dw      ZBRANCH

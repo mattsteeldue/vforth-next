@@ -17,6 +17,7 @@ NEEDS WILDCARD
 NEEDS .FAT-DATE
 NEEDS .FAT-TIME
 NEEDS .FILE-SIZE
+NEEDS COMPARE                   \ in the core since build 2026-10-28
 
 \
 \ skip filename
@@ -105,7 +106,7 @@ VARIABLE DIR-GAP
                                               \ to a different page and
                                               \ invalidate this address
             I             @ FAR              \ element i
-            PAD SWAP 32 (COMPARE) \ -1 when a[i+gap] < a[i]
+            PAD 32 ROT 32 COMPARE \ -1 when a[i+gap] < a[i]
             0< IF               \ exchange pointers, NOT strings!
                 I 2+ @  I  @ 
                 I 2+ !  I  ! 

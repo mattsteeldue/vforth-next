@@ -1,0 +1,10 @@
+    MDR-PUT32  -- cccc cccc cccc
+
+Like MDR-PUT, but each line of the host file is blank
+padded to 32 bytes and its line end dropped: the reverse
+of MDR-DUMP32. A longer line is kept, up to 256 bytes.
+Empty lines at the end of the file are dropped.
+
+    MDR-PUT32 M2.MDR !Blocks B.TXT
+
+See MDR-DUMP32, MDR-PUTBLOCK.

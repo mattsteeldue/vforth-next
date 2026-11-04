@@ -45,7 +45,15 @@ BASE @
 \
 \ Reserve n bytes of Heap, return heap-pointer address
 \ Heap is a linked-list starting from P:0002=$40:$E002
+\ Error #12 "Heap full." when n is more than one page can hold
+\ (PAGE-WATERMARK 2- = 7933 bytes) or when the last page, 39, has no
+\ room left for it: SKIP-HP-PAGE would wrap HP to page 32, over names.
 : HEAP ( n -- ha )
+    PAGE-WATERMARK 2- OVER U<           \ n f   ( larger than a page )
+    HP@ $E000 U< 0=                     \ n f f ( HP in the last page )
+    HP@ $1FFF AND  3 PICK +             \ n f f off+n
+    PAGE-WATERMARK >  AND  OR           \ n f   ( and no room in it )
+    12 ?ERROR                           \ n
     HP@ >R              \ n         R: h0   ( save current HP )
     DUP SKIP-HP-PAGE    \ n                 ( check for room in current page )
     HP@ CELL+ TUCK      \ ha n ha           ( prepare resulting hp )

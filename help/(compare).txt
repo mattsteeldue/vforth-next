@@ -1,6 +1,12 @@
-    (compare)  a1 a2 n -- b
+    (COMPARE)  a1 a2 n -- b
 
 Lexicographic comparison of n bytes at a1 against n bytes at a2,
 case-insensitive depending on CASEON and CASEOFF.
 Returns 0 if equal, +1 if a1 > a2, -1 if a1 < a2.
 
+Up to build 2026-10-20 a core word; since build 2026-10-28 a
+colon on COMPARE, kept for compatibility. Prefer COMPARE.
+
+Available after NEEDS (COMPARE)
+
+See also: COMPARE

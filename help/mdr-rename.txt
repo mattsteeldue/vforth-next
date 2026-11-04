@@ -1,0 +1,9 @@
+    MDR-RENAME  -- cccc cccc cccc
+
+Rename a file of a .MDR cartridge image, in place. Three
+names follow: cartridge, file, new name. Error #43 if the
+file is not there, #4 if the new name is already used.
+
+    MDR-RENAME M2.MDR old new
+
+See MDR-COPY.

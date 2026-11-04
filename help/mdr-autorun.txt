@@ -1,0 +1,11 @@
+    MDR-AUTORUN  -- cccc cccc cccc
+
+Make a program of a .MDR cartridge image start by itself
+when loaded, from the given line. Cartridge, file and
+line follow on the input line, the line in the current
+BASE. Error #43 if the file is not there, #66 if it is
+not a BASIC program.
+
+    MDR-AUTORUN M1.MDR run 10
+
+See MDR-NOAUTORUN.

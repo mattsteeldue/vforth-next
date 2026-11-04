@@ -15,7 +15,7 @@ NEEDS MS
 
 \ --- the translation
 
-\ 18-sound-and-music.md:360
+\ 18-sound-and-music.md:364
 : PLUCK  ( -- )
     1 AYSELECT
     262 PERIOD 0 AY!!

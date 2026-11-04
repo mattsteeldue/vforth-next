@@ -3,6 +3,10 @@
 \
 .( COMPARE )
 \
+\ In the core since build 2026-10-28, where NEEDS COMPARE skips this
+\ file. Kept for older cores: it needs their (COMPARE), which the newer
+\ core no longer has (see inc/(compare).f).
+\
 \ Compare two strings and return  0 if they're equal
 \ or  1 if s1 > s2  or  -1 if s1 < s2
 : COMPARE  ( a1 c1 a2 c2 -- -1|0|1 )

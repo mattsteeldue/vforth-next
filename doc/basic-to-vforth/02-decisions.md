@@ -115,12 +115,12 @@ checks nothing: an `n` outside the list crashes the machine, so the range
 has to be made safe first.
 
 **Equal strings compare as 0.** Strings are compared by `COMPARE`
-(`NEEDS COMPARE`), which takes two strings, each as an address and a
+(a core word; on a core older than build 2026-10-28, `NEEDS COMPARE`),
+which takes two strings, each as an address and a
 length, and leaves -1, 0 or 1: before, equal, after. Zero means *equal*, the
 opposite of a flag, so the test for equality is `COMPARE 0=`.
 
 ```forth
-NEEDS COMPARE
 NEEDS S"
 : T1  S" apple" S" apple" COMPARE . ;
 : T2  S" apple" S" pear"  COMPARE . ;
@@ -154,7 +154,7 @@ Strings are the subject of Chapter 7.
 | `ON` ... `: ELSE s` | code between the last `ENDOF` and `ENDCASE` | The value is still on the stack there. |
 | `n?(e0,e1,e2)` | `CREATE t e0 , e1 , e2 ,` then `n 2 MIN CELLS t + @` | The `MIN` gives "past the end, the last one". |
 | `GO TO n?(l0,l1,l2)` | `n EXEC: w0 w1 w2 ;` | |
-| `a$=b$` | `COMPARE 0=` | `NEEDS COMPARE`. |
+| `a$=b$` | `COMPARE 0=` | In the core since build 2026-10-28. |
 | `a$<b$` | `COMPARE 0<` | |
 
 ## Side by side

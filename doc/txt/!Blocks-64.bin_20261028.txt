@@ -1,9 +1,9 @@
-File: C:\zx\forth\F18\tools\vForth\!Blocks-64.bin
-Created: Tue Oct 20 23:56:45 2026
+File: !Blocks-64.bin
+Created: Thu Nov  5 00:00:35 2026
 
 See index at end of file.
 
-\ v-Forth 1.8 - NextZXOS versione - build 2026-10-20
+\ v-Forth 1.8 - NextZXOS versione - build 2026-10-28
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \ Read LICENSE.md file for MIT License terms agreement or
 \ at prompt type NEEDS VIEW and then VIEW LICENSE.MD
@@ -142,8 +142,8 @@ Scr# 7
 
 Scr# 8 
   0 ( Error messages    from #65 to #79 )
-  1 
-  2 
+  1 Microdrive full.
+  2 Not a program.
   3 
   4 
   5 
@@ -10653,9 +10653,9 @@ Scr# 885
   5        0 >IN !  1 TEXT  CR ." HELLO, "
   6     PAD COUNT TYPE  ." , I SPEAK FORTH. " ;
   7 \
-  8 \ vForth has (COMPARE) that is quite similar to -TEXT
+  8 \ vForth's COMPARE, given u twice, is quite similar to -TEXT
   9 : -TEXT        ( a1 u a2 -- f )
- 10   SWAP (COMPARE) ;
+ 10   OVER COMPARE ;
  11 
  12 
  13 

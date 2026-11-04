@@ -1,0 +1,12 @@
+    MDR-PUT  -- cccc cccc cccc
+
+Write a host file to a .MDR cartridge image, in place, as
+a PRINT file. Three names follow: cartridge, name on the
+cartridge, host file. The sectors needed are counted
+first: error #65, and nothing written, if they are not
+free. Error #4 if the name is already used: MDR-ERASE it
+first. Error #41 if the host file is not there.
+
+    MDR-PUT M2.MDR !Blocks BLK.BIN
+
+See MDR-PUTTEXT, MDR-PUT32, MDR-PUTBLOCK, MDR-PUTTAP.

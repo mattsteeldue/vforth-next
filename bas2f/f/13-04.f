@@ -8,7 +8,6 @@
 \ --- the translation
 
 \ 13-the-character-set.md:186
-NEEDS COMPARE
 NEEDS S"
 : E1  S" EVIL" S" evil" COMPARE . ;
 : E2  S" zoo" S" zoology" COMPARE . ;

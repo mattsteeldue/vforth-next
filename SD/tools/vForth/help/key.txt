@@ -5,3 +5,7 @@ Waits for input until a key is pressed.
 Shows no cursor: CURS KEY shows a flashing
 cursor while it waits. See also CURS.
 
+Clicks when PIP (23609) is not 0, as BASIC
+does: 20 23609 C! turns the click on. At
+start-up PIP is 0, i.e. silence. The pitch
+follows the CPU speed, as 7 EMIT does.

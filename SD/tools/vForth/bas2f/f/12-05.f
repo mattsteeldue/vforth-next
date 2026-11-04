@@ -10,7 +10,6 @@
 \ --- the translation
 
 \ 12-conditions.md:254
-NEEDS COMPARE
 : ORDER  ( a1 u1 a2 u2 -- )
     2OVER 2OVER COMPARE 0> IF  2SWAP  THEN
     2OVER TYPE SPACE

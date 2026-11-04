@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-10-20
+\ v-Forth 1.8 - NextZXOS version - build 2026-10-28
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -1014,20 +1014,39 @@ CODE (map) ( a2 a1 n c1 -- c2 )
         C;
 
 
-." (COMPARE) "
-\ this word performs a lexicographic compare of n bytes of text at address a1 
-\ with n bytes of text at address a2. It returns numeric a value: 
+." COMPARE "
+\ this word performs a lexicographic compare of string a1,c1 with string
+\ a2,c2. It returns a numeric value:
 \  0 : if strings are equal
-\ +1 : if string at a1 greater than string at a2 
-\ -1 : if string at a1 less than string at a2 
+\ +1 : if string a1 greater than string a2 (or a2 is a prefix of a1)
+\ -1 : if string a1 less than string a2 (or a1 is a prefix of a2)
+\ The first min(c1,c2) bytes decide; when they match the shorter string
+\ is the lesser. Case-insensitive unless CASEON.
 
-CODE (compare) ( a1 a2 n -- b )
-        POP     HL| 
+CODE compare ( a1 c1 a2 c2 -- b )
+        EXX                 \ alt set; IP and RP kept in main
+        POP     BC|         \ c2
+        POP     DE|         \ string a2
+        POP     HL|         \ c1
+        XORA     A|         \ tie := 0, clear carry
+        SBCHL   BC|         \ c1 - c2
+        JRF Z'|   HOLDPLACE \ c1 = c2 : n = c2, tie 0
+        LDN     A'|  1  N,  \ tie := +1 (flags untouched)
+        JRF NC'|  HOLDPLACE \ c1 > c2 : n = c2, tie +1
+        ADDHL   BC|         \ c1 < c2 : hl = c1 again
+        LD      B'|    H|
+        LD      C'|    L|   \ n = c1
+        LDN     A'| -1  N,  \ tie := -1
+        HERE DISP,  HERE DISP,
+        EXDEHL              \ string a2
+        POP     DE|         \ string a1
+        PUSH    BC|         \ n through the stack...
+        LD      B'|    A|   \ B' = tie, untouched by the loop
+        EXX
+        POP     HL|         \ ...to main HL as 16-bit counter
         LD      A'|    H|
         ORA      L|
         EXX
-        POP     HL|         \ string a2
-        POP     DE|         \ string a1
         JRF Z'|   HOLDPLACE \ IF,
 
             HERE                \ begin,
@@ -1060,8 +1079,13 @@ CODE (compare) ( a1 a2 n -- b )
 
 \ common ending
         HERE DISP, \ THEN,
-        EXX  
+        LD      A'|    B|   \ tie, sign-extended to 16 bit
+        LD      L'|    A|
+        RLA
+        SBCA     A|
+        LD      H'|    A|
         PUSH    HL|
+        EXX                 \ restore IP and RP
         Next
         C; 
 
@@ -1414,6 +1438,23 @@ CODE key ( -- c )
         LDN     H'|    0 N,
 
         RES      5| (IY+ 1 )|
+
+        \ key click as in BASIC: PIP is its length, 0 is silence
+        \ (vForth default); pitch follows the CPU speed, as bel
+        LDA()  HEX 5C39 AA,    \ PIP
+        ANDA     A|
+        JRF     Z'| HOLDPLACE  \ IF,
+            PUSH    HL|
+            PUSH    DE|
+            PUSH    IX|
+            LD      E'|    A|
+            LDN     D'|    0 N,
+            LDX     HL| HEX 00C8 NN,
+            CALL    HEX 03B6 AA,   \ bleep routine, as bel
+            POP     IX|
+            POP     DE|
+            POP     HL|
+        HERE DISP, \ THEN,
 
         POP     BC|
         PUSH    HL|
@@ -5715,16 +5756,19 @@ decimal
     [ decimal 128 ] Literal out !
     context @ @
     Begin
-        far
-        dup c@ [ hex 1F ] Literal and  
+        \ no resolved address survives any output: the link is
+        \ read first, the name is resolved again after CR
+        dup far                 \ ha a
+        1 traverse 1+ @ swap    \ ha' ha
+        dup far
+        c@ [ hex 1F ] Literal and  
         out @ +  
         c/l < 0=
         If 
             cr 
             0 out ! 
         Then
-        dup id.
-        1 traverse 1+ @
+        far id.                 \ ha'
         dup 0= 
         ?terminal or 
     Until
@@ -6511,7 +6555,7 @@ RENAME   curs           CURS
 \ RENAME   bleep          BLEEP  
 RENAME   (?emit)        (?EMIT)
 RENAME   (emitc)        (EMITC)
-RENAME   (compare)      (COMPARE)
+RENAME   compare        COMPARE
 RENAME   (map)          (MAP)
 RENAME   enclose        ENCLOSE
 RENAME   (find)         (FIND) 

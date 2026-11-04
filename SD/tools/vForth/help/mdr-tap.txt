@@ -1,0 +1,11 @@
+    MDR-TAP  -- cccc cccc
+
+All the files of a .MDR cartridge image to a new .TAP
+file, in name order. Cartridge and .TAP follow on the
+input line. PRINT files and files that have lost their
+first record are left out. Never overwrites: error #41 if
+the host file exists.
+
+    MDR-TAP M1.MDR ALL.TAP
+
+See MDR-GETTAP, MDR-PUTTAP.

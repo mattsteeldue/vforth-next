@@ -1,0 +1,12 @@
+    MDR-PUTBLOCK  -- cccc cccc cccc
+
+Like MDR-PUT32, but driven by the "\ Screen# n" headers,
+the reverse of MDR-DUMPBLOCK. Each header starts screen
+n, of 16 lines: a shorter screen is completed with
+blanks, lines past the 16th are dropped, and so are the
+lines before the first header. Screens that were skipped
+are written blank, 512 bytes each.
+
+    MDR-PUTBLOCK M2.MDR !Blocks B.F
+
+See MDR-DUMPBLOCK.

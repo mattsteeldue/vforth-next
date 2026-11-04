@@ -12,14 +12,14 @@
 
 \ --- words defined earlier in the guide
 
-\ 23-the-memory.md:128
+\ 23-the-memory.md:129
 : PAGE-C!  ( b page off -- )
     $E000 +  SWAP  MMU7@ >R  MMU7!  C!  R> MMU7! ;
 : PAGE-C@  ( page off -- b )
     $E000 +  SWAP  MMU7@ >R  MMU7!  C@  R> MMU7! ;
 99 60 10 PAGE-C!  60 10 PAGE-C@ .   \ => 99
 
-\ 23-the-memory.md:146
+\ 23-the-memory.md:147
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : NEW-PAGE  ( -- page )
@@ -29,7 +29,7 @@
 
 \ --- the translation
 
-\ 23-the-memory.md:240
+\ 23-the-memory.md:289
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : TRY-PAGE  ( -- )

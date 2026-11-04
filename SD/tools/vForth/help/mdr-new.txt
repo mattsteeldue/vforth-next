@@ -1,0 +1,10 @@
+    MDR-NEW  -- cccc
+
+Create an empty, formatted ZX Microdrive cartridge image
+(.MDR file) whose name follows on the input line: 254
+free sectors and a blank label. Error #41 if the file
+already exists.
+
+    MDR-NEW M9.MDR
+
+See MDR-LABEL, MDR-PUT.

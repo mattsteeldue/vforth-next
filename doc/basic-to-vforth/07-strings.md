@@ -220,11 +220,10 @@ does; a word that changes case writes into the string itself, so it
 must work on a copy in a buffer, not on a literal.
 
 **Comparing is `COMPARE`.** `a$=b$` and `a$<b$` are `COMPARE 0=` and
-`COMPARE 0<` (`NEEDS COMPARE`): see [Chapter 2](02-decisions.md). As
+`COMPARE 0<`: see [Chapter 2](02-decisions.md). As
 vForth starts, capitals and small letters count as equal:
 
 ```forth
-NEEDS COMPARE
 : SAME?  ( -- )  S" next" S" NEXT" COMPARE . ;
 SAME?                           \ => 0
 ```
@@ -268,7 +267,7 @@ there for long.
 | `a$[(f$,r$)]` | -- | See "No equivalent". |
 | `a$[~]`, `a$[^]` | -- | See "No equivalent". |
 | `{a$}` | -- | No tokens in Forth. |
-| `a$=b$` | `COMPARE 0=` | `NEEDS COMPARE`. Case is ignored at start-up. |
+| `a$=b$` | `COMPARE 0=` | Case is ignored at start-up. |
 | `a$<b$` | `COMPARE 0<` | |
 | `IN (a$,b$)` | `SEARCH` | `NEEDS SEARCH`. A position is a subtraction: Chapter 8. |
 | `3 Subscript wrong` | no error | A slice past the end shows other memory. |

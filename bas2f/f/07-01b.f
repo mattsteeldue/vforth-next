@@ -18,7 +18,7 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:310
+\ 07-strings.md:309
 : TAILS  ( a n -- )
     BEGIN  DUP WHILE
         CR 2DUP TYPE  1 /STRING

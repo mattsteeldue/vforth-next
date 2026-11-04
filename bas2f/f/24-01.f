@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 24-the-system-variables.md:129
+\ 24-the-system-variables.md:131
 : FAST-KEYS  ( -- )  15 23561 C!  2 23562 C! ;
 : SLOW-KEYS  ( -- )  35 23561 C!  5 23562 C! ;
 FAST-KEYS  23561 C@ .           \ => 15

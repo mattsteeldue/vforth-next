@@ -1,6 +1,6 @@
 \ z80n-asm.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-04-19 
+\ v-Forth 1.8 - NextZXOS version - build 2026-10-28
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \
 \ CR
@@ -99,7 +99,7 @@ HEX \ -->  DP @ LP ! HEX E080 DP !
 \ ## : %BODY>      0 CELL+ - NFA ;
 : %>CODE      PFA CFA CELL+  2 CFA NEGATE + ( direct/indirect patch ) ;
 \ ## : IGNORE?     1+ C@ &~ = ;
-: (>NEXT%)    PFA LFA @ ;
+: (>NEXT%)    PFA LFA @ FAR ;  \ LFA holds an ha (build 2026-09-26)
 \ ## : VOCEND?     @ FFFF AND A081 = ;
 \ ## : >NEXT%      BEGIN (>NEXT%)  DUP 1+ C@ &- - UNTIL ;
 

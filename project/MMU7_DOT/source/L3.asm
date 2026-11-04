@@ -350,12 +350,24 @@ FInclude_Endif_2:                               // endif
 // check for cccc exists in vocabulary
 // if it doesn't then  INCLUDE  inc/cccc.F
 
+// DOT only: the two buffers are not in the 8K core but at the start of
+// main RAM ($8000, page $28 on MMU4 since step 6 of ColdRoutine), just
+// below the first user definition: DP_origin and FENCE_origin (L0.asm)
+// begin at Needs_Buffers_End. NEEDS-F erases NEEDS-W before each use.
+Needs_Buffers   equ     $8000
 // temp filename cccc.f as counted string zero-padded
-                New_Def NEEDS_W,   "NEEDS-W", Create_Ptr, is_normal  
-                ds      35                      // 32 + .f + 0x00 = len 35
+                Constant_Def NEEDS_W,  "NEEDS-W",  Needs_Buffers
+                                                // 32 + .f + 0x00 = len 35
 // temp complete path+filename
-                New_Def NEEDS_FN,  "NEEDS-FN", Create_Ptr, is_normal  
-                ds      40
+                Constant_Def NEEDS_FN, "NEEDS-FN", Needs_Buffers + 35
+                                                // len 40
+Needs_Buffers_End equ   Needs_Buffers + 35 + 40
+// DOT only: then a stack of 128 bytes for the ROM calls of SELECT, (EMITC)
+// and (CLS), grown down from Rom_Stack to Needs_Buffers_End. +3DOS (a
+// file-attached stream) leaves the OS default banking at $C000, where
+// the Forth stacks are; TSTACK ($5C00) is no good either, +3DOS uses it
+// itself. Page $28 on MMU4 is never touched. DP_origin starts above it.
+Rom_Stack       equ     Needs_Buffers_End + 128
 // constant path
                 New_Def NEEDS_INC,  "NEEDS-INC", Create_Ptr, is_normal  
                 db      4, "inc/", 0
@@ -679,16 +691,19 @@ Dashes_Begin:
                 dw      LIT, 128, OUT, STORE
                 dw      CONTEXT, FETCH, FETCH
 Words_Begin:        
-                dw          FAR // Q TO HEAP
-                dw          DUP, CFETCH, LIT, $1F, AND_OP
+                // no resolved address survives any output: the link is
+                // read first, the name is resolved again after CR
+                dw          DUP, FAR                //  ha a
+                dw          ONE, TRAVERSE, ONE_PLUS, FETCH, SWAP
+                dw          DUP, FAR                //  ha' ha a
+                dw          CFETCH, LIT, $1F, AND_OP
                 dw          OUT, FETCH, PLUS
                 dw          CL, LESS, ZEQUAL
                 dw          ZBRANCH
                 dw          Words_Endif - $
                 dw              CR, ZERO, OUT, STORE
 Words_Endif:    
-                dw          DUP, ID_DOT
-                dw          ONE, TRAVERSE, ONE_PLUS, FETCH
+                dw          FAR, ID_DOT             //  ha'
                 dw          DUP, ZEQUAL
                 dw          QTERMINAL, OR_OP
                 dw      ZBRANCH

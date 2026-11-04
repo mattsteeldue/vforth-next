@@ -15,7 +15,7 @@ NEEDS MS
 
 \ --- the translation
 
-\ 18-sound-and-music.md:330
+\ 18-sound-and-music.md:334
 : CHORD  ( -- )
     1 AYSELECT
     262 PERIOD 0 AY!!  330 PERIOD 2 AY!!  392 PERIOD 4 AY!!

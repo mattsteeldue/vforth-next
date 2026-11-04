@@ -25,7 +25,6 @@ TESTING \ Missing
 \   INCLUDE  test/CASEOFF.f
 \   INCLUDE  test/ENCLOSE.f
 \   INCLUDE  test/(MAP).f
-\   INCLUDE  test/(COMPARE).f
 \   INCLUDE  test/KEY.f
 \   INCLUDE  test/?TERMINAL.f
 \   INCLUDE  test/INKEY.f

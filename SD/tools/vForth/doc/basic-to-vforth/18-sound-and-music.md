@@ -237,9 +237,13 @@ effects on the same chip may disturb each other. Under the dot command
 `.vforth`, `PLAY-ON` is still being tried: there the music slows down
 while the screen scrolls.
 
-**The keyboard does not click.** `POKE 23609,n` sets the length of
-BASIC's key click. vForth's `KEY` makes no click at all, so the variable
-has no effect while Forth runs.
+**The keyboard clicks only when asked.** `POKE 23609,n` sets the length
+of BASIC's key click, and since build 2026-10-28 vForth's `KEY` reads the
+same variable: `20 23609 C!` turns the click on, `0 23609 C!` turns it
+off. BASIC starts with 0, which is a short click; vForth takes 0 as
+silence, its state at start-up. The pitch follows the CPU speed, as the
+bell of `7 EMIT` does: at 28 MHz the click is eight times higher and
+shorter than BASIC's.
 
 ## Correspondence table
 
@@ -250,7 +254,7 @@ has no effect while Forth runs.
 | pitch out of range | `Invalid numeric argument.` | -60 ... 57; BASIC goes up to 69. |
 | `key+p` | `KEY# +` | `KEY` reads the keyboard. |
 | `crotchet` | `CROTCHET` | A `VALUE`, in milliseconds. |
-| `POKE 23609,n` | -- | `KEY` does not click. |
+| `POKE 23609,n` | `n 23609 C!` | 0 is silence, not a short click. |
 | `PLAY a$` | `a n 1 PLAY`, `PLAY" ..."` | `NEEDS PLAY`. |
 | `PLAY a$,b$,c$` | `a1 n1 a2 n2 a3 n3 3 PLAY` | Up to nine strings. By hand: `0`, `2`, `4 AY!!`. |
 | (not in BASIC) `PLAY` in the background | `a1 n1 ... k PLAY-ON` | `NEEDS PLAY-ON`. `PLAYING?`, `PLAY-OFF`. |
@@ -379,7 +383,6 @@ Write register 13 again to pluck again.
 - **Digital audio.** The players of WAV, MOD and PT3 are dot commands,
   which vForth cannot launch. The DACs of the Next are reachable through
   the Next registers `$2C` to `$2E`, but there is no player.
-- **`POKE 23609`.** vForth's keyboard makes no click.
 - **Pitches 58 to 69.** `BEEP` stops at 57, the A at 7040 Hz.
 
 ## Further reading

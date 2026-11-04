@@ -26,7 +26,7 @@ NAME$ C@ .                      \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:364
+\ 07-strings.md:363
 CREATE CARD$  20 ALLOT
 : CARD  ( -- a n )  S" 1234567890123456" ;
 CARD CARD$ $!

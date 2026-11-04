@@ -13,7 +13,7 @@ CREATE NAME$  32 ALLOT
 
 \ --- the translation
 
-\ 07-strings.md:410
+\ 07-strings.md:409
 NEEDS WITHIN
 : LOWER  ( c -- c2 )  DUP 65 91 WITHIN IF  32 +  THEN ;
 : LOWCASE  ( a n -- )

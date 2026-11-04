@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      111
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33 
-                db      " Heap Vocabulary - build 2026-10-20 ", $0D  // 37
+                db      " Heap Vocabulary - build 2026-10-28 ", $0D  // 37
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -697,21 +697,40 @@ C_Map_Then:
 
 //  ______________________________________________________________________
 //
-// (compare)    a1 a2 n -- b
-// this word performs a lexicographic compare of n bytes of text at address a1
-// with n bytes of text at address a2. It returns a numeric value:
+// compare      a1 c1 a2 c2 -- b
+// this word performs a lexicographic compare of string a1,c1 with string
+// a2,c2. It returns a numeric value:
 //  0 : if strings are equal
-// +1 : if string at a1 greater than string at a2
-// -1 : if string at a1 less than string at a2
-                New_Def C_COMPARE, "(COMPARE)", is_code, is_normal
-                pop     hl                  // n -> W  (16-bit counter to HL before exx)
-                ld      a, h
-                or      l                   // Z = 1 if n = 0  (flag survives exx, pop)
-                exx                         // alt HL' = n;  main = old alt
-                pop     hl                  // hl = a2
+// +1 : if string a1 greater than string a2 (or a2 is a prefix of a1)
+// -1 : if string a1 less than string a2 (or a1 is a prefix of a2)
+// The first min(c1,c2) bytes decide; when they match the shorter string
+// is the lesser. Case-insensitive unless CASEON.
+                New_Def COMPARE, "COMPARE", is_code, is_normal
+                exx                         // alt set; IP and RP kept in main
+                pop     bc                  // c2
+                pop     de                  // a2
+                pop     hl                  // c1
+                xor     a                   // tie := 0, clear carry
+                sbc     hl, bc              // c1 - c2
+                jr      z, C_Compare_Setup  // c1 = c2 : n = c2, tie 0
+                ld      a, 1                // tie := +1 (flags untouched)
+                jr      nc, C_Compare_Setup // c1 > c2 : n = c2, tie +1
+                add     hl, bc              // c1 < c2 : hl = c1 again
+                ld      b, h
+                ld      c, l                // n = c1
+                ld      a, -1               // tie := -1
+C_Compare_Setup:
+                ex      de, hl              // hl = a2
                 pop     de                  // de = a1
-                jr      z, C_Compare_Return_Equal   // n = 0: HL' already zero, stack already clean
-                                            // BC free: C available as temp char
+                push    bc                  // n through the stack...
+                ld      b, a                // B' = tie, untouched by the loop
+                exx
+                pop     hl                  // ...to main HL as 16-bit counter
+                ld      a, h
+                or      l                   // Z = 1 if n = 0
+                exx                         // Z survives exx
+                jr      z, C_Compare_Return_Equal
+                                            // C: temp char; B: tie
 C_Compare_Loop:
                     ld      a, (hl)
                     call    Case_Sensitive
@@ -740,9 +759,14 @@ C_Compare_Equal:
                 exx                         // restore a1/a2;  Z survives a exx
                 jr      nz, C_Compare_Loop
 
-C_Compare_Return_Equal:
-                exx                         // HL' = 0 -> main HL;  restore IP and RP
-                push    hl                  // push 0
+C_Compare_Return_Equal:                     // alt set active here
+                ld      a, b                // tie, sign-extended to 16 bit
+                ld      l, a
+                rla
+                sbc     a, a
+                ld      h, a
+                push    hl
+                exx                         // restore IP and RP
                 next
 
 //  ______________________________________________________________________ 
@@ -1052,6 +1076,22 @@ Key_NoCapsLock: ld      l, a
 
                 res     5, (iy + 1)         // FLAGS (5C3A+1)
 
+                // key click as in BASIC: PIP is its length, 0 is silence
+                // (vForth default); pitch follows the CPU speed, as bel
+                ld      a, (PIP)
+                and     a
+                jr      z, Key_NoClick
+                    push    hl                  // TOS
+                    push    de                  // save Return Stack Pointer
+                    push    ix                  // save Next Pointer
+                    ld      e, a
+                    ld      d, 0                // DE = PIP
+                    ld      hl, $00C8           // as the ROM click
+                    call    $03B6               // bleep routine, as bel
+                    pop     ix                  // restore Next Pointer
+                    pop     de                  // restore Return Stack Pointer
+                    pop     hl
+Key_NoClick:
                 pop     bc                  // Restore Instruction Pointer
 
                 psh1

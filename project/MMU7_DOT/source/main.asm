@@ -5,7 +5,7 @@
 // 
 //  v-Forth 1.8 NextZXOS version 
 //  DOT-command version
-//  build 20261020
+//  build 20261028
 // 
 //  Direct-Threaded version.
 // 
@@ -143,6 +143,12 @@ Heap_offset     defl     0
                 include "L2.asm"
                 include "next-opt1.asm"
                 include "L3.asm"
+
+// the dot command is saved as one 8K page, ORIGIN to ORIGIN+$1FFF
+// (vforth.1 below): the core must end inside it
+Core_Free       defl    ORIGIN + $2000 - (Here_Dictionary + 1)
+                DISPLAY "DOT core: ", /D, Core_Free, " bytes free in 8K"
+                ASSERT  Core_Free >= 0
 
 // now we save the compiled file so we can either run it or debug it
                 SAVENEX OPEN "output/main.nex", ORIGIN

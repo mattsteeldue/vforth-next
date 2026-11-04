@@ -18,6 +18,6 @@ PLANET NIP .                    \ => 8
 
 \ --- the translation
 
-\ 07-strings.md:351
+\ 07-strings.md:350
 : GREET  ( a n -- )  ." Hello, " TYPE ." !" ;
 PLANET GREET                    \ => Hello, Spectrum!

@@ -857,3 +857,34 @@ the wrapper (ch. 14), handles vs streams (ch. 20), the start-up palette
 and the 64-column layers (ch. 15), round circles on every layer and the
 logarithm from the hyperbola (ch. 16), MS and CURS KEY (ch. 17), PLAY-ON
 (ch. 18), EDIT (ch. 19), Screens to and from text files (ch. 5).
+
+
+\ build 20261028
+Core binary CHANGED in this build.
+COMPARE ( a1 c1 a2 c2 -- n ) is now a standard CODE word in the core and
+replaces (COMPARE), which leaves the core: old code that uses it needs
+NEEDS (COMPARE) (inc/(compare).f, one line). NEEDS COMPARE is no longer
+required. inc/search.f, lib/DIR.f, tutorial 009, the guide and Screen 885
+follow; new test/COMPARE-TESTS.f.
+KEY clicks as in BASIC when the system variable PIP (23609) is not zero:
+POKE it, or $10 $5C39 C!, to turn the click on. Silence stays the
+default. Like the bell of 7 EMIT, the pitch follows the CPU speed.
+WORDS reads the link to the previous word before printing and resolves
+the name again after CR, so no MMU7-mapped address survives any output.
+Dot-command .vforth: SELECT, (EMITC) and (CLS) call the ROM on a stack of
+their own in main RAM and restore MMU4-MMU7 before going back to the
+Forth stacks, so 13 SELECT to a file opened by BASIC no longer crashes
+and resets the machine; the NEEDS buffers moved to $8000, and the
+dictionary starts 128 bytes higher than before.
+src/F18e.f is aligned and verified by /check-f18e on CSpect, where all
+the above was tried under both the classic loader and .vforth.
+lib/MDR.f: write side and .TAP too (MDR-NEW MDR-LABEL MDR-ERASE
+MDR-RENAME MDR-COPY MDR-AUTORUN MDR-NOAUTORUN MDR-FIX MDR-PUT MDR-PUTTEXT
+MDR-PUT32 MDR-PUTBLOCK MDR-GETTAP MDR-TAP MDR-PUTTAP), a complete port of
+mdr.pl checked byte for byte against it on the headless emulator, not yet
+on the machine; a help page for each word, messages #65 and #66.
+New dot-command .mdr (in /dot): the same utility in Z80, usable from
+NextBASIC without loading vForth. For now it prints the catalogue only,
+as MDR-CAT does: .mdr M2.MDR. Tried on CSpect.
+WiFi, first step: lib/UART.f (taken out of RPi0.f) and lib/ESP.f, a
+terminal and AT commands for the ESP module, not yet tried on the Next.

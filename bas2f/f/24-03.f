@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 24-the-system-variables.md:168
+\ 24-the-system-variables.md:170
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS .AT

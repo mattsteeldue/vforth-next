@@ -1,0 +1,11 @@
+    MDR-NOAUTORUN  -- cccc cccc
+
+Remove the autorun line from a program of a .MDR
+cartridge image. Cartridge and file follow on the input
+line. The name * stands for all the programs on the
+cartridge, and any other file is left alone. Error #43 if
+the file is not there, #66 if it is not a BASIC program.
+
+    MDR-NOAUTORUN M1.MDR *
+
+See MDR-AUTORUN.

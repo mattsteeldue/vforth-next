@@ -1,0 +1,11 @@
+    MDR-GETTAP  -- cccc cccc cccc
+
+Extract a file from a .MDR cartridge image to a new .TAP
+file, with its header block and data block. Three names
+follow: cartridge, file, .TAP. A PRINT file has no tape
+form: its bytes are written as they are. Never
+overwrites: error #41 if the host file exists.
+
+    MDR-GETTAP M1.MDR run RUN.TAP
+
+See MDR-TAP, MDR-PUTTAP.

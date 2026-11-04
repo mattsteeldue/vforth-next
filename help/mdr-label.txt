@@ -1,0 +1,10 @@
+    MDR-LABEL  -- cccc cccc
+
+Change the label of a .MDR cartridge image, repeated in
+each of its sectors. Two names follow on the input line:
+the cartridge and the new label, 10 characters at most,
+no spaces. Works on the file itself.
+
+    MDR-LABEL M2.MDR Forth
+
+See MDR-CAT.

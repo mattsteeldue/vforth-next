@@ -1,0 +1,12 @@
+    MDR-PUTTAP  -- cccc cccc
+
+Write all the files of a .TAP to a .MDR cartridge image,
+in place. Cartridge and .TAP follow on the input line.
+The sectors needed are counted first: error #65, and
+nothing written, if they are not free. A name already on
+the cartridge is skipped with a message; a wrong tape
+checksum gives a warning (#34) and the file is written.
+
+    MDR-PUTTAP M1.MDR ALL.TAP
+
+See MDR-TAP.

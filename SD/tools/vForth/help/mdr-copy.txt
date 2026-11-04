@@ -1,0 +1,11 @@
+    MDR-COPY  -- cccc cccc cccc
+
+Copy a file to a new name on the same .MDR cartridge
+image. Three names follow: cartridge, file, new name.
+Error #43 if the file is not there, #4 if the new name is
+already used, #65 if the free sectors are not enough: in
+this case nothing is written.
+
+    MDR-COPY M2.MDR old new
+
+See MDR-RENAME.

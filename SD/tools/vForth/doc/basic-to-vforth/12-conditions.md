@@ -164,7 +164,7 @@ NEEDS WITHIN
 | `x OR y` (1 if y) | `x f IF DROP 1 THEN` | `OR` sets bits: `x -1 OR` is -1. |
 | `x$ AND y` | `a u f AND` | The empty string if `f` is false. |
 | `(a AND NOT a<b)+(b AND a<b)` | `a b MAX` | `MIN` for the smaller. |
-| `a$>b$` | `COMPARE 0>` | `NEEDS COMPARE`. Ignores case until `CASEON`. |
+| `a$>b$` | `COMPARE 0>` | Ignores case until `CASEON`. |
 | `a<=x AND x<=b` | `x a b BETWEEN` | `NEEDS BETWEEN`. Both limits included. |
 | `a<=x AND x<b` | `x a b WITHIN` | `NEEDS WITHIN`. Upper limit excluded. |
 
@@ -252,7 +252,6 @@ one at most is not empty.
 ```
 
 ```forth
-NEEDS COMPARE
 : ORDER  ( a1 u1 a2 u2 -- )
     2OVER 2OVER COMPARE 0> IF  2SWAP  THEN
     2OVER TYPE SPACE

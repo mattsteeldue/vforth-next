@@ -37,7 +37,7 @@ NAME$ C@ .                      \ => 13
 
 \ --- the translation
 
-\ 07-strings.md:338
+\ 07-strings.md:337
 CREATE G$  40 ALLOT
 : GREETING  ( a n -- )
     S" Hello, " G$ $!   G$ $+!   S" !" G$ $+! ;

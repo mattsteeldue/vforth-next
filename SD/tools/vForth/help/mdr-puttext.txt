@@ -1,0 +1,8 @@
+    MDR-PUTTEXT  -- cccc cccc cccc
+
+Like MDR-PUT, but for a text: each LF, or CR+LF, becomes
+a CR, the line end of the Spectrum.
+
+    MDR-PUTTEXT M2.MDR notes NOTES.TXT
+
+See MDR-PUT.

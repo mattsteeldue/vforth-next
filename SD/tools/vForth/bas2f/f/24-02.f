@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 24-the-system-variables.md:147
+\ 24-the-system-variables.md:149
 : CAPS  ( -- )  23658 C@ 8 XOR 23658 C! ;
 : .CAPS  ( -- )
     ." CAPS LOCK "  23658 C@ 8 AND IF ." on" ELSE ." off" THEN ;

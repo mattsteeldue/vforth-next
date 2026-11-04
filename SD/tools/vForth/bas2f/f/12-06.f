@@ -8,7 +8,7 @@
 
 \ --- the translation
 
-\ 12-conditions.md:283
+\ 12-conditions.md:282
 : NEITHER?  ( a b c -- flag )
     2 PICK <>  -ROT <>  AND ;
 5 3 4 NEITHER? .  5 5 4 NEITHER? .  5 3 5 NEITHER? .    \ => -1 0 0
