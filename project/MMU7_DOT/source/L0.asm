@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2026-10-28 ", $0D  // 33
+                db      " Dot-command - build 2026-11-07 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -844,7 +844,11 @@ CLS_Layer_0:
                 and     a
                 ld      a, $0E
                 jr      nz, CLS_No_Layer_0
-                  call    $0DAF
+            //  call    $0DAF       // DOES: in a dot $0000 is esxDOS
+                di
+                rst     $18         // CL-ALL in ROM 3, as SELECT does
+                dw      $0DAF
+                ei
                 jr      CLS_Layer_0
                 
 //              jr      Emit_Rst

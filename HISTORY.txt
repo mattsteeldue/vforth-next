@@ -888,3 +888,18 @@ NextBASIC without loading vForth. For now it prints the catalogue only,
 as MDR-CAT does: .mdr M2.MDR. Tried on CSpect.
 WiFi, first step: lib/UART.f (taken out of RPi0.f) and lib/ESP.f, a
 terminal and AT commands for the ESP module, not yet tried on the Next.
+
+
+\ build 20261107
+Dot-command .vforth: in LAYER 0, (CLS) called the ROM routine CL-ALL
+($0DAF) directly, but under a dot-command $0000-$1FFF holds the esxDOS
+ROM, not the Spectrum one; it now goes through rst $18, as SELECT
+already does. Tried on CSpect, CLS works in every LAYER.
+The classic-loader core is unchanged but for the build date.
+Dot-command .mdr: a spinner on the screen while the cartridge is being
+scanned; the catalogue goes to the current stream, so OPEN # 2 to a file
+before .mdr captures it all, while the spinner stays on the screen. The
+totals footer is 31 columns wide (K in 4 columns), so in LAYER 0 the K
+no longer wraps onto a line of its own; MDR-CAT of lib/MDR.f likewise.
+Tried on CSpect.
+

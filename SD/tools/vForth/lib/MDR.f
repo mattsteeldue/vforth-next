@@ -1,7 +1,7 @@
 \
 \ lib/MDR.f
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-11-02
+\ v-Forth 1.8 - NextZXOS version - build 2026-11-07
 \ MIT License (c) 1990-2026 Matteo Vitturi
 \
 \ Access to ZX Microdrive cartridge images (.MDR files): catalogue, sector
@@ -660,7 +660,7 @@ VARIABLE MDR-SKIP
 ;
 
 : MDR-KB ( d -- )
-    512 0 D+  1024 UM/MOD NIP  6 MDR-U.R  S"  K" TYPE
+    512 0 D+  1024 UM/MOD NIP  4 MDR-U.R  S"  K" TYPE
 ;
 
 \ the bad sectors, one a line; the highest is the tape junction
