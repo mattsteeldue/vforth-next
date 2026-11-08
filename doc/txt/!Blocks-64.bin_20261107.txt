@@ -1,5 +1,5 @@
 File: C:\Zx\Forth\F18\tools\vForth\!Blocks-64.bin
-Created: Sat Nov  7 17:42:26 2026
+Created: Sun Nov  8 18:07:44 2026
 
 See index at end of file.
 
@@ -144,7 +144,7 @@ Scr# 8
   0 ( Error messages    from #65 to #79 )
   1 Microdrive full.
   2 Not a program.
-  3 
+  3 defined after NEEDS ZAP.
   4 
   5 
   6 
@@ -8801,11 +8801,11 @@ Scr# 740
   7 M.FCG.K.FCACG.K.FCG.J
   8 M.....N...N...N.....J
   9 IBBBB.MCG.L.FCJ.BBBBH
- 10     J.N.......N.M
- 11 BBBBH.L.E---D.L.IBBBB
- 12 /.......M   J.......\
- 13 AAAAD.K.I---H.K.EAAAA
- 14     J.N.... ..N.M
+ 10     J.N       N.M
+ 11 BBBBH.L E---D L.IBBBB
+ 12 /...... M   J ......\
+ 13 AAAAD.K I---H K.EAAAA
+ 14     J.N       N.M
  15 BBBBH.L.FCACG.L.IBBBB
 
 Scr# 741 
@@ -8816,15 +8816,15 @@ Scr# 741
   4 AAD.L.FCCCCCCCG.L.EAA
   5   J...............M
   6    AAAAAAAAAAAAAAA
-  7 (reserved for level metadata)
-  8 (reserved for level metadata)
-  9 (reserved for level metadata)
- 10 (reserved for level metadata)
- 11 (reserved for level metadata)
- 12 (reserved for level metadata)
- 13 (reserved for level metadata)
- 14 (reserved for level metadata)
- 15 (reserved for level metadata)
+  7 ( reserved for metadata )
+  8 ( reserved for metadata )
+  9 ( reserved for metadata )
+ 10 ( reserved for metadata )
+ 11 ( reserved for metadata )
+ 12 ( reserved for metadata )
+ 13 ( reserved for metadata )
+ 14 ( reserved for metadata )
+ 15 ( reserved for metadata )
 
 Scr# 742 
   0 ( chomp-chomp maze 2 )
@@ -8837,11 +8837,11 @@ Scr# 742
   7 M.IBH.IBH.L.IBH.IBH.J
   8 M...................J
   9 IBBBB.ED.FCG.ED.BBBBH
- 10     J.IH.....IH.M
- 11 BBBBH...E---D...IBBBB
- 12 /.....K.M   J.K.....\
- 13 AAAAD.L.I---H.L.EAAAA
- 14     J...... ....M
+ 10     J.IH     IH.M
+ 11 BBBBH.. E---D ..IBBBB
+ 12 /.....K M   J K.....\
+ 13 AAAAD.L I---H L.EAAAA
+ 14     J..       ..M
  15 BBBBH.FG.FCG.FG.IBBBB
 
 Scr# 743 
@@ -8852,15 +8852,15 @@ Scr# 743
   4 AAD.W.IBBH.IBBH.W.EAA
   5   JO.............OM
   6    AAAAAAAAAAAAAAA
-  7 (reserved for level metadata)
-  8 (reserved for level metadata)
-  9 (reserved for level metadata)
- 10 (reserved for level metadata)
- 11 (reserved for level metadata)
- 12 (reserved for level metadata)
- 13 (reserved for level metadata)
- 14 (reserved for level metadata)
- 15 (reserved for level metadata)
+  7 ( reserved for metadata )
+  8 ( reserved for metadata )
+  9 ( reserved for metadata )
+ 10 ( reserved for metadata )
+ 11 ( reserved for metadata )
+ 12 ( reserved for metadata )
+ 13 ( reserved for metadata )
+ 14 ( reserved for metadata )
+ 15 ( reserved for metadata )
 
 Scr# 744 
   0 ( chomp-chomp maze 3 )
@@ -8873,11 +8873,11 @@ Scr# 744
   7 M.FCG.FCCG.FCCG.FCG.J
   8 M...................J
   9 IBBBB.FCG.W.FCG.BBBBH
- 10     J...........M
- 11 BBBBH.W.E---D.W.IBBBB
- 12 /.......M   J.......\
- 13 AAAAD.K.I---H.K.EAAAA
- 14     J.N.... ..N.M
+ 10     J..       ..M
+ 11 BBBBH.W E---D W.IBBBB
+ 12 /...... M   J ......\
+ 13 AAAAD.K I---H K.EAAAA
+ 14     J.N       N.M
  15 BBBBH.L.FCCCG.L.IBBBB
 
 Scr# 745 
@@ -8888,15 +8888,51 @@ Scr# 745
   4 AAAD.L.L.L.L.L.L.EAAA
   5    J.............M
   6     AAAAAAAAAAAAA
-  7 (reserved for level metadata)
-  8 (reserved for level metadata)
-  9 (reserved for level metadata)
- 10 (reserved for level metadata)
- 11 (reserved for level metadata)
- 12 (reserved for level metadata)
- 13 (reserved for level metadata)
- 14 (reserved for level metadata)
- 15 (reserved for level metadata)
+  7 ( reserved for metadata )
+  8 ( reserved for metadata )
+  9 ( reserved for metadata )
+ 10 ( reserved for metadata )
+ 11 ( reserved for metadata )
+ 12 ( reserved for metadata )
+ 13 ( reserved for metadata )
+ 14 ( reserved for metadata )
+ 15 ( reserved for metadata )
+
+Scr# 746 
+  0 ( chomp-chomp maze 4 )
+  1 EAAAAAAAAAAAAAAAAAAAD
+  2 M...................J
+  3 MOFG.FCG.FCG.FCG.FGOJ
+  4 M...................J
+  5 M.FG.K.FCCACCG.K.FG.J
+  6 M....N....L....N....J
+  7 M.FG.ICCG...FCCH.FG.J
+  8 M.........K.........J
+  9 IBBBB.EG.FBG.FD.BBBBH
+ 10     J.N       N.M
+ 11 BBBBH.L E---D L.IBBBB
+ 12 /...... M   J ......\
+ 13 AAAAD.K I---H K.EAAAA
+ 14     J.N       N.M
+ 15  BBBH.L.FCCCG.L.IBBB
+
+Scr# 747 
+  0 ( chomp-chomp maze 4 (cont'd)
+  1  M.................J
+  2  MOFD.FCG.K.FCG.EGOJ
+  3  M..N.....N.....N..J
+  4  AD.L.FCCCBCCCG.L.EA
+  5   J...............M
+  6    AAAAAAAAAAAAAAA
+  7 ( reserved for metadata )
+  8 ( reserved for metadata )
+  9 ( reserved for metadata )
+ 10 ( reserved for metadata )
+ 11 ( reserved for metadata )
+ 12 ( reserved for metadata )
+ 13 ( reserved for metadata )
+ 14 ( reserved for metadata )
+ 15 ( reserved for metadata )
 
 Scr# 777 
   0 ( 0< modified )
@@ -21890,6 +21926,8 @@ Restarting Supervisor
   743 ( chomp-chomp maze 2 (cont'd)
   744 ( chomp-chomp maze 3 )
   745 chomp-chomp maze 3 (cont'd)
+  746 ( chomp-chomp maze 4 )
+  747 ( chomp-chomp maze 4 (cont'd)
   777 ( 0< modified )
   778 ( Bernstein - Vazirani )
   779 ( Bernstein - Vazirani )

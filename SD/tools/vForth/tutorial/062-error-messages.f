@@ -168,7 +168,8 @@ NEEDS WHERE
 \
 \ Note that #16, #32, #48 and #64 fall on the first line of a Screen,
 \ which by convention carries a  ( Error messages ... )  header comment.
-\ Those four numbers are spent, not free.
+\ Those four numbers are spent, not free. Screen 4 has no header: its
+\ first line has to be message #0.
 \
 \ Screens 2 and 3 hold the NEGATIVE messages -32 to -1. They exist
 \ because THROW falls back to ERROR when nothing caught it (section 7),
@@ -315,7 +316,7 @@ NEEDS WHERE
 \ (a) You are extending the vForth library itself (a new inc/ or lib/
 \     module). Take free slots inside the standard area and document
 \     them at the top of your module. Free at the time of writing:
-\     #55, #61, #62 on Screen 7, and #65 to #78 on Screen 8 (#79 holds
+\     #55, #61, #62 on Screen 7, and #68 to #78 on Screen 8 (#79 holds
 \     a placeholder marking the end of the table) -- check with 9 LOAD
 \     before choosing, the table is shared and grows.
 \     lib/LOCALS.f is the model to copy: it reserves #57 to #60 and

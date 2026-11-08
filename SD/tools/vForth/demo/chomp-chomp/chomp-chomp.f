@@ -514,11 +514,11 @@ create maze-base
 ," M.FCG.K.FCACG.K.FCG.J "
 ," M.....N...N...N.....J "
 ," IBBBB.MCG.L.FCJ.BBBBH "
-,"     J.N.......N.M     "
-," BBBBH.L.E---D.L.IBBBB "
-," /.......M   J.......\ "
-," AAAAD.K.I---H.K.EAAAA "
-,"     J.N.... ..N.M     "
+,"     J.N       N.M     "
+," BBBBH.L E---D L.IBBBB "
+," /...... M   J ......\ "
+," AAAAD.K I---H K.EAAAA "
+,"     J.N       N.M     "
 ," BBBBH.L.FCACG.L.IBBBB "
 ," M.........N.........J "
 ," MOFCD.FCG.L.FCG.ECGOJ "
@@ -601,32 +601,65 @@ decimal
     block
     swap 64 * + ;
 
-\ load row r (0..20) of disk maze n into maze-run and UDGize it,
-\ mirroring what maze-copy does per row for the compiled path
-: load-maze-row ( n r -- )
-    dup >r
-    maze-line
-    r> 24 * maze-run +
-    2dup raw-row!
-    nip udgize ;
+\ Stage 5: the game never reads a BLOCK.  LOAD-MAZES copies every maze,
+\ once, into a heap area reserved right here, at HP, and set-maze-run
+\ copies from there.  The area moves HP ahead like any other heap
+\ allocation, so ZAP GAME saves it with the heap banks HP covers and
+\ game.bas loads it back with them: no block file in the standalone, no
+\ extra line in the loader.  SKIP-HP-PAGE moves HP to the next 8K page
+\ when the area does not fit below the watermark of the current one, so
+\ the area never straddles a page and one FAR maps any slot whole.
+\ Slot k (512 bytes) holds maze k in the 24-byte maze-run row shape,
+\ RAW characters (maze-copy UDGizes while copying to maze-run); slot 0
+\ is the compiled maze-base.  n-mazes slots, the last 8 bytes of each
+\ free: 15 at most fit in a page.
+\ #10 Wrong array index: more than 15 mazes; #12 Heap full: no page
+\ left after the current one.
+n-mazes 15 > 10 ?error
+n-mazes 9 lshift              \ bytes to reserve
+hp@ $E000 u< 0=  over hp@ $1FFF and +  page-watermark >  and  12 ?error
+dup skip-hp-page
+hp@  swap hp +!               \ move HP first: CONSTANT lays its
+                              \ header at HP, i.e. in slot 0
+constant MAZE-HA              \ heap address of slot 0
+n-mazes constant MAZE-SLOTS   \ slots reserved
+   variable  mazes-ready      \ slots LOAD-MAZES filled, 0 = none yet
 
-: load-maze ( n -- )
-    maze-h 0 do
-        dup i load-maze-row
-    loop drop ;
+\ map the maze page on MMU7, address of slot k there.  Valid until the
+\ next FAR or I/O call: re-take it after every BLOCK.
+: maze-slot ( k -- a )
+    9 lshift MAZE-HA + far ;
 
-\ prepare running image of maze: level 0 keeps the original compiled
-\ path unchanged; any other level loads the matching disk maze
+\ fill the maze area from maze-base and the disk mazes -- after an EDIT
+\ of a maze give it again at the ok prompt, no need to recompile.
+\ BLOCK first, maze-slot after, row by row: BLOCK goes through +3DOS
+\ and may leave another page in MMU7.
+\ #10 Wrong array index: n-mazes grew past the slots reserved above.
+: LOAD-MAZES ( -- )
+    n-mazes MAZE-SLOTS > 10 ?error
+    maze-base 0 maze-slot maze-h 24 * cmove
+    n-mazes 1 ?do
+        maze-h 0 do
+            j i maze-line
+            j maze-slot i 24 * +
+            raw-row!
+        loop
+    loop
+    n-mazes mazes-ready ! ;
+
+\ prepare running image of maze from the maze page; a level without
+\ its slot (LOAD-MAZES not given) plays the compiled maze-base
 : set-maze-run
     level @ n-mazes mod
-    ?dup 0= if
-        maze-base maze-run maze-copy
+    dup mazes-ready @ < if
+        maze-slot
     else
-        load-maze
-    then ;
+        drop maze-base
+    then
+    maze-run maze-copy ;
 
 
-set-maze-run  \ ...and do it now
+LOAD-MAZES set-maze-run  \ ...and do it now
 
 
 \ determine address of maze-cell x y
@@ -1385,6 +1418,12 @@ create cw-tab
 
 .( Interlude course )
 
+\ BREAK ([CAPS]+[SPACE]) stops the game through ABORT in inter-hunt,
+\ inter-flee and run-game.  In the development session ABORT ends at the
+\ ok prompt; in the ZAP standalone ABORT is patched to BYE, so BREAK goes
+\ back to BASIC like any Forth error.  To stay in Forth inside the
+\ standalone (to inspect HP@, level, score...), use QUIT instead of
+\ ABORT in those three places: ZAP does not patch QUIT.
 : inter-hunt
   0 27 do
    10 i .at sync-vid
@@ -1395,7 +1434,7 @@ create cw-tab
    [udg] P emitc
    bl emit sync-vid
    bleep
-   ?terminal if quit then
+   ?terminal if abort then
   -1 +loop ;
 
 
@@ -1409,7 +1448,7 @@ create cw-tab
    [udg] R emitc
    sync-vid
    bleep
-   ?terminal if quit then
+   ?terminal if abort then
   1 +loop ;
 
 
@@ -2015,7 +2054,7 @@ needs .s
   while
    heart-beat
    phase-complete
-   ?terminal if quit then
+   ?terminal if abort then
   repeat
 ;
 
@@ -2058,6 +2097,8 @@ CR CR CR
 needs TRUV needs INVV
 TRUV  .( Use: )
 INVV  .(  GAME )  CR
+INVV  .(  LOAD-MAZES )
+TRUV  .( after you EDIT a maze. ) CR
 TRUV  .( Arrorw keys to move. ) CR
       .( Cursor Joystick should work. ) CR
 INVV  .(  BREAK )

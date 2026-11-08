@@ -903,3 +903,22 @@ totals footer is 31 columns wide (K in 4 columns), so in LAYER 0 the K
 no longer wraps onto a line of its own; MDR-CAT of lib/MDR.f likewise.
 Tried on CSpect.
 
+Standalone executables, republished 2026-11-08 on the same build:
+ZAP" works and makes a single .nex file:  ' cccc ZAP" name.nex"
+saves the program cccc as a .nex that starts from the NextZXOS
+Browser, with no BASIC loader and no address to keep aligned.
+ZAP (the .bin files plus a BASIC loader) was reworked: NEEDS ZAP must
+come last, and ZAP itself stays out of the image (message #67 for a
+word defined after it); the session ZAP is given in is left as it was;
+in the image COLD runs the word, ERROR and ABORT end in BYE and WARNING
+is 0; the heap is saved one 16K bank per file, and Standard-Loader.bas
+loads as many as HP reached, reading the addresses from the image, so
+it no longer needs editing at each build.
+demo/chomp-chomp: the mazes are copied into the heap while the game is
+INCLUDEd, so the standalone (game.bas, or the new chomp-chomp.nex)
+plays every maze without the block file; BREAK goes back to BASIC.
+Tried on CSpect.
+Tutorial 059 rewritten; HELP ZAP and HELP ZAP"; the manual has new
+sections on ZAP and ZAP" and, in chapter 5, the whole table of error
+messages, negative ones included.
+

@@ -1,45 +1,39 @@
 \
 \ 059-standalone-executables.f
-\ Freezing a running vForth session into a standalone executable: ZAP / ZAP"
+\ Freezing a vForth program into a standalone executable: ZAP / ZAP"
 \
 \ vForth is normally a live, interactive system: forth18e.bin + ram8.bin are
 \ loaded by a BASIC loader, and you type commands at the "ok" prompt. ZAP and
-\ ZAP" go the other way: they take a SNAPSHOT of the current running system
-\ -- code, dictionary, block buffers, heap -- and freeze it into files that
-\ boot straight into one chosen word, with no vForth prompt, no editor, just
-\ your program starting up. This is how demo/chomp-chomp ships as a game a
-\ player can run without ever seeing vForth itself (see demo/chomp-chomp/,
-\ produced by ZAP, and demo/README.txt).
+\ ZAP" go the other way: they take a SNAPSHOT of the running system -- code,
+\ dictionary, user area, block buffers, heap -- and freeze it into files that
+\ boot straight into one chosen word, with no prompt and no editor: just your
+\ program starting up. This is how demo/chomp-chomp ships as a game a player
+\ can run without ever seeing vForth itself.
 \
-\ Two distinct output formats exist, covering the two vForth launch methods:
-\   ZAP   -- three raw .bin snapshots (-core/-user/-heap) played back by a
-\            BASIC loader such as Forth18_loader.bas. Fully working; this is
-\            exactly what demo/chomp-chomp/game.bas does.
-\   ZAP"  -- a single self-contained .nex file for the NextZXOS/CSpect
-\            "run .nex" loader. Present in the source and documented in the
-\            manual, but -- as section 7 shows by reading lib/ZAP~.f -- its
-\            auto-launch patch is currently commented out. Treat it as
-\            experimental, not yet a drop-in replacement for ZAP.
+\ Two output formats, two ways of starting the result:
+\   ZAP   -- raw .bin snapshots (-core, -user, one -heap per 16K bank) that
+\            a BASIC loader copied from Standard-Loader.bas loads and starts.
+\            demo/chomp-chomp/ holds game.bas and the files of ZAP GAME.
+\   ZAP"  -- one .nex file, started from the NextZXOS Browser (or .nexload):
+\            no loader to edit, no addresses to keep aligned.
+\            demo/chomp-chomp/chomp-chomp.nex is the same game made so.
+\ Both were confirmed on CSpect with chomp-chomp on 2026-11-08.
 \
 \ vForth-specific notes:
 \   - "Available only for non dot-version" (vForth manual, sec.2.8): both
-\     words assume the launcher-based vForth18_DOES boot flow (COLD reads
-\     Forth18_loader.bas-style memory images). vForth18_DOT (the NextZXOS
-\     dot-command variant) does not use this mechanism at all -- see
-\     tutorial 057 for the dot-command route to a standalone NextZXOS
-\     program instead.
-\   - ZAP patches the CURRENT session's live COLD definition (section 4)
-\     before it writes anything to disk. Read that section before typing
-\     ZAP interactively for the first time -- it is not undone by FORGET.
-\   - The manual calls this whole area "evolving for improvement" (sec.2.8);
-\     this tutorial documents it exactly as shipped, gotchas included.
+\     words assume the launcher-based vForth18_DOES memory layout. The
+\     dot-command variant (.vforth) cannot use them; tutorial 057 shows the
+\     dot-command route to a standalone NextZXOS program instead.
+\   - NEEDS ZAP (or NEEDS ZAP") must be the LAST thing loaded before ZAP:
+\     the image is the dictionary as it was just before it (section 3).
+\   - ZAP leaves the live session as it found it: it patches a few cells
+\     only while it writes, then puts them back (section 4). You can keep
+\     working, and ZAP again.
 \
 \ Starting FORTH (Brodie): no Brodie counterpart (vForth/NextZXOS extension).
-\ Reference: sec.2.8 (Creation of standalone executable), sec.5.1 (ZAP
-\ dictionary entry). ZAP" has no separate dictionary entry in the current
-\ manual; sec.2.8 documents it jointly with ZAP.
-\ Related: tutorial 042 (file I/O), tutorial 057 (dot commands -- the
-\ NextZXOS-native alternative covering the same ground as ZAP").
+\ Reference: sec.2.8 (Creation of standalone executable), sec.6.1 (ZAP
+\ dictionary entry). HELP ZAP, HELP ZAP" give the short form.
+\ Related: tutorial 042 (file I/O), tutorial 057 (dot commands).
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -55,308 +49,237 @@ CR
 .(     Type NEWTASK to unload.                     ) CR
 
 \ =============================================================================
-\ 1. The three things vForth is made of
+\ 1. What a running vForth is made of
 \ =============================================================================
 \
-\ Root CLAUDE.md's Memory Layout describes the running system as three
-\ regions, and ZAP saves exactly these three, as three separate files:
+\ ZAP saves the running system as three kinds of memory image:
 \
-\   1. CODE     -- from ORIGIN ($6366 in tape/loader mode) up to HERE: the
-\                  compiled Z80 code and the dictionary mirror area.
-\   2. USER     -- the "system" zone below $E000: S0/TIB/R0/USER buffers and
-\                  the block-buffer area (six 512-byte buffers).
-\   3. HEAP     -- the MMU7-paged dictionary heap living at $E000-$FFFF,
-\                  growing across 8K pages as you define words (lib/CLAUDE.md
-\                  "Heap Memory Facility").
+\   CORE  -- from ORIGIN ($6366, 25446) up to HERE: the compiled code of the
+\            core and of every word you defined, and the dictionary mirror.
+\   USER  -- from R0 @ (53652 on the current build) up to $E000: the user
+\            variables (BASE, DP, HP, WARNING...) and the seven 512-byte
+\            block buffers.
+\   HEAP  -- the names of the dictionary and anything else allotted there,
+\            living in 8K pages reached through MMU7 at $E000-$FFFF. Saved
+\            one 16K BASIC bank at a time: bank 16 (pages $20/$21), then
+\            17, 18, 19, as far as HP has reached.
 \
-\ A BASIC loader that re-creates all three in memory, in the same relative
-\ positions, and then jumps to the usual entry point reconstructs a working
-\ vForth session byte-for-byte -- including whatever you just typed at the
-\ prompt. ZAP's trick is to patch COLD (section 4) so that entry point runs
-\ straight into your chosen word instead of the interactive REPL.
+\ A loader that puts all three back where they were, and then enters at
+\ ORIGIN, rebuilds the session byte for byte. What makes it a standalone
+\ program rather than a copy of your session is how ZAP prepares the image
+\ (section 4): it starts your word instead of the ok prompt.
 
 
 \ =============================================================================
-\ 2. ZAP: the three-file snapshot
+\ 2. ZAP in practice
 \ =============================================================================
 \
-\ NEEDS ZAP
+\ A word to freeze -- anything that runs from start to end by itself:
+
+: HELLO-ZAP ( -- )
+    CR ." Hello from a standalone vForth image." CR
+    ." Press a key to go back to BASIC." CR
+    KEY DROP
+;
+
+\ Then, typed at the prompt:
 \
-\   INCLUDE demo/chomp-chomp.f     \ define your program first
-\   ZAP GAME                       \ note: bare name, NOT ' GAME
+\   NEEDS ZAP
+\   ZAP HELLO-ZAP
 \
-\ ZAP does not take its argument on the stack: like a plain word lookup, it
-\ PARSES the next token from the input line itself (it uses the run-time,
-\ non-immediate ' internally -- root CLAUDE.md's tick warning applies: this
-\ only works typed at the prompt or as top-level source, never inside a
-\ colon-definition). Usage is exactly:
+\ ZAP parses the next word itself, as ' does: write the bare name, not
+\ ' HELLO-ZAP. The name is also the base of the file names:
 \
-\   ZAP filename
+\   HELLO-ZAP-core.bin
+\   HELLO-ZAP-user.bin
+\   HELLO-ZAP-heap.bin       bank 16
+\   HELLO-ZAP-heap1.bin      bank 17, only if HP went past 16K; and so on
 \
-\ where filename is the NAME OF AN EXISTING WORD (the one you want to auto-
-\ launch), and it doubles as the base of the three output filenames:
+\ It also prints, as a reminder, the BASIC SAVE commands the three parts
+\ correspond to, e.g. for chomp-chomp:
 \
-\   filename-core.bin
-\   filename-user.bin
-\   filename-heap.bin
+\   SAVE "HEAP" BANK 16 TO 16
+\   SAVE "CORE" CODE 25446 19524
+\   SAVE "USER" CODE 53652 3692
 \
-\ demo/chomp-chomp/ contains exactly this triple (game-core.bin, game-user.bin,
-\ game-heap.bin), produced by  ZAP GAME  against the chomp-chomp demo. This
-\ tutorial does not run ZAP against a live word (section 4 explains why that
-\ is not safe to do casually inside a loaded tutorial) -- read on, then try
-\ it deliberately, in a session you are prepared to reboot afterward.
+\ The files go into the CURRENT directory: the one vForth was started from,
+\ not the one your source lives in (the PATH GOTCHA of tutorial 046).
+\
+\ Messages ZAP may give:
+\   #67 defined after NEEDS ZAP.   the word would not be in the image
+\   #14 Patching the wrong ...     COLD or ABORT are not in the state ZAP
+\                                  expects (e.g. a previous ZAP was broken
+\                                  off half way)
+\   #41 / #47 / #42                opening, writing or closing a file failed
 
 
 \ =============================================================================
-\ 3. What actually goes in each file
+\ 3. NEEDS ZAP comes last
 \ =============================================================================
 \
-\ From lib/ZAP.f (worth reading directly -- it is short):
+\ lib/ZAP.f opens with  MARKER NO-ZAP . ZAP does not save the dictionary as
+\ it is now: it saves the one NO-ZAP would give back -- the dictionary just
+\ before NEEDS ZAP, with its DP, HP, LATEST and vocabularies. ZAP itself is
+\ therefore left out of the deliverable (about 0.9 KB of code space and some
+\ heap), and so is anything defined after NEEDS ZAP. So:
 \
-\   SAVE-CORE   ( -- )   0 +ORIGIN HERE OVER -  ...  WRITE-CLOSE
-\ Everything from ORIGIN through the current HERE: the whole compiled system,
-\ including every word you defined interactively before calling ZAP.
+\   INCLUDE demo/chomp-chomp.f      \ the whole program first
+\   NEEDS ZAP                       \ then ZAP, last
+\   ZAP GAME
 \
-\   SAVE-USER   ( -- )   R0 @ $E000 OVER -  ...  WRITE-CLOSE
-\ The system zone from R0 (top of the return-stack/buffer area) up to $E000:
-\ S0/TIB/R0/USER and the six block buffers. Before saving, SAVE-USER forces
-\ the standard error-message screens into their buffers first:
-\   17 8 DO I BLOCK DROP LOOP
-\ (root CLAUDE.md's Blocks/Screens table: Screens 4-7 = Blocks 8-15 hold the
-\ text that ?ERROR / ERROR / MESSAGE display) -- so a standalone executable
-\ can still report a sensible error message without needing the SD block
-\ file open.
+\ A word defined after NEEDS ZAP is refused with message #67, and no file
+\ is written: it would not exist in the image.
 \
-\   SAVE-HEAP   ( -- )   $0000 FAR PAGE-SIZE ... $2000 FAR PAGE-SIZE ...
-\ Two consecutive 8K MMU7 pages (heap pages 0 and 1 -- one 16K bank in the
-\ BASIC-bank sense, root CLAUDE.md's "Banks vs Pages") starting at the base
-\ heap page. Only bank 16 is captured this way; SAVE-HEAP contains commented-
-\ out code (banks 17/18/19, guarded by `$4000 HP@ <` etc.) for programs whose
-\ heap has grown past the first 16K, disabled by default -- if your program
-\ defines enough words to overflow one heap bank, you must uncomment the
-\ matching block before calling ZAP (and edit the loader to load the extra
-\ file too, section 6).
+\ The heap banks saved are counted from that same HP: the HP of the image,
+\ not the live one. To try a two-bank image, push HP over 16K before
+\ NEEDS ZAP (that is how the multi-bank loader was tested):
+\
+\   #17000 HP !   NEEDS ZAP   ZAP HELLO-ZAP     \ writes -heap1.bin too
+\
+\ A bank holding data that HP never reached is not seen. Save it by hand,
+\ after ZAP, with its BASIC number (16-19), and load it in your loader:
+\
+\   19 SAVE-BANK                    \ writes HELLO-ZAP-heap3.bin
+\
+\ Simpler, when you can: allot the data in the heap at HP while the
+\ program is being INCLUDEd, so HP covers it. chomp-chomp does that with
+\ its mazes (MAZE-HA in demo/chomp-chomp.f): no extra bank, no extra line
+\ in the loader.
 
 
 \ =============================================================================
-\ 4. The live COLD patch -- read this before typing ZAP
+\ 4. How the image starts your word, and how it ends
 \ =============================================================================
 \
-\ ZAP's very first action, before any file is written, is:
+\ COLD begins with two NOOPs, left in the core on purpose (L3.asm) as a
+\ slot for ZAP. While it writes the CORE file, and only then, ZAP stores:
 \
-\   : ZAP
-\       '                       \ parse filename -> xt
-\       ['] COLD >BODY !        \ COLD's first cell := xt of your word
-\       ['] BYE                 \ 'BYE
-\       ['] COLD >BODY CELL+ !  \ COLD's second cell := xt of BYE
-\       ...
+\   COLD   NOOP NOOP  ->  [xt of your word] BYE
+\   ERROR  ... QUIT   ->  ... BYE
+\   ABORT  ... NOOP QUIT  ->  ... BYE QUIT
 \
-\ COLD is an ordinary colon-definition; its first two "tokens" are STOREd
-\ over directly. This is a live, in-place edit of the word COLD in the
-\ dictionary you are CURRENTLY running -- not a copy, not something scoped
-\ to the files being written. From the instant ZAP executes onward, in THIS
-\ session, COLD no longer does its usual S0/R0/BLK-INIT/ABORT/AUTOEXEC
-\ sequence: it runs your word, then BYE.
+\ So the image enters at ORIGIN, runs COLD, which runs your word, then BYE;
+\ and an error (ERROR, ABORT, ABORT") ends in BYE too, instead of at an ok
+\ prompt nobody asked for. Right after the write the three cells get their
+\ live values back: the session you are typing in is unchanged, and ZAP
+\ can be repeated. Error #14 guards against a session left half patched.
 \
-\ Consequences:
-\   - This is exactly why the three .bin files, reloaded by a BASIC loader
-\     that ends by invoking COLD, boot straight into your program: that IS
-\     the point, and it is documented behaviour (vForth manual sec.2.8:
-\     "ZAP modifies the definition of COLD by patching the first xt to be
-\     cccc and the second xt to be BYE").
-\   - It is NOT undone by FORGET. lib/ZAP.f's own MARKER TASK removes ZAP's
-\     definitions from the dictionary, but MARKER only unwinds the
-\     dictionary pointer -- it does not know how to reverse an arbitrary
-\     STORE into a word's body that already existed before the marker.
-\   - If you call ZAP interactively while continuing to work in the SAME
-\     session, nothing breaks immediately (WARM/QUIT keep running), but the
-\     NEXT time this session's COLD runs -- whether you type COLD yourself,
-\     or the machine resets and re-executes the in-memory image -- it jumps
-\     straight to your word and BYE, not back to the interactive prompt.
+\ While the USER file is written, WARNING is 0. In the image an error
+\ therefore prints only "msg#n": MESSAGE never goes looking for the block
+\ file, which a standalone program does not have. ZAP also FLUSHes first,
+\ so no buffer marked for update is frozen in the image.
 \
-\ Rule of thumb: treat ZAP as the LAST thing you do with a session before
-\ discarding it (power-cycle the real hardware, or reset the emulator, to
-\ get a clean interactive vForth back). Do not ZAP in the middle of ordinary
-\ development work.
+\ Two consequences to keep in mind:
+\
+\   - QUIT is NOT patched. A program that leaves with QUIT stops at the ok
+\     prompt of the standalone, with no block file and WARNING at 0 --
+\     handy to look around (HP@ U., variables...), but not what a player
+\     expects. Leave with ABORT (or simply return) to go back to BASIC.
+\     chomp-chomp uses ABORT on BREAK, and says in its source when QUIT
+\     is the better choice.
+\   - A standalone program has no block file: BLOCK, LOAD and LIST cannot
+\     work in it. Read what the program needs from blocks while it is
+\     being INCLUDEd, and keep it in memory.
 
 
 \ =============================================================================
-\ 5. Filename mechanics
+\ 5. The BASIC loader
 \ =============================================================================
 \
-\ FILENAME ( -- cccc ) parses one blank-delimited word and copies it into a
-\ fixed 48-byte buffer (CREATE FN 48 ALLOT); OPEN-FN appends one of the fixed
-\ suffix strings (S-CORE/S-USER/S-HEAP, e.g. ," -core.bin") and opens the
-\ result for write via NextZXOS F_OPEN mode %1110 (create-or-overwrite).
-\ Because the base name plus the longest suffix ("-heap.bin", still short of
-\ 48 bytes) must fit in FN, keep your ZAP target name reasonably short --
-\ there is no bounds check beyond the fixed ALLOT, so an oversized name
-\ silently overruns into whatever follows FN in the dictionary.
+\ ZAP writes the files, not the loader. Standard-Loader.bas (in the vForth
+\ directory) is the template; its listing, slightly abridged:
 \
-\ Files are created in the CURRENT working directory (whatever directory
-\ vForth itself was started from -- tutorial 046's PATH GOTCHA applies
-\ identically here).
+\   1110  CLEAR 25087
+\   1120  PROC getfilename()
+\   1150  LOAD c$ CODE 25446                core at ORIGIN
+\   1160  LET r=DPEEK 25466                 R0 as the core image holds it
+\   1165  LOAD d$ CODE r                    user area at R0
+\   1170  LOAD h$ BANK 16                   first heap bank
+\   1180  LET dp=DPEEK (r+26)               HP, from the user area
+\   1185  FOR i=1 TO INT (dp/16384)
+\   1190   LOAD f$+"-heap"+STR$ i+".bin" BANK 16+i
+\   1195  NEXT i
+\   1210  LET a=USR 25446                   enter at ORIGIN: COLD
+\   1220  STOP
+\   ...
+\   7990  DATA "Standard-Loader"            the base name
+\   ...
+\   9999  RESTORE : READ f$: SAVE f$+".bas" LINE 10
+\
+\ No address in it depends on the build: R0 is read from the core image
+\ (25466 = ORIGIN + $14), HP from the user area, and the number of heap
+\ banks from HP. To make the loader of your program, from BASIC:
+\
+\   NEW
+\   MERGE "Standard-Loader.bas"     \ MERGE: LOAD would autostart it
+\   7990 DATA "HELLO-ZAP"           \ the name you gave ZAP
+\   GO TO 9999                      \ saves HELLO-ZAP.bas, LINE 10
+\
+\ Put HELLO-ZAP.bas next to the .bin files (demo/chomp-chomp/game.bas is
+\ exactly this, with DATA "Game"). RUN it: the program starts, and when it
+\ ends BYE comes back from the USR and line 1220 stops with "Stop" -- the
+\ same report any error in the program leads to.
+\ A bank saved by hand with SAVE-BANK needs a line of its own, e.g.
+\   1197  LOAD f$+"-heap3.bin" BANK 19
 
 
 \ =============================================================================
-\ 6. Wiring up the BASIC loader
+\ 6. ZAP": one .nex file
 \ =============================================================================
 \
-\ ZAP writes the three .bin files but does not touch any .bas loader --
-\ per the manual: "You have to manually modify the basic loader
-\ 'Standard-Loader.bas' in order to load these three binary files and
-\ invoke a vForth cold-start that runs cccc instead."
+\   INCLUDE demo/chomp-chomp.f
+\   NEEDS ZAP"                      \ loads ZAP too; still the last thing
+\   ' GAME  ZAP" chomp-chomp.nex"
 \
-\ demo/chomp-chomp/game.bas is exactly that kind of edited loader (its own
-\ banner calls it a "Generic standalone executable loader", a sibling
-\ template to Standard-Loader.bas at the repo root -- same idea, same DATA-
-\ line convention, not guaranteed byte-identical): its DATA line has been
-\ changed from the generic placeholder to the real base name, e.g.:
+\ Unlike ZAP, ZAP" takes the word as an xt on the stack (hence the '), and
+\ the file name runs up to the closing quote; the extension is not added
+\ for you. A name over 47 characters gives error -18.
 \
-\   DATA "Game"
+\ The image is prepared exactly as for ZAP (same patch of COLD, ERROR and
+\ ABORT, same WARNING 0, same dictionary before NEEDS ZAP, same #67 and
+\ #14), but written in the NEX format: a 512-byte header, then the 16K
+\ banks 5, 2 and 0 (screen and system variables, dictionary, user area
+\ and buffers) and the heap banks HP has reached (16 and up). A bank of
+\ data beyond HP is added with its number before ZAP":
 \
-\ At RUN time the loader reads that DATA string, builds the three filenames
-\ by appending "-core.bin" / "-user.bin" / "-heap.bin", LOADs each at the
-\ matching fixed address (the same addresses SAVE-CORE/SAVE-USER/SAVE-HEAP
-\ used -- ORIGIN for the core image, and so on), and finally performs a
-\ machine-code COLD start at ORIGIN. Because COLD itself was patched
-\ (section 4) at the moment the snapshot was taken, that COLD start runs
-\ your word, then BYE -- the player never sees "ok".
+\   19 NEX-BANK  ' GAME ZAP" chomp-chomp.nex"
 \
-\ To ship your own: copy Standard-Loader.bas, change its DATA line to your
-\ ZAP base name, and place it alongside the three generated .bin files (see
-\ demo/chomp-chomp/ for the shipped example: game.bas + game-core.bin +
-\ game-user.bin + game-heap.bin).
+\ The .nex loader has no idea of vForth: it loads the banks and jumps to
+\ the PC of the header with the SP of the header. Both point into the 16
+\ bytes just below ORIGIN, which the core does not use: there ZAP" puts,
+\ for the time of the write, a small stub that sets IY to the system
+\ variables and jumps to ORIGIN -- a COLD start, with no address that
+\ changes from build to build.
+\
+\ There is no BASIC program to go back to. BYE is meant to end in a soft
+\ reset of the Next (NEXTREG 2,1, in the same stub). On CSpect, breaking
+\ out of chomp-chomp.nex ended instead with the BASIC report
+\ "4 Out of memory" (2026-11-08): harmless, but not the clean reset the
+\ design aims at.
+\
+\ The banks are saved as the development session sees them, bank 5 (the
+\ system variables and channels) included: the .nex starts with the
+\ NextZXOS state of the session that made it.
 
 
 \ =============================================================================
-\ 7. ZAP": the single-file .nex path (experimental)
+\ 7. Further reading
 \ =============================================================================
 \
-\ NEEDS ZAP"
-\
-\ ZAP" (lib/ZAP~.f -- FAT-mapped filename, root CLAUDE.md's quote-to-tilde
-\ rule) targets the NextZXOS/CSpect .nex loader instead of a BASIC loader.
-\ Documented usage (lib/ZAP~.f's own header comment):
-\
-\   ' cccc  ZAP" filename.nex"
-\
-\ Unlike ZAP, this DOES take its target as an xt already on the stack
-\ (hence '  before it), and the filename is consumed the same way OPEN">
-\ always works (tutorial-style: type the closing quote, it is not optional).
-\
-\ ZAP" builds a standard 512-byte .nex header (see the inline comment in
-\ lib/ZAP~.f linking the NEX file format wiki page) and then writes a fixed
-\ list of 16K banks, in the order the .nex format requires:
-\
-\   BANK-LIST:  5, 2, 0, 1, 8, 16
-\
-\ -- the base 128K working set (banks 5/2/0/1, matching CLAUDE.md's boot
-\ regions), bank 8, and heap bank 16 (the same one SAVE-HEAP captures for
-\ ZAP). Banks 3/4/6/7 and heap banks 17-19 are present in the source but
-\ commented out, exactly like SAVE-HEAP's extra banks (section 3) -- same
-\ caveat: uncomment the matching lines if your program needs more heap.
-\
-\ Header fields are POKEd directly via  value offset +HEADER !/C!  once
-\ NEX-HEADER is set up; nothing stops you from overriding one AFTER loading
-\ lib/ZAP~.f and BEFORE calling ZAP" -- see section 8 for why you may want to.
-
-
-\ =============================================================================
-\ 8. Known gotchas in the current ZAP" (found by reading lib/ZAP~.f)
-\ =============================================================================
-\
-\ Two things in the shipped source do not match the documented behaviour.
-\ Neither has been exercised on CSpect for this tutorial -- they are called
-\ out here as exactly what the source currently does, not as a confirmed
-\ CSpect failure.
-\
-\ (a) The auto-launch patch is commented out.
-\ ZAP" declares  ( xt -- CCCC )  and its header comment implies the same
-\ COLD-patch trick as ZAP (section 4), but every line that would perform it
-\ is prefixed with \ in the source:
-\
-\       \ first save current COLD
-\   \   ['] COLD >BODY       @ >R
-\   \   ['] COLD >BODY CELL+ @ >R
-\       \ put xt as first definition to execute at COLD start.
-\   \   ['] COLD >BODY       !
-\   \   ['] BYE
-\   \   ['] COLD >BODY CELL+ !
-\       ...
-\       \ restore COLD
-\   \   R> ['] COLD >BODY CELL+ !
-\   \   R> ['] COLD >BODY       !
-\
-\ As shipped, the xt you push before ZAP" is accepted (the stack comment
-\ still says so) but never consumed anywhere in the body -- it is simply
-\ left sitting on the stack once ZAP" returns, and COLD is left exactly as
-\ it was. A .nex built this way boots into whatever COLD currently does in
-\ that memory image: ordinary interactive vForth, UNLESS you have already
-\ live-patched COLD another way first (see the combination trick below).
-\
-\ (b) The saved Program Counter is a hardcoded literal, not derived from a
-\     symbol:
-\
-\    $7634        14  +HEADER  !
-\ \  4 +ORIGIN   14  +HEADER  !     <- an alternative form, also commented
-\ \  0           14  +HEADER  !     <- "0 = don't run, just load"
-\
-\ Dictionary/code addresses shift with every core rebuild (root CLAUDE.md's
-\ build-number convention), and this literal is not one of the canonical
-\ locations that /bump-build updates -- so it can silently go stale. As a
-\ concrete check: cross-referencing $7634 against the CURRENT build's
-\ project/vForth18_DOES/list/main.lst places it in the middle of COLD's own
-\ compiled token list (past the S0/USER-pointer setup, mid-way through a
-\ later LIT/PLUS pair) -- not at a genuine Z80 instruction boundary. Jumping
-\ there via the .nex loader's raw CPU JP is not the same thing as invoking
-\ COLD through the normal boot chain (root CLAUDE.md's Boot Sequence
-\ section: entry -> ColdRoutine -> COLD). Before relying on the PC field,
-\ verify it against the build you are actually running, or override it
-\ explicitly right before calling ZAP":
-\
-\   [ find the correct entry address for your build, e.g. from main.lst ]
-\   CONSTANT REAL-ENTRY
-\   REAL-ENTRY 14 +HEADER !        \ after NEEDS ZAP" has run NEX-HEADER's init
-\   ' MYWORD ZAP" myfile.nex"
-\
-\ Practical combination, until (a) is fixed upstream: since ZAP itself DOES
-\ patch COLD correctly (section 4), running ZAP first and ZAP" immediately
-\ after, in the same session, means ZAP"'s saved banks already contain a
-\ live-patched COLD -- ZAP" merely needs to jump into the ordinary boot
-\ chain (ORIGIN, not a raw literal into COLD's middle) to reach it:
-\
-\   ZAP MYWORD                     \ patches COLD (section 4); also writes
-\                                   \ 3 .bin files you can ignore here
-\   ' MYWORD ZAP" myfile.nex"      \ freezes the now-patched image to .nex
-\
-\ This still inherits caveat (b) above -- confirm the PC field before
-\ trusting the result to auto-run.
-
-
-\ =============================================================================
-\ 9. Further reading
-\ =============================================================================
-\
-\ lib/ZAP.f              full source of ZAP (SAVE-CORE/SAVE-USER/SAVE-HEAP).
-\ lib/ZAP~.f              full source of ZAP" (.nex header, BANK-LIST).
-\ demo/chomp-chomp.f      the demo program ZAP was run against for the
-\ demo/chomp-chomp/       shipped example (game.bas + the three .bin files).
-\ demo/README.txt         "Chomp-chomp.f" entry documents the same workflow
-\                         from the player's side.
-\ Standard-Loader.bas     the generic loader template to copy and edit
-\ Forth18_loader.bas      (repo root); the ordinary (non-ZAPped) loader for
-\                         comparison -- same structure, no DATA name to edit.
-\ tutorial 042            file-io (F_OPEN/F_WRITE/F_CLOSE primitives both
-\                         ZAP and ZAP" build on).
-\ tutorial 057            dot-commands: the NextZXOS-native alternative for
-\                         a standalone program, unrelated machinery, useful
-\                         point of comparison with ZAP"'s .nex approach.
+\ lib/ZAP.f              ZAP, SAVE-BANK; the patch and the image (ZAP-PATCH,
+\                         ZAP-IMAGE) shared with ZAP".
+\ lib/ZAP~.f             ZAP", NEX-BANK, the .nex header and the stub.
+\ Standard-Loader.bas    the loader template (section 5).
+\ demo/chomp-chomp/      game.bas + the ZAP GAME files, and chomp-chomp.nex.
+\ demo/chomp-chomp.f     the program; see its MAZE-HA and LOAD-MAZES for
+\                         data read from blocks at INCLUDE time.
+\ tutorial 042           file I/O: F_OPEN/F_WRITE/F_CLOSE, which ZAP uses.
+\ tutorial 046           the PATH GOTCHA: where files are written.
+\ tutorial 057           dot commands, the other way to a standalone program.
 
 \ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX
-\ This tutorial deliberately performs no file writes and no COLD patch of
-\ its own (sections 4 and 8 explain why that would not be safe to do simply
-\ by loading a tutorial). Verifying ZAP/ZAP" end to end means: NEEDS ZAP,
-\ ZAP a small test word, copy Standard-Loader.bas with its DATA line edited,
-\ and boot the result on CSpect or real hardware -- outside the scope of an
-\ automated T{ }T block.
+\ There is nothing to test from inside a tutorial: the result of ZAP runs
+\ only after a reboot through its loader. The headless emulator does the
+\ round trip in emu/test_zap_standalone.py (ZAP, then the files loaded as
+\ the loader would) and emu/test_zap_nex.py (ZAP", then the banks loaded
+\ as the .nex loader would).

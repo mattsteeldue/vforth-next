@@ -3,7 +3,7 @@
 \
 \ Isolated check of the NextZXOS window control codes 30/31, before
 \ building the Stage 3 (font in RAM) work of the chomp-chomp revision --
-\ see prompts/CHOMP-CHOMP-PLAN.md Part 5, risk noted in 5.4.
+\ see planners/archive/CHOMP-CHOMP-PLAN.md Part 5, risk noted in 5.4.
 \
 \ Code 30,n sets the current character width (n pixels) and is already
 \ used elsewhere in the repo.  Code 31,n installs a replacement font of

@@ -25,9 +25,15 @@
 \ A bank used for data beyond HP is not seen: save it by hand after
 \ ZAP, with its BASIC number, e.g.   19 SAVE-BANK
 \
+\ NEEDS ZAP must come last: the image is the dictionary as it was just
+\ before NEEDS ZAP (what the marker NO-ZAP would give back), so ZAP
+\ itself, and anything defined after it, stays out of the deliverable.
+\
 \ Error #14 "Patching the wrong definition": COLD or ABORT are not in
 \ the state ZAP expects (e.g. a previous ZAP was interrupted).
 \ Error #10 "Wrong array index": SAVE-BANK takes 16, 17, 18 or 19.
+\ Error #67 "defined after NEEDS ZAP": the word to launch would not be
+\ in the image.  Message #67 is reserved here.
 
 MARKER NO-ZAP
 
@@ -80,6 +86,42 @@ CREATE S-HEAP-N ," -heap1.bin"
 
 \ the QUIT found in ERROR is the real one if EXIT follows it
 ERROR-SLOT CELL+ @ ' EXIT - 14 ?ERROR
+
+
+\ The dictionary before NEEDS ZAP.  MARKER (L3.asm) keeps in the body
+\ of NO-ZAP: VOC-LINK, CURRENT, CONTEXT, the NFA of NO-ZAP itself (HP
+\ then) and the LATEST NO-ZAP replaced; DP then is where NO-ZAP starts.
+' NO-ZAP >BODY                  CONSTANT ZAP-MARK
+' NO-ZAP 2-                     CONSTANT ZAP-LIMIT
+
+\ the live values of the cells ZAP-IMAGE replaces
+CREATE ZAP-LIVE-CELLS 12 ALLOT
+
+
+\ give the session the dictionary of the image: the one before NEEDS
+\ ZAP, as NO-ZAP would, but keeping the live values in ZAP-LIVE-CELLS.
+\ DP goes down too, so PAD with it: nothing may use PAD meanwhile.
+: ZAP-IMAGE ( -- )
+    ZAP-LIVE-CELLS >R
+    VOC-LINK @  R@        !     ZAP-MARK            @ VOC-LINK !
+    CURRENT @   R@ 2+     !     ZAP-MARK 2+         @ CURRENT !
+    CONTEXT @   R@ 4 +    !     ZAP-MARK 4 +        @ CONTEXT !
+    HP @        R@ 6 +    !     ZAP-MARK 6 +        @ HP !
+    DP @        R@ 8 +    !     ZAP-LIMIT             DP !
+    CURRENT @ @ R> 10 +   !     ZAP-MARK 8 +        @ CURRENT @ !
+;
+
+
+\ and give the live session its dictionary back
+: ZAP-LIVE ( -- )
+    ZAP-LIVE-CELLS >R
+    R@ 10 + @ CURRENT @ !
+    R@ 8 +  @ DP !
+    R@ 6 +  @ HP !
+    R@ 4 +  @ CONTEXT !
+    R@ 2+   @ CURRENT !
+    R>      @ VOC-LINK !
+;
 
 
 \ true if COLD or ABORT are not as a live session keeps them
@@ -151,15 +193,16 @@ ERROR-SLOT CELL+ @ ' EXIT - 14 ?ERROR
 ;
 
 
-\ save core part in file "cccc-core.bin"
+\ save core part in file "cccc-core.bin", up to ZAP-LIMIT
 \ the patch lasts for the write alone: no error can be raised meanwhile
+\ the latest-word cell of CURRENT is in the core: ZAP-IMAGE sets it
 : SAVE-CORE ( xt -- )
     S-CORE                  \ xt a
     OPEN-FN >R              \ xt
-    ZAP-PATCH               \
+    ZAP-PATCH ZAP-IMAGE     \
     0 +ORIGIN HERE OVER -   \ a n
     R@ WRITE                \ f
-    ZAP-UNPATCH
+    ZAP-LIVE ZAP-UNPATCH
     R> CLOSE-CHECK
 ;
 
@@ -172,8 +215,10 @@ ERROR-SLOT CELL+ @ ' EXIT - 14 ?ERROR
     S-USER                  \ a
     OPEN-FN >R              \
     WARNING @  0 WARNING !  \ w
+    ZAP-IMAGE               \ w     DP, HP and the vocabularies
     R0 @ $E000 OVER -       \ w a n
     R@ WRITE                \ w f
+    ZAP-LIVE
     SWAP WARNING !          \ f
     R> CLOSE-CHECK
 ;
@@ -208,10 +253,11 @@ ERROR-SLOT CELL+ @ ' EXIT - 14 ?ERROR
 ;
 
 
-\ number of 16K banks the heap takes, HP included
+\ number of 16K banks the heap of the image takes, HP included: the HP
+\ before NEEDS ZAP, the one saved in "cccc-user.bin"
 \ a BASIC loader gets the same from the image: INT (hp/16384)+1
 : HEAP-BANKS ( -- n )
-    HP@ 14 RSHIFT 1+
+    ZAP-MARK 6 + @ 14 RSHIFT 1+
 ;
 
 
@@ -225,12 +271,13 @@ ERROR-SLOT CELL+ @ ' EXIT - 14 ?ERROR
 
 : ZAP ( -- cccc )
     '                       \ xt
+    DUP ZAP-LIMIT U< 0= 67 ?ERROR
     ?PATCHED 14 ?ERROR
     FN 48 ERASE
     HERE COUNT LEN !        \ a1
     FN LEN @ CMOVE
     .( SAVE "HEAP" BANK 16 TO ) HEAP-BANKS 15 + . CR
-    .( SAVE "CORE" CODE ) HERE 0 +ORIGIN DUP U. - U. CR
+    .( SAVE "CORE" CODE ) ZAP-LIMIT 0 +ORIGIN DUP U. - U. CR
     .( SAVE "USER" CODE ) $E000 R0 @     DUP U. - U. CR
     SAVE-CORE
     SAVE-USER

@@ -3,7 +3,7 @@
 \
 \ COMPARE ( a1 c1 a2 c2 -- n ) is in the core since build 2026-10-28,
 \ where it replaced the primitive (COMPARE) ( a1 a2 n -- n ), now
-\ inc/(compare).f. Plan: planners/COMPARE-CORE-PLAN.md.
+\ inc/(compare).f. Plan: planners/archive/COMPARE-CORE-PLAN.md.
 \
 \     INCLUDE test/COMPARE-TESTS.f
 \

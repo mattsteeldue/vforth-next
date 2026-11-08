@@ -17,3 +17,5 @@ dot/asm
 dot/sync
 SD/dot/asm
 SD/dot/sync
+demo/chomp-chomp/*-draft.txt
+SD/tools/vForth/demo/chomp-chomp/*-draft.txt

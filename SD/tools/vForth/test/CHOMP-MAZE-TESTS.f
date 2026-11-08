@@ -1,8 +1,9 @@
 \
 \ CHOMP-MAZE-TESTS.f
 \
-\ Unit tests for the Stage 4 maze-on-Screen infrastructure of
-\ demo/chomp-chomp.f (MAZE-SCR0, load-maze, set-maze-run, MAZE-CHECK).
+\ Unit tests for the maze infrastructure of demo/chomp-chomp.f: the
+\ Stage 4 mazes on Screen (MAZE-SCR0, maze-line, MAZE-CHECK) and the
+\ Stage 5 maze page (LOAD-MAZES, maze-slot, set-maze-run, section 8).
 \
 \ Load the game FIRST, then this file:
 \     INCLUDE demo/chomp-chomp.f
@@ -112,12 +113,12 @@ T{ 1 MAZE-CHECK  check-errors @ -> 0 }T
     dup MAZE-CHECK dot-count-check @
     swap level ! set-maze-run find-pills maze-dots @ ;
 
-T{ 0 dots-of -> 180 180 }T
-T{ 1 dots-of -> 180 180 }T
+T{ 0 dots-of -> 161 161 }T
+T{ 1 dots-of -> 161 161 }T
 
 \ level indexes the mazes cyclically: level n-mazes is maze 0 again, so
 \ this reads no disk block at all
-T{ n-mazes level ! set-maze-run find-pills maze-dots @ -> 180 }T
+T{ n-mazes level ! set-maze-run find-pills maze-dots @ -> 161 }T
 
 
 \ =========================================================================
@@ -187,18 +188,81 @@ T{ 0 check-errors !
     T{ 2 MAZE-CHECK  check-errors @ -> 0 }T
     T{ 3 MAZE-CHECK  check-errors @ -> 0 }T
 
-    T{ 1 dots-of -> 180 180 }T
-    T{ 2 dots-of -> 192 192 }T
-    T{ 3 dots-of -> 218 218 }T
+    T{ 1 dots-of -> 161 161 }T
+    T{ 2 dots-of -> 162 162 }T
+    T{ 3 dots-of -> 179 179 }T
 
     \ the new mazes must really be different layouts, or the level
     \ counter is walking through copies of one and none of the above
     \ proves much
-    T{ 2 level ! set-maze-run find-pills maze-dots @ 180 <> -> -1 }T
-    T{ 3 level ! set-maze-run find-pills maze-dots @ 180 <> -> -1 }T
+    T{ 2 level ! set-maze-run find-pills maze-dots @ 161 <> -> -1 }T
+    T{ 3 level ! set-maze-run find-pills maze-dots @ 161 <> -> -1 }T
 
     0 level ! set-maze-run find-pills
     cr ." DISK-MAZE-TESTS done - level 0 / maze-run restored" cr ;
+
+
+\ =========================================================================
+\ 8. Stage 5: the maze page.  The INCLUDE of the game has already given
+\    LOAD-MAZES; every slot must equal its source row by row (slot 0 the
+\    compiled maze-base, slot k the disk maze k), and set-maze-run must
+\    never read a block -- that is what lets the ZAP standalone run
+\    without !Blocks-64.bin.  Disk mazes are read from here too: since
+\    build 2026-09-25 an INCLUDE may read any number of blocks.
+\ =========================================================================
+
+T{ mazes-ready @ -> n-mazes }T
+
+\ the maze area lies below HP (so ZAP saves it with the heap) and
+\ inside one 8K page, below its watermark (one FAR maps any slot)
+T{ hp@  MAZE-HA MAZE-SLOTS 9 lshift +  u< -> 0 }T
+T{ MAZE-HA $1FFF and MAZE-SLOTS 9 lshift + page-watermark > -> 0 }T
+
+create slot-row  24 allot
+
+\ set maze-diff if the 24 bytes at a1 and a2 differ
+: row-diff ( a1 a2 -- )
+    24 0 do
+        over i + c@  over i + c@  <> if 1 maze-diff ! then
+    loop 2drop ;
+
+\ slot k equals its source.  maze-line (a BLOCK) comes before
+\ maze-slot, as in LOAD-MAZES: the other order would compare against
+\ whatever page the block read left in MMU7.
+: slot-same? ( k -- f )
+    0 maze-diff !
+    maze-h 0 do
+        dup if
+            dup i maze-line slot-row raw-row!
+        else
+            maze-base i 24 * + slot-row 24 cmove
+        then
+        dup maze-slot i 24 * + slot-row row-diff
+    loop drop
+    maze-diff @ 0= ;
+
+T{ 0 slot-same? -> -1 }T
+T{ 1 slot-same? -> -1 }T
+T{ 2 slot-same? -> -1 }T
+T{ 3 slot-same? -> -1 }T
+
+\ PREV moves on every BLOCK: read BLOCK 1 (the line being interpreted,
+\ always in memory), then play every level -- PREV must not move
+: no-block-read? ( -- f )
+    1 block drop  prev @
+    n-mazes 0 do i level ! set-maze-run loop
+    prev @ = ;
+
+T{ no-block-read? -> -1 }T
+
+\ without the page (mazes-ready 0) every level plays maze-base
+: fallback-same? ( -- f )
+    mazes-ready @  0 mazes-ready !
+    0 level ! set-maze-run save-maze-run
+    2 level ! set-maze-run maze-run-same?
+    swap mazes-ready ! ;
+
+T{ fallback-same? -> -1 }T
 
 
 \ =========================================================================

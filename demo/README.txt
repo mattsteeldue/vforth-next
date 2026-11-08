@@ -51,7 +51,9 @@ first clearing every level before it.
 To forget this demo you have to give COLD.
 This demo also come with a subdirectory named chomp-chomp that contains
 the result of execution of ZAP definition that is the simplest way to 
-produce a standalone executable of this game.
+produce a standalone executable of this game: start game.bas there to play
+it without vForth, or start chomp-chomp.nex (made by ZAP") from the
+Browser. Tutorial 059 shows how they were made.
 
 
 

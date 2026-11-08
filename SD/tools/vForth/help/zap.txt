@@ -1,0 +1,17 @@
+    ZAP    --
+
+Used in the form  ZAP cccc  it saves word cccc as a standalone
+executable: cccc-core.bin, cccc-user.bin, and one heap file per
+16K bank HP reached: cccc-heap.bin (bank 16), cccc-heap1.bin...
+The image runs cccc at COLD, then BYE; any error ends in BYE
+too (WARNING is 0 in it, no block file). QUIT is not patched:
+a QUIT in the program stops at its ok prompt.
+NEEDS ZAP must come last: the image is the dictionary before
+it, ZAP excluded. A word defined later gives #67.
+The live session is left as it was: ZAP can be repeated.
+Loader: MERGE "Standard-Loader.bas", put the name in the DATA
+line 7990, GO TO 9999 to save cccc.bas next to the files.
+n SAVE-BANK (16-19) saves a data bank HP never reached.
+Not for the dot-command version. See ZAP" and tutorial 059.
+
+Available after NEEDS ZAP

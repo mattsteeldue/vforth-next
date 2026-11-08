@@ -1,21 +1,45 @@
 \
-\ inc/zap~.f
+\ lib/ZAP~.f
 \
 
-.( ZAP" ) 
+.( ZAP" )
 
-\ produce a .nex file for standalone execution 
+\ Save a single .nex file for standalone execution, without vForth
+\ itself: it starts from the NextZXOS Browser (or .nexload), with no
+\ BASIC loader and no addresses to keep aligned.
 
 \ Usage:
-\ ' cccc  ZAP" filename" 
+\ ' cccc  ZAP" filename.nex"
 
 \ Example:
 \ INCLUDE DEMO/CHOMP-CHOMP.F
-\ NEEDS ZAP 
-\ ' GAME  ZAP" chomp-chomp.nex"  
+\ NEEDS ZAP"
+\ ' GAME  ZAP" chomp-chomp.nex"
+\
+\ The extension is not added: write it.  The image is prepared as ZAP
+\ does (lib/ZAP.f, loaded first): it boots straight into cccc, it leaves
+\ through BYE at the end of cccc and on any error, it is saved with
+\ WARNING at 0, and it is the dictionary as it was just before NEEDS ZAP,
+\ so NEEDS ZAP" must come last.  The live session is left as it was.
+\
+\ The file holds the 16K banks 5, 2 and 0 (screen, system variables,
+\ dictionary, user area and buffers), the heap banks HP has reached
+\ (16 and up), and any bank added with  n NEX-BANK  before ZAP" (e.g. the
+\ data bank 19 of chomp-chomp).  Banks are numbered as BASIC does.
+\
+\ There is no BASIC to go back to: BYE ends in a soft reset of the Next.
+\ The 16 bytes just below ORIGIN, unused by the core, hold the entry
+\ stub (IY to the system variables, then ORIGIN, i.e. a COLD start) and
+\ the address BYE returns to, through the SP of the .nex header, where
+\ NEXTREG 2,1 resets the machine.
+\
+\ Error #67 "defined after NEEDS ZAP": the word would not be in the image.
+\ Error #14 "Patching the wrong definition": as for ZAP.
+\ Error #10 "Wrong array index": NEX-BANK takes 0 to 111.
+\ Error -18 "Parsed string overflow": the file name is over 47 chars.
 
-NEEDS CHECKSUM
-NEEDS OPEN">
+\ it sets the marker NO-ZAP: ZAP" is out of the image too
+NEEDS ZAP
 
 BASE @
 
@@ -23,246 +47,211 @@ DECIMAL
 
 \ ________________________________________________________________________
 
-\ Header pointer
-VARIABLE NEX-HEADER
+\ 512 bytes header (https://wiki.specnext.dev/NEX_file_format)
+CREATE NEX-HEADER 512 ALLOT
 
-\ calc address of offset u inside NEX-HEADER
-\ enforce u to be between 0 and 511
+\ address of offset u inside NEX-HEADER
 : +HEADER ( u -- a )
-    DUP 512 U< NOT 33 ?ERROR    \ #33 Programming error
-    NEX-HEADER @ + 
+    NEX-HEADER +
 ;
 
-\ 8k page size
-  8 1024 * CONSTANT PAGE-SIZE
+\ file-handle of the .nex being written
+VARIABLE NEX-FH
 
-\ MMU7 address
-  $E000    CONSTANT PAGE-ADDR
+\ include the 16K bank n in the .nex
+: NEX-BANK ( n -- )
+    111 OVER U< 10 ?ERROR
+    1 SWAP 18 + +HEADER C!
+;
 
-\ File-handle
-VARIABLE FHANDLE
 
-\ If f is true, raise error n, but first close FHANDLE
-: ?ERROR-CLOSE ( f n -- )
-    SWAP IF
-        FHANDLE @ F_CLOSE DROP
-        ERROR
+\ the 8K pages a vForth session sees at $4000-$DFFF: banks 5, 2 and the
+\ first half of 0.  They are written from there, the others through MMU7.
+CREATE LOW-PAGES  $0A C, $0B C, $04 C, $05 C, $00 C,
+
+\ address at which 8K page p can be read, mapping it in MMU7 if needed
+: PAGE-AT ( p -- a )
+    $E000 SWAP                  \ a p
+    5 0 DO
+        DUP LOW-PAGES I + C@ = IF
+            NIP I 13 LSHIFT $4000 + SWAP
+        THEN
+    LOOP                        \ a p
+    OVER $E000 = IF
+        MMU7!
+    ELSE
+        DROP
     THEN
 ;
 
-\ write 8k page b to FHANDLE
-: FWRITE-PAGE ( b -- )
-    MMU7!
-    PAGE-ADDR PAGE-SIZE 
-    FHANDLE @ 
-    F_WRITE 47 ?ERROR-CLOSE
+\ write 8K page p, return the error flag only
+: WRITE-PAGE ( p -- f )
+    PAGE-AT 8192 NEX-FH @ WRITE
 ;
 
-\ ordered list of BANK
-\ 5,2,0,1,3,4,6,7,8,9,10,...,111
-CREATE BANK-LIST 
-HERE
-     5 C,  2 C,  0 C,  1 C,  
-\    3 C,  4 C,  6 C,  7 C,  
-     8 C, 
-    16 C, 
-\   17 C, 18 C, 19 C,
-HERE SWAP - CONSTANT BANK-NUM
-    
-\ ________________________________________________________________________
-    
-\ ZAP" 
-\ Usage:
-\ ' cccc ZAP" filename" 
-\ Given a xt, create or overwrite "filename.nex"
-: ZAP" ( xt -- CCCC )
-    
-    \ first save current COLD 
-\   ['] COLD >BODY       @ >R
-\   ['] COLD >BODY CELL+ @ >R
 
-    \ put xt as first definition to execute at COLD start.
-\   ['] COLD >BODY       !
-\   ['] BYE
-\   ['] COLD >BODY CELL+ !
-    
-    \ accept filename string and open for write (overwrite)
-    OPEN">
-    FHANDLE !
-    
-    \ write nex-header
-    0 +HEADER 512               \ a u    
-    FHANDLE @ F_WRITE           \ f
-    47 ?ERROR-CLOSE
-    
-    \ save pages
-    BANK-NUM 0 DO
-        BANK-LIST I + C@ 
-        DUP .
-        2* DUP 1+ SWAP 
-        FWRITE-PAGE 
-        FWRITE-PAGE 
+\ order of the bank data in the file: 5,2,0,1,3,4, then 6,7,8,...,111
+CREATE NEX-FIRST  5 C, 2 C, 0 C, 1 C, 3 C, 4 C,
+
+: NEX-ORDER ( i -- n )
+    DUP 6 < IF
+        NEX-FIRST + C@
+    THEN
+;
+
+\ write every bank flagged in the header, in file order
+: WRITE-BANKS ( -- f )
+    0                           \ f
+    112 0 DO
+        I NEX-ORDER             \ f n
+        DUP 18 + +HEADER C@ IF
+            2* DUP WRITE-PAGE   \ f p f1
+            SWAP 1+ WRITE-PAGE  \ f f1 f2
+            OR OR
+        ELSE
+            DROP
+        THEN
     LOOP
-    
-    \ restore COLD
-\   R> ['] COLD >BODY CELL+ !
-\   R> ['] COLD >BODY       !
-
-    \ close down
-    FHANDLE @ F_CLOSE 42 ?ERROR
 ;
+
 
 \ ________________________________________________________________________
 
+\ The 16 bytes below ORIGIN, as the image holds them:
+\ +0   ld iy,$5C3A  jp ORIGIN   entry (PC of the header), cold start
+\ +7   three bytes the entry push of ColdRoutine overwrites
+\ +10  the address BYE returns to (SP of the header points here)
+\ +12  nextreg 2,1              soft reset
+: NEX-STUB ( -- a )
+    0 +ORIGIN 16 -
+;
 
-\ 512 bytes header (https://wiki.specnext.dev/NEX_file_format)
-HERE 512 ALLOT  
-NEX-HEADER !  
-NEX-HEADER @ 512 ERASE 
+HEX
+CREATE NEX-CODE
+    FD C, 21 C, 5C3A ,          \ ld   iy, $5C3A
+    C3 C, 0 +ORIGIN ,           \ jp   ORIGIN
+    0 C, 0 C, 0 C,
+    0 +ORIGIN 4 - ,             \ return address of BYE
+    ED C, 91 C, 02 C, 01 C,     \ nextreg 2, 1
+DECIMAL
 
-\ "Next" string
-\ string with NEX file version, currently "V1.0", "V1.1", or "V1.2"
+\ the live bytes the stub replaces for the write
+CREATE NEX-SAVED 16 ALLOT
 
-CHAR   N   0 +HEADER C!
-CHAR   e   1 +HEADER C!
-CHAR   x   2 +HEADER C!
-CHAR   t   3 +HEADER C!
-CHAR   V   4 +HEADER C!
-CHAR   1   5 +HEADER C!
-CHAR   .   6 +HEADER C!
-CHAR   2   7 +HEADER C!
+: NEX-STUB-ON ( -- )
+    NEX-STUB NEX-SAVED 16 CMOVE
+    NEX-CODE NEX-STUB  16 CMOVE
+;
 
-
-\ RAM required: 0 = 768k, 1 = 1792k
-
-  1  8  +HEADER  C!
- 
-
-\ Number of 16k Banks to Load: 0-112
-\ (see also the byte array at offset 18, which must yield this count)
-\ It's calculated later.
-
-  5  9  +HEADER  C! 
-
-
-\ Loading-screen blocks in file (bit-flags):
-\ 128 = no palette block, 16 = Hi-Colour, 8 = Hi-Res, 4 = Lo-Res, 2 = ULA, 1 = Layer2
-\ The loader does use common banks to load the graphics into, and show it from, 
-\ i.e. bank5 for all ULA related modes and banks 9,10 and 11 for Layer2 graphics 
-\ (loading these banks afterwards as regular bank will thus replace the shown data on screen).
-\ Only Layer2, Tilemap and Lo-Res screens expect the palette block (unless +128 flag set). 
-\ While one can include multiple screen data in single file (setting up all relevant bits), 
-\ the recommended/expected usage is to have only one type of screen in NEX file.
-
-  0 10  +HEADER  C! 
-    
-
-\ Border colour: 0-7  
-
-  7 11  +HEADER  C!        
- 
- 
-\ Stack Pointer
- 
-  8 +ORIGIN @ 12  +HEADER  ! 
+: NEX-STUB-OFF ( -- )
+    NEX-SAVED NEX-STUB 16 CMOVE
+;
 
 
-\ Program counter (0 = don't run, just load)
-
- $7634        14  +HEADER  ! 
-\ 4 +ORIGIN   14  +HEADER  ! 
-\ 0           14  +HEADER  ! 
-
-
-\ "Number of extra files"
-
-  0 16  +HEADER  ! 
- 
- 
-\ byte flag (0/1) of 16k banks included in the file - this array is in regular 
-\ order 0..111, i.e. bank5 in file will set 1 to header byte at offset 18+5 = 23,
-\ but the 16kiB of data for bank 5 are first in the file (order of bank data
-\ in file is: 5,2,0,1,3,4,6,7,8,9,10,...,111) 
-
-\ Nine pages +1 must be saved (128k Memory + bank $08)
-  1  18       +HEADER C!        \ bank 5 = 8k pages $0A,0B (lower 16K RAM)
-  1  18 1+    +HEADER C!        \ bank 2 = 8k pages $04,05 
-  1  18 2+    +HEADER C!        \ bank 0 = 8k pages $00,01 
-  1  18 3 +   +HEADER C!        \ bank 1 = 8k pages $02,03
-
-\ 1  18 4 +   +HEADER C!        \ bank 3 = 8k pages $06,07
-\ 1  18 5 +   +HEADER C!        \ bank 4 = 8k pages $08,09
-\ 1  18 6 +   +HEADER C!        \ bank 6 = 8k pages $0C,0D
-\ 1  18 7 +   +HEADER C!        \ bank 7 = 8k pages $0E,0F
-
-  1  18 8 +   +HEADER C!        \ bank 8 = 8k pages $10,11
-
-\ Heap
-  1  18 16 +  +HEADER C!        \ bank 16 = 8k pages $20,21
-\ 1  18 17 +  +HEADER C!        \ bank 17 = 8k pages $22,23
-\ 1  18 18 +  +HEADER C!        \ bank 18 = 8k pages $24,25
-\ 1  18 19 +  +HEADER C!        \ bank 19 = 8k pages $26,27
-
-\ now compute: Number of 16k Banks to Load: 0-112
-  18 +HEADER  112  CHECKSUM  9  +HEADER  C! 
+\ set the fields that depend on the image: SP, PC, banks and their count,
+\ RAM required (768K is enough up to bank 47)
+: NEX-HEADER! ( -- )
+    NEX-STUB 10 + 12 +HEADER !
+    NEX-STUB      14 +HEADER !
+    5 NEX-BANK  2 NEX-BANK  0 NEX-BANK
+    HEAP-BANKS 0 DO
+        I 16 + NEX-BANK
+    LOOP
+    0 112 0 DO
+        I 18 + +HEADER C@ +
+    LOOP
+    9 +HEADER C!
+    0 112 48 DO
+        I 18 + +HEADER C@ OR
+    LOOP
+    8 +HEADER C!
+;
 
 
-\ Layer2 "loading bar" 0 = OFF, 1 = ON (works only in combination with Layer2 screen data)
+\ ________________________________________________________________________
 
-  0 130  +HEADER  C! 
-
-
-\ "Loading bar" colour (0..255) (for 640x256x4 mode the byte defines pixels pair)   
-
-  0 131  +HEADER  C! 
-
-
-\ Loading delay per bank (0..255 amount of frames), 0 = no delay
-
-  0 132  +HEADER  C! 
-
-
-\ Start delay (0..255 amount of frames), 0 = no delay
-
-  0 133  +HEADER  C! 
-
-
-\ Preserve current Next-Registers values (0 = reset machine state, 1 = preserve)
-
-  0 134  +HEADER  C! 
-  
-  
-\ Required core version, three bytes 0..15 "major", 0..15 "minor", 0..255 "subminor"
-\  version numbers. (core version is checked only when reported machine-ID is 10 = "Next",
-\ on other machine or emulator=8 the latest loaders will skip the check)
-
-  3 135  +HEADER  C! 
-  0 136  +HEADER  C! 
-  0 137  +HEADER  C! 
-
-
-\ Timex HiRes 512x192 mode colour, encoded as for port 255 = bits 5-3. 
-\ I.e. values 0, 8, 16, .., 56 (0..7 * 8)
-\ When screens 320x256x8 or 640x256x4 are used, this byte is re-used as palette 
-\ offset for Layer 2 mode, values 0..15
-
-  1 138  +HEADER  C!  
+\ ZAP"
+\ Usage:
+\ ' cccc ZAP" filename.nex"
+\ Given a xt, create or overwrite "filename.nex"
+\ the patch, the stub and WARNING at 0 last for the bank writes alone:
+\ no error can be raised meanwhile
+: ZAP" ( xt -- cccc )
+    DUP ZAP-LIMIT U< 0= 67 ?ERROR
+    ?PATCHED 14 ?ERROR
+    [CHAR] " WORD COUNT         \ xt a n
+    DUP 47 > -18 ?ERROR
+    FN 48 ERASE
+    FN SWAP CMOVE               \ xt
+    \ no buffer may be left marked for update in the image
+    FLUSH
+    NEX-HEADER!
+    ZAP-OPEN NEX-FH !
+    .FN
+    NEX-HEADER 512 NEX-FH @ WRITE   \ xt f
+    MMU7@ >R
+    WARNING @ >R  0 WARNING !
+    NEX-STUB-ON
+    SWAP ZAP-PATCH ZAP-IMAGE    \ f
+    WRITE-BANKS OR              \ f
+    ZAP-LIVE ZAP-UNPATCH
+    NEX-STUB-OFF
+    R> WARNING !
+    R> MMU7!
+    NEX-FH @ CLOSE-CHECK
+;
 
 
-\ Entry bank = bank to be mapped into slot 3 (0xC000..0xFFFF address space), 
-\ the "Program Counter" (header offset +14) and "File handle address" (header offset +140) 
-\ are used by NEX loader after the mapping is set 
-\ (The default ZX128 has bank 0 mapped after reset, which makes zero value nice default).
+\ ________________________________________________________________________
 
-  0 139  +HEADER  C!   
+\ The fixed fields of the header
 
+NEX-HEADER 512 ERASE
 
-\ File handle address: 0 = NEX file is closed by the loader, 1..0x3FFF values 
-\ (1 recommended) = NEX loader keeps NEX file open and does pass the file handle in 
-\ BC register, 0x4000..0xFFFF values (for 0xC000..0xFFFF see also "Entry bank") = NEX 
-\ loader keeps NEX file open and the file handle is written into memory at the desired address.
+\ "Next" string and file version: "V1.0", "V1.1" or "V1.2"
+CREATE NEX-MAGIC ," NextV1.2"
+NEX-MAGIC COUNT 0 +HEADER SWAP CMOVE
 
-  0 140  +HEADER  !  
+\ RAM required: 0 = 768k, 1 = 1792k              (8, set by ZAP")
+\ Number of 16k Banks to Load: 0-112              (9, set by ZAP")
+
+\ Loading-screen blocks in file (bit-flags): none
+  0 10  +HEADER  C!
+
+\ Border colour: 0-7
+  7 11  +HEADER  C!
+
+\ Stack Pointer                                   (12, set by ZAP")
+\ Program counter (0 = don't run, just load)      (14, set by ZAP")
+
+\ Number of extra files
+  0 16  +HEADER  !
+
+\ byte flag (0/1) of 16k banks included in the file, from offset 18,
+\ in regular order 0..111                         (set by NEX-BANK)
+
+\ Layer2 "loading bar", its colour, loading delay per bank, start delay
+  0 130  +HEADER  C!
+  0 131  +HEADER  C!
+  0 132  +HEADER  C!
+  0 133  +HEADER  C!
+
+\ Preserve current Next-Registers values (0 = reset machine state)
+  0 134  +HEADER  C!
+
+\ Required core version: major, minor, subminor
+  3 135  +HEADER  C!
+  0 136  +HEADER  C!
+  0 137  +HEADER  C!
+
+\ Timex HiRes colour / Layer 2 palette offset: no screen, unused
+  0 138  +HEADER  C!
+
+\ Entry bank, mapped into slot 3 ($C000-$FFFF): bank 0, as under BASIC
+  0 139  +HEADER  C!
+
+\ File handle address: 0 = the loader closes the .nex file
+  0 140  +HEADER  !
 
 
 BASE !

@@ -1,0 +1,14 @@
+    ZAP"    xt --
+
+Used in the form  ' cccc ZAP" name.nex"  it saves word cccc as
+one .nex file, started from the NextZXOS Browser: no loader.
+The image is prepared as by ZAP: it runs cccc at COLD, ends in
+BYE, any error included, WARNING is 0, and it is the dictionary
+before NEEDS ZAP" (a word defined later gives #67).
+The file holds banks 5, 2, 0 and the heap banks HP reached;
+n NEX-BANK (0-111) adds a bank before ZAP".
+The extension is not added; a name over 47 chars gives -18.
+BYE has no BASIC to go back to: it is meant to soft-reset.
+Not for the dot-command version. See ZAP and tutorial 059.
+
+Available after NEEDS ZAP"
