@@ -13,6 +13,15 @@ marker redo
 
 variable release        \ 0 = test in place (debug), 1 = final $2000 build
 
+\ *** BEFORE SAVING THE DOT-COMMAND, RAISE THE RELEASE FLAG ***
+\ With release at 0, dot-relative returns the live address: the file saved
+\ below would load HL with an address of the vForth dictionary instead of
+\ the message at $2000, and .helloworld would print garbage or worse.
+\ For the release build write   1 release !   on the line below, then
+\ load this file again (redo first, to forget the previous attempt).
+\ Check before save-bytes:  org @ .  must be close to HERE, never 0, and
+\ the file is 27 bytes long.
+
 variable org
 variable msg
 

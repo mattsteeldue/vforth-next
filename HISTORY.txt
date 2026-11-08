@@ -921,4 +921,9 @@ Tried on CSpect.
 Tutorial 059 rewritten; HELP ZAP and HELP ZAP"; the manual has new
 sections on ZAP and ZAP" and, in chapter 5, the whole table of error
 messages, negative ones included.
+demo/term0.dot.f is back: the source of the .term0 dot-command (a
+terminal for the Raspberry Pi Zero, in /dot since 2024), lost in 2024.
+demo/helloworld.dot.f says in a comment that the release flag must be
+raised before saving the dot-command. Tutorial 057's .hello tried on
+CSpect from a NextBASIC program (tutorial/057-hello.png).
 
