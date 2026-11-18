@@ -26,12 +26,12 @@
 : TIMER  ( -- u )  23672 @ ;
 RESET-TIMER
 
-\ 17-time-and-motion.md:266
+\ 17-time-and-motion.md:269
 : DISPLAY  ( -- )  CR  23672 @ .  TIMER . ;
 
 \ --- the translation
 
-\ 17-time-and-motion.md:271
+\ 17-time-and-motion.md:274
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 RESET-TIMER DISPLAY  100 WAIT-FRAMES  DISPLAY

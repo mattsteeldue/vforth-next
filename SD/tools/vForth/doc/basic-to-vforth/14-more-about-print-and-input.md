@@ -196,6 +196,7 @@ capture a key and test it later:
 <!-- no-test -->
 ```forth
 NEEDS KEYBOARD
+NEEDS 2VARIABLE
 2VARIABLE RIGHT-KEY
 : DEFINE-RIGHT  ( -- )
     ." Press a key for right" CR
@@ -305,12 +306,14 @@ where the cursor stands, and the answer is typed right after it.
 
 <!-- no-test -->
 ```forth
+NEEDS <>
 : TYPEWRITER  ( -- )
     BEGIN  KEY DUP 13 <>  WHILE  EMIT  REPEAT  DROP ;
 ```
 
 `KEY` waits by itself, so the `PAUSE 0` disappears; `BEGIN ... WHILE ...
-REPEAT` is the loop of [Chapter 3](03-looping.md). `NEEDS <>` first.
+REPEAT` is the loop of [Chapter 3](03-looping.md). `<>` is not in the
+core: `NEEDS <>` loads it.
 
 **Waiting for a key, with a message.** The listing that stops every 20
 lines, since vForth never asks `scroll?`:

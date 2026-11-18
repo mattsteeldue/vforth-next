@@ -927,3 +927,19 @@ demo/helloworld.dot.f says in a comment that the release flag must be
 raised before saving the dot-command. Tutorial 057's .hello tried on
 CSpect from a NextBASIC program (tutorial/057-hello.png).
 
+Republished 2026-11-18 on the same build (the core binary does not change):
+LAYER24 (Layer 2 640x256, 16 colours) now draws in place: everything came
+out shifted right, columns 0..255 from column 384 and the rest lost, on
+CSpect and on the real Next alike. L4-PIXELADD used DAA as a modulo 10 on
+the page number without clearing the flags first, and L4-PLOT, L4-POINT
+and L4-XPLOT leave the half-carry set just before it. An OR A before the
+DAA fixes it; L22-PIXELADD (LAYER22) got the same guard, though it worked.
+Tried on the real Next: demo/layer24-check.f (new, picture in
+demo/layer24-check.png) and demo/layer22-demo.f.
+demo/Fedora.f tried on the real Next (demo/Fedora.png).
+basic-to-vforth guide: chapter 17, the earthquake listing opens with
+LAYER 2,1, since NextBASIC accepts LAYER AT on Layer 2 only; QUAKE
+shakes in LAYER0, 11, 12 and 13. Chapter 15: contrast and transparent
+colours, and the paper column, on LAYER0 (not on LAYER12, where Timex
+HiRes has one ink and one paper). Chapter 14: NEEDS lines completed.
+

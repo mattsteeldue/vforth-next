@@ -18,8 +18,8 @@
 \ WARNING: this mode assumes the five 16K banks starting at the Layer 2
 \ active bank (NextReg $12) are reserved for the framebuffer.  NextZXOS
 \ allocates only three banks (48K) for the standard 256x192 Layer 2, so
-\ the two extra banks must be free.  Validate on real hardware / CSpect
-\ before relying on it.
+\ the two extra banks must be free.  Checked on the real Next 2026-11-18
+\ with demo/layer24-check.f.
 \
 .( LAYER24-GRAPHICS )
 

@@ -23,7 +23,7 @@ CREATE BUF 80 ALLOT
 
 \ --- the translation
 
-\ 14-more-about-print-and-input.md:289
+\ 14-more-about-print-and-input.md:290
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : DOUBLE  ( -- )

@@ -9,7 +9,7 @@
 
 \ --- the translation
 
-\ 14-more-about-print-and-input.md:265
+\ 14-more-about-print-and-input.md:266
 : POWERS  ( -- )
     6 1 DO
         CR  I 3 .R  I I * 6 .R  I I * I * 6 .R

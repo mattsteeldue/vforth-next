@@ -172,8 +172,11 @@ library keeps no copy of what it sent. The functions `SPRITE s` and
 `SPRITE AT(s,c)` have no counterpart: the program knows where it put
 each sprite, and keeps it in its own variables or structures.
 
-**`LAYER AT` is a register for each layer.** BASIC moves the current
-layer; vForth writes the offset register of the layer you mean:
+**`LAYER AT` is a register for each layer.** The manual says BASIC
+moves the current layer, but in practice it accepts `LAYER AT` only on
+Layer 2: in Layer 0 and in the Layer 1 modes it stops with `Invalid
+mode`. vForth writes the offset register of the layer you mean, in any
+mode:
 
 | Layer | x | y |
 |---|---|---|
@@ -525,12 +528,12 @@ after `SPRITES-ON`: sprites on, under the border.
 pixels, in both directions at random, and then goes back in place:
 
 ```
-10 LAYER 1,1: CLS: PRINT AT 10,10;"EARTHQUAKE!"
+10 LAYER 2,1: CLS: PRINT AT 10,10;"EARTHQUAKE!"
 20 FOR %n=1 TO 50
 30 LAYER AT %RND 8,%RND 8
 40 PAUSE 1
 50 NEXT %n
-60 LAYER AT 0,0: LAYER 0
+60 LAYER AT 0,0: LAYER 2,0: LAYER 0
 ```
 
 ```forth
@@ -541,13 +544,17 @@ NEEDS RND
 QUAKE  $26 REG@ .  $27 REG@ .   \ => 0 0
 ```
 
-BASIC moves the current layer, but not Layer 0: there `LAYER AT` stops
-with `Invalid mode`. `LAYER 1,1` is the same ULA screen, 256 by 192,
-seen as Layer 1, and `LAYER 0` at the end goes back. vForth writes the
-offset registers of the ULA, `$26` and `$27` in the table above. The ULA is
-also the screen vForth types on: `LAYER12` is a Layer 1 mode, so
-`QUAKE` shakes the prompt itself, with no change of mode and nothing to
-load. `8 RND` is `%RND 8`, from 0 to 7 ([Chapter 10](10-random-numbers.md)).
+BASIC accepts `LAYER AT` only on Layer 2: in Layer 0 and in `LAYER 1,1`
+it stops with `Invalid mode`. So the listing prints on Layer 2
+(`LAYER 2,1`), and at the end `LAYER 2,0` hides it again before going
+back to `LAYER 0`. vForth writes the offset registers of the ULA, `$26`
+and `$27` in the table above, which BASIC cannot reach. The ULA is also
+the screen vForth types on, so `QUAKE` shakes the prompt itself, with
+no change of mode and nothing to load. It works in every mode that
+shows the ULA: `LAYER0`, `LAYER11`, `LAYER12`, `LAYER13`. In `LAYER10`
+(LoRes, registers `$32` and `$33`) and in `LAYER2` (`$16` and `$17`)
+the screen stays still, because those layers have registers of their
+own. `8 RND` is `%RND 8`, from 0 to 7 ([Chapter 10](10-random-numbers.md)).
 The offset wraps around: what leaves the screen on one side comes back
 on the other, so the shake shows a thin strip of the opposite edge.
 `1FRAME` is the `PAUSE 1`: without a wait the Forth loop would be over

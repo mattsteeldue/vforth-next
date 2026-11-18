@@ -7,13 +7,13 @@
 
 \ --- words defined earlier in the guide
 
-\ 15-colours.md:131
+\ 15-colours.md:139
 : RGB8  ( r g b -- c )  2/  SWAP 2 LSHIFT OR  SWAP 5 LSHIFT OR ;
 7 3 0 RGB8 .                    \ => 236
 
 \ --- the translation
 
-\ 15-colours.md:265
+\ 15-colours.md:276
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : ORANGE  ( -- )

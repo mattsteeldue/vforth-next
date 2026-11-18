@@ -58,14 +58,22 @@ you from the `K Invalid colour` that a wrong control code raises (and
 that ends in BASIC, as Chapter 13 explains). It also means that BASIC's
 special values do not get through: `9 .INK` is `1 .INK`, blue, not the
 contrasting ink, and `8 .BRIGHT` is `0 .BRIGHT`. For 8 (transparent) and
-9 (contrast), send the code and its argument yourself:
+9 (contrast), send the code and its argument yourself, on Layer 0:
 
 <!-- no-test -->
 ```forth
+NEEDS LAYER0
+LAYER0 CLS
 16 EMITC 9 EMITC                \ INK 9
 17 EMITC 8 EMITC                \ PAPER 8
 19 EMITC 8 EMITC                \ BRIGHT 8
 ```
+
+Not on `LAYER12`, where vForth starts: Timex HiRes has one ink and one
+paper for the whole screen, and the paper is always the complement of
+the ink. Setting the ink sets the paper too (blue ink, yellow paper),
+and setting the paper sets the ink. Transparent and contrasting have no
+meaning there, and `16 EMITC 9 EMITC` stops with `K Invalid colour`.
 
 **One word per layer.** BASIC's `LAYER m,n` becomes `LAYER0`, `LAYER10`,
 `LAYER11`, `LAYER12`, `LAYER13` and `LAYER2`, each loaded with `NEEDS`
@@ -222,7 +230,9 @@ screen, one paper on each line.
 
 `I` is the loop index, used directly as the colour. The `PRINT` without
 a `;` goes to the next line; in Forth that is `CR`, which comes after
-`7 .PAPER`, so that only the four spaces take the colour.
+`7 .PAPER`, so that only the four spaces take the colour. Try it after
+`LAYER0 CLS`: on `LAYER12` the whole screen has one paper, and the
+column does not show.
 
 **An accent.** An `e` with an apostrophe printed over it.
 
@@ -252,7 +262,8 @@ NEEDS .AT
     6 0 .AT  5 3 ATTR . ;
 ```
 
-It prints 49: paper 6 times 8, plus ink 1.
+It prints 49: paper 6 times 8, plus ink 1. Like `ATTR`, it is meant
+for Layer 0.
 
 **Changing a colour of the palette.** Red ink becomes orange, on the
 standard ULA screen: entry 2 of the first ULA palette.

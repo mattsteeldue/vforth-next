@@ -9,8 +9,9 @@
 
 \ --- the translation
 
-\ 14-more-about-print-and-input.md:307
+\ 14-more-about-print-and-input.md:308
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
+NEEDS <>
 : TYPEWRITER  ( -- )
     BEGIN  KEY DUP 13 <>  WHILE  EMIT  REPEAT  DROP ;

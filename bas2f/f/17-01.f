@@ -24,5 +24,5 @@ RESET-TIMER
 
 \ --- the translation
 
-\ 17-time-and-motion.md:266
+\ 17-time-and-motion.md:269
 : DISPLAY  ( -- )  CR  23672 @ .  TIMER . ;

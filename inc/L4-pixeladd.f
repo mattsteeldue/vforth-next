@@ -28,6 +28,10 @@ CODE L4-PIXELADD  ( x y -- a )
     06 C, 05 C,       \ ld   b, 5
     ED C, 2A C,       \ bsrl de, b  \ e = byteX >> 5 = which 8K page (0..9)
     7B C,             \ ld   a, e
+    B7 C,             \ or   a     \ clear H and N: DAA reads the flags,
+                      \             \ and L4-PLOT's `1 AND` leaves H set
+                      \             \ (DAA then added 6: pages 0..3 went
+                      \             \ to 6..9, the rest off screen)
     27 C,             \ daa         \ DAA trick for fast modulo 10: if A nibble_low > 9,
                       \             \ DAA adds 6 to nibble_low (causing carry to high nibble);
                       \             \ then AND 0F extracts the low nibble = A mod 10.
