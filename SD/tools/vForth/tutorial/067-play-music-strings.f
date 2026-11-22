@@ -16,7 +16,9 @@
 \     each, and their number last: PLAY a$,b$ is  a$ b$ 2 PLAY.
 \     PLAY" plays one literal string, at the prompt or in a definition.
 \   - PLAY waits until the music ends, as in BASIC. H in a string, or
-\     the BREAK key, stops it.
+\     the BREAK key, stops it. PLAY-ON (section 10) takes the same
+\     strings and plays them in the background, on the frame interrupt,
+\     which BASIC cannot do.
 \   - The strings are READ WHILE THEY PLAY: keep them in the dictionary
 \     (CREATE name ," text") -- see section 9 for why S" at the prompt
 \     is not safe with more than one string.
@@ -24,8 +26,9 @@
 \     there and still work.
 \
 \ no Brodie counterpart (vForth extension)
-\ Reference: sec.3.13 (AY sound); lib/PLAY.f header; HELP PLAY and
-\            HELP PLAY"; doc/basic-to-vforth/18-sound-and-music.md.
+\ Reference: sec.3.13 (AY sound); lib/PLAY.f and lib/PLAY-ON.f headers;
+\            HELP PLAY, HELP PLAY", HELP PLAY-ON;
+\            doc/basic-to-vforth/18-sound-and-music.md.
 \
 \ Load from a clean session:
 \   NEEDS TUTORIAL
@@ -43,6 +46,8 @@ CR
 .(     Type NEWTASK to unload.               ) CR
 
 NEEDS PLAY
+NEEDS PLAY-ON                   \ section 10; loads INTERRUPTS too
+NEEDS [']
 
 \ ===========================================================================
 \ 1. A first note, a first scale
@@ -265,14 +270,113 @@ CREATE RIGHT-HAND  ," R O5 (3CgecegCg)"
 \
 \ - PLAY waits. The program does nothing else until the music ends;
 \   the time is counted with MS, so PLAY does not depend on the
-\   interrupts. For music while the program runs there is AFX
-\   (tutorials 050 and 055).
+\   interrupts -- but MS is calibrated for 3.5 MHz, and at 28 MHz
+\   (3 SPEED!) a tune of 200 frames lasts 285. For music while the
+\   program runs, and at a tempo that does not depend on the CPU, there
+\   is PLAY-ON (section 10); for sound effects, AFX (tutorials 050 and
+\   055).
 \
 \ - Y and Z, BASIC's MIDI commands, are read and ignored.
 
 
 \ ===========================================================================
-\ 10. DEMO: a canon in three voices
+\ 10. Music in the background: PLAY-ON
+\ ===========================================================================
+\
+\ PLAY-ON (lib/PLAY-ON.f) takes the strings exactly as PLAY does, and
+\ returns at once. The music goes on by itself: the frame interrupt of
+\ tutorial 049 (lib/INTERRUPTS.f, ISR-XT) plays one step of it at every
+\ frame, 50 or 60 times a second, while the program draws, reads the
+\ keyboard or computes. Three more words go with it:
+\
+\   PLAYING?    ( -- f )   true until the music ends
+\   PLAY-OFF    ( -- )     stop it now, the chips quiet
+\   PLAY-ERROR  ( -- n )   the error that halted it, 0 if none
+\
+\   TOP COUNT MIDDLE COUNT BOTTOM COUNT 3 PLAY-ON   => ok at once,
+\                                                   the chords follow
+\   PLAYING? .                   => -1 while they play, 0 afterwards
+\
+\ The prompt comes back while the chords play: type WORDS and the
+\ listing scrolls over the music. .DOTS prints a dot per frame until
+\ the music ends (1FRAME waits for the next interrupt):
+
+: .DOTS  ( -- )
+    TOP COUNT  MIDDLE COUNT  BOTTOM COUNT  3 PLAY-ON
+    BEGIN  [CHAR] . EMIT  1FRAME  PLAYING? 0=  UNTIL  CR ;
+
+\ What changes from PLAY:
+\
+\ - The time is counted in frames, not with MS: the tempo is the same
+\   at 3.5 MHz and at 28 MHz, and PLAY-ON reads NextReg 5 to know
+\   whether a second has 50 or 60 of them.
+\
+\ - The strings are COPIED when the music starts, 1024 bytes in all
+\   (more is error -18). The interrupt cannot read the heap, where the
+\   window at $E000 may map another page when it comes; the copy also
+\   removes the trap of section 9, so two S" at the prompt are fine:
+\
+\     S" O4ceg))" S" O3c))" 2 PLAY-ON         => a chord, for ever
+\     PLAY-OFF                                => silence
+\
+\ - BREAK does NOT stop the music: PLAY-OFF does. H in a string ends
+\   it as in PLAY, and a PLAY started meanwhile stops it first.
+\
+\ - Errors. PLAY-ON reads the first note of each string at once, so a
+\   mistake there is reported at once, with the usual messages. A
+\   mistake further on is found by the interrupt, which cannot print:
+\   the music halts, and PLAY-ERROR keeps the number (19 a wrong
+\   character, -24 a number out of range).
+\
+\     S" xc" 1 PLAY-ON          => Syntax error, at once
+\     S" O4cdefgx" 1 PLAY-ON    => five notes, then silence
+\     PLAY-ERROR .              => 19
+\
+\ - Disk access turns the interrupts off. While a file is read (NEEDS,
+\   INCLUDE, LOAD, BLOCK) the frames do not reach the music, which
+\   slows down and does not catch up afterwards.
+\
+\ Sharing the interrupt. There is a single ISR-XT cell. PLAY-ON keeps
+\ the word it finds there and calls it after its own step at every
+\ frame; when the music ends, or at PLAY-OFF, it puts it back. So a
+\ handler of your own, or AFXFRAME (tutorial 050), keeps running under
+\ the music -- provided it is installed BEFORE PLAY-ON: a word stored
+\ into ISR-XT while the music plays takes the place of the music. When
+\ the word given back is NOOP, PLAY-OFF also returns to interrupt mode
+\ 1. .TICKS counts the frames of a tune with the counter of tutorial
+\ 049, installed first:
+
+VARIABLE TICKS
+
+: COUNT-TICKS  ( -- )  1 TICKS +! ;
+
+: .TICKS  ( -- )
+    0 TICKS !
+    ISR-OFF  ['] COUNT-TICKS ISR-XT !   \ our handler first
+    THEME COUNT  OSTINATO COUNT  2 PLAY-ON
+    BEGIN  PLAYING? 0=  UNTIL           \ COUNT-TICKS still in ISR-XT
+    ISR-OFF  ['] NOOP ISR-XT !
+    ." Frames: " TICKS @ . CR ;
+
+\ THEME of section 5 lasts 4.8 seconds at T150: 16 quavers and a
+\ semibreve. .TICKS prints about 240 at 50 Hz (288 at 60 Hz), and the
+\ same number at 3 SPEED! as at 0 SPEED!.
+\
+\ AFXFRAME and PLAY-ON both write the chips, and AFXFRAME rewrites the
+\ mixer (registers 6 and 7) and the stereo bits of all three chips at
+\ every frame: a tune and effects on the same chip may disturb each
+\ other (M, L and R last one frame). Keep the effects on another chip.
+\
+\ Under the dot command .vforth, PLAY-ON is still being tried: the
+\ music slows down while the screen scrolls, and changing LAYER while
+\ it plays has crashed the machine. Call PLAY-OFF first.
+\
+\ To remove the module: PLAY-OFF, then NO-PLAY-ON (NO-PLAY removes
+\ both modules, but call PLAY-OFF before it).
+
+
+\ ===========================================================================
+\ 11. DEMO: a canon in three voices
 \ ===========================================================================
 \
 \ A round is one tune in several voices, each starting a few bars after

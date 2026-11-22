@@ -1,0 +1,11 @@
+    LAYER23-GRAPHICS  --
+
+NEEDS LAYER23-GRAPHICS loads GRAPHICS-COMMON and
+activates Layer 2 high-res: 640x256 pixels, 16
+colours, 4 bits per pixel (two pixels per byte).
+Uses 80K of RAM (ten 8K MMU7 pages) laid out in
+vertical bands, the same bytes as LAYER22.
+Same PLOT/DRAW-LINE/CIRCLE as the other modes;
+x = vertical 0..255, y = horizontal 0..639.
+The five 16K banks from NextReg $12 must be free.
+

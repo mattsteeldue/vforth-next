@@ -90,7 +90,7 @@ goes one step further: its files may have lines of up to 80 columns, so
 it prints them with characters 6 pixels wide, 85 to a row on `LAYER12`,
 and sets the width back to 8 at the end. For drawing in a layer there
 are the graphics libraries of Chapter 16; `LAYER22-GRAPHICS` and
-`LAYER24-GRAPHICS` even reach the 320x256 and 640x256 modes of Layer 2,
+`LAYER23-GRAPHICS` even reach the 320x256 and 640x256 modes of Layer 2,
 which BASIC does not offer.
 
 **`ATTR` is a fetch.** On Layer 0 the attributes are 768 bytes from `$5800`,

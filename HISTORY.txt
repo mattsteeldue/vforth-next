@@ -943,3 +943,17 @@ shakes in LAYER0, 11, 12 and 13. Chapter 15: contrast and transparent
 colours, and the paper column, on LAYER0 (not on LAYER12, where Timex
 HiRes has one ink and one paper). Chapter 14: NEEDS lines completed.
 
+
+\ build 20261121
+The core binary does not change: only the build date in the banner.
+LAYER24 is renamed LAYER23, after the official ZX Spectrum Next manual,
+which calls the 640x256 16-colour mode "Layer 2,3" (and 320x256
+"Layer 2,2", hence LAYER22). The library is now NEEDS LAYER23-GRAPHICS,
+its primitives L23-PIXELADD, L23-PLOT, L23-POINT, L23-XPLOT and L23-EDGE
+(they were L4-), and the check demo demo/layer23-check.f. Programs that
+used NEEDS LAYER24-GRAPHICS or LAYER24 must be updated.
+New HELP LAYER23 and HELP LAYER23-GRAPHICS; the manual documents LAYER22
+and LAYER23 in section 3.4.1.
+Tutorial 067, section 10: PLAY-ON, NextBASIC music strings played in the
+background by the frame interrupt; tutorial 049 points to it in its new
+section 9.

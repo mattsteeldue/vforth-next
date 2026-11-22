@@ -176,7 +176,7 @@ DEFER EDGE          ( b -- f )
 .( LAYER: )
 
 \ LAYER: is a defining word that allows you creating a new definition
-\ (LAYER0, LAYER10, LAYER11, LAYER12, LAYER13, LAYER20) that in one
+\ (LAYER0, LAYER10, LAYER11, LAYER12, LAYER13, LAYER2) that in one
 \ shot changes all vectorized definitions behavior and also tries to
 \ change current char-size.
 HEX

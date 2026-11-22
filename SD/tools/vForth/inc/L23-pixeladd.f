@@ -1,5 +1,5 @@
 \
-\ L4-pixeladd.f
+\ L23-pixeladd.f
 \
 \ Layer 2 640x256 4bpp PIXELADD.
 \ Identical vertical-band layout as L22-PIXELADD (320x256), but two pixels
@@ -8,17 +8,17 @@
 \   page    = byteX >> 5   (one 8K page per 32 byte-columns)
 \   column  = byteX & 31
 \   address = $E000 + column*256 + x      (x = vertical coord, low byte L)
-\ Returns the address of the BYTE; the caller (L4-PLOT/L4-POINT/L4-XPLOT)
+\ Returns the address of the BYTE; the caller (L23-PLOT/L23-POINT/L23-XPLOT)
 \ selects the proper nibble from the parity of y.
 \
-.( L4-PIXELADD )
+.( L23-PIXELADD )
 \
 NEEDS GRAPHICS-COMMON    \ for L2-RAM-PAGE assembled-in constant
 NEEDS L2-RAM-PAGE
 
 BASE @
 HEX
-CODE L4-PIXELADD  ( x y -- a )
+CODE L23-PIXELADD ( x y -- a )
     D9 C,             \ exx
     D1 C,             \ pop  de     \ horizontal y-coord (0..639, full DE)
     E1 C,             \ pop  hl     \ vertical   x-coord (only L significant)
@@ -29,7 +29,7 @@ CODE L4-PIXELADD  ( x y -- a )
     ED C, 2A C,       \ bsrl de, b  \ e = byteX >> 5 = which 8K page (0..9)
     7B C,             \ ld   a, e
     B7 C,             \ or   a     \ clear H and N: DAA reads the flags,
-                      \             \ and L4-PLOT's `1 AND` leaves H set
+                      \             \ and L23-PLOT's `1 AND` leaves H set
                       \             \ (DAA then added 6: pages 0..3 went
                       \             \ to 6..9, the rest off screen)
     27 C,             \ daa         \ DAA trick for fast modulo 10: if A nibble_low > 9,

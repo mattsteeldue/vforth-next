@@ -1,13 +1,13 @@
 \
-\ layer24-check.f
+\ layer23-check.f
 \
-\ Where does pixel 0,0 land in LAYER24 (Layer 2 640x256, 16 colours)?
+\ Where does pixel 0,0 land in LAYER23 (Layer 2 640x256, 16 colours)?
 \ On CSpect (2026-06-28), and then on the real Next, everything came
 \ out shifted to the right; this picture tells a correct screen from a
-\ shifted one (planners/LAYER24-PLAN.md).
+\ shifted one (planners/LAYER23-PLAN.md).
 \
 \ At the prompt, one line each:
-\   INCLUDE DEMO/LAYER24-CHECK.F
+\   INCLUDE DEMO/LAYER23-CHECK.F
 \   CHECK
 \ Any key returns to the text screen.
 \
@@ -18,16 +18,16 @@
 \   - ticks along the top edge every 64 columns, longer every 128,
 \     longest at 320 (the centre);
 \   - a circle in the middle, centre 128,320.
-\ Confirmed on the real Next 2026-11-18 (demo/layer24-check.png).
-\ Before the fix to L4-PIXELADD (an `or a` before its `daa`) only
+\ Confirmed on the real Next 2026-11-18 (demo/layer23-check.png).
+\ Before the fix to L23-PIXELADD (an `or a` before its `daa`) only
 \ columns 0..255 showed, drawn from column 384 on, and the circle was
 \ cut at the edge of that strip.
 \
 
-NEEDS LAYER24-GRAPHICS
+NEEDS LAYER23-GRAPHICS
 NEEDS LAYER12
 
-\ LAYER24-GRAPHICS switches to 640x256 at once: back to text before
+\ LAYER23-GRAPHICS switches to 640x256 at once: back to text before
 \ anything else is printed (as in demo/layer22-demo.f).
 LAYER12  _BLUE .PAPER
 
@@ -59,7 +59,7 @@ DECIMAL
 ;
 
 : CHECK ( -- )
-    LAYER24                          \ 640x256, cleared to BACKGROUND
+    LAYER23                          \ 640x256, cleared to BACKGROUND
     15 .INK
     FRAME  CORNER  TICKS
     255 255 0 0 DRAW-LINE            \ diagonal from 0,0

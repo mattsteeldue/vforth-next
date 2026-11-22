@@ -627,7 +627,7 @@ ATTR-COLORS                     \ sensible default before any layer activates
 .( LAYER: )
 
 \ LAYER: is a defining word that allows you creating 6 new definitions
-\ LAYER0 , LAYER10 , LAYER11 , LAYER12 , LAYER13 , LAYER20
+\ LAYER0 , LAYER10 , LAYER11 , LAYER12 , LAYER13 , LAYER2
 \ that in one shot change all vectorized definitions behavior
 \ and they also try to change current char-size.
 HEX

@@ -218,9 +218,39 @@ VARIABLE FLASH-STATE
 \
 \ 5. MOUSE (lib/MOUSE.f) uses this ISR facility.  Do not load MOUSE
 \    and then install your own ISR-XT without first unloading MOUSE.
+\
+\ 6. There is one ISR-XT cell.  Libraries that need the interrupt
+\    either take it over (MOUSE, above) or chain to the word they
+\    find there (PLAY-ON, section 9): install your own handler first.
 
 \ ===========================================================================
-\ 9. Simple tests (requires NEEDS TESTING)
+\ 9. Further: music in the background (tutorial 067, section 10)
+\ ===========================================================================
+\
+\ The best-known use of the frame interrupt is music that plays while
+\ the program goes on.  NEEDS PLAY-ON (lib/PLAY-ON.f) plays the
+\ NextBASIC music strings of lib/PLAY.f that way: PLAY-ON returns at
+\ once, and a word in ISR-XT plays one step of the music at every
+\ frame.  It is a worked example of everything above:
+\   - it counts time in frames, like COUNT-FRAMES in section 5, so the
+\     tempo does not depend on the CPU speed;
+\   - it keeps the xt it finds in ISR-XT and calls it after its own
+\     step, so a handler installed BEFORE it (AFXFRAME, or the counter
+\     of section 5) keeps running; it puts that xt back when the music
+\     ends, and returns to IM 1 only when it was NOOP;
+\   - it reads nothing from the heap inside the interrupt: the strings
+\     are copied first, because the interrupt may come while the MMU7
+\     window maps another page;
+\   - errors found inside the interrupt cannot be printed (caution 2),
+\     so they are kept for PLAY-ERROR to report.
+\ Disk access disables the interrupts: frames lost meanwhile never
+\ reach ISR-XT, so anything timed by counting them (the music, the
+\ counter of section 5) falls behind and does not catch up.
+\
+\   NEEDS TUTORIAL  067 TUTORIAL     \ then see section 10 there
+
+\ ===========================================================================
+\ 10. Simple tests (requires NEEDS TESTING)
 \ ===========================================================================
 \
 \ NEEDS TESTING  DECIMAL          \ lib/testing.f leaves BASE in HEX

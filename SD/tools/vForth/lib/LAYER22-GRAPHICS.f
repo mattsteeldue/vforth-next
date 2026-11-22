@@ -57,7 +57,7 @@ CODE L22-PIXELADD  ( x y -- a )
     ED C, 2A C,       \ bsrl de, b  \ e = y >> 5 = which 8K page
     7B C,             \ ld   a, e
     B7 C,             \ or   a     \ clear H and N: DAA reads the flags
-                      \             \ (the same fix as L4-PIXELADD)
+                      \             \ (the same fix as L23-PIXELADD)
     27 C,             \ daa         \ DAA trick for fast modulo 10
     E6 C, 0F C,       \ and  0F     \ extract low nibble = page number modulo 10
     C6 C, L2-RAM-PAGE C, \ add  L2-RAM-PAGE

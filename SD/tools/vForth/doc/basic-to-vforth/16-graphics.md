@@ -184,7 +184,7 @@ LAYER2  CLS
 circle, as in BASIC, and the graphics libraries take the shape of the
 pixels into account. Each layer library sets `XY-RATIO`, a deferred
 word that `CIRCLE` applies to every vertical offset: on `LAYER12` and on
-the 640x256 mode of `LAYER24-GRAPHICS`, where a pixel is half as wide
+the 640x256 mode of `LAYER23-GRAPHICS`, where a pixel is half as wide
 as it is tall, it is `2/`, so `r` is counted in columns and halved in
 the vertical direction; on the modes with square pixels it does
 nothing. The circle comes out round whatever the mode, with no change
@@ -215,7 +215,7 @@ to the program.
 | `LAYER CLEAR` | - | |
 | stipple UDGs | UDGs as in Chapter 13 | |
 | `TILE`, `TILE BANK`, `TILE DIM` | - | Layer 3 tilemaps are another thing: tutorial `058`. |
-| Layer 2 at 320x256 and 640x256 | `NEEDS LAYER22-GRAPHICS`, `NEEDS LAYER24-GRAPHICS` | BASIC has no statements for them. 640x256 is still experimental. |
+| Layer 2 at 320x256 and 640x256 | `NEEDS LAYER22-GRAPHICS`, `NEEDS LAYER23-GRAPHICS` | BASIC has no statements for them. 640x256 is still experimental. |
 
 ## Side by side
 

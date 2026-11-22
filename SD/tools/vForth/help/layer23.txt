@@ -1,0 +1,13 @@
+    LAYER23  --
+
+Activates Layer 2 high-res: 640x256 pixels, 16
+colours, 4 bits per pixel, two pixels per byte
+(80K RAM, vertical bands, as LAYER22).
+Re-vectors PLOT/POINT/DRAW-LINE/CIRCLE.
+x = vertical 0..255, y = horizontal 0..639.
+Colour is a 4-bit index 0..15 into the Layer 2
+palette.
+
+Part of the LAYER23-GRAPHICS library.
+Available after NEEDS LAYER23-GRAPHICS
+
