@@ -957,3 +957,17 @@ and LAYER23 in section 3.4.1.
 Tutorial 067, section 10: PLAY-ON, NextBASIC music strings played in the
 background by the frame interrupt; tutorial 049 points to it in its new
 section 9.
+
+
+\ build 20261122
+NextReg access is now atomic against interrupts: MMU7@, REG@ and REG!
+(and the MMU7 read inside the core) select the register on $243B and
+read or write $253B with interrupts disabled, then restore the state
+found on entry, so an interrupt routine that touches a NextReg can no
+longer spoil the selection. Code that disables interrupts and then
+calls REG! (e.g. a hardware IM2 set-up) finds them still disabled.
+The ASSEMBLER knows NEXTREGA< reg P, (ED C7 nn, nextreg a,reg: read a
+NextReg into A), new in Next core 3.03.03; it is not used by the core
+and will not run on an older Next core.
+Manual: section 3.4.1 (LAYER22/LAYER23) tidied, and the addresses of
+sections 3.8 and 4.6 brought in line with this build.

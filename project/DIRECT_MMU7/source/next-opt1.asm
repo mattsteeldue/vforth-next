@@ -18,11 +18,10 @@
 //              dw      EXIT
                 New_Def REG_FETCH, "REG@", is_code, is_normal
                 exx
-                ld      bc, $243B 
-                pop     hl 
-                out     (c), l 
-                inc     b
-                in      l, (c)
+                pop     hl
+                ld      a, l
+                call    NEXTREG_read        // atomic, see L0.asm
+                ld      l, a
                 push    hl
                 exx
                 next
@@ -41,12 +40,18 @@
 //              dw      EXIT
                 New_Def REG_STORE, "REG!", is_code, is_normal
                 exx
-                ld      bc, $243B 
-                pop     hl 
-                out     (c), l 
-                inc     b
-                pop     hl
+                pop     hl                  // n
+                pop     de                  // b
+                ld      a, i                // P/V = IFF2
+                jp      pe, Reg_Store_Di
+                ld      a, i                // NMOS quirk: re-read
+Reg_Store_Di:
+                di
+                ld      bc, $243B
                 out     (c), l
+                ld      b, $25              // not inc b: it would change P/V
+                out     (c), e
+                call    Nextreg_Read_Ei     // ei only if it was on; keeps flags
                 exx
                 next
 

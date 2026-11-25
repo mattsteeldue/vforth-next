@@ -1,6 +1,6 @@
 \ ______________________________________________________________________ 
 \
-\ v-Forth 1.8 - NextZXOS version - build 2026-11-21
+\ v-Forth 1.8 - NextZXOS version - build 2026-11-22
 \ MIT License (c) 1990-2026 Matteo Vitturi     
 \ Direct Threaded Heap Dictionary - NextZXOS version 
 \ ______________________________________________________________________ 
@@ -152,6 +152,8 @@ DECIMAL
      0  VALUE     emitc^        \ entry-point for EMITC
      0  VALUE     upper^        \ entry-point for UPPER
      0  VALUE     mmu7@^        \ entry-point for mmu7@
+     0  VALUE     nextreg@^     \ entry-point for reg@ (A = NextReg)
+     0  VALUE     nextreg-ei^   \ tail of nextreg@^ shared with reg!
      0  VALUE     clsnol0^      \ CLS_No_Layer_0: the rst $10 in (EMITC)
      0  VALUE     clsl0^        \ CLS_Layer_0: the MMU7 restore in (EMITC)
      0  VALUE     tofar^        \ entry-point for >far
@@ -722,18 +724,33 @@ CODE upper ( c1 -- c2 )
 
 
 \ mmu7 status routine
-\ It returns in reg A the current value of fitted page at MMU7
-\ only registers ABC are modified:
+\ It returns in reg A the current value of fitted page at MMU7;
+\ entered at nextreg@^ it returns in A the value of NextReg A.
+\ only registers AF and BC are modified:
 \ Care must be paid to use EXX before this CALL because it must
 \ be called having alternate registers active, to preserve BC and DE.
+\ It is atomic: an interrupt cannot fall between the select on $243B
+\ and the read on $253B, and the interrupt state is put back as it was.
+\ The second LDAI covers the NMOS Z80 quirk: if an interrupt is accepted
+\ right after LD A,I then P/V reads 0 even with interrupts enabled.
+\ nextreg-ei^ is the tail shared with reg! : EI only if P/V is set.
     ASSEMBLER
     HERE TO mmu7@^
         LDN     A'| DECIMAL 87 N,
-        \ read current MMU7 paging status
-        LDX     BC| HEX 243B NN, 
+    HERE TO nextreg@^
+        LD      B'|    A|
+        LDAI                    \ P/V = IFF2
+        JPF     PE| HERE 4 + AA, \ skip the re-read
+        LDAI                    \ NMOS quirk: re-read
+        DI
+        LD      A'|    B|
+        LDX     BC| HEX 243B NN,
         OUT(C)  A'|
-        INC     B'|
-        IN(C)   A'|
+        LDN     A'| HEX 25 N,
+        INA     HEX 3B P,       \ port $253B: unlike IN(C) keeps P/V
+    HERE TO nextreg-ei^
+        RETF    PO|             \ interrupts were off: leave them off
+        EI
         RET
 
 
@@ -5044,11 +5061,10 @@ CODE basic ( n -- )
 
 CODE reg@ ( n -- b )
         EXX
-        LDX     BC| HEX 243B NN, 
         POP     HL|
-        OUT(C)  L'|
-        INC     B'|
-        IN(C)   L'|
+        LD      A'|    L|
+        CALL    nextreg@^ AA,   \ atomic, see mmu7@^
+        LD      L'|    A|
         PUSH    HL|
         EXX
         Next
@@ -5064,12 +5080,17 @@ CODE reg@ ( n -- b )
 
 CODE reg! ( b n -- )
         EXX
-        LDX     BC| HEX 243B NN, 
-        POP     HL|
+        POP     HL|             \ n
+        POP     DE|             \ b
+        LDAI                    \ P/V = IFF2
+        JPF     PE| HERE 4 + AA, \ skip the re-read
+        LDAI                    \ NMOS quirk: re-read
+        DI
+        LDX     BC| HEX 243B NN,
         OUT(C)  L'|
-        INC     B'|
-        POP     HL|
-        OUT(C)  L'|
+        LDN     B'| HEX 25 N,   \ not INC B: it would change P/V
+        OUT(C)  E'|
+        CALL    nextreg-ei^ AA, \ EI only if it was on; keeps flags
         EXX
         Next
         C;

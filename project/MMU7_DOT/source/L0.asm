@@ -64,7 +64,7 @@ Splash_Ptr      defl    $ - $E000           // save current HP
                 // length include a leading space in each line
                 db      107 
                 db      " v-Forth 1.8 - NextZXOS version ", $0D      // 33
-                db      " Dot-command - build 2026-11-21 ", $0D  // 33
+                db      " Dot-command - build 2026-11-22 ", $0D  // 33
                 db      " MIT License ", 127                         // 14
                 db      " 1990-2026 Matteo Vitturi ", $0D            // 27
                 End_Heap
@@ -455,15 +455,30 @@ Case_Upper:
 //  ______________________________________________________________________ 
 
 // This routine must be called with alternate registers active
-// input: None
-// Output: A = 8k-page number currently fitted at MMU7
+// input: None (NEXTREG_read: A = NextReg number)
+// Output: A = 8k-page number currently fitted at MMU7 (NEXTREG_read: its value)
+// Only AF and BC are modified. Atomic: an interrupt cannot fall between the
+// select on $243B and the read on $253B, and the interrupt state is restored.
+// The second "ld a,i" covers the NMOS Z80 quirk: if an interrupt is accepted
+// right after "ld a,i", P/V reads 0 even with interrupts enabled.
+// Nextreg_Read_Ei: tail shared with REG!, enables interrupts only if P/V=1.
 MMU7_read:
                 ld      a, 87
-NEXTREG_read:                
-                ld      bc, $243B 
+NEXTREG_read:
+                ld      b, a
+                ld      a, i                // P/V = IFF2
+                jp      pe, Nextreg_Read_Di
+                ld      a, i                // NMOS quirk: re-read
+Nextreg_Read_Di:
+                di
+                ld      a, b
+                ld      bc, $243B
                 out     (c), a
-                inc     b
-                in      a, (c)
+                ld      a, $25
+                in      a, ($3B)            // port $253B; unlike in a,(c) keeps P/V
+Nextreg_Read_Ei:
+                ret     po                  // interrupts were off: leave them off
+                ei
                 ret
 
 //  ______________________________________________________________________ 
