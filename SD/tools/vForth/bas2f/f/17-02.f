@@ -26,7 +26,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:306
+\ 17-time-and-motion.md:307
 NEEDS IDE_RTC
 : NOW  ( -- h m s )
     IDE_RTC DROP NIP

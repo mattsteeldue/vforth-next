@@ -35,7 +35,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:499
+\ 17-time-and-motion.md:500
 : HIT?  ( x1 y1 x2 y2 -- flag )
     ROT - ABS 16 < >R  - ABS 16 < R> AND ;
 10 10 20 25 HIT? .              \ => -1

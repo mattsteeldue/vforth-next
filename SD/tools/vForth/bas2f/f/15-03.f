@@ -6,6 +6,10 @@
 \   10 PRINT AT 5,3;PAPER 6;INK 1;"*"
 \   20 PRINT AT 6,0;ATTR (5,3)
 
+\ --- libraries the guide loads elsewhere
+NEEDS .INK
+NEEDS .PAPER
+
 \ --- words defined earlier in the guide
 
 \ 15-colours.md:100

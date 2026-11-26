@@ -6,6 +6,9 @@
 \   10 DEF FN t(n)=n?(0,n+FN t(n-1))
 \   20 PRINT FN t(10)
 
+\ --- libraries the guide loads elsewhere
+NEEDS RECURSE
+
 \ --- the translation
 
 \ 08-functions.md:323

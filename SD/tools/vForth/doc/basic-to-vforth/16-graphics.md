@@ -217,6 +217,16 @@ to the program.
 | `TILE`, `TILE BANK`, `TILE DIM` | - | Layer 3 tilemaps are another thing: tutorial `058`. |
 | Layer 2 at 320x256 and 640x256 | `NEEDS LAYER22-GRAPHICS`, `NEEDS LAYER23-GRAPHICS` | BASIC has no statements for them. 640x256 is still experimental. |
 
+**Text on Layer 2 at 320 and 640 points comes out sideways.** These two
+modes keep the screen in vertical bands, a column of pixels after
+another, while the text is written as on the other layers, a row after
+another. So the text runs from top to bottom, the lines follow from
+left to right, and every character is transposed: turned a quarter and
+mirrored. A program reads it as well as any other; a person needs a lot
+of practice. Draw in `LAYER22` or `LAYER23`, and go back to a text
+layer, `LAYER12` for instance, to type and to read, as
+`demo/layer22-demo.f` does.
+
 ## Side by side
 
 **A hyperbola.** The graph of `y=1/x`, on Layer 0, with the origin in
@@ -442,7 +452,9 @@ The four writes go to the same register, `$18`, one after the other;
 `$1C` with bit 0 set makes the next write the first. For Layers 0 and
 1 the register is `$1A`, reset with bit 2 (`4 $1C REG!`); the sprites
 have `$19` and bit 1. The window is in the order of the registers:
-columns first.
+columns first. At 320 and 640 points (`LAYER22`, `LAYER23`) a column
+counts 2 and 4 points and the rows reach 255: there the whole screen is
+`0 0 255 159 CLIP-L2`, and the line above hides the bottom 64 rows.
 
 ## No equivalent
 

@@ -7,6 +7,14 @@
 \   20   PRINT y,1000*1.05^y
 \   30 NEXT y
 
+\ --- words defined earlier in the guide
+
+\ 09-mathematical-functions.md:28
+NEEDS FLOATING
+FLOATING
+7.0 2.0 F/ F.                   \ => 3.5000e0
+INTEGER
+
 \ --- the translation
 
 \ 09-mathematical-functions.md:198

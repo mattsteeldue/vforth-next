@@ -6,6 +6,9 @@
 \   10 INPUT a,b,c
 \   20 IF a<>b AND a<>c THEN PRINT "neither": ELSE PRINT "one of them"
 
+\ --- libraries the guide loads elsewhere
+NEEDS <>
+
 \ --- the translation
 
 \ 12-conditions.md:282

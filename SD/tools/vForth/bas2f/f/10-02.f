@@ -5,6 +5,10 @@
 \
 \   10 PRINT 10+RND (11)
 
+\ --- libraries the guide loads elsewhere
+NEEDS RANDOMIZE
+NEEDS RND
+
 \ --- the translation
 
 \ 10-random-numbers.md:190

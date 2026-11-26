@@ -7,6 +7,9 @@
 \   20   PRINT n;TAB 6;n*n;TAB 12;n*n*n
 \   30 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS .TAB
+
 \ --- the translation
 
 \ 14-more-about-print-and-input.md:255

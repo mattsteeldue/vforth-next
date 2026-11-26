@@ -10,9 +10,12 @@
 \   50 NEXT n
 \   60 PAUSE 0
 
+\ --- libraries the guide loads elsewhere
+NEEDS LAYER12
+
 \ --- words defined earlier in the guide
 
-\ 16-graphics.md:344
+\ 16-graphics.md:354
 NEEDS RND
 23670 CONSTANT SEED
 : NEXT-RND  ( -- u )  SEED @ NEXT-SEED  DUP SEED ! ;
@@ -22,7 +25,7 @@ NEEDS RND
 
 \ --- the translation
 
-\ 16-graphics.md:354
+\ 16-graphics.md:364
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 NEEDS GRAPHICS

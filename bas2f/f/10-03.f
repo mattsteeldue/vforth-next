@@ -9,6 +9,10 @@
 \   40 NEXT n
 \   50 PRINT h
 
+\ --- libraries the guide loads elsewhere
+NEEDS RANDOMIZE
+NEEDS RND
+
 \ --- the translation
 
 \ 10-random-numbers.md:211

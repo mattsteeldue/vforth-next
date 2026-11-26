@@ -89,7 +89,7 @@ beat. Both are `VALUE`s in Forth, changed with `TO`. The name `KEY` is
 taken: it is the word that reads the keyboard ([Chapter 14](14-more-about-print-and-input.md)).
 
 ```forth
-NEEDS VALUE
+NEEDS VALUE  NEEDS TO
 0 VALUE KEY#
 400 VALUE CROTCHET
 : Q  ( pitch -- )  CROTCHET  SWAP KEY# +  BEEP ;

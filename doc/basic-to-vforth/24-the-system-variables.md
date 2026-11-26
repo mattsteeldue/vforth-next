@@ -28,8 +28,9 @@ variable low byte first, which is the order the manual describes:
 ```
 
 **What vForth uses itself.** The core reads the keyboard through LAST K
-(23560) and bit 5 of FLAGS (23611), shows the cursor as `C` or `L`
-from bit 3 of FLAGS2 (23658), makes it blink with FRAMES (23672), and
+(23560) and bit 5 of FLAGS (23611), draws its cursor as a block that
+alternates with a half block, or with an underline when bit 3 of FLAGS2
+(23658), CAPS LOCK, is set, makes it blink with FRAMES (23672), and
 sets SCR CT (23692) to 255 after each character it prints. Libraries
 use SEED (23670) for `RND`, BORDCR (23624) for `.BORDER`, UDG (23675)
 and CHARS (23606) for the characters. Writing into these changes how

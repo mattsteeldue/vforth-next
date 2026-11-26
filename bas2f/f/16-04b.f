@@ -11,9 +11,13 @@
 \   110 DRAW OVER 1;-255,0: DRAW OVER 1;0,-174
 \   120 RETURN
 
+\ --- libraries the guide loads elsewhere
+NEEDS GRAPHICS
+NEEDS LAYER2
+
 \ --- the translation
 
-\ 16-graphics.md:416
+\ 16-graphics.md:426
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : FILL-RECT  ( row1 col1 row2 col2 -- )

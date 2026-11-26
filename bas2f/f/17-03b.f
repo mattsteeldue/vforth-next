@@ -33,9 +33,28 @@
 \   420 DATA 13,"_______ttt______",14,"_______ttt______"
 \   430 DATA 15,"_______kkkkk____"
 
+\ --- words defined earlier in the guide
+
+\ 17-time-and-motion.md:28
+: WAIT-FRAMES  ( n -- )  0 ?DO  1FRAME  LOOP ;
+5 WAIT-FRAMES
+
+\ 17-time-and-motion.md:462
+\ no-test in the guide: it waits for keys, never ends or
+\ needs hardware the emulator lacks
+NEEDS SPRITE
+: WALK  ( -- )
+    SPRITES-ON  128 SPRITE _ycoord !
+    290 32 DO
+        I              SPRITE _xcoord !
+        I 8 / 1 AND    SPRITE _spriteid !
+        2 WAIT-FRAMES  SPRITE 0 SPRITE-UPDATE
+    2 +LOOP
+    0 SPRITE-HIDE ;
+
 \ --- the translation
 
-\ 17-time-and-motion.md:485
+\ 17-time-and-motion.md:486
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : MOVE-ALL  ( -- )

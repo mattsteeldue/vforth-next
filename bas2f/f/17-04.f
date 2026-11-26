@@ -12,7 +12,7 @@
 
 \ --- the translation
 
-\ 17-time-and-motion.md:539
+\ 17-time-and-motion.md:540
 NEEDS RND
 : QUAKE  ( -- )
     50 0 DO  8 RND $26 REG!  8 RND $27 REG!  1FRAME  LOOP

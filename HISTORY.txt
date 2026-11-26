@@ -971,3 +971,17 @@ NextReg into A), new in Next core 3.03.03; it is not used by the core
 and will not run on an older Next core.
 Manual: section 3.4.1 (LAYER22/LAYER23) tidied, and the addresses of
 sections 3.8 and 4.6 brought in line with this build.
+
+Republished 2026-11-26 on the same build (the core binary does not change).
+basic-to-vforth guide: the Forth parts of chapters 9, 13-24 and Appendices
+A and C tried on MAME. Chapter 18 now loads TO (NEEDS VALUE  NEEDS TO);
+chapter 17 gives 101 frames for the timer test; chapter 19 says that
+SAVE-BYTES-FORCE is a word of its own; chapter 16: CLIP-L2 counts 2 and 4
+points per column on LAYER22 and LAYER23 (whole screen: 0 0 255 159);
+chapter 24 describes the cursor (a block alternating with a half block, or
+with an underline under CAPS LOCK); Appendix A: code 29 works in the system
+window too. bas2f/f: every file now loads the libraries it uses (PLOT, RND,
+.TAB, BEEP, FLOATING...).
+HELP LAYER22 and HELP LAYER23: text printed in these modes comes out
+sideways, each character turned and mirrored; draw there, type and read in
+LAYER12.

@@ -12,6 +12,9 @@
 \   70   PROC gcd(b,a MOD b) TO r
 \   80 ENDPROC =r
 
+\ --- libraries the guide loads elsewhere
+NEEDS RECURSE
+
 \ --- the translation
 
 \ 04-procedures-and-subroutines.md:435

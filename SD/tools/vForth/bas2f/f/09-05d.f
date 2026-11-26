@@ -7,6 +7,9 @@
 \   20   PRINT 200*SIN (a*PI/180)
 \   30 NEXT a
 
+\ --- libraries the guide loads elsewhere
+NEEDS GRAPHICS
+
 \ --- words defined earlier in the guide
 
 \ 09-mathematical-functions.md:319

@@ -8,6 +8,9 @@
 \   30   PRINT a$( TO n)
 \   40 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS /STRING
+
 \ --- words defined earlier in the guide
 
 \ 07-strings.md:26

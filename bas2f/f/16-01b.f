@@ -8,9 +8,12 @@
 \   30   IF x<>0 THEN LET y=88+30/x: IF y>=0 AND y<=175 THEN PLOT n,y
 \   40 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS GRAPHICS
+
 \ --- the translation
 
-\ 16-graphics.md:241
+\ 16-graphics.md:251
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : HYPERBOLA  ( -- )

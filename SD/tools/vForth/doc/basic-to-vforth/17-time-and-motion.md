@@ -277,12 +277,13 @@ RESET-TIMER DISPLAY  100 WAIT-FRAMES  DISPLAY
 
 ```text
 0 0
-100 100
+101 101
 ```
 
 In Forth the two numbers are the same by definition, since `TIMER` is
-`23672 @`. The number of frames is typed on the line, as with any word;
-`INPUT` would be Chapter 14. There is no need to define the main
+`23672 @`. The second pair is 101, not 100: printing the first one
+takes a frame of its own, before the wait starts. The number of frames
+is typed on the line, as with any word; `INPUT` would be Chapter 14. There is no need to define the main
 program: a line without loops or `IF` runs at the prompt as it is.
 
 **Hours, minutes, seconds.** `Now()` slices `TIME$` and returns three

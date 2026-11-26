@@ -9,6 +9,9 @@
 \   40 PRINT VAL "2*3"
 \   50 PRINT STR$ (255,16)
 
+\ --- libraries the guide loads elsewhere
+NEEDS EVALUATE
+
 \ --- words defined earlier in the guide
 
 \ 08-functions.md:161

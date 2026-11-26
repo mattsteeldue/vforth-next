@@ -8,9 +8,12 @@
 \   30   IF x<>0 THEN PLOT n,88+30*x*LN (ABS x)
 \   40 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS GRAPHICS
+
 \ --- words defined earlier in the guide
 
-\ 16-graphics.md:282
+\ 16-graphics.md:292
 NEEDS VALUE
 NEEDS TO
 NEEDS +TO
@@ -22,7 +25,7 @@ NEEDS +TO
 
 \ --- the translation
 
-\ 16-graphics.md:301
+\ 16-graphics.md:311
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : TWIN  ( u -- )                \ the point at u and its mirror at -u

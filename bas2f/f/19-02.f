@@ -7,6 +7,6 @@
 
 \ --- the translation
 
-\ 19-nextzxos-and-alternatives.md:265
+\ 19-nextzxos-and-alternatives.md:266
 : HELLO  ( -- )  ." Hello" CR ;
 HELLO

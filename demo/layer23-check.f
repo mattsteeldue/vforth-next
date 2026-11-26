@@ -4,7 +4,7 @@
 \ Where does pixel 0,0 land in LAYER23 (Layer 2 640x256, 16 colours)?
 \ On CSpect (2026-06-28), and then on the real Next, everything came
 \ out shifted to the right; this picture tells a correct screen from a
-\ shifted one (planners/LAYER23-PLAN.md).
+\ shifted one (planners/archive/LAYER23-PLAN.md).
 \
 \ At the prompt, one line each:
 \   INCLUDE DEMO/LAYER23-CHECK.F

@@ -6,6 +6,14 @@
 \   10 INPUT r
 \   20 PRINT 2*PI*r,PI*r*r
 
+\ --- words defined earlier in the guide
+
+\ 09-mathematical-functions.md:28
+NEEDS FLOATING
+FLOATING
+7.0 2.0 F/ F.                   \ => 3.5000e0
+INTEGER
+
 \ --- the translation
 
 \ 09-mathematical-functions.md:228

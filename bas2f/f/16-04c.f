@@ -13,7 +13,7 @@
 
 \ --- the translation
 
-\ 16-graphics.md:432
+\ 16-graphics.md:442
 : CLIP-L2  ( row1 col1 row2 col2 -- )
     ROT SWAP                    \ row1 row2 col1 col2
     1 $1C REG!                  \ start again from the first one

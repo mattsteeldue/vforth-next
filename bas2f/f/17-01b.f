@@ -37,4 +37,4 @@ RESET-TIMER
 RESET-TIMER DISPLAY  100 WAIT-FRAMES  DISPLAY
 \ output of the last line:
 \ 0 0
-\ 100 100
+\ 101 101

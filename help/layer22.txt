@@ -4,6 +4,10 @@ Activates Layer 2 high-res: 320x256 pixels, 256
 colours, 1 colour per pixel (80K RAM, vertical
 bands).  Re-vectors PLOT/POINT/DRAW-LINE/CIRCLE.
 x = vertical 0..255, y = horizontal 0..319.
+Text printed here comes out sideways: top to
+bottom, lines from left to right, each
+character transposed (turned and mirrored).
+Draw here; type and read in LAYER12.
 
 Part of the LAYER22-GRAPHICS library.
 Available after NEEDS LAYER22-GRAPHICS

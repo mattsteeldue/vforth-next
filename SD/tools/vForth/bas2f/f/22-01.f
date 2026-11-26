@@ -9,6 +9,10 @@
 \   40 PRINT "Now: ";% REG 7&3
 \   50 RUN AT s
 
+\ --- libraries the guide loads elsewhere
+NEEDS SPEED!
+NEEDS SPEED@
+
 \ --- the translation
 
 \ 22-in-out-and-the-next-registers.md:203

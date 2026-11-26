@@ -11,8 +11,13 @@
 
 \ --- words defined earlier in the guide
 
+\ 18-sound-and-music.md:44
+NEEDS BLEEP
+0 BEEP-PITCH .                  \ => 2093
+9 BEEP-PITCH .                  \ => 3520
+
 \ 18-sound-and-music.md:91
-NEEDS VALUE
+NEEDS VALUE  NEEDS TO
 0 VALUE KEY#
 400 VALUE CROTCHET
 : Q  ( pitch -- )  CROTCHET  SWAP KEY# +  BEEP ;

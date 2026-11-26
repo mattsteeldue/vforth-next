@@ -13,6 +13,12 @@ NEEDS MS
 : PERIOD  ( hz -- p )  16 * >R  1750000. R> UM/MOD NIP ;
 440 PERIOD .                    \ => 248
 
+\ 18-sound-and-music.md:326
+\ no-test in the guide: it waits for keys, never ends or
+\ needs hardware the emulator lacks
+NEEDS PLAY
+S" c" S" e" S" g" 3 PLAY
+
 \ --- the translation
 
 \ 18-sound-and-music.md:334

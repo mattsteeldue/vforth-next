@@ -5,6 +5,9 @@
 \
 \   10 PRINT "e";CHR$ 8;OVER 1;"'";OVER 0
 
+\ --- libraries the guide loads elsewhere
+NEEDS .OVER
+
 \ --- the translation
 
 \ 15-colours.md:243

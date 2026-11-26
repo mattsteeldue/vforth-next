@@ -6,6 +6,9 @@
 \   10 INPUT "How many? ";n
 \   20 PRINT n;" doubled is ";n*2
 
+\ --- libraries the guide loads elsewhere
+NEEDS EVALUATE
+
 \ --- words defined earlier in the guide
 
 \ 14-more-about-print-and-input.md:129

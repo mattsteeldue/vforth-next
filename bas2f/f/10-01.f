@@ -7,6 +7,10 @@
 \   20   PRINT 1+RND (20);" ";
 \   30 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS RANDOMIZE
+NEEDS RND
+
 \ --- the translation
 
 \ 10-random-numbers.md:173

@@ -11,6 +11,10 @@
 \   110 DRAW OVER 1;-255,0: DRAW OVER 1;0,-174
 \   120 RETURN
 
+\ --- libraries the guide loads elsewhere
+NEEDS GRAPHICS
+NEEDS L0-XOR
+
 \ --- words defined earlier in the guide
 
 \ 16-graphics.md:142
@@ -21,7 +25,7 @@
 
 \ --- the translation
 
-\ 16-graphics.md:394
+\ 16-graphics.md:404
 \ no-test in the guide: it waits for keys, never ends or
 \ needs hardware the emulator lacks
 : RIM  ( -- )

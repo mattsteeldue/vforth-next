@@ -9,6 +9,9 @@
 \   40 DEFPROC rect(w,h)
 \   50 ENDPROC =w*h,2*(w+h)
 
+\ --- libraries the guide loads elsewhere
+NEEDS LED
+
 \ --- words defined earlier in the guide
 
 \ 04-procedures-and-subroutines.md:217

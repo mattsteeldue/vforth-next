@@ -7,6 +7,8 @@ Re-vectors PLOT/POINT/DRAW-LINE/CIRCLE.
 x = vertical 0..255, y = horizontal 0..639.
 Colour is a 4-bit index 0..15 into the Layer 2
 palette.
+Text printed here comes out sideways, as in
+LAYER22: draw here; type and read in LAYER12.
 
 Part of the LAYER23-GRAPHICS library.
 Available after NEEDS LAYER23-GRAPHICS

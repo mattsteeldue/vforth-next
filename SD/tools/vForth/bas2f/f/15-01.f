@@ -8,6 +8,9 @@
 \   30 NEXT c
 \   40 PAPER 7
 
+\ --- libraries the guide loads elsewhere
+NEEDS .PAPER
+
 \ --- the translation
 
 \ 15-colours.md:226

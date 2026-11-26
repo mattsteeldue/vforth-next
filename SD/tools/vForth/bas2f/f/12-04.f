@@ -7,6 +7,9 @@
 \   20   PRINT n;" item";("s" AND n<>1)
 \   30 NEXT n
 
+\ --- libraries the guide loads elsewhere
+NEEDS <>
+
 \ --- words defined earlier in the guide
 
 \ 12-conditions.md:123

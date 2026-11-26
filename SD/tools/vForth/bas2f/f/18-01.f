@@ -8,6 +8,13 @@
 \   30 NEXT n
 \   40 DATA 0,2,4,5,7,9,11,12
 
+\ --- words defined earlier in the guide
+
+\ 18-sound-and-music.md:44
+NEEDS BLEEP
+0 BEEP-PITCH .                  \ => 2093
+9 BEEP-PITCH .                  \ => 3520
+
 \ --- the translation
 
 \ 18-sound-and-music.md:287

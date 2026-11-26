@@ -6,6 +6,9 @@
 \   10 LET a$="   hello there   "
 \   20 PRINT a$[<>+];"."
 
+\ --- libraries the guide loads elsewhere
+NEEDS /STRING
+
 \ --- words defined earlier in the guide
 
 \ 07-strings.md:26

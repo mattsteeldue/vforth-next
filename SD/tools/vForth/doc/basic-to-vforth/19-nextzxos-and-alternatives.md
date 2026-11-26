@@ -59,8 +59,9 @@ PAD" pic.scr" $4000 6912 LOAD-BYTES   \ LOAD "pic.scr" SCREEN$
 
 The length given to `LOAD-BYTES` is the most it reads: a shorter file
 loads without an error. `SAVE-BYTES` refuses a file that already exists
-(`SAVE-BYTES? NextZXOS Open error.`); `NEEDS SAVE-BYTES-FORCE` loads a
-version that overwrites it, and no `.bak` copy is kept. Load below
+(`SAVE-BYTES? NextZXOS Open error.`); `SAVE-BYTES-FORCE`, a word of its
+own (`NEEDS SAVE-BYTES-FORCE`), overwrites it, and no `.bak` copy is
+kept. Load below
 `$E000`: the top 8K is the MMU7 window, where vForth keeps the names of
 its words. A file written by BASIC's `SAVE ... CODE` begins with a
 128-byte +3DOS header, which tells `LOAD` the type, the address and the

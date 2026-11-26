@@ -83,7 +83,7 @@ BASIC, not at the `ok` prompt: `RUN` brings vForth back.
 | 26 | auto pause (SW) | `26 EMITC n EMITC` |
 | 27 | fill the window (SW) | `EMITC`, not on Layer 0 |
 | 28 | double width (SW) | `28 EMITC n EMITC` |
-| 29 | font height (UW) | user windows only |
+| 29 | font height (UW, the system window too) | `29 EMITC n EMITC`, not on Layer 0 |
 | 30 | font width (SW) | `WIDECHAR`, `NARROWCHAR`, or `30 EMITC n EMITC` |
 | 31 | redefine the character set (SW) | `EMITC`, not on Layer 0 |
 

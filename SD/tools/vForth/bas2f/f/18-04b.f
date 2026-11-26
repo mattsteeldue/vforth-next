@@ -13,6 +13,12 @@ NEEDS MS
 : PERIOD  ( hz -- p )  16 * >R  1750000. R> UM/MOD NIP ;
 440 PERIOD .                    \ => 248
 
+\ 18-sound-and-music.md:357
+\ no-test in the guide: it waits for keys, never ends or
+\ needs hardware the emulator lacks
+NEEDS PLAY
+PLAY" UX1000W0c"
+
 \ --- the translation
 
 \ 18-sound-and-music.md:364
